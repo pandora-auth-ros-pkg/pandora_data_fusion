@@ -1,0 +1,6 @@
+<launch>
+	<node pkg="tf" type="static_transform_publisher" name="staticArmBase2headCamera" 
+			args="0.156222 0.007000 0.480097  0 0 0 1.000000 armBase headCamera 100" />
+</launch>
+
+
