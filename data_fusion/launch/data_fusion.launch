@@ -1,7 +1,0 @@
-<launch>
-
-	<!--Data fusion-->
-	<include file="$(find data_fusion)/launch/victim_fusion.launch" /> 
-	<include file="$(find data_fusion)/launch/alert_handler.launch" /> 
-	
-</launch>

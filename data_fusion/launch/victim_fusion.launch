@@ -1,9 +1,0 @@
-<launch>
-
-	<!--Victim fusion-->
-	<node name="victim_fusion" type="victim_fusion" pkg="data_fusion" respawn="false" ns="data_fusion/victim_fusion"/>
-	
-	<rosparam file="$(find data_fusion)/config/victim_fusion/sensor_params.yaml" command="load" ns="victim_fusion"/>
-	<rosparam file="$(find data_fusion)/config/victim_fusion/probability_thresholds.yaml" command="load" ns="victim_fusion"/>
-	
-</launch>
