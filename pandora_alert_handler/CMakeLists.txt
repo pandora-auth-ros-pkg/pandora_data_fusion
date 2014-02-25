@@ -35,12 +35,18 @@ add_library(objects
 target_link_libraries(objects 
           ${catkin_LIBRARIES}
           )
+add_dependencies(objects 
+  data_fusion_communications_gencpp
+  ) 
           
 add_library(victim 
         src/alert_handler/victim.cpp)
 target_link_libraries(victim 
           ${catkin_LIBRARIES}
           )
+add_dependencies(victim 
+  data_fusion_communications_gencpp
+  ) 
 
 ###################### victim_list #########################################
 add_library(victim_list 
@@ -48,7 +54,9 @@ add_library(victim_list
 target_link_libraries(victim_list 
           ${catkin_LIBRARIES}
           )
-          
+add_dependencies(victim_list 
+  data_fusion_communications_gencpp
+  )           
           
 ##################### Utils ############################################
 add_library(utils 
@@ -56,6 +64,9 @@ add_library(utils
 target_link_libraries(utils 
           ${catkin_LIBRARIES}
           )
+add_dependencies(utils 
+  data_fusion_communications_gencpp
+  )  
   
 #################### PoseFinder ########################################
 add_library(pose_finder 
@@ -63,6 +74,9 @@ add_library(pose_finder
 target_link_libraries(pose_finder 
           ${catkin_LIBRARIES}
           )
+add_dependencies(pose_finder 
+  data_fusion_communications_gencpp
+  ) 
           
 #################### VicitmHandler ########################################
 add_library(victim_clusterer 
@@ -70,13 +84,19 @@ add_library(victim_clusterer
 target_link_libraries(victim_clusterer 
           ${catkin_LIBRARIES}
           )
-          
+add_dependencies(victim_clusterer 
+  data_fusion_communications_gencpp
+  )           
+
 #################### VicitmHandler ########################################
 add_library(victim_handler 
         src/alert_handler/victim_handler.cpp)
 target_link_libraries(victim_handler 
           ${catkin_LIBRARIES}
           )
+add_dependencies(victim_handler 
+  data_fusion_communications_gencpp
+  ) 
           
 ##################### object_handler ############################################
 add_library(object_handler 
@@ -85,8 +105,7 @@ target_link_libraries(object_handler
           ${catkin_LIBRARIES}
           )
 add_dependencies(object_handler 
-  pandora_alert_handler_gencfg 
-  data_fusion_communication_gencpp
+  data_fusion_communications_gencpp
   ) 
 
 ##################### alert_handler ############################################
@@ -97,8 +116,11 @@ target_link_libraries(alert_handler
           )
 add_dependencies(alert_handler 
   pandora_alert_handler_gencfg 
-  vision_communication_gencpp
-  data_fusion_communication_gencpp
+  vision_communications_gencpp
+  data_fusion_communications_gencpp
+  ) 
+add_dependencies(alert_handler 
+  data_fusion_communications_gencpp
   ) 
 
 ##################### alert_handler_node ############################################
@@ -116,6 +138,11 @@ target_link_libraries(alert_handler_node
           objects
           victim
           )
+add_dependencies(alert_handler_node 
+  pandora_alert_handler_gencfg 
+  vision_communications_gencpp
+  data_fusion_communications_gencpp
+  ) 
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/tests.cmake)
 

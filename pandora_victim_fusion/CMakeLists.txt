@@ -37,8 +37,8 @@ add_executable(victim_fusion src/victim_fusion/main.cpp
           )
 target_link_libraries(victim_fusion ${catkin_LIBRARIES} )
 add_dependencies(victim_fusion 
-  controllers_and_sensors_communications
-  vision_communication_gencpp
-  data_fusion_communication_gencpp
+  controllers_and_sensors_communications_gencpp
+  vision_communications_gencpp
+  data_fusion_communications_gencpp
   ) 
 
