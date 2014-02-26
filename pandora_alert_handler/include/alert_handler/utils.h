@@ -9,7 +9,7 @@
 #include "alert_handler/exceptions.h"
 #include "alert_handler/defines.h"
 #include "std_msgs/Empty.h"
-#include "misc/pixelcoords.h"
+#include "pandora_navigation_common/misc/pixelcoords.h"
 
 
 typedef geometry_msgs::Pose Pose;

@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
           actionlib 
           state_manager
           dynamic_reconfigure
-          pandora_navigation
+          pandora_navigation_common
           roslint
           data_fusion_communications 
           vision_communications 
