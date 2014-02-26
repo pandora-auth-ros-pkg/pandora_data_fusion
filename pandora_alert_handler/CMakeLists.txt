@@ -121,6 +121,7 @@ add_dependencies(alert_handler
   ) 
 add_dependencies(alert_handler 
   data_fusion_communications_gencpp
+  state_manager_communications_gencpp
   ) 
 
 ##################### alert_handler_node ############################################
@@ -142,6 +143,7 @@ add_dependencies(alert_handler_node
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
   data_fusion_communications_gencpp
+  state_manager_communications_gencpp
   ) 
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/tests.cmake)

@@ -40,5 +40,6 @@ add_dependencies(victim_fusion
   controllers_and_sensors_communications_gencpp
   vision_communications_gencpp
   data_fusion_communications_gencpp
+  state_manager_communications_gencpp
   ) 
 
