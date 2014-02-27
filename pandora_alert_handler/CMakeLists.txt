@@ -31,7 +31,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 ###################### objects #########################################
 add_library(objects 
-        src/alert_handler/objects.cpp)
+        src/objects.cpp)
 target_link_libraries(objects 
           ${catkin_LIBRARIES}
           )
@@ -40,7 +40,7 @@ add_dependencies(objects
   ) 
           
 add_library(victim 
-        src/alert_handler/victim.cpp)
+        src/victim.cpp)
 target_link_libraries(victim 
           ${catkin_LIBRARIES}
           )
@@ -50,7 +50,7 @@ add_dependencies(victim
 
 ###################### victim_list #########################################
 add_library(victim_list 
-        src/alert_handler/victim_list.cpp)
+        src/victim_list.cpp)
 target_link_libraries(victim_list 
           ${catkin_LIBRARIES}
           )
@@ -60,7 +60,7 @@ add_dependencies(victim_list
           
 ##################### Utils ############################################
 add_library(utils 
-        src/alert_handler/utils.cpp)
+        src/utils.cpp)
 target_link_libraries(utils 
           ${catkin_LIBRARIES}
           )
@@ -70,7 +70,7 @@ add_dependencies(utils
   
 #################### PoseFinder ########################################
 add_library(pose_finder 
-        src/alert_handler/pose_finder.cpp)
+        src/pose_finder.cpp)
 target_link_libraries(pose_finder 
           ${catkin_LIBRARIES}
           )
@@ -80,7 +80,7 @@ add_dependencies(pose_finder
           
 #################### VicitmHandler ########################################
 add_library(victim_clusterer 
-        src/alert_handler/victim_clusterer.cpp)
+        src/victim_clusterer.cpp)
 target_link_libraries(victim_clusterer 
           ${catkin_LIBRARIES}
           )
@@ -90,7 +90,7 @@ add_dependencies(victim_clusterer
 
 #################### VicitmHandler ########################################
 add_library(victim_handler 
-        src/alert_handler/victim_handler.cpp)
+        src/victim_handler.cpp)
 target_link_libraries(victim_handler 
           ${catkin_LIBRARIES}
           )
@@ -100,7 +100,7 @@ add_dependencies(victim_handler
           
 ##################### object_handler ############################################
 add_library(object_handler 
-        src/alert_handler/object_handler.cpp)
+        src/object_handler.cpp)
 target_link_libraries(object_handler 
           ${catkin_LIBRARIES}
           )
@@ -110,7 +110,7 @@ add_dependencies(object_handler
 
 ##################### alert_handler ############################################
 add_library(alert_handler 
-        src/alert_handler/alert_handler.cpp)
+        src/alert_handler.cpp)
 target_link_libraries(alert_handler 
           ${catkin_LIBRARIES}
           )
@@ -126,7 +126,7 @@ add_dependencies(alert_handler
 
 ##################### alert_handler_node ############################################
 add_executable(alert_handler_node 
-        src/alert_handler/main.cpp )
+        src/main.cpp )
 target_link_libraries(alert_handler_node 
           ${catkin_LIBRARIES}
           alert_handler
@@ -153,6 +153,6 @@ set(ROSLINT_CPP_OPTS
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS 
      RELATIVE ${PROJECT_SOURCE_DIR} 
             include/alert_handler/*.h 
-            src/alert_handler/*.cpp 
+            src/*.cpp 
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})

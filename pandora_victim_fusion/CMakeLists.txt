@@ -21,19 +21,19 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 #---------------Victim fusion node--------------------
-add_executable(victim_fusion src/victim_fusion/main.cpp
-                             src/victim_fusion/co2.cpp 
-                             src/victim_fusion/camera.cpp 
-                             src/victim_fusion/mlx.cpp 
-                             src/victim_fusion/tpa.cpp
+add_executable(victim_fusion src/main.cpp
+                             src/co2.cpp 
+                             src/camera.cpp 
+                             src/mlx.cpp 
+                             src/tpa.cpp
 
-                             src/victim_fusion/state_abstract.cpp 
-                             src/victim_fusion/state_arm_approach.cpp 
-                             src/victim_fusion/state_df_hold.cpp
-                             src/victim_fusion/state_exploration_identification.cpp 
-                             src/victim_fusion/state_any_other.cpp
+                             src/state_abstract.cpp 
+                             src/state_arm_approach.cpp 
+                             src/state_df_hold.cpp
+                             src/state_exploration_identification.cpp 
+                             src/state_any_other.cpp
 
-                             src/victim_fusion/victim_fusion.cpp 
+                             src/victim_fusion.cpp 
           )
 target_link_libraries(victim_fusion ${catkin_LIBRARIES} )
 add_dependencies(victim_fusion 
