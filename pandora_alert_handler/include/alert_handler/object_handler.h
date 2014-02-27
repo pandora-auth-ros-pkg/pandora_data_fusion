@@ -1,7 +1,7 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
-#define PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
+#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
+#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
 
 #include "alert_handler/object_list.h"
 #include "data_fusion_communications/QrNotificationMsg.h"
@@ -50,4 +50,4 @@ class ObjectHandler {
 
 typedef boost::shared_ptr< ObjectHandler >  ObjectHandlerPtr;
 
-#endif  // PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
+#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_

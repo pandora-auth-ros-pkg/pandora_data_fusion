@@ -37,8 +37,8 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_OBJECTS_H_
-#define PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_OBJECTS_H_
+#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_
+#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_
 
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
@@ -408,4 +408,4 @@ class Tpa : public Object {
 typedef Tpa::Ptr TpaPtr;
 typedef std::vector<TpaPtr> TpaPtrStdVector;
 
-#endif  // PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_OBJECTS_H_
+#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_

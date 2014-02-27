@@ -37,8 +37,8 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
-#define PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
+#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
+#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
 
 #include <map>
 #include <string>
@@ -242,4 +242,4 @@ class VictimHandler {
 
 typedef boost::shared_ptr<VictimHandler> VictimHandlerPtr;
 
-#endif  // PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
+#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_

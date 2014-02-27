@@ -1,7 +1,7 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
-#define PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
+#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
+#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
 
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
@@ -154,11 +154,12 @@ class AlertHandler : public StateClient {
 
   int currentVictimId;
 
-  dynamic_reconfigure::Server<pandora_alert_handler::AlertHandlerConfig> dynReconfserver_;
+  dynamic_reconfigure::Server<pandora_alert_handler::AlertHandlerConfig> 
+    dynReconfserver_;
 
   int curState;
   bool eraseHolesQrs;
 
 };
 
-#endif  // PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
+#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_

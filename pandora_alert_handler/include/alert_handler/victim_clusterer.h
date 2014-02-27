@@ -37,8 +37,8 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
-#define PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
+#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
+#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
 
 #include <vector>
 
@@ -102,4 +102,4 @@ class VictimClusterer {
 
 typedef boost::shared_ptr<VictimClusterer> VictimClustererPtr;
 
-#endif  // PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
+#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_

@@ -37,8 +37,8 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_LIST_H_
-#define PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_LIST_H_
+#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_LIST_H_
+#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_LIST_H_
 
 #include <list>
 #include <vector>
@@ -193,4 +193,4 @@ class VictimList : public ObjectList<Victim> {
 };
 
 
-#endif  // PANDORA_ROBOT_SRC_DATA_FUSION_INCLUDE_ALERT_HANDLER_VICTIM_LIST_H_
+#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_LIST_H_
