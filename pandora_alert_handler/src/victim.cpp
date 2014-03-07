@@ -118,9 +118,8 @@ void Victim::fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
 
   if (valid_) {
-    PixelCoords coords = Utils::pointToPixelCoords( pose_.position );
-    res->victimsx.push_back( coords.getXCoord() );
-    res->victimsy.push_back( coords.getYCoord() );
+    res->victimsx.push_back( pose_.position.x );
+    res->victimsy.push_back( pose_.position.y );
   }
 }
 

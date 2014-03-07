@@ -100,6 +100,6 @@ class VictimClusterer {
 
 };
 
-typedef boost::shared_ptr<VictimClusterer> VictimClustererPtr;
+typedef boost::scoped_ptr<VictimClusterer> VictimClustererPtr;
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_

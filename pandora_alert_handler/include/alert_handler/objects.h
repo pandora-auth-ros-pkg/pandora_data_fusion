@@ -104,7 +104,7 @@ class Object {
   @return void
   **/
   virtual void getVisualization(
-    visualization_msgs::MarkerArray* markers) const = 0;
+    visualization_msgs::MarkerArray* markers) const {};
   
   /**
   @brief Getter for member id_
@@ -246,10 +246,8 @@ class Object {
 typedef Object::Ptr ObjectPtr;
 typedef Object::ConstPtr ObjectConstPtr;
 
-typedef std::vector<ObjectPtr> ObjectPtrStdVector;
-typedef boost::shared_ptr<ObjectPtrStdVector> ObjectPtrStdVectorPtr;
-
 typedef std::vector<ObjectPtr> ObjectPtrVector;
+typedef boost::shared_ptr<ObjectPtrVector> ObjectPtrVectorPtr;
 typedef std::vector<ObjectPtrVector> ObjectPtrVectorVector;
 
 /**
@@ -298,7 +296,8 @@ class Qr : public Object {
 };
 
 typedef Qr::Ptr QrPtr;
-typedef std::vector<QrPtr> QrPtrStdVector;
+typedef std::vector< QrPtr > QrPtrVector;
+typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
 
 /**
   @class Hazmat
@@ -344,7 +343,8 @@ class Hazmat : public Object {
 };
 
 typedef Hazmat::Ptr HazmatPtr;
-typedef std::vector<HazmatPtr> HazmatPtrStdVector;
+typedef std::vector< HazmatPtr > HazmatPtrVector;
+typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
 
 /**
   @class Hole
@@ -385,7 +385,8 @@ class Hole : public Object {
 };
 
 typedef Hole::Ptr HolePtr;
-typedef std::vector<HolePtr> HolePtrStdVector;
+typedef std::vector< HolePtr > HolePtrVector;
+typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 
 /**
   @class Tpa
@@ -406,6 +407,7 @@ class Tpa : public Object {
 };
 
 typedef Tpa::Ptr TpaPtr;
-typedef std::vector<TpaPtr> TpaPtrStdVector;
+typedef std::vector< TpaPtr > TpaPtrVector;
+typedef boost::shared_ptr< TpaPtrVector > TpaPtrVectorPtr;
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_

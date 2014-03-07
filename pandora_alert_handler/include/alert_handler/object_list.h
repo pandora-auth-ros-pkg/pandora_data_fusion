@@ -16,7 +16,8 @@ template <class ObjectType>
 class ObjectList {
  public:
 
-  typedef std::list< boost::shared_ptr<ObjectType>  > List;
+  typedef boost::shared_ptr< ObjectType > Ptr;
+  typedef std::list< Ptr > List;
   typedef typename List::iterator iterator;
   typedef typename List::const_iterator const_iterator;
   typedef std::list<iterator> IteratorList;
@@ -31,12 +32,12 @@ class ObjectList {
   int size() const;
   bool isObjectPoseInList(ObjectPtr object, float closestAlert) const;
 
-  bool add(boost::shared_ptr<ObjectType> object);
-  void remove(boost::shared_ptr<ObjectType> object);
+  bool add(Ptr object);
+  void remove(Ptr object);
   void pop_back();
   void clear();
 
-  void removeInRangeOfObject(ObjectPtr, float range);
+  void removeInRangeOfObject(ObjectPtr object, float range);
 
   void getObjectsPosesStamped(
     std::vector<geometry_msgs::PoseStamped>* poses) const;
@@ -51,10 +52,10 @@ class ObjectList {
  protected:
 
   bool isAnExistingObject(
-    boost::shared_ptr<ObjectType> object, IteratorList* iteratorListPtr);
+    Ptr object, IteratorList* iteratorListPtr);
 
   void updateObject(
-    const boost::shared_ptr<ObjectType>& object,
+    const Ptr& object,
       const IteratorList& iteratorList);
 
   void removeElementAt(iterator it);
@@ -70,12 +71,13 @@ class ObjectList {
 };
 
 
-
+typedef boost::shared_ptr< ObjectList<Object> > ObjectListPtr;
 typedef boost::shared_ptr< ObjectList<Hole> >  HoleListPtr;
 typedef boost::shared_ptr< ObjectList<Qr> >  QrListPtr;
 typedef boost::shared_ptr< ObjectList<Hazmat> > HazmatListPtr;
 typedef boost::shared_ptr< ObjectList<Tpa> >  TpaListPtr;
 
+typedef boost::shared_ptr<const ObjectList<Object> > ObjectListConstPtr;
 typedef boost::shared_ptr<const ObjectList<Hole> >  HoleListConstPtr;
 typedef boost::shared_ptr<const ObjectList<Qr> >  QrListConstPtr;
 typedef boost::shared_ptr<const ObjectList<Hazmat> > HazmatListConstPtr;
@@ -102,7 +104,7 @@ typename ObjectList<ObjectType>::const_iterator
 }
 
 template <class ObjectType>
-bool ObjectList<ObjectType>::add(boost::shared_ptr<ObjectType> object) {
+bool ObjectList<ObjectType>::add(Ptr object) {
   IteratorList iteratorList;
 
   if (isAnExistingObject(object, &iteratorList)) {
@@ -117,7 +119,7 @@ bool ObjectList<ObjectType>::add(boost::shared_ptr<ObjectType> object) {
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::remove(boost::shared_ptr<ObjectType> object) {
+void ObjectList<ObjectType>::remove(Ptr object) {
   for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
     if (*it == object) {
       removeElementAt(it);
@@ -245,7 +247,7 @@ void ObjectList<ObjectType>::getVisualization(
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isAnExistingObject(
-    boost::shared_ptr<ObjectType> object, IteratorList* iteratorListPtr) {
+    Ptr object, IteratorList* iteratorListPtr) {
   for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
     if ((*it)->isSameObject(object, DIST_THRESHOLD)) {
       iteratorListPtr->push_back(it);
@@ -259,7 +261,7 @@ bool ObjectList<ObjectType>::isAnExistingObject(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::updateObject(
-    const boost::shared_ptr<ObjectType>& object,
+    const Ptr& object,
       const IteratorList& iteratorList) {
 
   int maxCounter = (*iteratorList.front())->getCounter();

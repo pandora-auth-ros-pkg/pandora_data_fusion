@@ -51,12 +51,12 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
                              float sameVictimRadius,
                              float approachDist,
                              float victimUpdate) :
-  holePtrListPtr_(holeListPtr) ,
+  holePtrListPtr_(holeListPtr),
   tpaPtrListPtr_(tpaListPtr),
   victimsToGoList_(1, sameVictimRadius, approachDist),
   victimsVisitedList_(1, sameVictimRadius, approachDist) {
 
-  clusterer_.reset(new VictimClusterer(clusterRadius, approachDist));
+  clusterer_.reset( new VictimClusterer(clusterRadius, approachDist) );
 
   std::string param; 
   

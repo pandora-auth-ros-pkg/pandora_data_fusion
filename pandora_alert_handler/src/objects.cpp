@@ -51,16 +51,15 @@ bool Qr::isSameObject(const ObjectConstPtr& object, float distance) const {
 void Qr::fillGeotiff(
   data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
 
-  PixelCoords coords = Utils::pointToPixelCoords(pose_.position);
-  res->qrx.push_back( coords.getXCoord() );
-  res->qry.push_back( coords.getYCoord() );
+  res->qrx.push_back( pose_.position.x );
+  res->qry.push_back( pose_.position.y );
   res->qrworldx.push_back( pose_.position.x );
   res->qrworldy.push_back( pose_.position.y );
   res->qrcontent.push_back(content_);
   res->qrtimestamp.push_back(timeFound_);
 }
 
-void  Qr::getVisualization(visualization_msgs::MarkerArray* markers) const {
+void Qr::getVisualization(visualization_msgs::MarkerArray* markers) const {
 
   visualization_msgs::Marker marker;
 
@@ -113,9 +112,8 @@ bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const {
 void Hazmat::fillGeotiff(
   data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
 
-  PixelCoords coords = Utils::pointToPixelCoords( pose_.position );
-  res->hazmatx.push_back( coords.getXCoord() );
-  res->hazmaty.push_back( coords.getYCoord() );
+  res->hazmatx.push_back( pose_.position.x );
+  res->hazmaty.push_back( pose_.position.y );
   res->pattern.push_back( pattern_ );
 }
 

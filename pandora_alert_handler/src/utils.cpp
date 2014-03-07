@@ -2,6 +2,7 @@
 
 #include "alert_handler/utils.h"
 
+/*
 float Utils::pixelCoords2Meters(int pixels) {
   return pixels * OCGD;
 }
@@ -9,25 +10,11 @@ float Utils::pixelCoords2Meters(int pixels) {
 int Utils::meters2PixelCoords(float meters) {
   return floor(meters / OCGD);
 }
+*/
 
-PixelCoords Utils::pointToPixelCoords(Point point) {
-  PixelCoords pixels(meters2PixelCoords(point.x) +  
-    START_X, meters2PixelCoords(point.y) + START_Y);
-  return pixels;
-}
-
-Point Utils::pixelCoordsToPoint(PixelCoords pixels) {
-  Point point;
-  point.x = pixelCoords2Meters(pixels.getXCoord() - START_X);
-  point.y = pixelCoords2Meters(pixels.getYCoord() - START_Y);
-  return point;
-}
-
-Point Utils::pixelCoordsAndHeight2Point(PixelCoords position, float height) {
-  Point point;
-  point = pixelCoordsToPoint(position);
-  point.z = height;
-  return point;
+Point Utils::point2DAndHeight2Point3D(Point position, float height) {
+  position.z = height;
+  return position;
 }
 
 float Utils::distanceBetweenPoints2D(Point a, Point b) {
@@ -46,11 +33,11 @@ float Utils::distanceBetweenPoints3D(Point a, Point b) {
 }
 
 
-geometry_msgs::Quaternion Utils::calculateQuaternion(PixelCoords a,
-    PixelCoords b) {
+geometry_msgs::Quaternion Utils::calculateQuaternion(Point a,
+    Point b) {
   tfScalar yaw;
 
-  yaw = atan2(b.getYCoord() - a.getYCoord(), b.getXCoord() - a.getXCoord());
+  yaw = atan2(b.y - a.y, b.x - a.x);
 
   return tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
 }

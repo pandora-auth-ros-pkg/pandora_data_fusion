@@ -240,6 +240,6 @@ class VictimHandler {
   float VICTIM_VERIFICATION_PROB;
 };
 
-typedef boost::shared_ptr<VictimHandler> VictimHandlerPtr;
+typedef boost::scoped_ptr<VictimHandler> VictimHandlerPtr;
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
