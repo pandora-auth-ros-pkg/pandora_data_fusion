@@ -5,29 +5,24 @@
 
 #include "alert_handler/pose_finder.h"
 
-PoseFinder::PoseFinder(const Map& map, float heightHighThres,
-    float heightLowThres,
+PoseFinder::PoseFinder(const MapConstPtr& map, const std::string& map_type, 
+    float occupiedCellThres, 
+    float heightHighThres, float heightLowThres,
     float approachDist, int orientationDist,
-    int orientationCircle) : _map(map) {
+    int orientationCircle) : map_(map) {
 
-  updateParams(heightHighThres, heightLowThres, approachDist,
+  updateParams(occupiedCellThres, heightHighThres, heightLowThres, approachDist,
                             orientationDist, orientationCircle);
-
-  tf::StampedTransform tfTransform;
-
-  try {
-    _listener.waitForTransform("/world", "/map",
-                             ros::Time(0), ros::Duration(1));
-    _listener.lookupTransform("/world", "/map", ros::Time(0), tfTransform);
-  } catch (tf::TransformException ex) {
-    ROS_ERROR("[ALERT_HANDLER %d]%s", __LINE__, ex.what());
-  }
+  
+  listener_.reset( TfFinder::newTfListener(map_type) );
 
 }
 
-void PoseFinder::updateParams(float heightHighThres, float heightLowThres,
+void PoseFinder::updateParams(float occupiedCellThres,
+      float heightHighThres, float heightLowThres,
       float approachDist, int orientationDist, int orientationCircle) {
 
+  OCCUPIED_CELL_THRES = occupiedCellThres;
   HEIGHT_HIGH_THRES = heightHighThres;
   HEIGHT_LOW_THRES = heightLowThres;
   ORIENTATION_CIRCLE = orientationCircle;
@@ -70,14 +65,14 @@ Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
 
   Point framePosition = Utils::vector3ToPoint(origin);
 
-  PixelCoords position = positionOnWall(framePosition, horizontalDirection);
+  Point position = positionOnWall(framePosition, horizontalDirection);
 
   float distFromAlert = Utils::distanceBetweenPoints2D(
-                            Utils::pixelCoordsToPoint(position), framePosition);
+                            position, framePosition);
 
   float height = calcHeight(verticalDirection, origin[2], distFromAlert);
 
-  outPose.position = Utils::pixelCoordsAndHeight2Point(position, height);
+  outPose.position = Utils::point2DAndHeight2Point3D(position, height);
   outPose.orientation = findNormalVectorOnWall(framePosition, outPose.position);
 
   return outPose;
@@ -102,30 +97,30 @@ float PoseFinder::calcHeight(float alertPitch,
 }
 
 
-PixelCoords PoseFinder::positionOnWall(Point startPoint, float angle) {
+Point PoseFinder::positionOnWall(Point startPoint, float angle) {
   int x = 0, y = 0, D = 5;
-  PixelCoords onWall;
-  PixelCoords startCoords = Utils::pointToPixelCoords(startPoint);
 
-  unsigned int currX = startCoords.getXCoord();
-  unsigned int currY = startCoords.getYCoord();
+  unsigned int currX = startPoint.x;
+  unsigned int currY = startPoint.y;
 
   float omega = angle;
 
   x = D * cos(omega) + currX;
   y = D * sin(omega) + currY;
 
-  while (_map[x][y] > 127) {
+  while (map_->data[x * map_->info.width + y] > OCCUPIED_CELL_THRES * 255) {
     D++;
     x = D * cos(omega) + currX;
     y = D * sin(omega) + currY;
 
   }
-  if (_map[x][y] == 127) {
+  if (map_->data[x * map_->info.width + y] == OCCUPIED_CELL_THRES * 255) {
     throw AlertException("Can not find point on wall");
   }
-  if (_map[x][y] < 127) {
-    onWall = PixelCoords(x, y);
+  if (map_->data[x * map_->info.width + y] < OCCUPIED_CELL_THRES * 255) {
+    Point onWall;
+    onWall.x = x;
+    onWall.y = y;
     return onWall;
   }
   throw AlertException("Can not find point on wall");
@@ -133,75 +128,79 @@ PixelCoords PoseFinder::positionOnWall(Point startPoint, float angle) {
 
 geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
     Point alertPoint) {
-  PixelCoords frameCoords = Utils::pointToPixelCoords(framePoint);
-  PixelCoords alertCoords = Utils::pointToPixelCoords(alertPoint);
 
-  std::vector<PixelCoords> points;
+  std::vector<Point> points;
   int x, y;
 
   for (unsigned int i = 0; i < 360; i += 5) {
-    x = alertCoords.getXCoord() + ORIENTATION_CIRCLE * cos((i / 180.0) * D_PI);
-    y = alertCoords.getYCoord() + ORIENTATION_CIRCLE * sin((i / 180.0) * D_PI);
+    x = alertPoint.x + ORIENTATION_CIRCLE * cos((i / 180.0) * D_PI);
+    y = alertPoint.y + ORIENTATION_CIRCLE * sin((i / 180.0) * D_PI);
 
-    if (_map[x][y] < 127) {
-      points.push_back(PixelCoords(x, y));
+    if (map_->data[x * map_->info.width + y] < OCCUPIED_CELL_THRES * 255) {
+      Point temp;
+      temp.x = x;
+      temp.y = y;
+      points.push_back(temp);
     }
   }
 
-  std::pair<PixelCoords, PixelCoords> pointsOnWall =
+  std::pair<Point, Point> pointsOnWall =
                                    findDiameterEndPointsOnWall(points);
 
   float angle;
 
   // if points are too close, first point should be the
   // diametrically opposite of the second
-  if (pointsOnWall.first.computeDistanceFrom(pointsOnWall.second) < 
-                                                      ORIENTATION_CIRCLE / 2) {
+  if ( Utils::distanceBetweenPoints2D(pointsOnWall.first, pointsOnWall.second)  < 
+                                                      ORIENTATION_CIRCLE / 2 ) {
     
-    angle = atan2((alertCoords.getYCoord() - pointsOnWall.first.getYCoord()),
-      (alertCoords.getXCoord() - pointsOnWall.first.getXCoord()));
-      
-    pointsOnWall.first = PixelCoords(alertCoords.getXCoord() -
-      ORIENTATION_CIRCLE * cos(D_PI + angle), alertCoords.getYCoord() - 
-        ORIENTATION_CIRCLE * sin(D_PI + angle));
+    angle = atan2((alertPoint.y - pointsOnWall.first.y),
+      (alertPoint.x - pointsOnWall.first.x));
+    
+    Point onWall;
+    onWall.x = alertPoint.x - ORIENTATION_CIRCLE * cos(D_PI + angle);
+    onWall.y = alertPoint.y - ORIENTATION_CIRCLE * sin(D_PI + angle);
+    pointsOnWall.first = onWall;
   }
 
-  angle = atan2((pointsOnWall.second.getYCoord() - 
-    pointsOnWall.first.getYCoord()), (pointsOnWall.second.getXCoord() - 
-      pointsOnWall.first.getXCoord()));
+  angle = atan2((pointsOnWall.second.y - 
+    pointsOnWall.first.y), (pointsOnWall.second.x - 
+      pointsOnWall.first.x));
 
-  std::pair<PixelCoords, PixelCoords> approachPoints;
+  std::pair<Point, Point> approachPoints;
 
-  approachPoints.first = PixelCoords(alertCoords.getXCoord() + 
-    ORIENTATION_DIST * cos((D_PI / 2) + angle), alertCoords.getYCoord() + 
-      ORIENTATION_DIST * sin((D_PI / 2) + angle));
+  Point first;
+  first.x = alertPoint.x + ORIENTATION_DIST * cos((D_PI / 2) + angle);
+  first.y = alertPoint.y + ORIENTATION_DIST * sin((D_PI / 2) + angle);
+  approachPoints.first = first;
 
-  approachPoints.second = PixelCoords(alertCoords.getXCoord() + 
-    ORIENTATION_DIST * cos((-D_PI / 2) + angle), alertCoords.getYCoord() + 
-      ORIENTATION_DIST * sin((-D_PI / 2) + angle));
+  Point second;
+  second.x = alertPoint.x + ORIENTATION_DIST * cos((-D_PI / 2) + angle);
+  second.y = alertPoint.y + ORIENTATION_DIST * sin((-D_PI / 2) + angle);
+  approachPoints.second = second;
 
-  if (frameCoords.computeDistanceFrom(approachPoints.first) < 
-                      frameCoords.computeDistanceFrom(approachPoints.second)) {
-    return Utils::calculateQuaternion(alertCoords, approachPoints.first);
+  if ( Utils::distanceBetweenPoints2D(framePoint, approachPoints.first) < 
+                       Utils::distanceBetweenPoints2D(framePoint, approachPoints.second) ) {
+    return Utils::calculateQuaternion(alertPoint, approachPoints.first);
   } else {
-    return Utils::calculateQuaternion(alertCoords, approachPoints.second);
+    return Utils::calculateQuaternion(alertPoint, approachPoints.second);
   }
 }
 
 
-std::pair<PixelCoords, PixelCoords> PoseFinder::findDiameterEndPointsOnWall(
-    std::vector<PixelCoords> points) {
+std::pair<Point, Point> PoseFinder::findDiameterEndPointsOnWall(
+    std::vector<Point> points) {
   if (points.size() < 2) {
     throw AlertException("Can not calculate approach point");
   }
 
   float maxDist = 0, dist = 0;
 
-  std::pair<PixelCoords, PixelCoords> pointsOnWall;
+  std::pair<Point, Point> pointsOnWall;
 
   for (unsigned int i = 0; i < points.size(); i++) {
     for (unsigned int j = i + 1; j < points.size(); j++) {
-      dist = points[i].computeDistanceFrom(points[j]);
+      dist = Utils::distanceBetweenPoints2D(points[i], points[j]);
       if (dist > maxDist) {
         maxDist = dist;
         pointsOnWall = std::make_pair(points[i], points[j]);
@@ -214,22 +213,16 @@ std::pair<PixelCoords, PixelCoords> PoseFinder::findDiameterEndPointsOnWall(
 
 
 tf::Transform PoseFinder::lookupTransformFromWorld(std_msgs::Header header) {
+
   tf::StampedTransform tfTransform;
 
-  try {
-
-    _listener.waitForTransform("/world", header.frame_id,
+  listener_->waitForTransform("/world", header.frame_id,
                                      header.stamp, ros::Duration(1));
 
-    _listener.lookupTransform( "/world", header.frame_id,
+  listener_->lookupTransform( "/world", header.frame_id,
                                            header.stamp, tfTransform);
 
-  } catch (tf::TransformException ex) {
-    ROS_ERROR("[ALERT_HANDLER %d]%s", __LINE__, ex.what());
-    throw AlertException(
-        "Something went wrong with tf, ignoring current message");
-  }
-
   return tfTransform;
+
 }
 
