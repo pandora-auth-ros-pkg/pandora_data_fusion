@@ -11,36 +11,36 @@ class ObjectHandler {
  public:
 
   ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-                HazmatListPtr hazmatListPtr , TpaListPtr tpaListPtr ,
+                HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr ,
                 float sensorRange = 2.5,
                 float qrClosestAlert = 0.5,
                 float hazmatClosestalert = 0.5);
 
-  void handleHoles(HolePtrStdVector holes, tf::Transform transform);
-  void handleQrs(QrPtrStdVector newQrs,
-    tf::Transform transform, bool eraseHoles);
-  void handleHazmats(HazmatPtrStdVector newHazmats, tf::Transform transform);
-  void handleTpas(TpaPtrStdVector newTpas, tf::Transform transform);
+  void handleHoles(HolePtrVectorPtr newHoles, const tf::Transform& transform);
+  void handleQrs(QrPtrVectorPtr newQrs,
+   const tf::Transform& transform, bool eraseHoles);
+  void handleHazmats(HazmatPtrVectorPtr newHazmats, const tf::Transform& transform);
+  void handleTpas(TpaPtrVectorPtr newTpas, const tf::Transform& transform);
 
-  bool isHoleQr(ObjectPtr hole);
-  bool isHoleHazmat(ObjectPtr hole);
+  bool isHoleQr(const HolePtr& hole);
+  bool isHoleHazmat(const HolePtr& hole);
 
   void updateParams(float sensor_range,
      float qrClosestAlert, float hazmatClosestalert);
 
  private:
 
-  void keepValidHoles(HolePtrStdVector* holesPtr,
-     tf::Transform cameraTransform);
+  void keepValidHoles(HolePtrVectorPtr holesPtr,
+     const tf::Transform& cameraTransform);
 
  private:
 
-  ros::Publisher _qrPublisher;
+  ros::Publisher qrPublisher_;
 
-  QrListPtr _qrListPtr;
-  HazmatListPtr _hazmatListPtr;
-  HoleListPtr _holeListPtr;
-  TpaListPtr _tpaListPtr;
+  QrListPtr qrListPtr_;
+  HazmatListPtr hazmatListPtr_;
+  HoleListPtr holeListPtr_;
+  TpaListPtr tpaListPtr_;
 
   float SENSOR_RANGE;
   float QR_CLOSEST_ALERT;
@@ -48,6 +48,6 @@ class ObjectHandler {
 
 };
 
-typedef boost::shared_ptr< ObjectHandler >  ObjectHandlerPtr;
+typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
