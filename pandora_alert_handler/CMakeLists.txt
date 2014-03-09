@@ -38,7 +38,43 @@ target_link_libraries(objects
 add_dependencies(objects 
   data_fusion_communications_gencpp
   ) 
-          
+
+add_library(hazmat 
+        src/hazmat.cpp)
+target_link_libraries(hazmat 
+          ${catkin_LIBRARIES}
+          )
+add_dependencies(hazmat
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(hole
+        src/hole.cpp)
+target_link_libraries(hole 
+          ${catkin_LIBRARIES}
+          )
+add_dependencies(hole
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(qr 
+        src/qr.cpp)
+target_link_libraries(qr 
+          ${catkin_LIBRARIES}
+          )
+add_dependencies(qr 
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(tpa 
+        src/tpa.cpp)
+target_link_libraries(tpa 
+          ${catkin_LIBRARIES}
+          )
+add_dependencies(tpa
+  data_fusion_communications_gencpp
+  ) 
+
 add_library(victim 
         src/victim.cpp)
 target_link_libraries(victim 
@@ -156,6 +192,10 @@ target_link_libraries(alert_handler_node
           victim_list
           utils
           objects
+          hazmat
+          hole
+          qr
+          tpa
           victim
           )
 add_dependencies(alert_handler_node 
