@@ -54,7 +54,7 @@ VictimList::VictimList(int counterThreshold, float distanceThreshold,
 @details Also returns a vector containing the indices of the victims in the
   vector that match the given one
 **/
-bool VictimList::contains(const VictimPtr& victim) const {
+bool VictimList::contains(const VictimConstPtr& victim) const {
   for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
     if ((*it)->isSameObject(victim, DIST_THRESHOLD)) {
       return true;
@@ -66,7 +66,7 @@ bool VictimList::contains(const VictimPtr& victim) const {
 
 /**
 @details A victim from given the indices of the unvisited list is selected 
-  (this will be the current if we track one). It's info is updated by 
+  (this will be the current if we track one). Its info is updated by 
     copying the given victim object's one and the rest are deleted from the 
       unvisited list. The fsm is informed if necessary     
 **/

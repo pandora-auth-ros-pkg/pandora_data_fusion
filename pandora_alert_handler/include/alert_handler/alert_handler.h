@@ -199,9 +199,6 @@ class AlertHandler: public StateClient {
 
   int currentVictimId;
 
-  dynamic_reconfigure::Server<alert_handler::AlertHandlerConfig> 
-    dynReconfserver_;
-
   int curState;
   bool eraseHolesQrs;
 

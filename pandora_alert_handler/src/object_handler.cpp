@@ -18,7 +18,7 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
                  ("/data_fusion/qr_notification", 10);
 }
 
-void ObjectHandler::handleHoles(HolePtrVectorPtr newHoles,
+void ObjectHandler::handleHoles(const HolePtrVectorPtr& newHoles,
   const tf::Transform& transform) {
 
   keepValidHoles(newHoles, transform);
@@ -29,7 +29,7 @@ void ObjectHandler::handleHoles(HolePtrVectorPtr newHoles,
 
 }
 
-void ObjectHandler::handleQrs(QrPtrVectorPtr newQrs, 
+void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs, 
   const tf::Transform& transform, bool eraseHoles) {
 
   for (int ii = 0; ii < newQrs->size(); ++ii) {
@@ -51,7 +51,7 @@ void ObjectHandler::handleQrs(QrPtrVectorPtr newQrs,
 
 }
 
-void ObjectHandler::handleHazmats(HazmatPtrVectorPtr newHazmats,
+void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
   const tf::Transform& transform) {
 
   for (int ii = 0; ii < newHazmats->size(); ++ii) {
@@ -62,7 +62,7 @@ void ObjectHandler::handleHazmats(HazmatPtrVectorPtr newHazmats,
 
 }
 
-void ObjectHandler::handleTpas(TpaPtrVectorPtr newTpas,
+void ObjectHandler::handleTpas(const TpaPtrVectorPtr& newTpas,
   const tf::Transform& transform) {
 
   for (int ii = 0; ii < newTpas->size(); ++ii) {
@@ -71,7 +71,7 @@ void ObjectHandler::handleTpas(TpaPtrVectorPtr newTpas,
 
 }
 
-void ObjectHandler::keepValidHoles(HolePtrVectorPtr holesPtr,
+void ObjectHandler::keepValidHoles(const HolePtrVectorPtr& holesPtr,
     const tf::Transform& transform) {
   tf::Vector3 origin = transform.getOrigin();
   geometry_msgs::Point framePosition = Utils::vector3ToPoint(origin);
@@ -100,11 +100,11 @@ void ObjectHandler::keepValidHoles(HolePtrVectorPtr holesPtr,
 
 }
 
-bool ObjectHandler::isHoleQr(const HolePtr& hole) {
+bool ObjectHandler::isHoleQr(const HoleConstPtr& hole) {
   return qrListPtr_->isObjectPoseInList(hole, QR_CLOSEST_ALERT);
 }
 
-bool ObjectHandler::isHoleHazmat(const HolePtr& hole) {
+bool ObjectHandler::isHoleHazmat(const HoleConstPtr& hole) {
   return hazmatListPtr_->isObjectPoseInList(hole, HAZMAT_CLOSEST_ALERT);
 }
 

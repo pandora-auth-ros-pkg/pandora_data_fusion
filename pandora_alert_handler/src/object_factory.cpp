@@ -111,7 +111,7 @@ void ObjectFactory::dynamicReconfigForward(float occupiedCellThres,
 
 }
 
-void ObjectFactory::setUpObject(HolePtr holePtr,
+void ObjectFactory::setUpObject(const HolePtr& holePtr,
                         const vision_communications::HoleDirectionMsg& msg) {
   holePtr->setPose( poseFinder_->findAlertPose(msg.yaw,
                                  msg.pitch, currentTransform_) );
@@ -119,21 +119,21 @@ void ObjectFactory::setUpObject(HolePtr holePtr,
   holePtr->setHoleId( msg.holeId );
 }
 
-void ObjectFactory::setUpObject(TpaPtr tpaPtr,
+void ObjectFactory::setUpObject(const TpaPtr& tpaPtr,
                         const data_fusion_communications::ThermalDirectionAlertMsg& msg) {
   tpaPtr->setPose( poseFinder_->findAlertPose(msg.yaw,
                                                   msg.pitch, currentTransform_) );
   tpaPtr->setProbability( msg.probability );
 }
 
-void ObjectFactory::setUpObject(HazmatPtr hazmatPtr,
+void ObjectFactory::setUpObject(const HazmatPtr& hazmatPtr,
                         const vision_communications::HazmatAlertMsg& msg) {
   hazmatPtr->setPose( poseFinder_->findAlertPose(msg.yaw,
                                                   msg.pitch, currentTransform_) );
   hazmatPtr->setPattern( msg.patternType );
 }
 
-void ObjectFactory::setUpObject(QrPtr qrPtr,
+void ObjectFactory::setUpObject(const QrPtr& qrPtr,
                         const vision_communications::QRAlertMsg& msg) {
   qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw,
                                                   msg.pitch, currentTransform_) );

@@ -70,7 +70,7 @@ class VictimList : public ObjectList<Victim> {
   @param victim [VictimPtr] The victim whose existance we need to check
   @return bool True if victim exists, false otherwise
   **/
-  bool contains(const VictimPtr& victim) const;
+  bool contains(const VictimConstPtr& victim) const;
 
   /**
   @brief Checks if a victim is currently tracked or not

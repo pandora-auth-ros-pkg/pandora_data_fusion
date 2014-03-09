@@ -65,19 +65,19 @@ class ObjectFactory {
   @param msg [const ..._communications::...Msg&] Incoming ros message containing info
   @return void
   **/
-  void setUpObject(HolePtr holePtr, 
+  void setUpObject(const HolePtr& holePtr, 
                         const vision_communications::HoleDirectionMsg& msg);
-  void setUpObject(ObjectPtr objectPtr, 
+  void setUpObject(const ObjectPtr& objectPtr, 
                         const vision_communications::HolePositionMsg& msg) {}
-  void setUpObject(ObjectPtr objectPtr, 
+  void setUpObject(const ObjectPtr& objectPtr, 
                         const vision_communications::FaceDirectionMsg& msg) {}
-  void setUpObject(TpaPtr tpaPtr, 
+  void setUpObject(const TpaPtr& tpaPtr, 
                         const data_fusion_communications::ThermalDirectionAlertMsg& msg);
-  void setUpObject(ObjectPtr objectPtr, 
+  void setUpObject(const ObjectPtr& objectPtr, 
                         const vision_communications::HoleDirectionMsg& msg);
-  void setUpObject(HazmatPtr hazmatPtr, 
+  void setUpObject(const HazmatPtr& hazmatPtr, 
                         const vision_communications::HazmatAlertMsg& msg);
-  void setUpObject(QrPtr qrPtr, 
+  void setUpObject(const QrPtr& qrPtr, 
                         const vision_communications::QRAlertMsg& msg);
 
  private:

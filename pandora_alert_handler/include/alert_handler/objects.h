@@ -250,6 +250,10 @@ typedef std::vector<ObjectPtr> ObjectPtrVector;
 typedef boost::shared_ptr<ObjectPtrVector> ObjectPtrVectorPtr;
 typedef std::vector<ObjectPtrVector> ObjectPtrVectorVector;
 
+typedef std::vector<ObjectConstPtr> ObjectConstPtrVector;
+typedef boost::shared_ptr<ObjectConstPtrVector> ObjectConstPtrVectorPtr;
+typedef std::vector<ObjectConstPtrVector> ObjectConstPtrVectorVector;
+
 /**
   @class Qr
   @brief Concrete class representing a Qr Object. Inherits from Object
@@ -257,6 +261,7 @@ typedef std::vector<ObjectPtrVector> ObjectPtrVectorVector;
 class Qr : public Object {
  public:
   typedef boost::shared_ptr<Qr> Ptr;
+  typedef boost::shared_ptr<Qr const> ConstPtr;
 
   /**
   @brief Constructor
@@ -296,6 +301,7 @@ class Qr : public Object {
 };
 
 typedef Qr::Ptr QrPtr;
+typedef Qr::ConstPtr QrConstPtr;
 typedef std::vector< QrPtr > QrPtrVector;
 typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
 
@@ -306,6 +312,7 @@ typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
 class Hazmat : public Object {
  public:
   typedef boost::shared_ptr<Hazmat> Ptr;
+  typedef boost::shared_ptr<Hazmat const> ConstPtr;
 
   /**
   @brief Constructor
@@ -343,6 +350,7 @@ class Hazmat : public Object {
 };
 
 typedef Hazmat::Ptr HazmatPtr;
+typedef Hazmat::ConstPtr HazmatConstPtr;
 typedef std::vector< HazmatPtr > HazmatPtrVector;
 typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
 
@@ -353,6 +361,7 @@ typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
 class Hole : public Object {
  public:
   typedef boost::shared_ptr<Hole> Ptr;
+  typedef boost::shared_ptr<Hole const> ConstPtr;
 
   /**
   @brief Constructor
@@ -385,6 +394,7 @@ class Hole : public Object {
 };
 
 typedef Hole::Ptr HolePtr;
+typedef Hole::ConstPtr HoleConstPtr;
 typedef std::vector< HolePtr > HolePtrVector;
 typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 
@@ -395,6 +405,7 @@ typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 class Tpa : public Object {
  public:
   typedef boost::shared_ptr<Tpa> Ptr;
+  typedef boost::shared_ptr<Tpa const> ConstPtr;
 
   /**
   @brief Constructor
@@ -407,6 +418,7 @@ class Tpa : public Object {
 };
 
 typedef Tpa::Ptr TpaPtr;
+typedef Tpa::ConstPtr TpaConstPtr;
 typedef std::vector< TpaPtr > TpaPtrVector;
 typedef boost::shared_ptr< TpaPtrVector > TpaPtrVectorPtr;
 

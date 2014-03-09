@@ -17,6 +17,7 @@ class ObjectList {
  public:
 
   typedef boost::shared_ptr< ObjectType > Ptr;
+  typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
   typedef typename List::iterator iterator;
   typedef typename List::const_iterator const_iterator;
@@ -28,16 +29,16 @@ class ObjectList {
 
   const_iterator begin() const;
   const_iterator end() const;
-  bool find(ObjectPtr object) const;
+  //bool find(const ObjectConstPtr& object) const;
   int size() const;
-  bool isObjectPoseInList(ObjectPtr object, float closestAlert) const;
+  bool isObjectPoseInList(const ObjectConstPtr& object, float closestAlert) const;
 
-  bool add(Ptr object);
-  void remove(Ptr object);
+  bool add(const Ptr& object);
+  //void remove(const ConstPtr& object);
   void pop_back();
   void clear();
 
-  void removeInRangeOfObject(ObjectPtr object, float range);
+  void removeInRangeOfObject(const ObjectConstPtr& object, float range);
 
   void getObjectsPosesStamped(
     std::vector<geometry_msgs::PoseStamped>* poses) const;
@@ -52,7 +53,7 @@ class ObjectList {
  protected:
 
   bool isAnExistingObject(
-    Ptr object, IteratorList* iteratorListPtr);
+    const ConstPtr& object, IteratorList* iteratorListPtr);
 
   void updateObject(
     const Ptr& object,
@@ -91,6 +92,7 @@ ObjectList<ObjectType>::ObjectList(int counterThreshold,
   DIST_THRESHOLD = distanceThreshold;
 }
 
+//to be changed..
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator 
   ObjectList<ObjectType>::begin() const {
@@ -104,7 +106,7 @@ typename ObjectList<ObjectType>::const_iterator
 }
 
 template <class ObjectType>
-bool ObjectList<ObjectType>::add(Ptr object) {
+bool ObjectList<ObjectType>::add(const Ptr& object) {
   IteratorList iteratorList;
 
   if (isAnExistingObject(object, &iteratorList)) {
@@ -117,9 +119,9 @@ bool ObjectList<ObjectType>::add(Ptr object) {
   objects_.push_back(object);
   return true;
 }
-
+/*
 template <class ObjectType>
-void ObjectList<ObjectType>::remove(Ptr object) {
+void ObjectList<ObjectType>::remove(const ConstPtr& object) {
   for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
     if (*it == object) {
       removeElementAt(it);
@@ -127,15 +129,15 @@ void ObjectList<ObjectType>::remove(Ptr object) {
     }
   }
 }
-
+*/
 template <class ObjectType>
 void ObjectList<ObjectType>::removeElementAt(
   ObjectList<ObjectType>::iterator it) {
     objects_.erase(it);
 }
-
+/*
 template <class ObjectType>
-bool ObjectList<ObjectType>::find(ObjectPtr object) const {
+bool ObjectList<ObjectType>::find(const ObjectConstPtr& object) const {
   for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
     if (*it == object) {
       return true;
@@ -143,7 +145,7 @@ bool ObjectList<ObjectType>::find(ObjectPtr object) const {
   }
   return false;
 }
-
+*/
 template <class ObjectType>
 void ObjectList<ObjectType>::setParams(int counterThreshold,
     float distanceThreshold) {
@@ -168,7 +170,7 @@ void ObjectList<ObjectType>::clear() {
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isObjectPoseInList(
-    ObjectPtr object, float range) const {
+    const ObjectConstPtr& object, float range) const {
 
   for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
     float distance =
@@ -184,8 +186,8 @@ bool ObjectList<ObjectType>::isObjectPoseInList(
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::removeInRangeOfObject(ObjectPtr object,
-                                                        float range) {
+void ObjectList<ObjectType>::removeInRangeOfObject(
+    const ObjectConstPtr& object, float range) {
 
   iterator iter = objects_.begin();
 
@@ -247,7 +249,7 @@ void ObjectList<ObjectType>::getVisualization(
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isAnExistingObject(
-    Ptr object, IteratorList* iteratorListPtr) {
+    const ConstPtr& object, IteratorList* iteratorListPtr) {
   for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
     if ((*it)->isSameObject(object, DIST_THRESHOLD)) {
       iteratorListPtr->push_back(it);
