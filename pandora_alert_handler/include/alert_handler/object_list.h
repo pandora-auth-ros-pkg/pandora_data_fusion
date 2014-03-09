@@ -29,12 +29,10 @@ class ObjectList {
 
   const_iterator begin() const;
   const_iterator end() const;
-  //bool find(const ObjectConstPtr& object) const;
   int size() const;
   bool isObjectPoseInList(const ObjectConstPtr& object, float closestAlert) const;
 
   bool add(const Ptr& object);
-  //void remove(const ConstPtr& object);
   void pop_back();
   void clear();
 
@@ -119,33 +117,13 @@ bool ObjectList<ObjectType>::add(const Ptr& object) {
   objects_.push_back(object);
   return true;
 }
-/*
-template <class ObjectType>
-void ObjectList<ObjectType>::remove(const ConstPtr& object) {
-  for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
-    if (*it == object) {
-      removeElementAt(it);
-      return;
-    }
-  }
-}
-*/
+
 template <class ObjectType>
 void ObjectList<ObjectType>::removeElementAt(
   ObjectList<ObjectType>::iterator it) {
     objects_.erase(it);
 }
-/*
-template <class ObjectType>
-bool ObjectList<ObjectType>::find(const ObjectConstPtr& object) const {
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
-    if (*it == object) {
-      return true;
-    }
-  }
-  return false;
-}
-*/
+
 template <class ObjectType>
 void ObjectList<ObjectType>::setParams(int counterThreshold,
     float distanceThreshold) {
@@ -266,12 +244,15 @@ void ObjectList<ObjectType>::updateObject(
     const Ptr& object,
       const IteratorList& iteratorList) {
 
+  int totalCounter = 0;
   int maxCounter = (*iteratorList.front())->getCounter();
   int maxId = (*iteratorList.front())->getId();
 
   for ( typename IteratorList::const_iterator it = iteratorList.begin();
          it != iteratorList.end() ; ++it) {
-    // find max counter value
+    // find total counter value, set new object's id as the id of the
+    // object with the highest counter as of now.
+    totalCounter += (*(*it))->getCounter();
     if ((*(*it))->getCounter() > maxCounter) {
       maxCounter = (*(*it))->getCounter();
       maxId = (*(*it))->getId();
@@ -281,7 +262,7 @@ void ObjectList<ObjectType>::updateObject(
   }
 
   object->setId(maxId);
-  object->setCounter(++maxCounter);
+  object->setCounter(++totalCounter);
 
   if (object->getCounter() > COUNTER_THRES) {
     object->setLegit(true);
