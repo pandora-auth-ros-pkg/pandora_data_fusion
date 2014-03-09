@@ -289,8 +289,10 @@ void AlertHandler::validateCurrentHoleCallback() {
 
 void AlertHandler::updateMap(const nav_msgs::OccupancyGridConstPtr& msg) {
 
-  prevxMin = (msg->info.origin.position.x) / OCGD + MAP_SIZE / 2;
-  prevyMin = (msg->info.origin.position.y) / OCGD + MAP_SIZE / 2;
+  prevxMin = msg->info.origin.position.x / msg->info.resolution 
+             + msg->info.width / 2;
+  prevyMin = (msg->info.origin.position.y) / msg->info.resolution 
+             + msg->info.height / 2;
 
  *map_ = *msg;
 }
