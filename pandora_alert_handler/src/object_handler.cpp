@@ -13,9 +13,16 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
   SENSOR_RANGE(sensorRange),
   QR_CLOSEST_ALERT(qrClosestAlert),
   HAZMAT_CLOSEST_ALERT(hazmatClosestalert) {
-  qrPublisher_ = ros::NodeHandle().advertise<
-                  data_fusion_communications::QrNotificationMsg>
-                 ("/data_fusion/qr_notification", 10);
+
+  std::string param;
+
+  if (ros::NodeHandle().getParam("/data_fusion/qr_notification", param)) {
+    qrPublisher_ = ros::NodeHandle().advertise<data_fusion_communications::QrNotificationMsg>(param, 10);
+  } else {
+    ROS_FATAL("qr_notification topic name param not found");
+    ROS_BREAK();
+  }
+
 }
 
 void ObjectHandler::handleHoles(const HolePtrVectorPtr& newHoles,
