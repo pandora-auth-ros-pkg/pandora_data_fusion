@@ -123,7 +123,7 @@ void Victim::fillGeotiff(
   }
 }
 
-void Victim::setObjects(const ObjectPtrVector& objects,
+void Victim::setObjects(const ObjectConstPtrVector& objects,
         float approachDistance) {
     objects_ = objects;
     updateRepresentativeObject(approachDistance);
@@ -220,12 +220,12 @@ tf::Transform Victim::getTransform() const {
 @details 
 **/
 void Victim::sanityCheck(
-    const ObjectPtrVector& allObjects,
+    const ObjectConstPtrVectorPtr& allObjects,
       float distThreshold, float approachDistance) {
   for ( int ii = 0 ; ii < objects_.size() ; ii++) {
     bool objectStillExists = false;
-    for ( int jj = 0 ; jj < allObjects.size() ; jj++) {
-      if (objects_[ii]->isSameObject(allObjects[jj], distThreshold)) {
+    for ( int jj = 0 ; jj < allObjects->size() ; jj++) {
+      if (objects_[ii]->isSameObject(allObjects->at(jj), distThreshold)) {
         objectStillExists = true;
         break;
       }

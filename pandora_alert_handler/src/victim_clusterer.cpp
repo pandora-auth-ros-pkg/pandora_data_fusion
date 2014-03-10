@@ -50,9 +50,9 @@ VictimClusterer::VictimClusterer(float clusterRadius, float approachDist) {
 @details 
 **/
 VictimPtrVector VictimClusterer::createVictimList(
-  ObjectPtrVector allObjects) {
+  const ObjectConstPtrVectorPtr& allObjects) {
   
-  ObjectPtrVectorVector groupedObjects = groupObjects(allObjects);
+  ObjectConstPtrVectorVector groupedObjects = groupObjects(allObjects);
     
   VictimPtrVector newVictimVector;
 
@@ -71,16 +71,16 @@ VictimPtrVector VictimClusterer::createVictimList(
 /**
 @details 
 **/
-ObjectPtrVectorVector 
-  VictimClusterer::groupObjects(ObjectPtrVector allObjects) {
+ObjectConstPtrVectorVector 
+  VictimClusterer::groupObjects(const ObjectConstPtrVectorPtr& allObjects) {
 
-  ObjectPtrVectorVector groupedObjects;
+  ObjectConstPtrVectorVector groupedObjects;
 
   
 
-  for ( int objectIt = 0 ; objectIt < allObjects.size() ; objectIt++ ) {
+  for ( int objectIt = 0 ; objectIt < allObjects->size() ; objectIt++ ) {
 
-    ObjectPtr currentObj = allObjects[objectIt];
+    ObjectConstPtr currentObj = allObjects->at(objectIt);
 
     bool isAdded = false;
 
@@ -103,7 +103,7 @@ ObjectPtrVectorVector
     }
 
     if (!isAdded) {
-      ObjectPtrVector newVect;
+      ObjectConstPtrVector newVect;
       newVect.push_back(currentObj);
       groupedObjects.push_back(newVect);
       isAdded = false;
@@ -119,10 +119,10 @@ ObjectPtrVectorVector
 @details 
 **/
 geometry_msgs::Point VictimClusterer::findGroupCenterPoint(
-  ObjectPtrVector objects) {
+  const ObjectConstPtrVector& objects) {
   geometry_msgs::Point centerPoint;
 
-  for (ObjectPtrVector::iterator it = objects.begin();
+  for (ObjectConstPtrVector::const_iterator it = objects.begin();
        it != objects.end(); ++it) {
     centerPoint.x += (*it)->getPose().position.x;
     centerPoint.y += (*it)->getPose().position.y;
@@ -133,7 +133,6 @@ geometry_msgs::Point VictimClusterer::findGroupCenterPoint(
 
   return centerPoint;
 }
-
 
 /**
 @details 

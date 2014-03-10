@@ -152,7 +152,7 @@ class VictimList : public ObjectList<Victim> {
   @param allObjects [const ObjectPtrVector&] All the legit objects
   @return void
   **/
-  void sanityCheck(const ObjectPtrVector& allObjects);
+  void sanityCheck(const ObjectConstPtrVectorPtr& allObjects);
 
   /**
   @override

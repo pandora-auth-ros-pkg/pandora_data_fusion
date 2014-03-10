@@ -9,18 +9,23 @@
 #include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/objects.h"
+#include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
+
+//#include <boost/iterator/iterator_adaptor.hpp>
 
 
 template <class ObjectType>
 class ObjectList {
  public:
-
+ 
   typedef boost::shared_ptr< ObjectType > Ptr;
   typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
   typedef typename List::iterator iterator;
-  typedef typename List::const_iterator const_iterator;
+  typedef typename List::const_iterator const_iterator_vers_ref;
+  typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
+            ConstPtr> const_iterator;
   typedef std::list<iterator> IteratorList;
 
  public:
@@ -61,6 +66,8 @@ class ObjectList {
 
  protected:
   List objects_;
+  typename List::const_iterator* begins;
+  typename List::const_iterator* ends;
   float DIST_THRESHOLD;
   int COUNTER_THRES;
 
@@ -76,31 +83,33 @@ typedef boost::shared_ptr< ObjectList<Qr> >  QrListPtr;
 typedef boost::shared_ptr< ObjectList<Hazmat> > HazmatListPtr;
 typedef boost::shared_ptr< ObjectList<Tpa> >  TpaListPtr;
 
-typedef boost::shared_ptr<const ObjectList<Object> > ObjectListConstPtr;
-typedef boost::shared_ptr<const ObjectList<Hole> >  HoleListConstPtr;
-typedef boost::shared_ptr<const ObjectList<Qr> >  QrListConstPtr;
-typedef boost::shared_ptr<const ObjectList<Hazmat> > HazmatListConstPtr;
-typedef boost::shared_ptr<const ObjectList<Tpa> >  TpaListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Object> > ObjectListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Hole> >  HoleListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Qr> >  QrListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Hazmat> > HazmatListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::ObjectList(int counterThreshold,
     float distanceThreshold) {
   id_ = 0;
+  begins = new typename List::const_iterator(objects_.begin());
+  ends = new typename List::const_iterator(objects_.end());
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
 }
 
 //to be changed..
 template <class ObjectType>
-typename ObjectList<ObjectType>::const_iterator 
+typename ObjectList<ObjectType>::const_iterator
   ObjectList<ObjectType>::begin() const {
-    return objects_.begin();
+    return const_iterator(begins);
 }
 
 template <class ObjectType>
-typename ObjectList<ObjectType>::const_iterator 
+typename ObjectList<ObjectType>::const_iterator
   ObjectList<ObjectType>::end() const {
-    return objects_.end();
+    return const_iterator(ends);
 }
 
 template <class ObjectType>
@@ -109,12 +118,16 @@ bool ObjectList<ObjectType>::add(const Ptr& object) {
 
   if (isAnExistingObject(object, &iteratorList)) {
     updateObject(object, iteratorList);
+    begins = new typename List::const_iterator(objects_.begin());
+    ends = new typename List::const_iterator(objects_.end());
     return false;
   }
 
   object->setId(id_++);
   object->incrementCounter();
   objects_.push_back(object);
+  begins = new typename List::const_iterator(objects_.begin());
+  ends = new typename List::const_iterator(objects_.end());
   return true;
 }
 
@@ -150,7 +163,7 @@ template <class ObjectType>
 bool ObjectList<ObjectType>::isObjectPoseInList(
     const ObjectConstPtr& object, float range) const {
 
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
+  for (const_iterator it = this->begin(); it != this->end(); ++it) {
     float distance =
       Utils::distanceBetweenPoints3D(object->getPose().position,
                                       (*it)->getPose().position);
@@ -190,7 +203,7 @@ template <class ObjectType>
 void ObjectList<ObjectType>::getObjectsPosesStamped(
     std::vector<geometry_msgs::PoseStamped>* poses) const {
 
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
+  for (const_iterator it = this->begin(); it != this->end(); ++it) {
 
     poses->push_back((*it)->getPoseStamped());
 
@@ -202,7 +215,7 @@ template <class ObjectType>
 void ObjectList<ObjectType>::fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
 
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
+  for (const_iterator it = this->begin(); it != this->end(); ++it) {
     (*it)->fillGeotiff(res);
   }
 
@@ -215,7 +228,7 @@ void ObjectList<ObjectType>::getVisualization(
   markers->markers.clear();
 
 
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
+  for (const_iterator it = this->begin(); it != this->end(); ++it) {
 
     (*it)->getVisualization(markers);
 

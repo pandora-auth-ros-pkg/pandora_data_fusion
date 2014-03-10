@@ -180,9 +180,9 @@ class VictimHandler {
   /**
   @brief Returns all the legit Objects from all the Object lists concatenated 
     into a single vector
-  @return ObjectPtrVector A vector contaiing all the legit Objects
+  @return ObjectConstPtrVector A vector contaiing all the legit Objects
   **/
-  ObjectPtrVector getAllLegitObjects();
+  ObjectConstPtrVectorPtr getAllLegitObjects();
 
   /**
   @brief Publishes a message that a victim was found

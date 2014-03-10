@@ -91,7 +91,7 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
 **/
 void VictimHandler::notify() {
   
-  ObjectPtrVector allObjects = getAllLegitObjects();  
+  ObjectConstPtrVectorPtr allObjects = getAllLegitObjects();  
 
   VictimPtrVector newVictimVector = clusterer_->createVictimList(allObjects);
 
@@ -118,16 +118,16 @@ void VictimHandler::notify() {
 /**
 @details 
 **/
-ObjectPtrVector VictimHandler::getAllLegitObjects() {
+ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects() {
 
-  ObjectPtrVector result;
+  ObjectConstPtrVectorPtr result(new ObjectConstPtrVector);
 
   ObjectList<Hole>::const_iterator holeIt;
 
   for ( holeIt = holePtrListPtr_->begin();
         holeIt != holePtrListPtr_->end() ; ++holeIt ) {
     if ( (*holeIt) -> getLegit()) {
-      result.push_back(ObjectPtr(*holeIt));
+      result->push_back(HoleConstPtr(*holeIt));
     }
   }
 
@@ -136,7 +136,7 @@ ObjectPtrVector VictimHandler::getAllLegitObjects() {
   for ( tpaIt = tpaPtrListPtr_->begin();
         tpaIt != tpaPtrListPtr_->end() ; ++tpaIt ) {
     if ( (*tpaIt) -> getLegit()) {
-      result.push_back(ObjectPtr(*tpaIt));
+      result->push_back(TpaConstPtr(*tpaIt));
     }
   }
 
@@ -153,7 +153,7 @@ ObjectPtrVector VictimHandler::getAllLegitObjects() {
 **/
 void VictimHandler::fixVictims() {
 
-  ObjectPtrVector allObjects = getAllLegitObjects();  
+  ObjectConstPtrVectorPtr allObjects = getAllLegitObjects();  
   
   victimsToGoList_.sanityCheck(allObjects);
   

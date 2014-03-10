@@ -55,7 +55,7 @@ VictimList::VictimList(int counterThreshold, float distanceThreshold,
   vector that match the given one
 **/
 bool VictimList::contains(const VictimConstPtr& victim) const {
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
+  for (const_iterator it = this->begin(); it != this->end(); ++it) {
     if ((*it)->isSameObject(victim, DIST_THRESHOLD)) {
       return true;
     }
@@ -75,7 +75,7 @@ void VictimList::updateObject(const VictimPtr& victim,
                                    
   ROS_ASSERT(iteratorList.size() > 0);
 
-  const_iterator victimToUpdate = *(iteratorList.begin());
+  const_iterator_vers_ref victimToUpdate = *(iteratorList.begin());
 
   if (currentVictimIt_ != objects_.end() ) {
     for ( IteratorList::const_iterator it = iteratorList.begin() ;
@@ -141,7 +141,7 @@ void VictimList::getVictimsMsg(
   ros::Time now = ros::Time::now();
 
   int ii = 0;
-  for (const_iterator it = objects_.begin(); it != objects_.end(); ++it) {
+  for (const_iterator it = this->begin(); it != this->end(); ++it) {
 
     victimIndicesMap_[ii++] = (*it)->getId();
 
@@ -214,6 +214,8 @@ bool VictimList::updateCurrentVictimSensorsAndProb(
   for (int i = 0; i < msg.sensorIds.size(); i++) {
     (*currentVictimIt_)->addSensor(msg.sensorIds[i]);
   }
+
+  return true;
 
 }
 
@@ -291,7 +293,7 @@ bool VictimList::currentVictimUpdated() {
 @details If a victim is erased during sanity check, we should inform it,
   that's why currentVictimDied_ the is used. See currentVictimUpdated()
 **/
-void VictimList::sanityCheck(const ObjectPtrVector& allObjects) {
+void VictimList::sanityCheck(const ObjectConstPtrVectorPtr& allObjects) {
   
   iterator it = objects_.begin();
     

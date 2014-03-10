@@ -65,7 +65,7 @@ class VictimClusterer {
     groups of Objects
   @return VictimPtrVector The resulting victim vector 
   **/
-  VictimPtrVector createVictimList(ObjectPtrVector allObjects);
+  VictimPtrVector createVictimList(const ObjectConstPtrVectorPtr& allObjects);
 
   /**
   @brief Updates the victim handler's parameters
@@ -81,14 +81,14 @@ class VictimClusterer {
   @return ObjectPtrVectorVector A vector containing
     the resulting groups as vectors of Objects
   **/
-  ObjectPtrVectorVector groupObjects(ObjectPtrVector allObjects);
+  ObjectConstPtrVectorVector groupObjects(const ObjectConstPtrVectorPtr& allObjects);
 
   /**
   @brief Finds and returns the centroid of a group of Objects
   @param objects [ObjectPtrVector] The group of Objects
   @return geometry_msgs::Point The centroid
   **/
-  geometry_msgs::Point findGroupCenterPoint(ObjectPtrVector objects);
+  geometry_msgs::Point findGroupCenterPoint(const ObjectConstPtrVector& objects);
 
 
  private:

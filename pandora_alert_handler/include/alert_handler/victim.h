@@ -34,11 +34,11 @@ class Victim : public Object {
 
   geometry_msgs::PoseStamped getApproachPoint() const;
   
-  void setObjects(const ObjectPtrVector& objects, float approachDistance);
+  void setObjects(const ObjectConstPtrVector& objects, float approachDistance);
   
   void eraseObjectAt(int index, float approachDistance);
   
-  void sanityCheck(const ObjectPtrVector& allObjects,
+  void sanityCheck(const ObjectConstPtrVectorPtr& allObjects,
             float distThreshold, float approachDistance);
    
   void addSensor(int sensorId);
@@ -89,7 +89,7 @@ class Victim : public Object {
   @brief Getter for member objects_
   @return std::set<int>& objects_
   **/
-  const ObjectPtrVector& getObjects() const {
+  const ObjectConstPtrVector& getObjects() const {
     return objects_;
   }
    
@@ -148,7 +148,7 @@ class Victim : public Object {
   //!<Holds the type of sensor that created the alarm
   std::set<int> sensorIds_;   
   
-  ObjectPtrVector objects_;
+  ObjectConstPtrVector objects_;
  
  private:
   
