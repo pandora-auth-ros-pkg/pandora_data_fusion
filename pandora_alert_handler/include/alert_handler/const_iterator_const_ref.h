@@ -9,7 +9,7 @@ template <class Iterator, class Value, class ConstReference>
 class const_iterator_const_ref
   : public boost::iterator_adaptor<
         const_iterator_const_ref< Iterator, Value, ConstReference >  // Derived
-      , Iterator*                                               // Base
+      , Iterator                                               // Base
       , Value                                   // Value
       , boost::use_default                      // CategoryOrTraversal
       , const ConstReference&                         // Reference
@@ -20,9 +20,9 @@ class const_iterator_const_ref
 
  public:
     const_iterator_const_ref()
-      : const_iterator_const_ref::iterator_adaptor_(0) {}
+      : const_iterator_const_ref::iterator_adaptor_(Iterator()) {}
 
-    explicit const_iterator_const_ref(Iterator* p)
+    explicit const_iterator_const_ref(Iterator p)
       : const_iterator_const_ref::iterator_adaptor_(p) {}
 
     template <class OtherIterator, class OtherValue, class OtherReference>
@@ -45,9 +45,6 @@ class const_iterator_const_ref
 
  private:
     friend class boost::iterator_core_access;
-    const ConstReference& dereference() const { 
-      return *(*this->base_reference());
-    }
 };
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_CONST_ITERATOR_CONST_REF_H_

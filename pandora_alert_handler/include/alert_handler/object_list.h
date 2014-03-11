@@ -66,8 +66,6 @@ class ObjectList {
 
  protected:
   List objects_;
-  typename List::const_iterator* begins;
-  typename List::const_iterator* ends;
   float DIST_THRESHOLD;
   int COUNTER_THRES;
 
@@ -93,23 +91,20 @@ template <class ObjectType>
 ObjectList<ObjectType>::ObjectList(int counterThreshold,
     float distanceThreshold) {
   id_ = 0;
-  begins = new typename List::const_iterator(objects_.begin());
-  ends = new typename List::const_iterator(objects_.end());
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
 }
 
-//to be changed..
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator
   ObjectList<ObjectType>::begin() const {
-    return const_iterator(begins);
+    return const_iterator(objects_.begin());
 }
 
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator
   ObjectList<ObjectType>::end() const {
-    return const_iterator(ends);
+    return const_iterator(objects_.end());
 }
 
 template <class ObjectType>
@@ -118,16 +113,12 @@ bool ObjectList<ObjectType>::add(const Ptr& object) {
 
   if (isAnExistingObject(object, &iteratorList)) {
     updateObject(object, iteratorList);
-    begins = new typename List::const_iterator(objects_.begin());
-    ends = new typename List::const_iterator(objects_.end());
     return false;
   }
 
   object->setId(id_++);
   object->incrementCounter();
   objects_.push_back(object);
-  begins = new typename List::const_iterator(objects_.begin());
-  ends = new typename List::const_iterator(objects_.end());
   return true;
 }
 
