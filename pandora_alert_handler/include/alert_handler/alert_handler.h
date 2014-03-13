@@ -61,7 +61,7 @@ class AlertHandler: public StateClient {
   @param nh [const ros::NodeHandle&] AlertHandler's NodeHandle
   @param map_type [const std::string&] Says if map originates from SLAM or TEST
   **/
-  AlertHandler(const std::string& map_type);
+  AlertHandler();
 
   //* Alert-concerned Subscribers */
   void holeDirectionAlertCallback(

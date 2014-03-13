@@ -3,7 +3,7 @@
 #include "alert_handler/alert_handler.h"
 #include <string> 
 
-AlertHandler::AlertHandler(const std::string& map_type) {
+AlertHandler::AlertHandler() {
 
   map_.reset( new Map );
 
@@ -12,7 +12,9 @@ AlertHandler::AlertHandler(const std::string& map_type) {
   hazmats_.reset( new ObjectList<Hazmat> );
   tpas_.reset( new ObjectList<Tpa> );
 
-  objectFactory_.reset( new ObjectFactory(map_, map_type) );
+  std::string mapType;
+  nh_.getParam("map_type", mapType);
+  objectFactory_.reset( new ObjectFactory(map_, mapType) );
   objectHandler_.reset( new ObjectHandler( holes_, qrs_, hazmats_, tpas_  ) );
   victimHandler_.reset( new VictimHandler( holes_ , tpas_ ) );
 
@@ -294,7 +296,7 @@ void AlertHandler::updateMap(const nav_msgs::OccupancyGridConstPtr& msg) {
   prevyMin = (msg->info.origin.position.y) / msg->info.resolution 
              + msg->info.height / 2;
 
- *map_ = *msg;
+ map_ = msg;
 }
 
 void AlertHandler::dynamicReconfigCallback(
