@@ -6,13 +6,14 @@
 
 class ObjectListTest : public testing::Test {
 	protected:
-
+ 
+ 
 	/* Constructor/Destructor */
 
 	ObjectListTest() : objectList(), objectList2(3, 10.669), object1(new Object), object2(new Object), object3(new Object),
 						object4(new Object), object5(new Object), object6(new Object), object7(new Object), object8(new Object) {}
 
-	/* SetUp/TearDown definitions */
+	/* SetUp/T   earDown definitions */
 
 	virtual void SetUp()
 	{
