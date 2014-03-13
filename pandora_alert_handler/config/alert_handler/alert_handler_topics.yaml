@@ -10,6 +10,7 @@ published_topic_names:
   victim_found : victim_found
   victim_update : victim_update
   victim_verified : victim_verified
+  qr_notification : qr_notification
 action_server_names:
   get_victims: get_victims
   delete_current_victim: delete_current_victim
