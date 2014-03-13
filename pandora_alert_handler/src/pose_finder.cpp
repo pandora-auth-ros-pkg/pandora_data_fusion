@@ -5,7 +5,7 @@
 
 #include "alert_handler/pose_finder.h"
 
-PoseFinder::PoseFinder(const MapConstPtr& map, const std::string& mapType, 
+PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType, 
     float occupiedCellThres, 
     float heightHighThres, float heightLowThres,
     float approachDist, int orientationDist,

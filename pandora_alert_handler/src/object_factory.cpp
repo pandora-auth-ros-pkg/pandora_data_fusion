@@ -1,7 +1,7 @@
 // "Copyright [year] <Copyright Owner>"
 #include "alert_handler/object_factory.h"
 
-ObjectFactory::ObjectFactory(const MapConstPtr& map, const std::string& mapType,
+ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType,
       float occupiedCellThres,
       float heightHighThres, float heightLowThres,
       float approachDist, int orientationDist,

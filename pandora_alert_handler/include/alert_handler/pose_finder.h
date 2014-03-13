@@ -24,7 +24,7 @@ class PoseFinder {
 
  public:
 
-  PoseFinder(const MapConstPtr& map, const std::string& mapType,
+  PoseFinder(const MapPtr& map, const std::string& mapType,
     float occupiedCellThres = 0.5,
     float heightHighThres = 1.2, float heightLowThres = 0,
     float approachDist = 0.5, int orientationDist = 20,
@@ -52,7 +52,7 @@ class PoseFinder {
       
  private:
 
-  const MapConstPtr& map_;
+  const MapPtr& map_;
 
   TfListenerPtr listener_;
   tf::TransformBroadcaster victimFrameBroadcaster;
