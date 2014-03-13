@@ -5,7 +5,7 @@
 
 #include "alert_handler/pose_finder.h"
 
-PoseFinder::PoseFinder(const MapConstPtr& map, const std::string& map_type, 
+PoseFinder::PoseFinder(const MapConstPtr& map, const std::string& mapType, 
     float occupiedCellThres, 
     float heightHighThres, float heightLowThres,
     float approachDist, int orientationDist,
@@ -14,7 +14,7 @@ PoseFinder::PoseFinder(const MapConstPtr& map, const std::string& map_type,
   updateParams(occupiedCellThres, heightHighThres, heightLowThres, approachDist,
                             orientationDist, orientationCircle);
   
-  listener_.reset( TfFinder::newTfListener(map_type) );
+  listener_.reset( TfFinder::newTfListener(mapType) );
 
 }
 

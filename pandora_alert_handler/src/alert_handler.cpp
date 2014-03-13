@@ -296,7 +296,7 @@ void AlertHandler::updateMap(const nav_msgs::OccupancyGridConstPtr& msg) {
   prevyMin = (msg->info.origin.position.y) / msg->info.resolution 
              + msg->info.height / 2;
 
- map_ = msg;
+ *map_ = *msg;
 }
 
 void AlertHandler::dynamicReconfigCallback(
