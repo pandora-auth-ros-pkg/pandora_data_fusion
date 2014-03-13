@@ -112,6 +112,7 @@ target_link_libraries(object_factory
           )
 add_dependencies(object_factory 
   data_fusion_communications_gencpp
+  vision_communications_gencpp
   ) 
   
 #################### pose_finder ########################################
