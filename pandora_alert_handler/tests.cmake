@@ -2,11 +2,11 @@
 # add tests here so that CMakelists is not polluted
 
 ##########  ObjectListTest ###########  
-
 #~ 
-#~ catkin_add_gtest(object_list_test test/object_list_test.cpp)
-#~ target_link_libraries(object_list_test ${catkin_LIBRARIES}  objects utils
-  #~ gtest_main) 
+
+catkin_add_gtest(object_list_test test/object_list_test.cpp)
+target_link_libraries(object_list_test ${catkin_LIBRARIES}  objects utils
+  gtest_main) 
   
   
 ##########  ObjectFactoryTest ########### 
@@ -36,4 +36,3 @@ target_link_libraries(qr_test ${catkin_LIBRARIES} objects utils  qr gtest_main)
 
 catkin_add_gtest(hazmat_test test/hazmat_test.cpp)
 target_link_libraries(hazmat_test ${catkin_LIBRARIES} objects utils  hazmat gtest_main)
-#~  

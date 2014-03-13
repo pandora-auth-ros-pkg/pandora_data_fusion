@@ -70,7 +70,7 @@ class ObjectList {
   int COUNTER_THRES;
 
  private:
-
+  friend class ObjectListTest;
   int id_;
 };
 
