@@ -7,7 +7,7 @@ namespace {
 class ObjectFactoryTest : public ::testing::Test {
  protected:
   
-  ObjectFactoryTest(): map_type1("TestMap1"){
+  ObjectFactoryTest(): map_type1("TEST"){
    MapPtr1.reset(new Map);
    ObjectFactoryPtr1.reset(new ObjectFactory(MapConstPtr(MapPtr1),map_type1));
   }
@@ -16,11 +16,12 @@ class ObjectFactoryTest : public ::testing::Test {
 	  
   }
 
-  
-  //~ MapPtr createSimpleMap()
+  //~ 
+   //~ MapPtr createSimpleMap()
   //~ {
 	  //~ 
-  //~ }
+	  //~ 
+   //~ }
   
   
   /* variables */
@@ -41,8 +42,4 @@ TEST_F(ObjectFactoryTest,makeHoles) {
 
 }  // namespace
 
- int main(int argc, char **argv) {
-	
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+ 
