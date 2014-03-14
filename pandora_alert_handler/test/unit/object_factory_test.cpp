@@ -2,25 +2,27 @@
 #include "gtest/gtest.h"
 
 namespace {
+  
 
 
 class ObjectFactoryTest : public ::testing::Test {
  protected:
   
   ObjectFactoryTest(): map_type1("TEST"){
-   MapPtr1.reset(new Map);
-   ObjectFactoryPtr1.reset(new ObjectFactory(MapConstPtr(MapPtr1),map_type1));
+  MapPtr1.reset(new Map);
+  ObjectFactoryPtr1.reset(new ObjectFactory(MapConstPtr(MapPtr1),map_type1));
   }
 
   virtual void SetUp() {
-	  
+    
   }
+  
 
   //~ 
    //~ MapPtr createSimpleMap()
   //~ {
-	  //~ 
-	  //~ 
+    //~ 
+    //~ 
    //~ }
   
   
@@ -28,14 +30,18 @@ class ObjectFactoryTest : public ::testing::Test {
   MapPtr MapPtr1;
   const std::string map_type1;
   ObjectFactoryPtr ObjectFactoryPtr1;
+  vision_communications::HolesDirectionsVectorMsg HoleDirVect1;
+  vision_communications::HoleDirectionMsg HoleDir1;
+  vision_communications::HoleDirectionMsg HoleDir2;
+  vision_communications::HoleDirectionMsg HoleDir3;
   
 
 };
 
 // Tests that the Foo::Bar() method does Abc.
 TEST_F(ObjectFactoryTest,makeHoles) {
-	
-	EXPECT_TRUE(true);
+  
+  EXPECT_TRUE(true);
   
 }
 
