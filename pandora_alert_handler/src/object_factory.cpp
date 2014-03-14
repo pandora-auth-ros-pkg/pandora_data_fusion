@@ -59,7 +59,7 @@ HazmatPtrVectorPtr ObjectFactory::makeHazmats(
 
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-  HazmatPtrVectorPtr hazmatsVectorPtr( new HazmatVectorPtr );
+  HazmatPtrVectorPtr hazmatsVectorPtr( new HazmatPtrVector );
   for (int ii = 0; ii < msg.hazmatAlerts.size(); ++ii) {
 
     try {
