@@ -29,7 +29,11 @@ class TfListener {
                     }
   virtual void lookupTransform(const std::string& target_frame, 
                     const std::string& source_frame, const ros::Time& time,
-                    tf::StampedTransform& transform) const {}
+                    tf::StampedTransform& transform) const
+                    {
+                      transform.setOrigin(tf::Vector3(0,0,0));
+                      transform.setRotation(tf::Quaternion(0,0,0,0));
+                      }
 };
 
 typedef TfListener::Ptr TfListenerPtr;

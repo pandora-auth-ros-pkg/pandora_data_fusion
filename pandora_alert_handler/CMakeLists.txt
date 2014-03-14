@@ -118,7 +118,7 @@ add_dependencies(object_factory
 #################### pose_finder ########################################
 add_library(pose_finder 
         src/pose_finder.cpp)
-target_link_libraries(pose_finder 
+target_link_libraries(pose_finder ros_tf_listener
           ${catkin_LIBRARIES}
           )
 add_dependencies(pose_finder 
