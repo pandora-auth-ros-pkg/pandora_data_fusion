@@ -1,3 +1,4 @@
+
 // "Copyright [2014] <Pandora_Software_Testing_Team>" 
 #include <cstdlib>
 #include <ctime>
@@ -19,7 +20,8 @@ class ObjectListTest : public testing::Test
 
   /* SetUp/TearDown definitions */
 
-  virtual void SetUp(){
+  virtual void SetUp()
+  {
     
 
     std::srand(std::time(0));
@@ -137,12 +139,14 @@ class ObjectListTest : public testing::Test
   
   // get and set the params
 
-  float* DIST_THRESHOLD(ObjectList<Object> &objList) {
+  float* DIST_THRESHOLD(ObjectList<Object> &objList) 
+  {
     
     return &objList.DIST_THRESHOLD;
   }
 
-  int* COUNTER_THRES(ObjectList<Object> &objList) {
+  int* COUNTER_THRES(ObjectList<Object> &objList)
+  {
     
     return &objList.COUNTER_THRES;
   }
@@ -169,7 +173,8 @@ class ObjectListTest : public testing::Test
   geometry_msgs::Pose pose8;
 };
 
-TEST_F(ObjectListTest, Constructor) {
+TEST_F(ObjectListTest, Constructor) 
+{
   EXPECT_EQ(0u, objectList.size());
   EXPECT_EQ(0u, *id(objectList));
   EXPECT_EQ(1, *COUNTER_THRES(objectList));
@@ -178,10 +183,11 @@ TEST_F(ObjectListTest, Constructor) {
   EXPECT_EQ(0u, objectList2.size());
   EXPECT_EQ(0u, *id(objectList2));
   EXPECT_EQ(3, *COUNTER_THRES(objectList2));
-  EXPECT_EQ(10669, int(*(DIST_THRESHOLD(objectList2))*1000));
+  EXPECT_EQ(10669, static_cast<int>(*(DIST_THRESHOLD(objectList2))*1000));
 }
 
-TEST_F(ObjectListTest, IsAnExistingObject) {
+TEST_F(ObjectListTest, IsAnExistingObject) 
+{
   
   fillList(&objectList);
   ObjectList<Object>::IteratorList iteratorList;
@@ -200,7 +206,7 @@ TEST_F(ObjectListTest, IsAnExistingObject) {
   // It should find that newObject2 exists in 2 places.
 
   EXPECT_TRUE(isAnExistingObject(objectList, object5, &iteratorList));
-  it=iteratorList.begin();
+  it = iteratorList.begin();
   EXPECT_FALSE(iteratorList.empty());
   ASSERT_EQ(2, iteratorList.size());
   EXPECT_EQ(object1, **(it++));
@@ -211,18 +217,18 @@ TEST_F(ObjectListTest, IsAnExistingObject) {
   // It should find that object6 exists only  in 1 place( same as object 3).
   EXPECT_TRUE( iteratorList.empty());
   EXPECT_TRUE(isAnExistingObject(objectList, object6, &iteratorList));
-  it=iteratorList.begin();
+  it = iteratorList.begin();
   EXPECT_FALSE( iteratorList.empty());
-  ASSERT_EQ(1,iteratorList.size());
+  EXPECT_EQ(1, iteratorList.size());
   EXPECT_EQ(object2, **it);
 
   iteratorList.clear();
 
   // Changed distance must find Object 6 in  3 places( object1 object2 object3).
   (*DIST_THRESHOLD(objectList)) = 1; 
-  ASSERT_EQ(1, *DIST_THRESHOLD(objectList));
+  EXPECT_EQ(1, *DIST_THRESHOLD(objectList));
   EXPECT_TRUE(isAnExistingObject(objectList, object6, &iteratorList));
-  it=iteratorList.begin();
+  it = iteratorList.begin();
   EXPECT_FALSE(iteratorList.empty());
   EXPECT_EQ(3, iteratorList.size());
   EXPECT_EQ(object1, **(it++));
@@ -261,18 +267,16 @@ TEST_F(ObjectListTest, IsAnExistingObject) {
 }
 
 
-TEST_F(ObjectListTest, Add) {
-  
+TEST_F(ObjectListTest, Add) 
+{
   
   ObjectList<Object>::const_iterator it(objectList.begin());
   *(COUNTER_THRES(objectList)) = 4;
+  
   EXPECT_EQ(0u, objectList.size());
-  
-  
-  
   EXPECT_TRUE( objectList.add(object1));
   EXPECT_EQ(1u, objectList.size());
-  EXPECT_EQ(object1,*objectList.begin());
+  EXPECT_EQ(object1, *objectList.begin());
   EXPECT_EQ(1u, object1->getCounter());
   EXPECT_FALSE( object1->getLegit());
 
