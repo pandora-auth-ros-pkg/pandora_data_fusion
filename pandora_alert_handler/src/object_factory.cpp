@@ -18,7 +18,7 @@ HolePtrVectorPtr ObjectFactory::makeHoles(
 
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-  HolePtrVectorPtr holesVectorPtr;
+  HolePtrVectorPtr holesVectorPtr( new HolePtrVector );
   for (int ii = 0; ii < msg.holesDirections.size(); ++ii) {
 
     try {
@@ -41,7 +41,7 @@ TpaPtrVectorPtr ObjectFactory::makeTpas(
 
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-  TpaPtrVectorPtr tpasVectorPtr;
+  TpaPtrVectorPtr tpasVectorPtr( new TpaPtrVector );
   try {
     TpaPtr newTpa( new Tpa );
     setUpObject( newTpa, msg );
@@ -59,7 +59,7 @@ HazmatPtrVectorPtr ObjectFactory::makeHazmats(
 
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-  HazmatPtrVectorPtr hazmatsVectorPtr;
+  HazmatPtrVectorPtr hazmatsVectorPtr( new HazmatVectorPtr );
   for (int ii = 0; ii < msg.hazmatAlerts.size(); ++ii) {
 
     try {
@@ -82,7 +82,7 @@ QrPtrVectorPtr ObjectFactory::makeQrs(
 
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-  QrPtrVectorPtr qrsVectorPtr;
+  QrPtrVectorPtr qrsVectorPtr( new QrPtrVector );
   for (int ii = 0; ii < msg.qrAlerts.size(); ++ii) {
 
     try {
