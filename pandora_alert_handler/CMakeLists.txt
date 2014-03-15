@@ -32,7 +32,13 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 ###################### objects #########################################
 add_library(objects 
         src/objects.cpp)
-target_link_libraries(objects 
+target_link_libraries(objects
+          utils
+          hazmat
+          qr
+          tpa
+          hole
+          qr
           ${catkin_LIBRARIES}
           )
 add_dependencies(objects 
@@ -41,7 +47,7 @@ add_dependencies(objects
 
 add_library(hazmat 
         src/hazmat.cpp)
-target_link_libraries(hazmat 
+target_link_libraries(hazmat
           ${catkin_LIBRARIES}
           )
 add_dependencies(hazmat
@@ -50,7 +56,7 @@ add_dependencies(hazmat
 
 add_library(hole
         src/hole.cpp)
-target_link_libraries(hole 
+target_link_libraries(hole
           ${catkin_LIBRARIES}
           )
 add_dependencies(hole
@@ -88,6 +94,9 @@ add_dependencies(victim
 add_library(victim_list 
         src/victim_list.cpp)
 target_link_libraries(victim_list 
+           objects
+           utils
+           victim
           ${catkin_LIBRARIES}
           )
 add_dependencies(victim_list 
@@ -104,21 +113,28 @@ add_dependencies(utils
   data_fusion_communications_gencpp
   )  
 
+
 #################### object_factory ########################################
 add_library(object_factory 
         src/object_factory.cpp)
 target_link_libraries(object_factory 
+          pose_finder
+          objects
+          utils
           ${catkin_LIBRARIES}
           )
 add_dependencies(object_factory 
   data_fusion_communications_gencpp
   vision_communications_gencpp
   ) 
-  
+
 #################### pose_finder ########################################
 add_library(pose_finder 
         src/pose_finder.cpp)
-target_link_libraries(pose_finder ros_tf_listener
+target_link_libraries(pose_finder 
+          ros_tf_listener
+          objects
+          utils
           ${catkin_LIBRARIES}
           )
 add_dependencies(pose_finder 
