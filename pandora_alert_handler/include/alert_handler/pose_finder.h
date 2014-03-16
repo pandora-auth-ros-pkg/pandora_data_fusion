@@ -55,7 +55,7 @@ class PoseFinder {
   const MapPtr& map_;
 
   TfListenerPtr listener_;
-  tf::TransformBroadcaster victimFrameBroadcaster;
+  //~ tf::TransformBroadcaster victimFrameBroadcaster;
 
   //params
   int ORIENTATION_CIRCLE;

@@ -11,11 +11,15 @@ target_link_libraries(object_list_test ${catkin_LIBRARIES}  objects utils
 
 ##########  ObjectFactoryTest ########### 
 
-#~ catkin_add_gtest(object_factory_test test/unit/object_factory_test.cpp)
-#~ target_link_libraries(object_factory_test ${catkin_LIBRARIES}  objects utils ros_tf_listener
-  #~ gtest_main) 
- 
-  #~ 
+catkin_add_gtest(object_factory_test test/unit/object_factory_test.cpp)
+target_link_libraries(object_factory_test 
+
+${catkin_LIBRARIES} 
+object_factory
+objects utils
+ros_tf_listener
+gtest_main) 
+
 ##########  PoseFinderTest ###########   
   
 #~ catkin_add_gtest(pose_finder_test test/unit/pose_finder_test.cpp)

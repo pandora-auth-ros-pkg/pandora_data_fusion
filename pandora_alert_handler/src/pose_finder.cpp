@@ -43,8 +43,8 @@ void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch,
   rotation.setRPY(0, cameraPitch - alertPitch, cameraYaw - alertYaw);
   transVision.setRotation(rotation);
 
-  victimFrameBroadcaster.sendTransform(
-    tf::StampedTransform( transVision , ros::Time::now(), "world", "vision")  );
+  //~ victimFrameBroadcaster.sendTransform(
+    //~ tf::StampedTransform( transVision , ros::Time::now(), "world", "vision")  );
 
 }
 
@@ -107,7 +107,7 @@ Point PoseFinder::positionOnWall(Point startPoint, float angle) {
 
   x = D * cos(omega) + currX;
   y = D * sin(omega) + currY;
-
+  
   while (map_->data[x * map_->info.width + y] > OCCUPIED_CELL_THRES * 255) {
     D++;
     x = D * cos(omega) + currX;
