@@ -59,7 +59,7 @@ Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
 
   tfTransform.getBasis().getRPY(roll, pitch, yaw);
   tf::Vector3 origin = tfTransform.getOrigin();
-
+  
   horizontalDirection = yaw - alertYaw;
   verticalDirection = alertPitch - pitch;
 

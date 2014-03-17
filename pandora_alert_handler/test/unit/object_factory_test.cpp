@@ -1,9 +1,10 @@
 #include "alert_handler/object_factory.h"
 #include "gtest/gtest.h"
 #include <ctime> 
- 
+#include <math.h>
  
 
+double pi= M_PI;
 class ObjectFactoryTest : public ::testing::Test
 { 
   protected: 
@@ -12,7 +13,8 @@ class ObjectFactoryTest : public ::testing::Test
   { 
   
     createSimpleMap(MapPtr1);
-    ObjectFactoryPtr1.reset(new ObjectFactory(MapPtr1,map_type1)); 
+    ObjectFactoryPtr1.reset(new ObjectFactory(MapPtr1,map_type1,0.5,1.2,0,0.5,20,0)); 
+    
   }
     virtual void SetUp() 
   { 
@@ -30,18 +32,18 @@ class ObjectFactoryTest : public ::testing::Test
   {
     HoleDirVect1.header.seq= 1; 
     HoleDirVect1.header.frame_id= "Maria";
-    HoleDir1.yaw = -45;
-    HoleDir1.pitch = 45; 
+    HoleDir1.yaw = -pi/6;
+    HoleDir1.pitch =0; 
     HoleDir1.probability = 4;
     HoleDir1.holeId = 1; 
     HoleDirVect1.holesDirections.push_back(HoleDir1); 
-    HoleDir2.yaw = 30;
-    HoleDir2.pitch = 30; 
+    HoleDir2.yaw =-pi/3;
+    HoleDir2.pitch = 0; 
     HoleDir2.probability = 0; 
     HoleDir2.holeId = 2;
     HoleDirVect1.holesDirections.push_back(HoleDir2);
-    HoleDir3.yaw = 20; 
-    HoleDir3.pitch = 20; 
+    HoleDir3.yaw = pi/4; 
+    HoleDir3.pitch = pi/6*(0.1); 
     HoleDir3.probability = 0; 
     HoleDir3.holeId = 3;
     HoleDirVect1.holesDirections.push_back(HoleDir3);
@@ -50,16 +52,16 @@ class ObjectFactoryTest : public ::testing::Test
  void createQrVector()
   {
    
-    Qr1.yaw = -45;
-    Qr1.pitch = 45;
+    Qr1.yaw = -pi/6;
+    Qr1.pitch =0;
     Qr1.QRcontent = "Danger"; 
     QrVect1.qrAlerts.push_back(Qr1); 
-    Qr2.yaw = 30;
-    Qr2.pitch = 30; 
+    Qr2.yaw =-pi/3;
+    Qr2.pitch = 0; 
     Qr2.QRcontent ="Ultra Danger"; 
     QrVect1.qrAlerts.push_back(Qr2);
-    Qr3.QRcontent = 20; 
-    Qr3.pitch = 20;
+    Qr3.QRcontent = pi/3; 
+    Qr3.pitch = pi/6*(0.1);
     Qr3.QRcontent ="The victim is here";
     QrVect1.qrAlerts.push_back(Qr3);
   }
@@ -67,16 +69,16 @@ class ObjectFactoryTest : public ::testing::Test
  void createHazmatVector()
   {
 
-    Hazmat1.yaw = -45;
-    Hazmat1.pitch = 45; 
+    Hazmat1.yaw = -pi/3;
+    Hazmat1.pitch = pi/60; 
     Hazmat1.patternType = 1; 
     HazmatVect1.hazmatAlerts.push_back(Hazmat1); 
-    Hazmat2.yaw = 30;
-    Hazmat2.pitch = 30; 
+    Hazmat2.yaw = pi/4;
+    Hazmat2.pitch = pi/30; 
     Hazmat2.patternType = 2;
     HazmatVect1.hazmatAlerts.push_back(Hazmat2);
-    Hazmat3.yaw = 20; 
-    Hazmat3.pitch = 20; 
+    Hazmat3.yaw = pi/6;  
+    Hazmat3.pitch = pi/40; 
     Hazmat3.patternType = 3;
     HazmatVect1.hazmatAlerts.push_back(Hazmat3);
   }
@@ -84,8 +86,8 @@ class ObjectFactoryTest : public ::testing::Test
  
   void  createSimpleMap(MapPtr MapPtr1)
   {
-    MapPtr1->info.width=10;
-    MapPtr1->info.height=10;
+    MapPtr1->info.width=1;
+    MapPtr1->info.height=1;
     MapPtr1->info.origin.position.x = 0;
     MapPtr1->info.origin.position.y = 0;
     MapPtr1->info.origin.position.z = 0;
@@ -95,7 +97,7 @@ class ObjectFactoryTest : public ::testing::Test
     MapPtr1->info.origin.orientation.w = 0;
     for ( int i=0 ;i<100; i++)
     {
-      MapPtr1->data.push_back(i);
+      MapPtr1->data.push_back(50);
            
     }
   }
@@ -134,7 +136,7 @@ TEST_F(ObjectFactoryTest,makeHoles)
   } 
   
   
-  
+
 TEST_F(ObjectFactoryTest,makeQrs)
   { 
     QrPtrVectorPtr qrsVectorPtr( new QrPtrVector);
@@ -152,6 +154,15 @@ TEST_F(ObjectFactoryTest,makeHazmats)
     EXPECT_TRUE(true); 
   } 
   
+  
+ 
+  
+int main(int argc, char **argv) {
+  
+  ros::Time::init();
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
   
 
   
