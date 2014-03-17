@@ -22,8 +22,8 @@ target_link_libraries(map_loader
 # add tests here so that CMakelists is not polluted
 
 ##########  ObjectListTest ###########  
-#~ 
-#~ 
+
+
 catkin_add_gtest(object_list_test test/unit/object_list_test.cpp)
 target_link_libraries(object_list_test ${catkin_LIBRARIES}  objects utils
   gtest_main) 
@@ -38,6 +38,7 @@ ${catkin_LIBRARIES}
 object_factory
 objects utils
 ros_tf_listener
+map_loader
 gtest_main) 
 
 ##########  PoseFinderTest ###########   

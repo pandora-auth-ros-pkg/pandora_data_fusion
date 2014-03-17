@@ -2,7 +2,9 @@
 #include "gtest/gtest.h"
 #include <ctime> 
 #include <math.h>
- 
+#include <ros/ros.h>
+#include <ros/package.h>
+#include "map_loader/map_loader.h"
 
 double pi= M_PI;
 class ObjectFactoryTest : public ::testing::Test
@@ -12,8 +14,11 @@ class ObjectFactoryTest : public ::testing::Test
   ObjectFactoryTest(): map_type1("TEST"),MapPtr1(new Map) 
   { 
   
-    createSimpleMap(MapPtr1);
-    ObjectFactoryPtr1.reset(new ObjectFactory(MapPtr1,map_type1,0.5,1.2,0,0.5,20,0)); 
+    //~ createSimpleMap(MapPtr1);
+    *MapPtr1 = map_loader::
+    loadMap(ros::package::getPath("pandora_alert_handler")+"/test/test_maps/map1.yaml");
+    ObjectFactoryPtr1.reset(new ObjectFactory(MapPtr1,map_type1,0.5,1.2,0,0.5,20,0.5)); 
+    
     
   }
     virtual void SetUp() 
@@ -151,6 +156,14 @@ TEST_F(ObjectFactoryTest,makeHazmats)
     HazmatPtrVectorPtr hazmatsVectorPtr( new HazmatPtrVector );
     hazmatsVectorPtr=ObjectFactoryPtr1-> makeHazmats(HazmatVect1);
     EXPECT_EQ( 3,hazmatsVectorPtr->size());
+    EXPECT_TRUE(true); 
+  } 
+  
+  TEST_F(ObjectFactoryTest,makeTpas)
+  { 
+    TpaPtrVectorPtr tpasVectorPtr( new TpaPtrVector );
+    tpasVectorPtr=ObjectFactoryPtr1->makeTpas(TpaDir1);
+  
     EXPECT_TRUE(true); 
   } 
   
