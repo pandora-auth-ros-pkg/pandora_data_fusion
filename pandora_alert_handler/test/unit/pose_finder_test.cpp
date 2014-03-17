@@ -108,10 +108,10 @@ class PoseFinderTest : public ::testing::Test {
   virtual void
     SetUp() {
       
-      tf::Matrix3x3 defaultRotation(tf::tfScalar(1), tf::tfScalar(0), tf::tfScalar(0),
-                                    tf::tfScalar(0), tf::tfScalar(1), tf::tfScalar(0),
-                                    tf::tfScalar(0), tf::tfScalar(0), tf::tfScalar(1));
-      tf::Vector3 defaultTranslation(tf::tfScalar(0), tf::tfScalar(0), tf::tfScalar(0));
+      tf::Matrix3x3 defaultRotation(tfScalar(1), tfScalar(0), tfScalar(0),
+                                    tfScalar(0), tfScalar(1), tfScalar(0),
+                                    tfScalar(0), tfScalar(0), tfScalar(1));
+      tf::Vector3 defaultTranslation(tfScalar(0), tfScalar(0), tfScalar(0));
       defaultTransform_.setBasis(defaultRotation);
       defaultTransform_.setOrigin(defaultTranslation);
 
@@ -156,10 +156,10 @@ TEST_F(PoseFinderTest, findAlertPoseTest) {
   // Make a tfTransform [tf::Transform], check for various yaw [float] and pitches [float]
   // for the expected Pose
 
-  float alertYaw, alertpitch;
+  float alertYaw, alertPitch;
   tf::Transform transform;
   Point position;
-  tf::Quaternion orientation;
+  geometry_msgs::Quaternion orientation;
   orientation.x = 0;
   orientation.y = 0;
   Pose expected, result;
@@ -167,22 +167,22 @@ TEST_F(PoseFinderTest, findAlertPoseTest) {
   alertYaw = 0.78540;
   alertPitch = 0.52360;
   transform = defaultTransform_;
-  transform.setOrigin(tf::Vector3(tf::tfScalar(5),tf::tfScalar(5),tf::tfScalar(0.3)));
+  transform.setOrigin(tf::Vector3(tfScalar(4),tfScalar(5.7),tfScalar(0.3)));
   position.x = 6.12;
-  position y = 6.12;
+  position.y = 6.12;
   position.z = 0.87735;
+  expected.position = position;
   orientation.z = -0.70711;
   orientation.w = 0.70711;
-  expected.position = position;
   expected.orientation = orientation;
   result = poseFinder_->findAlertPose(alertYaw, alertPitch, transform);
   EXPECT_NEAR( expected.position.x , result.position.x , 0.0001 );
   EXPECT_NEAR( expected.position.y , result.position.y , 0.0001 );
   EXPECT_NEAR( expected.position.z , result.position.z , 0.0001 );
-  EXPECT_NEAR( expected.orientantion.x , result.orientation.x , 0.0001 );
-  EXPECT_NEAR( expected.orientantion.y , result.orientation.y , 0.0001 );
-  EXPECT_NEAR( expected.orientantion.z , result.orientation.z , 0.0001 );
-  EXPECT_NEAR( expected.orientantion.w , result.orientation.w , 0.0001 );
+  EXPECT_NEAR( expected.orientation.x , result.orientation.x , 0.0001 );
+  EXPECT_NEAR( expected.orientation.y , result.orientation.y , 0.0001 );
+  EXPECT_NEAR( expected.orientation.z , result.orientation.z , 0.0001 );
+  EXPECT_NEAR( expected.orientation.w , result.orientation.w , 0.0001 );
 
 }
 
@@ -260,7 +260,7 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest) {
   // with the given map [OccupancyGrid] and various frame points [Point] and 
   // alert points [Point]
 
-  tf::Quaternion result, expected;
+  geometry_msgs::Quaternion result, expected;
   expected.x = 0;
   expected.y = 0;
   Point framePoint;

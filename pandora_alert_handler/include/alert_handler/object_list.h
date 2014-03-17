@@ -12,11 +12,12 @@
 #include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
 
-//#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 
 template <class ObjectType>
 class ObjectList {
+
  public:
  
   typedef boost::shared_ptr< ObjectType > Ptr;
@@ -65,12 +66,17 @@ class ObjectList {
   void removeElementAt(iterator it);
 
  protected:
+
   List objects_;
   float DIST_THRESHOLD;
   int COUNTER_THRES;
 
  private:
+
   friend class ObjectListTest;
+
+ private:
+
   int id_;
 };
 
@@ -225,8 +231,6 @@ void ObjectList<ObjectType>::getVisualization(
 
   }
 
-
-
 }
 
 template <class ObjectType>
@@ -274,6 +278,5 @@ void ObjectList<ObjectType>::updateObject(
 
   objects_.push_back(object);
 }
-
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_LIST_H_
