@@ -83,10 +83,12 @@ add_dependencies(tpa
 
 add_library(victim 
         src/victim.cpp)
+
 target_link_libraries(victim
           objects 
-          ${catkin_LIBRARIES}
           )
+          
+          
 add_dependencies(victim 
   data_fusion_communications_gencpp
   ) 

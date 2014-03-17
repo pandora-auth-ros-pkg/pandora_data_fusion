@@ -15,6 +15,8 @@
 class Victim : public Object {
 
  public:
+ 
+  friend class VictimTest;
   
   typedef boost::shared_ptr<Victim> Ptr;
   typedef boost::shared_ptr<Victim const> ConstPtr;

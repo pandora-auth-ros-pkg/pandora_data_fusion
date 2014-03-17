@@ -43,9 +43,14 @@ gtest_main)
 
 ##########  PoseFinderTest ###########   
   
-catkin_add_gtest(pose_finder_test test/unit/pose_finder_test.cpp)
-target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
-  pose_finder map_loader utils gtest_main) 
+#~ catkin_add_gtest(pose_finder_test test/unit/pose_finder_test.cpp)
+#~ target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
+  #~ pose_finder map_loader utils gtest_main) 
+######### VictimTest #################
+catkin_add_gtest(victim_test test/unit/victim_test.cpp)
+target_link_libraries(victim_test ${catkin_LIBRARIES}
+   victim gtest_main) 
+
 
 ##########  ObjectsTest ###########       
 catkin_add_gtest(objects_test test/unit/objects_test.cpp)
