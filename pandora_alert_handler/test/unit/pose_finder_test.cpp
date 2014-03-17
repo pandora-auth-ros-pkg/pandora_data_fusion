@@ -1,39 +1,25 @@
 // "Copyright 2014 <Tsirigotis Christos>"
 
 #include <ros/ros.h>
+#include <ros/package.h>
 
 #include <nav_msgs/OccupancyGrid.h>
 
 #include "alert_handler/pose_finder.h"
+#include "map_loader/map_loader.h"
 #include "gtest/gtest.h"
 
-namespace PoseFinder {
-
 /**
-* @class PoseFinderTest
-* @brief Basic Test Fixture for testing PoseFinder
+@class PoseFinderTest
+@brief Basic Test Fixture for testing PoseFinder
 **/
 class PoseFinderTest : public ::testing::Test {
  
-public:
-
-  /**
-    * @brief Callback of mapSuscriber_
-    * @param msg [nav_msgs::OccupancyGridConstPtr const&] Msg contains map from tester.
-    * @return void
-    **/
-  void
-    updateMap(const nav_msgs::OccupancyGridConstPtr& msg) {
-
-    map_ = msg;
-
-  }
-
  protected:
 
   /* Accessors for private methods of PoseFinder */
   Point
-    positionOnWall(Point startPoint, angle) const {
+    positionOnWall(Point startPoint, float angle) const {
 
       return poseFinder_->positionOnWall(startPoint, angle);
 
@@ -104,20 +90,24 @@ public:
 
   /* Methods */
   /**
-    * @brief Constructor
-    **/
+  @brief Constructor
+  **/
   PoseFinderTest() {
 
+    int argc;
+    char** argv;
+    ros::init(argc, argv, "map_loader", ros::init_options::AnonymousName);
+    ros::Time::init();
+
     map_.reset( new Map );
-    mapSubsriber_ = nh_.subscribe("/map", 1, &PoseFinderTest::updateMap, this);
-    ros::spinOnce();
+    *map_ = map_loader::loadMap(ros::package::getPath("pandora_alert_handler")+"/test/test_maps/map1.yaml");
 
   }
 
   /**
-    * @brief Function to SetUp the Test Fixture
-    * @return void
-    **/
+  @brief Function to SetUp the Test Fixture
+  @return void
+  **/
   virtual void
     SetUp() {
 
@@ -126,35 +116,30 @@ public:
   }
 
   /* Variables */
-  ros::NodeHandle nh_;
-  ros::Subscriber mapSubscriber_;
   MapPtr map_;
 
   PoseFinderPtr poseFinder_;
-
  
 };
-
-}
 
 TEST_F(PoseFinderTest, updateParamsTest) {
 
   // Expect default parameters
-  EXPECT_EQ( 0.5 , getOccupiedCellThres() );
-  EXPECT_EQ( 1.2 , getHeightHighThres() );
-  EXPECT_EQ( 0 , getHeightLowThres() );
-  EXPECT_EQ( 0.5 , getApproachDist() );
-  EXPECT_EQ( 20 , getOrientationDist() );
-  EXPECT_EQ( 10 , getOrientationCircle() );
+  EXPECT_NEAR( 0.5 , getOccupiedCellThres() , 0.0001 );
+  EXPECT_NEAR( 1.2 , getHeightHighThres() , 0.0001 );
+  EXPECT_NEAR( 0 , getHeightLowThres() , 0.0001 );
+  EXPECT_NEAR( 0.5 , getApproachDist() , 0.0001 );
+  EXPECT_NEAR( 20 , getOrientationDist() , 0.0001 );
+  EXPECT_NEAR( 10 , getOrientationCircle() , 0.0001 );
 
   poseFinder_->updateParams(0.6, 1.5, 0.3, 0.6, 30, 15);
   // Expect updated parameters
-  EXPECT_EQ( 0.6 , getOccupiedCellThres() );
-  EXPECT_EQ( 1.5 , getHeightHighThres() );
-  EXPECT_EQ( 0.3 , getHeightLowThres() );
-  EXPECT_EQ( 0.6 , getApproachDist() );
-  EXPECT_EQ( 30 , getOrientationDist() );
-  EXPECT_EQ( 15 , getOrientationCircle() );
+  EXPECT_NEAR( 0.6 , getOccupiedCellThres() , 0.0001 );
+  EXPECT_NEAR( 1.5 , getHeightHighThres() , 0.0001 );
+  EXPECT_NEAR( 0.3 , getHeightLowThres() , 0.0001 );
+  EXPECT_NEAR( 0.6 , getApproachDist() , 0.0001 );
+  EXPECT_NEAR( 30 , getOrientationDist() , 0.0001 );
+  EXPECT_NEAR( 15 , getOrientationCircle() , 0.0001 );
 
 }
 
@@ -193,28 +178,28 @@ TEST_F(PoseFinderTest, calcHeightTest) {
 
   float h = 0.3;
   EXPECT_THROW( calcHeight(1.04720,h,-1) , AlertException );
-  EXPECT_EQ   ( 0.30000 , calcHeight(1.04720,h,0) );
+  EXPECT_NEAR   ( 0.30000 , calcHeight(1.04720,h,0) , 0.0001 );
   EXPECT_THROW( calcHeight(1.04720,h,1) , AlertException );
   EXPECT_THROW( calcHeight(1.04720,h,1.5) , AlertException );
   EXPECT_THROW( calcHeight(1.04720,h,2) , AlertException );
 
   EXPECT_THROW( calcHeight(0.52360,h,-1) , AlertException );
-  EXPECT_EQ   ( 0.30000 , calcHeight(0.52360,h,0) );
-  EXPECT_EQ   ( 0.87735 , calcHeight(0.52360,h,1) );
-  EXPECT_EQ   ( 1.16603 , calcHeight(0.52360,h,1.5) );
-  EXPECT_EQ   ( 1.45470 , calcHeight(0.52360,h,2) );
+  EXPECT_NEAR   ( 0.30000 , calcHeight(0.52360,h,0) , 0.0001 );
+  EXPECT_NEAR   ( 0.87735 , calcHeight(0.52360,h,1) , 0.0001 );
+  EXPECT_NEAR   ( 1.16603 , calcHeight(0.52360,h,1.5) , 0.0001 );
+  EXPECT_NEAR   ( 1.45470 , calcHeight(0.52360,h,2) , 0.0001 );
 
   EXPECT_THROW( calcHeight(-0.52360,h,-1) , AlertException );
-  EXPECT_EQ   ( 0.30000 , calcHeight(-0.52360,h,0) );
+  EXPECT_NEAR   ( 0.30000 , calcHeight(-0.52360,h,0) , 0.0001 );
   EXPECT_THROW( calcHeight(-0.52360,h,1) , AlertException );
   EXPECT_THROW( calcHeight(-0.52360,h,1.5) , AlertException );
   EXPECT_THROW( calcHeight(-0.52360,h,2) , AlertException );
 
   h = 0.5;
   EXPECT_THROW( calcHeight(-0.26180,h,-1) , AlertException );
-  EXPECT_EQ   ( 0.500000 , calcHeight(-0.26180,h,0) );
-  EXPECT_EQ   ( 0.232051 , calcHeight(-0.26180,h,1) );
-  EXPECT_EQ   ( 0.098076 , calcHeight(-0.26180,h,1.5) );
+  EXPECT_NEAR   ( 0.500000 , calcHeight(-0.26180,h,0) , 0.0001 );
+  EXPECT_NEAR   ( 0.232051 , calcHeight(-0.26180,h,1) , 0.0001 );
+  EXPECT_NEAR   ( 0.098076 , calcHeight(-0.26180,h,1.5) , 0.0001 );
   EXPECT_THROW( calcHeight(-0.26180,h,2) , AlertException );
 
 }
@@ -238,30 +223,83 @@ TEST_F(PoseFinderTest, findDiameterEndPointsOnWallTest) {
 
   std::vector<Point> points;
   std::pair<Point, Point> result;
+
   points.clear();
   EXPECT_THROW( findDiameterEndPointsOnWall(points), AlertException );
-  points.push_back(Point(0,0,0));
+
+  Point first;
+  first.x = 0;
+  first.y = 0;
+  first.z = 0;
+  points.push_back(first);
   EXPECT_THROW( findDiameterEndPointsOnWall(points), AlertException );
-  points.push_back(Point(1,0,0));
+
+  Point second;
+  second.x = 1;
+  second.y = 0;
+  second.z = 0;
+  points.push_back(second);
   result = findDiameterEndPointsOnWall(points);
-  EXPECT_EQ( Point(0,0,0) , result.first );
-  EXPECT_EQ( Point(1,0,0) , result.second );
-  points.push_back(Point(0,0,0));
+  EXPECT_NEAR( first.x , result.first.x , 0.0001 );
+  EXPECT_NEAR( first.y , result.first.y , 0.0001 );
+  EXPECT_NEAR( first.z , result.first.z , 0.0001 );
+  EXPECT_NEAR( second.x , result.second.x , 0.0001 );
+  EXPECT_NEAR( second.y , result.second.y , 0.0001 );
+  EXPECT_NEAR( second.z , result.second.z , 0.0001 );
+
+  Point third;
+  third.x = 0;
+  third.y = 0;
+  third.z = 0;
+  points.push_back(third);
   result = findDiameterEndPointsOnWall(points);
-  EXPECT_EQ( Point(0,0,0) , result.first );
-  EXPECT_EQ( Point(1,0,0) , result.second );
-  points.push_back(Point(0,-1,0));
+  EXPECT_NEAR( first.x , result.first.x , 0.0001 );
+  EXPECT_NEAR( first.y , result.first.y , 0.0001 );
+  EXPECT_NEAR( first.z , result.first.z , 0.0001 );
+  EXPECT_NEAR( second.x , result.second.x , 0.0001 );
+  EXPECT_NEAR( second.y , result.second.y , 0.0001 );
+  EXPECT_NEAR( second.z , result.second.z , 0.0001 );
+
+  Point fourth;
+  fourth.x = 0;
+  fourth.y = -1;
+  fourth.z = 0;
+  points.push_back(fourth);
   result = findDiameterEndPointsOnWall(points);
-  EXPECT_EQ( Point(1,0,0) , result.first );
-  EXPECT_EQ( Point(0,-1,0) , result.second );
-  points.push_back(Point(41,2.42,-12));
+  EXPECT_NEAR( second.x , result.first.x , 0.0001 );
+  EXPECT_NEAR( second.y , result.first.y , 0.0001 );
+  EXPECT_NEAR( second.z , result.first.z , 0.0001 );
+  EXPECT_NEAR( fourth.x , result.second.x , 0.0001 );
+  EXPECT_NEAR( fourth.y , result.second.y , 0.0001 );
+  EXPECT_NEAR( fourth.z , result.second.z , 0.0001 );
+
+
+  Point fifth;
+  fifth.x = 41;
+  fifth.y = 2.42;
+  fifth.z = -12;
+  points.push_back(fifth);
   result = findDiameterEndPointsOnWall(points);
-  EXPECT_EQ( Point(0,-1,0) , result.first );
-  EXPECT_EQ( Point(41,2.42,-12) , result.second );
-  points.push_back(Point(10000,10000,10000));
+  EXPECT_NEAR( fourth.x , result.first.x , 0.0001 );
+  EXPECT_NEAR( fourth.y , result.first.y , 0.0001 );
+  EXPECT_NEAR( fourth.z , result.first.z , 0.0001 );
+  EXPECT_NEAR( fifth.x , result.second.x , 0.0001 );
+  EXPECT_NEAR( fifth.y , result.second.y , 0.0001 );
+  EXPECT_NEAR( fifth.z , result.second.z , 0.0001 );
+
+
+  Point sixth;
+  sixth.x = 10000;
+  sixth.y = 10000;
+  sixth.z = 10000;
+  points.push_back(sixth);
   result = findDiameterEndPointsOnWall(points);
-  EXPECT_EQ( Point(0,-1,0) , result.first );
-  EXPECT_EQ( Point(10000,10000,10000) , result.second );
- 
+  EXPECT_NEAR( fourth.x , result.first.x , 0.0001 );
+  EXPECT_NEAR( fourth.y , result.first.y , 0.0001 );
+  EXPECT_NEAR( fourth.z , result.first.z , 0.0001 );
+  EXPECT_NEAR( sixth.x , result.second.x , 0.0001 );
+  EXPECT_NEAR( sixth.y , result.second.y , 0.0001 );
+  EXPECT_NEAR( sixth.z , result.second.z , 0.0001 );
+
 }
 

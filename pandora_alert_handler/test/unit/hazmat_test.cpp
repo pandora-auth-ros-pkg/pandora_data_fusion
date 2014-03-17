@@ -52,7 +52,6 @@ TEST_F(HazmatTest, IsSameHazmat) {
     }
 }  // namespace
 
-
 int main(int argc, char **argv) {
   
   ros::Time::init();

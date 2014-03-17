@@ -49,7 +49,9 @@ class PoseFinder {
 
   void publishVisionTransform(float alertYaw, float alertPitch,
       tf::Transform worldHeadCameraTransform);
-      
+
+  friend class PoseFinderTest;
+
  private:
 
   const MapPtr& map_;
