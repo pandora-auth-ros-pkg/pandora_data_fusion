@@ -70,7 +70,7 @@ Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
   float distFromAlert = Utils::distanceBetweenPoints2D(
                             position, framePosition);
 
-  float height = calcHeight(verticalDirection, origin[2], distFromAlert);
+  float height = calcHeight(verticalDirection, framePosition.z, distFromAlert);
 
   outPose.position = Utils::point2DAndHeight2Point3D(position, height);
   outPose.orientation = findNormalVectorOnWall(framePosition, outPose.position);
@@ -155,6 +155,7 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
                                                       ORIENTATION_CIRCLE / 2 ) {
     
     angle = atan2((alertPoint.y - pointsOnWall.first.y),
+
       (alertPoint.x - pointsOnWall.first.x));
     
     Point onWall;
