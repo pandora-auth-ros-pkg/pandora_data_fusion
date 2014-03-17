@@ -3,8 +3,6 @@
 #include <ros/ros.h>
 #include <ros/package.h>
 
-#include <nav_msgs/OccupancyGrid.h>
-
 #include "alert_handler/pose_finder.h"
 #include "map_loader/map_loader.h"
 #include "gtest/gtest.h"
@@ -94,9 +92,6 @@ class PoseFinderTest : public ::testing::Test {
   **/
   PoseFinderTest() {
 
-    int argc;
-    char** argv;
-    ros::init(argc, argv, "map_loader", ros::init_options::AnonymousName);
     ros::Time::init();
 
     map_.reset( new Map );
@@ -211,6 +206,8 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest) {
   // Test if the returned normal vector on wall is right [geometry_msgs::Quaternion]
   // with the given map [OccupancyGrid] and various frame points [Point] and 
   // alert points [Point]
+
+
    
 }
 
