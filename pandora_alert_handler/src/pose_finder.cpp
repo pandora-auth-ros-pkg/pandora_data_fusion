@@ -8,8 +8,8 @@
 PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType, 
     float occupiedCellThres, 
     float heightHighThres, float heightLowThres,
-    float approachDist, int orientationDist,
-    int orientationCircle) : map_(map) {
+    float approachDist, float orientationDist,
+    float orientationCircle) : map_(map) {
 
   updateParams(occupiedCellThres, heightHighThres, heightLowThres, approachDist,
                             orientationDist, orientationCircle);
@@ -20,7 +20,7 @@ PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType,
 
 void PoseFinder::updateParams(float occupiedCellThres,
       float heightHighThres, float heightLowThres,
-      float approachDist, int orientationDist, int orientationCircle) {
+      float approachDist, float orientationDist, float orientationCircle) {
 
   OCCUPIED_CELL_THRES = occupiedCellThres;
   HEIGHT_HIGH_THRES = heightHighThres;
@@ -28,6 +28,7 @@ void PoseFinder::updateParams(float occupiedCellThres,
   ORIENTATION_CIRCLE = orientationCircle;
   ORIENTATION_DIST = orientationDist;
   APPROACH_DIST = approachDist;
+
 }
 
 void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch,
@@ -94,36 +95,37 @@ float PoseFinder::calcHeight(float alertPitch,
     throw AlertException("Alert either too low or two high");
 
   return alertHeight;
+
 }
 
 
 Point PoseFinder::positionOnWall(Point startPoint, float angle) {
+
   int x = 0, y = 0, D = 5;
 
-  unsigned int currX = startPoint.x;
-  unsigned int currY = startPoint.y;
+  unsigned int currX = floor(startPoint.x/map_->info.resolution);
+  unsigned int currY = floor(startPoint.y/map_->info.resolution);
 
   float omega = angle;
 
   x = D * cos(omega) + currX;
   y = D * sin(omega) + currY;
   
-  while (map_->data[x * map_->info.width + y] > OCCUPIED_CELL_THRES * 255) {
+  while (map_->data[x * map_->info.width + y]
+      < OCCUPIED_CELL_THRES * 100) {
     D++;
     x = D * cos(omega) + currX;
     y = D * sin(omega) + currY;
-
   }
-  if (map_->data[x * map_->info.width + y] == OCCUPIED_CELL_THRES * 255) {
-    throw AlertException("Can not find point on wall");
-  }
-  if (map_->data[x * map_->info.width + y] < OCCUPIED_CELL_THRES * 255) {
+  if (map_->data[x * map_->info.width + y]
+      > OCCUPIED_CELL_THRES * 100) {
     Point onWall;
-    onWall.x = x;
-    onWall.y = y;
+    onWall.x = x * map_->info.resolution;
+    onWall.y = y * map_->info.resolution;
     return onWall;
-  }
-  throw AlertException("Can not find point on wall");
+  } else 
+    throw AlertException("Can not find point on wall");
+
 }
 
 geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
@@ -133,13 +135,15 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   int x, y;
 
   for (unsigned int i = 0; i < 360; i += 5) {
-    x = alertPoint.x + ORIENTATION_CIRCLE * cos((i / 180.0) * D_PI);
-    y = alertPoint.y + ORIENTATION_CIRCLE * sin((i / 180.0) * D_PI);
+    x = floor(alertPoint.x/map_->info.resolution) + 
+      floor(ORIENTATION_CIRCLE/map_->info.resolution) * cos((i / 180.0) * D_PI);
+    y = floor(alertPoint.y/map_->info.resolution) + 
+      floor(ORIENTATION_CIRCLE/map_->info.resolution) * sin((i / 180.0) * D_PI);
 
-    if (map_->data[x * map_->info.width + y] < OCCUPIED_CELL_THRES * 255) {
+    if (map_->data[x * map_->info.width + y] > OCCUPIED_CELL_THRES * 100) {
       Point temp;
-      temp.x = x;
-      temp.y = y;
+      temp.x = x * map_->info.resolution;
+      temp.y = y * map_->info.resolution;
       points.push_back(temp);
     }
   }
@@ -155,18 +159,16 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
                                                       ORIENTATION_CIRCLE / 2 ) {
     
     angle = atan2((alertPoint.y - pointsOnWall.first.y),
-
-      (alertPoint.x - pointsOnWall.first.x));
+        (alertPoint.x - pointsOnWall.first.x));
     
     Point onWall;
-    onWall.x = alertPoint.x - ORIENTATION_CIRCLE * cos(D_PI + angle);
-    onWall.y = alertPoint.y - ORIENTATION_CIRCLE * sin(D_PI + angle);
+    onWall.x = alertPoint.x + ORIENTATION_CIRCLE * cos(angle);
+    onWall.y = alertPoint.y + ORIENTATION_CIRCLE * sin(angle);
     pointsOnWall.first = onWall;
   }
 
-  angle = atan2((pointsOnWall.second.y - 
-    pointsOnWall.first.y), (pointsOnWall.second.x - 
-      pointsOnWall.first.x));
+  angle = atan2((pointsOnWall.second.y - pointsOnWall.first.y), 
+      (pointsOnWall.second.x - pointsOnWall.first.x));
 
   std::pair<Point, Point> approachPoints;
 
@@ -186,11 +188,13 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   } else {
     return Utils::calculateQuaternion(alertPoint, approachPoints.second);
   }
+
 }
 
 
 std::pair<Point, Point> PoseFinder::findDiameterEndPointsOnWall(
     std::vector<Point> points) {
+
   if (points.size() < 2) {
     throw AlertException("Can not calculate approach point");
   }

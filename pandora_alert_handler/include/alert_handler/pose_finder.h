@@ -27,8 +27,8 @@ class PoseFinder {
   PoseFinder(const MapPtr& map, const std::string& mapType,
     float occupiedCellThres = 0.5,
     float heightHighThres = 1.2, float heightLowThres = 0,
-    float approachDist = 0.5, int orientationDist = 20,
-    int orientationCircle = 10);
+    float approachDist = 0.5, float orientationDist = 0.5,
+    float orientationCircle = 0.25);
   Pose findAlertPose(float alertYaw, float alertPitch,
     tf::Transform tfTransform);
   tf::Transform lookupTransformFromWorld(std_msgs::Header header);
@@ -36,7 +36,7 @@ class PoseFinder {
   void updateParams(float occupiedCellThres,
     float heightHighThres, float heightLowThres,
     float approachDist,
-    int orientationDist, int orientationCircle);
+    float orientationDist, float orientationCircle);
 
  private:
 
@@ -60,8 +60,8 @@ class PoseFinder {
   //~ tf::TransformBroadcaster victimFrameBroadcaster;
 
   //params
-  int ORIENTATION_CIRCLE;
-  int ORIENTATION_DIST;
+  float ORIENTATION_CIRCLE;
+  float ORIENTATION_DIST;
   float APPROACH_DIST;
   float HEIGHT_HIGH_THRES;
   float HEIGHT_LOW_THRES;

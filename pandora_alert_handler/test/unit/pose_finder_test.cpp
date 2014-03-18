@@ -15,6 +15,31 @@ class PoseFinderTest : public ::testing::Test {
  
  protected:
 
+  void
+    testOrientation(float expectedZ, float expectedW, float frameX,
+        float frameY, float alertX, float alertY) {
+
+      geometry_msgs::Quaternion result, expected;
+      expected.x = 0;
+      expected.y = 0;
+      Point framePoint;
+      framePoint.z = 0;
+      Point alertPoint;
+      alertPoint.z = 0;
+      expected.z = expectedZ;
+      expected.w = expectedW;
+      framePoint.x = frameX;
+      framePoint.y = frameY;
+      alertPoint.x = alertX;
+      alertPoint.y = alertY;
+      result = findNormalVectorOnWall(framePoint, alertPoint);
+      EXPECT_NEAR( expected.x , result.x , 0.1 );
+      EXPECT_NEAR( expected.y , result.y , 0.1 );
+      EXPECT_NEAR( expected.z , result.z , 0.1 );
+      EXPECT_NEAR( expected.w , result.w , 0.1 );
+  }
+
+
   /* Accessors for private methods of PoseFinder */
   Point
     positionOnWall(Point startPoint, float angle) const {
@@ -44,14 +69,14 @@ class PoseFinderTest : public ::testing::Test {
 
   }
 
-  int
+  float
     getOrientationCircle() const {
 
       return poseFinder_->ORIENTATION_CIRCLE;
 
     }
 
-  int
+  float
     getOrientationDist() const {
 
       return poseFinder_->ORIENTATION_DIST;
@@ -108,12 +133,12 @@ class PoseFinderTest : public ::testing::Test {
   virtual void
     SetUp() {
       
-      tf::Matrix3x3 defaultRotation(tfScalar(1), tfScalar(0), tfScalar(0),
+      defaultRotation_.setValue(tfScalar(1), tfScalar(0), tfScalar(0),
                                     tfScalar(0), tfScalar(1), tfScalar(0),
                                     tfScalar(0), tfScalar(0), tfScalar(1));
-      tf::Vector3 defaultTranslation(tfScalar(0), tfScalar(0), tfScalar(0));
-      defaultTransform_.setBasis(defaultRotation);
-      defaultTransform_.setOrigin(defaultTranslation);
+      defaultTranslation_.setValue(tfScalar(0), tfScalar(0), tfScalar(0));
+      defaultTransform_.setBasis(defaultRotation_);
+      defaultTransform_.setOrigin(defaultTranslation_);
 
       poseFinder_.reset( new PoseFinder(map_, "TEST") );
     
@@ -122,6 +147,8 @@ class PoseFinderTest : public ::testing::Test {
   /* Variables */
   MapPtr map_;
 
+  tf::Matrix3x3 defaultRotation_;
+  tf::Vector3 defaultTranslation_;
   tf::Transform defaultTransform_;
 
   PoseFinderPtr poseFinder_;
@@ -135,23 +162,23 @@ TEST_F(PoseFinderTest, updateParamsTest) {
   EXPECT_NEAR( 1.2 , getHeightHighThres() , 0.0001 );
   EXPECT_NEAR( 0 , getHeightLowThres() , 0.0001 );
   EXPECT_NEAR( 0.5 , getApproachDist() , 0.0001 );
-  EXPECT_NEAR( 20 , getOrientationDist() , 0.0001 );
-  EXPECT_NEAR( 10 , getOrientationCircle() , 0.0001 );
+  EXPECT_NEAR( 0.5 , getOrientationDist() , 0.0001 );
+  EXPECT_NEAR( 0.25 , getOrientationCircle() , 0.0001 );
 
-  poseFinder_->updateParams(0.6, 1.5, 0.3, 0.6, 30, 15);
+  poseFinder_->updateParams(0.6, 1.5, 0.3, 0.6, 1, 0.55);
   // Expect updated parameters
   EXPECT_NEAR( 0.6 , getOccupiedCellThres() , 0.0001 );
   EXPECT_NEAR( 1.5 , getHeightHighThres() , 0.0001 );
   EXPECT_NEAR( 0.3 , getHeightLowThres() , 0.0001 );
   EXPECT_NEAR( 0.6 , getApproachDist() , 0.0001 );
-  EXPECT_NEAR( 30 , getOrientationDist() , 0.0001 );
-  EXPECT_NEAR( 15 , getOrientationCircle() , 0.0001 );
+  EXPECT_NEAR( 1 , getOrientationDist() , 0.0001 );
+  EXPECT_NEAR( 0.55 , getOrientationCircle() , 0.0001 );
 
 }
 
 TEST_F(PoseFinderTest, findAlertPoseTest) {
 
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 20, 10);
+  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 1, 0.5);
 
   // Make a tfTransform [tf::Transform], check for various yaw [float] and pitches [float]
   // for the expected Pose
@@ -164,25 +191,26 @@ TEST_F(PoseFinderTest, findAlertPoseTest) {
   orientation.y = 0;
   Pose expected, result;
 
-  alertYaw = 0.78540;
+  alertYaw = -0.785398;
   alertPitch = 0.52360;
   transform = defaultTransform_;
-  transform.setOrigin(tf::Vector3(tfScalar(4),tfScalar(5.7),tfScalar(0.3)));
-  position.x = 6.12;
-  position.y = 6.12;
-  position.z = 0.87735;
+  tf::Vector3 origin(tfScalar(5),tfScalar(5),tfScalar(0.3));
+  transform.setOrigin(origin);
+  position.x = 5.76;
+  position.y = 5.76;
+  position.z = 0.9205;
   expected.position = position;
-  orientation.z = -0.70711;
-  orientation.w = 0.70711;
+  orientation.z = 1;
+  orientation.w = 0;
   expected.orientation = orientation;
   result = poseFinder_->findAlertPose(alertYaw, alertPitch, transform);
-  EXPECT_NEAR( expected.position.x , result.position.x , 0.0001 );
-  EXPECT_NEAR( expected.position.y , result.position.y , 0.0001 );
+  EXPECT_NEAR( expected.position.x , result.position.x , 0.1 );
+  EXPECT_NEAR( expected.position.y , result.position.y , 0.1 );
   EXPECT_NEAR( expected.position.z , result.position.z , 0.0001 );
   EXPECT_NEAR( expected.orientation.x , result.orientation.x , 0.0001 );
   EXPECT_NEAR( expected.orientation.y , result.orientation.y , 0.0001 );
-  EXPECT_NEAR( expected.orientation.z , result.orientation.z , 0.0001 );
-  EXPECT_NEAR( expected.orientation.w , result.orientation.w , 0.0001 );
+  EXPECT_NEAR( expected.orientation.z , result.orientation.z , 0.1 );
+  EXPECT_NEAR( expected.orientation.w , result.orientation.w , 0.1 );
 
 }
 
@@ -196,7 +224,7 @@ TEST_F(PoseFinderTest, lookupTransformFromWorldTest) {
 
 TEST_F(PoseFinderTest, positionOnWallTest) {
  
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 20, 10);
+  poseFinder_->updateParams(0.3 , 1.5, 0, 0.5, 20, 10);
 
   // With given map [OccupancyGrid], make points [Point] and test their supposed positions
   // on wall with various angles [float]
@@ -206,14 +234,23 @@ TEST_F(PoseFinderTest, positionOnWallTest) {
   expected.z = 0;
   float angle;
 
+  startPoint.x = 8;
+  startPoint.y = 9;
+  angle = 0;
+  expected.x = 9.97;
+  expected.y = 9;
+  result = positionOnWall(startPoint, angle);
+  EXPECT_NEAR( expected.x , result.x , 0.01 );
+  EXPECT_NEAR( expected.y , result.y , 0.01 );
+
   startPoint.x = 5;
   startPoint.y = 5;
-  angle = 0;
-  expected.x = 5;
-  expected.y = 6;
+  angle = 0.785398;
+  expected.x = 5.76;
+  expected.y = 5.76;
   result = positionOnWall(startPoint, angle);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
+  EXPECT_NEAR( expected.x , result.x , 0.01 );
+  EXPECT_NEAR( expected.y , result.y , 0.01 );
 
 }
 
@@ -255,86 +292,18 @@ TEST_F(PoseFinderTest, calcHeightTest) {
 
 TEST_F(PoseFinderTest, findNormalVectorOnWallTest) {
  
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 1, 0.5);
+  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.25);
   // Test if the returned normal vector on wall is right [geometry_msgs::Quaternion]
   // with the given map [OccupancyGrid] and various frame points [Point] and 
   // alert points [Point]
 
-  geometry_msgs::Quaternion result, expected;
-  expected.x = 0;
-  expected.y = 0;
-  Point framePoint;
-  framePoint.z = 0;
-  Point alertPoint;
-  alertPoint.z = 0;
-
-  expected.z = -0.70711;
-  expected.w = 0.70711;
-  framePoint.x = 5;
-  framePoint.y = 5;
-  alertPoint.x = 5;
-  alertPoint.y = 6;
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
-  EXPECT_NEAR( expected.z , result.z , 0.0001 );
-  EXPECT_NEAR( expected.w , result.w , 0.0001 );
-
-  expected.z = 1;
-  expected.w = 0;
-  framePoint.x = 7;
-  framePoint.y = 1;
-  alertPoint.x = 8;
-  alertPoint.y = 1;
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
-  EXPECT_NEAR( expected.z , result.z , 0.0001 );
-  EXPECT_NEAR( expected.w , result.w , 0.0001 );
-
-  expected.z = 1;
-  expected.w = 0;
-  framePoint.x = 10.0;
-  framePoint.y = 12.3;
-  alertPoint.x = 11.2;
-  alertPoint.y = 12.8;
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
-  EXPECT_NEAR( expected.z , result.z , 0.0001 );
-  EXPECT_NEAR( expected.w , result.w , 0.0001 );
-
-
-  expected.z = 0;
-  expected.w = 1;
-  framePoint.x = 12.0;
-  framePoint.y = 11.0;
-  alertPoint.x = 11.2;
-  alertPoint.y = 12.8;
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
-  EXPECT_NEAR( expected.z , result.z , 0.0001 );
-  EXPECT_NEAR( expected.w , result.w , 0.0001 );
-
-  expected.z = -0.70711;
-  expected.w = 0.70711;
-  framePoint.x = 4.15;
-  framePoint.y = 2.7;
-  alertPoint.x = 3;
-  alertPoint.y = 3.5;
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
-  EXPECT_NEAR( expected.z , result.z , 0.0001 );
-  EXPECT_NEAR( expected.w , result.w , 0.0001 );
-
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 2, 1);
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  EXPECT_NEAR( expected.x , result.x , 0.0001 );
-  EXPECT_NEAR( expected.y , result.y , 0.0001 );
-  EXPECT_NEAR( expected.z , result.z , 0.0001 );
-  EXPECT_NEAR( expected.w , result.w , 0.0001 );
+  testOrientation(1, 0, 5, 5, 5.76, 5.76);
+  testOrientation(-0.70711, 0.70711, 1, 7, 1, 8);
+  testOrientation(-0.70711, 0.70711, 12.3, 10.0, 12.6, 10.5);
+  testOrientation(0.70711, 0.70711, 11, 12, 11.7, 11.4);
+  testOrientation(0 , 0, 4.7, 4.14, 3.58, 3);
+  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 1, 0.5);
+  testOrientation(0 , 0, 4.7, 4.14, 3.58, 3);
 
 }
 

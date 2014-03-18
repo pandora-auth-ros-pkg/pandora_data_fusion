@@ -4,8 +4,8 @@
 ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType,
       float occupiedCellThres,
       float heightHighThres, float heightLowThres,
-      float approachDist, int orientationDist,
-      int orientationCircle) {
+      float approachDist, float orientationDist,
+      float orientationCircle) {
 
   poseFinder_.reset( new PoseFinder(map, mapType, occupiedCellThres, 
            heightHighThres, heightLowThres, approachDist, 
@@ -102,7 +102,7 @@ QrPtrVectorPtr ObjectFactory::makeQrs(
 
 void ObjectFactory::dynamicReconfigForward(float occupiedCellThres,
     float highThres, float lowThres, float approachDist,
-    int orientationCircle, int orientationDist) {
+    float orientationCircle, float orientationDist) {
 
   poseFinder_->updateParams( occupiedCellThres, 
     highThres, lowThres, approachDist,
