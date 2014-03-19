@@ -158,8 +158,8 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   if ( Utils::distanceBetweenPoints2D(pointsOnWall.first, pointsOnWall.second)  < 
                                                       ORIENTATION_CIRCLE / 2 ) {
     
-    angle = atan2((alertPoint.y - pointsOnWall.first.y),
-        (alertPoint.x - pointsOnWall.first.x));
+    angle = atan2((alertPoint.y - pointsOnWall.second.y),
+        (alertPoint.x - pointsOnWall.second.x));
     
     Point onWall;
     onWall.x = alertPoint.x + ORIENTATION_CIRCLE * cos(angle);
