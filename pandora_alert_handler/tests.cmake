@@ -70,8 +70,8 @@ set(ROSLINT_CPP_OPTS
     "--filter=-whitespace/end_of_line,-build/include_order,-build/include,-whitespace/blank_line,-whitespace/parens,-whitespace/comments")
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS 
      RELATIVE ${PROJECT_SOURCE_DIR} 
-            #~ include/alert_handler/*.h 
-            #~ src/*.cpp 
-            test/unit/object_list_test.cpp
+            #include/alert_handler/*.h 
+            #src/*.cpp 
+            test/unit/*.cpp
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})

@@ -5,8 +5,8 @@
 #include "alert_handler/object_list.h"
 #include "gtest/gtest.h"
 
-class ObjectListTest : public testing::Test {
-
+class ObjectListTest : public testing::Test 
+{
  protected:
  
   /* Constructor/Destructor */
@@ -18,8 +18,8 @@ class ObjectListTest : public testing::Test {
 
   /* SetUp/TearDown definitions */
 
-  virtual void SetUp() {
-    
+  virtual void SetUp() 
+  { 
     std::srand(std::time(0));
     
     seed = time(NULL);
@@ -80,20 +80,20 @@ class ObjectListTest : public testing::Test {
 
   /* Function to fill objectList.objects_ */
 
-  void fillList(ObjectList<Object>* objList) {
-
+  void fillList(ObjectList<Object>* objList) 
+  {
     getObjects(objList).clear();
     getObjects(objList).push_back(object1);
     getObjects(objList).push_back(object2);
     getObjects(objList).push_back(object3);
   }
 
-  void fillListRandom(ObjectList<Object>* objList, int n) {
-
+  void fillListRandom(ObjectList<Object>* objList, int n) 
+  {
     getObjects(objList).clear();
 
-    for(int i = 0; i < n; ++i) {
-      
+    for(int i = 0; i < n; ++i) 
+    {
       geometry_msgs::Pose pose;
       pose.position.x =
         static_cast<double> (rand_r(&seed) - RAND_MAX/2)/(RAND_MAX/2) * 10000;
@@ -105,51 +105,44 @@ class ObjectListTest : public testing::Test {
       object->setPose(pose);
       getObjects(objList).push_back(object);
     }
-
   }
 
   /* Accessors for private methods/members of ObjectList */
 
   bool isAnExistingObject(
       ObjectList<Object>* objList, const ObjectConstPtr& object, 
-      ObjectList<Object>::IteratorList* iteratorListPtr) {
-    
+      ObjectList<Object>::IteratorList* iteratorListPtr) 
+  {
     return objList->isAnExistingObject(object, iteratorListPtr);
-
   }
 
   void updateObject(
       ObjectList<Object>* objList, const ObjectPtr& object, 
-      const ObjectList<Object>::IteratorList& iteratorList) {
-    
+      const ObjectList<Object>::IteratorList& iteratorList) 
+  {
     objList->updateObject(object, iteratorList);
-
   }
 
-  int* id(ObjectList<Object>* objList) {
-
+  int* id(ObjectList<Object>* objList) 
+  {
     return &(objList->id_);
-
   }
 
-  ObjectList<Object>::List& getObjects(ObjectList<Object>* objList) {
-
+  ObjectList<Object>::List& getObjects(ObjectList<Object>* objList) 
+  {
     return objList->objects_;
-
   }
   
   // get and set the params
 
-  float* DIST_THRESHOLD(ObjectList<Object>* objList) {
-    
+  float* DIST_THRESHOLD(ObjectList<Object>* objList) 
+  {
     return &(objList->DIST_THRESHOLD);
-
   }
 
-  int* COUNTER_THRES(ObjectList<Object>* objList) {
-    
+  int* COUNTER_THRES(ObjectList<Object>* objList) 
+  {
     return &(objList->COUNTER_THRES);
-
   }
 
   /* Variables */
@@ -175,8 +168,8 @@ class ObjectListTest : public testing::Test {
 
 };
 
-TEST_F(ObjectListTest, Constructor) {
-
+TEST_F(ObjectListTest, Constructor) 
+{
   EXPECT_EQ( 0u , objectList.size() );
   EXPECT_EQ( 0u , *id(&objectList) );
   EXPECT_EQ( 1u , *COUNTER_THRES(&objectList) );
@@ -186,11 +179,10 @@ TEST_F(ObjectListTest, Constructor) {
   EXPECT_EQ( 0u , *id(&objectList2) );
   EXPECT_EQ( 3 , *COUNTER_THRES(&objectList2) );
   EXPECT_NEAR( 10.669 , *DIST_THRESHOLD(&objectList2) , 0.0001 );
-
 }
 
-TEST_F(ObjectListTest, IsAnExistingObject) {
-  
+TEST_F(ObjectListTest, IsAnExistingObject) 
+{  
   fillList(&objectList);
   ObjectList<Object>::IteratorList iteratorList;
   ObjectList<Object>::IteratorList::const_iterator it;
@@ -266,12 +258,11 @@ TEST_F(ObjectListTest, IsAnExistingObject) {
   EXPECT_EQ( objectList.size() , iteratorList.size() );
 
   iteratorList.clear();
-
 }
 
 
-TEST_F(ObjectListTest, Add) {
-  
+TEST_F(ObjectListTest, Add) 
+{ 
   ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
   *(COUNTER_THRES(&objectList)) = 4;
   
@@ -319,6 +310,5 @@ TEST_F(ObjectListTest, Add) {
   EXPECT_EQ( object2, *it );
   EXPECT_EQ( 5u, object2->getCounter() );
   EXPECT_TRUE( object2->getLegit() );
-
 }
 
