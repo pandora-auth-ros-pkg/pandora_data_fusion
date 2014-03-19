@@ -12,14 +12,16 @@ class ObjectsTest : public ::testing::Test {
 
   ObjectsTest(){
     
-    Qr2Ptr.reset(new Qr);
-    Hazmat2Ptr.reset(new Hazmat);
-    Hazmat3Ptr.reset(new Hazmat);
+    QrPtr2.reset(new Qr);
+    HazmatPtr2.reset(new Hazmat);
+    HazmatPtr3.reset(new Hazmat);
+    HolePtr2.reset(new Hole);
+    TpaPtr2.reset(new Tpa);
   }
 
 
   virtual void SetUp() {
-//The distance Between the points is 5 
+//The distance Between the points is 5 (0,0,0,) (4,3,2)
 
     pose1.position.x=0;
     pose1.position.y=0;
@@ -28,40 +30,79 @@ class ObjectsTest : public ::testing::Test {
     pose2.position.y=3;
     pose2.position.z=0;
     Qr1.setPose(pose1);
-    Qr2Ptr->setPose(pose2);
+    QrPtr2->setPose(pose2);
     Hazmat1.setPose(pose1);
     Hazmat1.setPattern(1);
-    Hazmat2Ptr->setPose(pose2);
-    Hazmat2Ptr->setPattern(1);
-    Hazmat3Ptr->setPose(pose2);
-    Hazmat3Ptr->setPattern(0);
+    HazmatPtr2->setPose(pose2);
+    HazmatPtr2->setPattern(1);
+    HazmatPtr3->setPose(pose2);
+    HazmatPtr3->setPattern(0);
+    Hole1.setPose(pose1);
+    HolePtr2->setPose(pose2);
+    Tpa1.setPose(pose1);
+    TpaPtr2->setPose(pose2);
+    
   }
  /* Variables */
   geometry_msgs::Pose pose1;
   geometry_msgs::Pose pose2;
+  Object Object1;
   Qr Qr1;
-  QrPtr Qr2Ptr;
+  QrPtr QrPtr2;
   Hazmat Hazmat1;
-  HazmatPtr Hazmat2Ptr;
-  HazmatPtr Hazmat3Ptr;
+  HazmatPtr HazmatPtr2;
+  HazmatPtr HazmatPtr3;
+  Hole Hole1;
+  HolePtr HolePtr2;
+  Tpa Tpa1;
+  TpaPtr TpaPtr2;
 };
 
+TEST_F(ObjectsTest, Construstors)
+  {
+    EXPECT_EQ(0,Object1.getCounter());
+    EXPECT_FALSE(Object1.getLegit());
+    EXPECT_STREQ("qr", Qr1.getType().c_str());    
+    EXPECT_STREQ("hazmat", Hazmat1.getType().c_str());
+    EXPECT_STREQ("hole", Hole1.getType().c_str());
+    EXPECT_STREQ("tpa", Tpa1.getType().c_str());
+  
+  }
 
 // Checks  if isSameObject() behaves correctly for all possible inputs(Qr) 
-TEST_F(ObjectsTest, IsSameQr) {
-  
-  
-  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(Qr2Ptr) , 4));
-  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(Qr2Ptr) , -4));
-  EXPECT_TRUE(Qr1.isSameObject( ObjectConstPtr(Qr2Ptr) , 6));
-    }
+TEST_F(ObjectsTest, IsSameQr)
+  {
+  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2) , 4));
+  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2) , -8));
+  EXPECT_TRUE(Qr1.isSameObject( ObjectConstPtr(QrPtr2) , 6));
+  }
          
 // Checks  if isSameObject() behaves correctly for all possible inputs(Hazmat)     
-TEST_F(ObjectsTest, IsSameHazmat) {
-  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(Hazmat2Ptr) , 4));
-  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(Hazmat2Ptr) , -4));
-  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(Hazmat3Ptr) , 6));  
-  EXPECT_TRUE(Hazmat1.isSameObject( ObjectConstPtr(Hazmat2Ptr) ,6));
+TEST_F(ObjectsTest, IsSameHazmat)
+  {
+  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2) , 4));
+  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2) , -4));
+  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr3) , 6));  
+  EXPECT_TRUE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2) ,6));
+  }
+    
+            
+// Checks  if isSameObject() behaves correctly for all possible inputs(Hole)     
+TEST_F(ObjectsTest, IsSameHole) 
+  {
+  
+  EXPECT_FALSE(Hole1.isSameObject( ObjectConstPtr(HolePtr2) , 4));
+  EXPECT_FALSE(Hole1.isSameObject( ObjectConstPtr(HolePtr2) , -4));
+  EXPECT_TRUE(Hole1.isSameObject( ObjectConstPtr(HolePtr2) , 6));
+  }
+    
+            
+// Checks  if isSameObject() behaves correctly for all possible inputs(Tpa)     
+TEST_F(ObjectsTest, isSameTpa) {
+  
+  EXPECT_FALSE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2) , 4));
+  EXPECT_FALSE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2) , -4));
+  EXPECT_TRUE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2) , 6));
     }
 }  // namespace
 

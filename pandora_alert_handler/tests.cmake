@@ -79,24 +79,6 @@ target_link_libraries(objects_test
   hole
   ) 
 
-catkin_add_gtest(qr_test test/unit/qr_test.cpp)
-target_link_libraries(qr_test 
-  ${catkin_LIBRARIES} 
-  objects 
-  utils 
-  qr 
-  gtest_main
-  ) 
-
-catkin_add_gtest(hazmat_test test/unit/hazmat_test.cpp)
-target_link_libraries(hazmat_test 
-  ${catkin_LIBRARIES} 
-  objects 
-  utils  
-  hazmat 
-  gtest_main
-  )
-
 ########## Functional Tests #########
 
 add_rostest(test/functional/alert_handler_test.launch)

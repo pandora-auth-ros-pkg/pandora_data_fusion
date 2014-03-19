@@ -1,4 +1,4 @@
-// "Copyright [year] <Copyright Owner>"
+// "Copyright [year] <Copyright Owner>" 
 
 #include "alert_handler/victim.h"
 

@@ -59,15 +59,15 @@ class ObjectFactoryTest : public ::testing::Test
    
     Qr1.yaw = -pi/6;
     Qr1.pitch =0;
-    Qr1.QRcontent = "Danger"; 
+    Qr1.QRcontent = "I kota ekane to Augo i to augo tin kota?"; 
     QrVect1.qrAlerts.push_back(Qr1); 
     Qr2.yaw =-pi/3;
     Qr2.pitch = 0; 
-    Qr2.QRcontent ="Ultra Danger"; 
+    Qr2.QRcontent ="Poios einai O Kalampokas kai gt Zei?"; 
     QrVect1.qrAlerts.push_back(Qr2);
     Qr3.QRcontent = pi/3; 
     Qr3.pitch = pi/6*(0.1);
-    Qr3.QRcontent ="The victim is here";
+    Qr3.QRcontent ="The victim is  not here";
     QrVect1.qrAlerts.push_back(Qr3);
   }
  
