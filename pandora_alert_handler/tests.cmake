@@ -69,15 +69,7 @@ target_link_libraries(victim_test
 ########## ObjectsTest ###########       
 
 catkin_add_gtest(objects_test test/unit/objects_test.cpp)
-target_link_libraries(objects_test 
-  ${catkin_LIBRARIES} 
-  objects 
-  utils 
-  tpa 
-  qr 
-  hazmat
-  hole
-  ) 
+target_link_libraries(objects_test ${catkin_LIBRARIES} objects  ) 
 
 ########## Functional Tests #########
 
@@ -91,7 +83,7 @@ FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS
      RELATIVE ${PROJECT_SOURCE_DIR} 
             #include/alert_handler/*.h 
             #src/*.cpp 
-            test/unit/*.cpp
+            test/unit/objects_test.cpp
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 

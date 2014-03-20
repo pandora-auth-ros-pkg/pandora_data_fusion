@@ -1,17 +1,18 @@
+/*"Copyright [2014] <Chamzas Konstantinos>"*/ 
+
 #include "alert_handler/objects.h"
 #include "gtest/gtest.h"
 
 
 
-namespace {
  
 
-class ObjectsTest : public ::testing::Test {
- 
-  protected:
+class ObjectsTest : public ::testing::Test 
+{
+protected:
 
-  ObjectsTest(){
-    
+  ObjectsTest()
+  {
     QrPtr2.reset(new Qr);
     HazmatPtr2.reset(new Hazmat);
     HazmatPtr3.reset(new Hazmat);
@@ -19,16 +20,18 @@ class ObjectsTest : public ::testing::Test {
     TpaPtr2.reset(new Tpa);
   }
 
-
-  virtual void SetUp() {
-//The distance Between the points is 5 (0,0,0,) (4,3,2)
-
-    pose1.position.x=0;
-    pose1.position.y=0;
-    pose1.position.z=0;
-    pose2.position.x=4;
-    pose2.position.y=3;
-    pose2.position.z=0;
+// Seting up all the differnet Objects that will be used for our test cases
+//The distance Between the points (0,0,0,) (4,3,2) is 5 
+  
+  virtual void SetUp() 
+  {
+     
+    pose1.position.x = 0;
+    pose1.position.y = 0;
+    pose1.position.z = 0;
+    pose2.position.x = 4;
+    pose2.position.y = 3;
+    pose2.position.z = 0;
     Qr1.setPose(pose1);
     QrPtr2->setPose(pose2);
     Hazmat1.setPose(pose1);
@@ -41,9 +44,10 @@ class ObjectsTest : public ::testing::Test {
     HolePtr2->setPose(pose2);
     Tpa1.setPose(pose1);
     TpaPtr2->setPose(pose2);
-    
   }
- /* Variables */
+  
+  /* Variables */
+
   geometry_msgs::Pose pose1;
   geometry_msgs::Pose pose2;
   Object Object1;
@@ -60,56 +64,55 @@ class ObjectsTest : public ::testing::Test {
 
 TEST_F(ObjectsTest, Construstors)
   {
-    EXPECT_EQ(0,Object1.getCounter());
-    EXPECT_FALSE(Object1.getLegit());
-    EXPECT_STREQ("qr", Qr1.getType().c_str());    
-    EXPECT_STREQ("hazmat", Hazmat1.getType().c_str());
-    EXPECT_STREQ("hole", Hole1.getType().c_str());
-    EXPECT_STREQ("tpa", Tpa1.getType().c_str());
-  
+  EXPECT_EQ(0, Object1.getCounter());
+  EXPECT_FALSE(Object1.getLegit());
+  EXPECT_STREQ("qr", Qr1.getType().c_str());    
+  EXPECT_STREQ("hazmat", Hazmat1.getType().c_str());
+  EXPECT_STREQ("hole", Hole1.getType().c_str());
+  EXPECT_STREQ("tpa", Tpa1.getType().c_str());
   }
 
-// Checks  if isSameObject() behaves correctly for all possible inputs(Qr) 
+// Checks  if isSameObject() behaves correctly for all possible inputs(Qr)
+ 
 TEST_F(ObjectsTest, IsSameQr)
   {
-  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2) , 4));
-  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2) , -8));
-  EXPECT_TRUE(Qr1.isSameObject( ObjectConstPtr(QrPtr2) , 6));
+  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2), 4));
+  EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2), -8));
+  EXPECT_TRUE(Qr1.isSameObject( ObjectConstPtr(QrPtr2), 6));
   }
          
-// Checks  if isSameObject() behaves correctly for all possible inputs(Hazmat)     
+// Checks  if isSameObject() behaves correctly for all possible inputs(Hazmat)
+     
 TEST_F(ObjectsTest, IsSameHazmat)
   {
-  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2) , 4));
-  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2) , -4));
-  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr3) , 6));  
-  EXPECT_TRUE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2) ,6));
+  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2), 4));
+  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2), -8));
+  EXPECT_FALSE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr3), 6));  
+  EXPECT_TRUE(Hazmat1.isSameObject( ObjectConstPtr(HazmatPtr2), 6));
   }
-    
-            
-// Checks  if isSameObject() behaves correctly for all possible inputs(Hole)     
+  
+// Checks  if isSameObject() behaves correctly for all possible inputs(Hole)
+     
 TEST_F(ObjectsTest, IsSameHole) 
   {
-  
-  EXPECT_FALSE(Hole1.isSameObject( ObjectConstPtr(HolePtr2) , 4));
-  EXPECT_FALSE(Hole1.isSameObject( ObjectConstPtr(HolePtr2) , -4));
-  EXPECT_TRUE(Hole1.isSameObject( ObjectConstPtr(HolePtr2) , 6));
+  EXPECT_FALSE(Hole1.isSameObject( ObjectConstPtr(HolePtr2), 4));
+  EXPECT_FALSE(Hole1.isSameObject( ObjectConstPtr(HolePtr2), -8));
+  EXPECT_TRUE(Hole1.isSameObject( ObjectConstPtr(HolePtr2), 6));
   }
-    
-            
-// Checks  if isSameObject() behaves correctly for all possible inputs(Tpa)     
-TEST_F(ObjectsTest, isSameTpa) {
-  
-  EXPECT_FALSE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2) , 4));
-  EXPECT_FALSE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2) , -4));
-  EXPECT_TRUE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2) , 6));
-    }
-}  // namespace
+
+// Checks  if isSameObject() behaves correctly for all possible inputs(Tpa)
+     
+TEST_F(ObjectsTest, isSameTpa) 
+  {
+  EXPECT_FALSE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2), 4));
+  EXPECT_FALSE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2), -8));
+  EXPECT_TRUE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2), 6));
+  }
 
 
-int main(int argc, char **argv) {
-  
+int main(int argc, char **argv)
+  {
   ros::Time::init();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
-}
+  }
