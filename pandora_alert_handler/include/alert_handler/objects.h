@@ -225,6 +225,7 @@ class Object {
   }
   
  protected:
+ 
   //!< The object's id
   int id_;
   //!< Counter for counting how many times this object is found

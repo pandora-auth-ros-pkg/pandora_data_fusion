@@ -47,15 +47,28 @@ target_link_libraries(object_factory_test
   gtest_main
   ) 
 
+<<<<<<< HEAD
 ########## PoseFinderTest ###########   
+=======
+${catkin_LIBRARIES} 
+object_factory
+map_loader
+gtest_main
+) 
+>>>>>>> Object_Factory_Test Completed and Rolnit compatible
 
 catkin_add_gtest(pose_finder_test test/unit/pose_finder_test.cpp)
+<<<<<<< HEAD
 target_link_libraries(pose_finder_test 
   ${catkin_LIBRARIES}
   pose_finder 
   map_loader 
   gtest_main
   )
+=======
+target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
+    pose_finder map_loader  gtest_main)
+>>>>>>> Object_Factory_Test Completed and Rolnit compatible
 
 ######### VictimTest #################
 
@@ -83,7 +96,7 @@ FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS
      RELATIVE ${PROJECT_SOURCE_DIR} 
             #include/alert_handler/*.h 
             #src/*.cpp 
-            test/unit/objects_test.cpp
+            test/unit/object_factory_test.cpp
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 

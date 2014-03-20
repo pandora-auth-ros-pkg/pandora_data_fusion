@@ -1,4 +1,4 @@
-/*"Copyright [2014] <Chamzas Konstantinos>"*/ 
+/*Copyright [2014] <Chamzas Konstantinos>*/ 
 
 #include "alert_handler/objects.h"
 #include "gtest/gtest.h"
@@ -73,7 +73,7 @@ TEST_F(ObjectsTest, Construstors)
   }
 
 // Checks  if isSameObject() behaves correctly for all possible inputs(Qr)
- 
+
 TEST_F(ObjectsTest, IsSameQr)
   {
   EXPECT_FALSE(Qr1.isSameObject( ObjectConstPtr(QrPtr2), 4));

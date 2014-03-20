@@ -33,7 +33,7 @@ class TfListener {
                     const std::string& source_frame, const ros::Time& time,
                     tf::StampedTransform& transform) const
                     {
-                      transform.setOrigin(tf::Vector3(0.7,0.7,0.1));
+                      transform.setOrigin(tf::Vector3(5,5,0.3));
                       transform.setRotation(tf::createQuaternionFromRPY(0,0,0));
                       }
 };
