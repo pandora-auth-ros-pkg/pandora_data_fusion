@@ -1,7 +1,6 @@
 set(CMAKE_BUILD_TYPE Debug)
 
 find_package(catkin REQUIRED COMPONENTS
-          rospy
           rostest
           roslib 
           map_server

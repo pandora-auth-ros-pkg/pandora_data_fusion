@@ -12,6 +12,6 @@
     command="load" ns="data_fusion/alert_handler"/>
 
   <test test-name="AlertHandlerStatic" pkg="pandora_alert_handler"
-    type="test/functional/alert_handler_static_test.py"/>
+    type="alert_handler_static_test.py"/>
 
 </launch>

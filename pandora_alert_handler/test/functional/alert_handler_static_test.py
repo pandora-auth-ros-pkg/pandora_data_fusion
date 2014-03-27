@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright <alert_handler_static_test.py>
 
 PKG = 'pandora_alert_handler'
