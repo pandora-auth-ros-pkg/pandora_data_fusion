@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
           actionlib 
           state_manager
           dynamic_reconfigure
-          pandora_navigation_common
           roslint
           data_fusion_communications 
           vision_communications 
@@ -29,17 +28,25 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
+          
+##################### utils ############################################
+
+add_library(utils 
+        src/utils.cpp)
+target_link_libraries(utils 
+          ${catkin_LIBRARIES}
+          )
+add_dependencies(utils 
+  data_fusion_communications_gencpp
+  )
+
 ###################### objects #########################################
+
 add_library(objects 
         src/objects.cpp)
 target_link_libraries(objects
-          utils
-          hazmat
-          qr
-          tpa
-          hole
-          qr
           ${catkin_LIBRARIES}
+          utils
           )
 add_dependencies(objects 
   data_fusion_communications_gencpp
@@ -49,6 +56,7 @@ add_library(hazmat
         src/hazmat.cpp)
 target_link_libraries(hazmat
           ${catkin_LIBRARIES}
+          objects
           )
 add_dependencies(hazmat
   data_fusion_communications_gencpp
@@ -58,6 +66,7 @@ add_library(hole
         src/hole.cpp)
 target_link_libraries(hole
           ${catkin_LIBRARIES}
+          objects
           )
 add_dependencies(hole
   data_fusion_communications_gencpp
@@ -67,6 +76,7 @@ add_library(qr
         src/qr.cpp)
 target_link_libraries(qr 
           ${catkin_LIBRARIES}
+          objects
           )
 add_dependencies(qr 
   data_fusion_communications_gencpp
@@ -76,6 +86,7 @@ add_library(tpa
         src/tpa.cpp)
 target_link_libraries(tpa 
           ${catkin_LIBRARIES}
+          objects
           )
 add_dependencies(tpa
   data_fusion_communications_gencpp
@@ -83,68 +94,29 @@ add_dependencies(tpa
 
 add_library(victim 
         src/victim.cpp)
-
 target_link_libraries(victim
+          ${catkin_LIBRARIES}
           objects 
           )
-          
-          
 add_dependencies(victim 
   data_fusion_communications_gencpp
   ) 
 
-###################### victim_list #########################################
+###################### victim_list #####################################
+
 add_library(victim_list 
         src/victim_list.cpp)
-target_link_libraries(victim_list 
-           objects
-           utils
-           victim
+target_link_libraries(victim_list
           ${catkin_LIBRARIES}
+          utils
+          victim
           )
 add_dependencies(victim_list 
   data_fusion_communications_gencpp
   )           
-          
-##################### utils ############################################
-add_library(utils 
-        src/utils.cpp)
-target_link_libraries(utils 
-          ${catkin_LIBRARIES}
-          )
-add_dependencies(utils 
-  data_fusion_communications_gencpp
-  )  
 
+#################### ros_tf_listener ####################################
 
-#################### object_factory ########################################
-add_library(object_factory 
-        src/object_factory.cpp)
-target_link_libraries(object_factory 
-          pose_finder
-          objects
-          utils
-          ${catkin_LIBRARIES}
-          )
-add_dependencies(object_factory 
-  data_fusion_communications_gencpp
-  vision_communications_gencpp
-  ) 
-
-#################### pose_finder ########################################
-add_library(pose_finder 
-        src/pose_finder.cpp)
-target_link_libraries(pose_finder 
-          ros_tf_listener
-          objects
-          utils
-          ${catkin_LIBRARIES}
-          )
-add_dependencies(pose_finder 
-  data_fusion_communications_gencpp
-  ) 
-
-#################### ros_tf_listener ########################################
 add_library(ros_tf_listener 
         src/ros_tf_listener.cpp)
 target_link_libraries(ros_tf_listener 
@@ -153,28 +125,66 @@ target_link_libraries(ros_tf_listener
 add_dependencies(ros_tf_listener
   data_fusion_communications_gencpp
   ) 
+
+#################### pose_finder ########################################
+
+add_library(pose_finder 
+        src/pose_finder.cpp)
+target_link_libraries(pose_finder
+          ${catkin_LIBRARIES}
+          ros_tf_listener
+          objects
+          utils
+          )
+add_dependencies(pose_finder 
+  data_fusion_communications_gencpp
+  ) 
+
+#################### object_factory ###################################
+
+add_library(object_factory 
+        src/object_factory.cpp)
+target_link_libraries(object_factory
+          ${catkin_LIBRARIES}
+          pose_finder
+          hazmat
+          hole
+          qr
+          tpa
+          utils
+          )
+add_dependencies(object_factory 
+  data_fusion_communications_gencpp
+  vision_communications_gencpp
+  ) 
          
-#################### victim_clusterer ########################################
+#################### victim_clusterer ###################################
+
 add_library(victim_clusterer 
         src/victim_clusterer.cpp)
 target_link_libraries(victim_clusterer 
           ${catkin_LIBRARIES}
+          victim
           )
 add_dependencies(victim_clusterer 
   data_fusion_communications_gencpp
   )           
 
-#################### victim_handler ########################################
+#################### victim_handler #####################################
+
 add_library(victim_handler 
         src/victim_handler.cpp)
-target_link_libraries(victim_handler 
+target_link_libraries(victim_handler
           ${catkin_LIBRARIES}
+          victim
+          victim_clusterer
           )
 add_dependencies(victim_handler 
   data_fusion_communications_gencpp
   ) 
           
-##################### object_handler ############################################
+##################### object_handler ####################################
+
 add_library(object_handler 
         src/object_handler.cpp)
 target_link_libraries(object_handler 
@@ -184,7 +194,8 @@ add_dependencies(object_handler
   data_fusion_communications_gencpp
   ) 
 
-##################### alert_handler ############################################
+##################### alert_handler #####################################
+
 add_library(alert_handler 
         src/alert_handler.cpp)
 target_link_libraries(alert_handler 
@@ -197,7 +208,8 @@ add_dependencies(alert_handler
   state_manager_communications_gencpp
   ) 
 
-##################### alert_handler_node ############################################
+##################### alert_handler_node ###############################
+
 add_executable(alert_handler_node 
         src/main.cpp )
 target_link_libraries(alert_handler_node 
@@ -225,5 +237,9 @@ add_dependencies(alert_handler_node
   state_manager_communications_gencpp
   ) 
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/tests.cmake)
+##### Testing ####
+
+if(CATKIN_ENABLE_TESTING)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/tests.cmake)
+endif()
 
