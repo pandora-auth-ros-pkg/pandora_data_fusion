@@ -54,6 +54,8 @@ class VictimClusterer {
 
  public:
  
+ 
+  friend class VictimClustererTest;
   /**
   @brief Constructor
   **/
