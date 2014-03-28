@@ -55,6 +55,8 @@
 class VictimList : public ObjectList<Victim> {
   
  public:
+ 
+ friend class VictimListTest;
   
   /**
   @brief Constructor
