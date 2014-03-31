@@ -9,7 +9,7 @@
 #include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/objects.h"
-#include "alert_handler/const_iterator_const_ref.h"
+//#include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
 
 #include <boost/iterator/iterator_adaptor.hpp>
@@ -23,10 +23,11 @@ class ObjectList {
   typedef boost::shared_ptr< ObjectType > Ptr;
   typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
-  typedef typename List::iterator iterator;
+  typedef typename List::iterator iterator;  
   typedef typename List::const_iterator const_iterator_vers_ref;
-  typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
-            ConstPtr> const_iterator;
+  typedef typename List::const_iterator const_iterator;
+  //typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
+            //ConstPtr> const_iterator;
   typedef std::list<iterator> IteratorList;
 
  public:
@@ -104,13 +105,13 @@ ObjectList<ObjectType>::ObjectList(int counterThreshold,
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator
   ObjectList<ObjectType>::begin() const {
-    return const_iterator(objects_.begin());
+    return objects_.begin();
 }
 
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator
   ObjectList<ObjectType>::end() const {
-    return const_iterator(objects_.end());
+    return objects_.end();
 }
 
 template <class ObjectType>
