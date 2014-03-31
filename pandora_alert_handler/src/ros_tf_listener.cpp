@@ -29,7 +29,8 @@ bool RosTfListener::waitForTransform(const std::string& target_frame,
   }
   return flag;
 
-}											
+}
+
 void RosTfListener::lookupTransform(const std::string& target_frame,
               const std::string& source_frame, const ros::Time& time,
               tf::StampedTransform& transform) const {
