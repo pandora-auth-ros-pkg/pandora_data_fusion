@@ -4,12 +4,12 @@
     args="$(find pandora_alert_handler)/test/test_maps/map1.yaml"/>
   
   <node pkg="tf" type="static_transform_publisher" 
-    name="world2headCamera" args="1 1 1 0 0 0  world headCamera 100" />
+    name="world2headCamera" args="1 1 1 0 0 0 /world headCamera 100" />
+
+  <node pkg="tf" type="static_transform_publisher" 
+    name="world2map" args="0 0 0 0 0 0 /world /map 100" />
 
   <include file="$(find pandora_data_fusion_launchers)/launch/data_fusion_stand_alone.launch" /> 
-  
-  <rosparam file="$(find pandora_alert_handler)/config/alert_handler/alert_handler_test_params.yaml" 
-    command="load" ns="data_fusion/alert_handler"/>
 
   <node name="data_fusion_object_visualization" type="data_fusion_object_visualization"
     pkg="pandora_visualization" respawn="true" ns="data_fusion" />
