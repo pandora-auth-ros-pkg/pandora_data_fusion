@@ -16,7 +16,7 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
 
   std::string param;
 
-  if (ros::NodeHandle().getParam("published_topic_names/qr_notification", param)) {
+  if (ros::param::get("published_topic_names/qr_notification", param)) {
     qrPublisher_ = ros::NodeHandle().advertise<data_fusion_communications::QrNotificationMsg>(param, 10);
   } else {
     ROS_FATAL("qr_notification topic name param not found");

@@ -3,7 +3,7 @@
 #include "alert_handler/alert_handler.h"
 #include <string> 
 
-AlertHandler::AlertHandler() {
+AlertHandler::AlertHandler(): nh_("/data_fusion/alert_handler") {
 
   map_.reset( new Map );
 
@@ -191,7 +191,8 @@ void AlertHandler::holeDirectionAlertCallback(
 void AlertHandler::hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg) {
 
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "HAZMAT ALERT ARRIVED!");  
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "HAZMAT ALERT ARRIVED!");
+
   HazmatPtrVectorPtr hazmatsVectorPtr;
   try {
     hazmatsVectorPtr = objectFactory_->makeHazmats(msg);
@@ -325,9 +326,10 @@ bool AlertHandler::getObjectsServiceCb(
     data_fusion_communications::GetObjectsSrv::Request& rq,
       data_fusion_communications::GetObjectsSrv::Response &rs) {
 
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "ORDER ARRIVED!");
   holes_->getObjectsPosesStamped(&rs.holes);
-  qrs_->getObjectsPosesStamped(&rs.hazmats);
-  hazmats_->getObjectsPosesStamped(&rs.qrs);
+  qrs_->getObjectsPosesStamped(&rs.qrs);
+  hazmats_->getObjectsPosesStamped(&rs.hazmats);
   tpas_->getObjectsPosesStamped(&rs.tpas);
 
   //~ victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited
