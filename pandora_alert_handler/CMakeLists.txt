@@ -11,8 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
           dynamic_reconfigure
           roslint
           data_fusion_communications 
-          vision_communications 
+          vision_communications
           )
+
+find_package(PkgConfig)
+pkg_check_modules(BFL REQUIRED orocos-bfl)
 
 generate_dynamic_reconfigure_options(
   config/alert_handler/alert_handler_dynamic.cfg
@@ -20,13 +23,16 @@ generate_dynamic_reconfigure_options(
   )
 
 catkin_package(
-    DEPENDS 
-    CATKIN-DEPENDS 
+    DEPENDS
+      orocos-bfl
+    CATKIN_DEPENDS 
     INCLUDE_DIRS 
     LIBRARIES 
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${BFL_INCLUDE_DIRS})
+
+link_directories(${BFL_LIBRARY_DIRS})
 
           
 ##################### utils ############################################
@@ -47,6 +53,7 @@ add_library(objects
 target_link_libraries(objects
           ${catkin_LIBRARIES}
           utils
+          ${BFL_LIBRARIES}
           )
 add_dependencies(objects 
   data_fusion_communications_gencpp

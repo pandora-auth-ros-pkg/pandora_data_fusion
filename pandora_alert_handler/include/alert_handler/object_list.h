@@ -7,6 +7,12 @@
 #include <vector>
 #include <boost/iterator/iterator_adaptor.hpp>
 
+#include <bfl/filter/extendedkalmanfilter.h>
+#include <bfl/model/linearanalyticsystemmodel_gaussianuncertainty.h>
+#include <bfl/model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
+#include <bfl/pdf/analyticconditionalgaussian.h>
+#include <bfl/pdf/linearanalyticconditionalgaussian.h>
+
 #include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/objects.h"
@@ -99,7 +105,7 @@ typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::ObjectList(int counterThreshold,
-    float distanceThreshold)
+    float distanceThreshold) 
 {
   id_ = 0;
   COUNTER_THRES = counterThreshold;
@@ -130,9 +136,87 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
     updateObject(object, iteratorList);
     return false;
   }
+  
+  // System Model Initialization
+  object->A(1,1) = 1.0;
+  object->A(1,2) = 0.0;
+  object->A(1,3) = 0.0;
+  object->A(2,1) = 0.0;
+  object->A(2,2) = 1.0;
+  object->A(2,3) = 0.0;
+  object->A(3,1) = 0.0;
+  object->A(3,2) = 0.0;
+  object->A(3,3) = 1.0;
+  object->B(1,1) = 0.0;
+  object->B(1,2) = 0.0;
+  object->B(1,3) = 0.0;
+  object->B(2,1) = 0.0;
+  object->B(2,2) = 0.0;
+  object->B(2,3) = 0.0;
+  object->B(3,1) = 0.0;
+  object->B(3,2) = 0.0;
+  object->B(3,3) = 0.0;
+
+  object->AB[0] = object->A;
+  object->AB[1] = object->B;
+  
+  object->sysNoise_Mu(1) = 0.0;
+  object->sysNoise_Mu(2) = 0.0;
+  object->sysNoise_Mu(2) = 0.0;
+
+  object->sysNoise_Cov = 0.0;
+  object->sysNoise_Cov(1,1) = pow(0.01,2);
+  object->sysNoise_Cov(1,2) = 0.0;
+  object->sysNoise_Cov(1,3) = 0.0;
+  object->sysNoise_Cov(2,1) = 0.0;
+  object->sysNoise_Cov(2,2) = pow(0.01,2);
+  object->sysNoise_Cov(2,3) = 0.0;
+  object->sysNoise_Cov(3,1) = 0.0;
+  object->sysNoise_Cov(3,2) = 0.0;
+  object->sysNoise_Cov(3,3) = pow(0.01,2);
+
+  BFL::Gaussian system_Uncertainty(object->sysNoise_Mu, object->sysNoise_Cov);
+
+  BFL::LinearAnalyticConditionalGaussian sys_pdf(object->AB, system_Uncertainty);
+  object->sys_model = new BFL::LinearAnalyticSystemModelGaussianUncertainty(&sys_pdf);
+  
+  // Measurement Model Initialization
+  object->H(1,1) = 1;
+  object->H(1,2) = 1;
+  object->H(1,3) = 1;
+  
+  object->measNoise_Mu(1) = 0;
+
+  object->measNoise_Cov(1,1) = pow(0.05,2);
+  BFL::Gaussian measurement_Uncertainty(object->measNoise_Mu, object->measNoise_Cov);
+
+  BFL::LinearAnalyticConditionalGaussian meas_pdf(object->H, measurement_Uncertainty);
+  object->meas_model = new BFL::LinearAnalyticMeasurementModelGaussianUncertainty(&meas_pdf);
+  
+  // Prior
+  object->prior_Mu(1) = 0;
+  object->prior_Mu(2) = 0;
+  object->prior_Mu(3) = 0;
+  object->prior_Cov(1,1) = pow(0.2,2);
+  object->prior_Cov(1,2) = 0.0;
+  object->prior_Cov(1,3) = 0.0;
+  object->prior_Cov(2,1) = 0.0;
+  object->prior_Cov(2,2) = pow(0.2,2);
+  object->prior_Cov(2,3) = 0.0;
+  object->prior_Cov(3,1) = 0.0;
+  object->prior_Cov(3,2) = 0.0;
+  object->prior_Cov(3,3) = pow(0.2,2);
+  BFL::Gaussian prior(object->prior_Mu, object->prior_Cov);
+  
+  object->filter = new BFL::ExtendedKalmanFilter(&prior);
+  
+  // Input
+  object->input(1) = 0.0;
+  object->input(2) = 0.0;
+  object->input(3) = 0.0;
 
   object->setId(id_++);
-  object->incrementCounter();
+  //object->incrementCounter();
   objects_.push_back(object);
   return true;
 }
@@ -264,34 +348,49 @@ bool ObjectList<ObjectType>::isAnExistingObject(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::updateObject(
-    const Ptr& object,
-      const IteratorList& iteratorList)
-{
-  int totalCounter = 0;
+    const Ptr& object, const IteratorList& iteratorList) {
+  
+  /*int totalCounter = 0;
   int maxCounter = (*iteratorList.front())->getCounter();
-  int maxId = (*iteratorList.front())->getId();
+  int maxId = (*iteratorList.front())->getId();*/
 
   for ( typename IteratorList::const_iterator it = iteratorList.begin();
          it != iteratorList.end() ; ++it)
   {
     // find total counter value, set new object's id as the id of the
     // object with the highest counter as of now.
-    totalCounter += (*(*it))->getCounter();
-    if ((*(*it))->getCounter() > maxCounter)
-    {
+    /*totalCounter += (*(*it))->getCounter();
+    if ((*(*it))->getCounter() > maxCounter) {
       maxCounter = (*(*it))->getCounter();
       maxId = (*(*it))->getId();
-    }
+    }*/
+    
+    Point objectPosition = object->getPose().position;
+    
+    MatrixWrapper::ColumnVector measurementVector;
+    measurementVector(1) = objectPosition.x;
+    measurementVector(2) = objectPosition.y;
+    measurementVector(3) = objectPosition.z;
+    
+    (*(*it))->filter->Update(object->sys_model, object->input, object->meas_model, measurementVector);
+    
+    //Debug info
+    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior = object->filter->PostGet();
+    std::cout << "Mesurement = (" << measurementVector(1) << ", " <<
+      measurementVector(2) << ", "<< measurementVector(3) << ")" << std::endl;
+    std::cout << "Expected = " << posterior->ExpectedValueGet() << std::endl;
+    std::cout << "Covariance = " << posterior->CovarianceGet() << std::endl;
+
     removeElementAt(*it);
   }
 
-  object->setId(maxId);
+  /*object->setId(maxId);
   object->setCounter(++totalCounter);
 
   if (object->getCounter() > COUNTER_THRES)
   {
     object->setLegit(true);
-  }
+  }*/
 
   objects_.push_back(object);
 }

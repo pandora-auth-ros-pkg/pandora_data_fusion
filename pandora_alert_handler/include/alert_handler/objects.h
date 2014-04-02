@@ -45,6 +45,12 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
+#include <bfl/filter/extendedkalmanfilter.h>
+#include <bfl/model/linearanalyticsystemmodel_gaussianuncertainty.h>
+#include <bfl/model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
+#include <bfl/pdf/analyticconditionalgaussian.h>
+#include <bfl/pdf/linearanalyticconditionalgaussian.h>
+
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 
@@ -260,6 +266,27 @@ class Object
   geometry_msgs::Pose pose_;
   //!< The reference frame for the pose. Should normally be "/world"
   std::string frame_id_;
+  
+  public:
+  //filter variables
+  MatrixWrapper::Matrix A;
+  MatrixWrapper::Matrix B;
+  std::vector<MatrixWrapper::Matrix> AB;
+  MatrixWrapper::ColumnVector sysNoise_Mu;
+  MatrixWrapper::SymmetricMatrix sysNoise_Cov;
+  
+  MatrixWrapper::Matrix H;
+  MatrixWrapper::ColumnVector measNoise_Mu;
+  MatrixWrapper::SymmetricMatrix measNoise_Cov;
+  
+  MatrixWrapper::ColumnVector prior_Mu;
+  MatrixWrapper::SymmetricMatrix prior_Cov;
+  
+  BFL::ExtendedKalmanFilter* filter;
+  BFL::LinearAnalyticSystemModelGaussianUncertainty* sys_model;
+  BFL::LinearAnalyticMeasurementModelGaussianUncertainty* meas_model;
+  
+  MatrixWrapper::ColumnVector input;
 
 };
 
@@ -281,6 +308,7 @@ typedef std::vector<ObjectConstPtrVector> ObjectConstPtrVectorVector;
 class Qr : public Object
 {
  public:
+
   typedef boost::shared_ptr<Qr> Ptr;
   typedef boost::shared_ptr<Qr const> ConstPtr;
 
@@ -317,10 +345,12 @@ class Qr : public Object
   }
  
  protected:
+
   //!< The qr's content
   std::string content_;
   //!< The time when this qr was first found
   ros::Time timeFound_;
+
 };
 
 typedef Qr::Ptr QrPtr;
@@ -335,6 +365,7 @@ typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
 class Hazmat : public Object
 {
  public:
+
   typedef boost::shared_ptr<Hazmat> Ptr;
   typedef boost::shared_ptr<Hazmat const> ConstPtr;
 
@@ -371,8 +402,10 @@ class Hazmat : public Object
   }
   
  protected:
+
   //!< The hazmat's pattern
   int pattern_;
+
 };
 
 typedef Hazmat::Ptr HazmatPtr;
@@ -387,6 +420,7 @@ typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
 class Hole : public Object
 {
  public:
+
   typedef boost::shared_ptr<Hole> Ptr;
   typedef boost::shared_ptr<Hole const> ConstPtr;
 
@@ -420,8 +454,10 @@ class Hole : public Object
   }
 
  protected:
+
   //!< The hole's holeId. Caution: Not to be confused with the Object id!
   unsigned int holeId_;
+
 };
 
 typedef Hole::Ptr HolePtr;
@@ -436,6 +472,7 @@ typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 class Tpa : public Object
 {
  public:
+
   typedef boost::shared_ptr<Tpa> Ptr;
   typedef boost::shared_ptr<Tpa const> ConstPtr;
 
@@ -449,6 +486,7 @@ class Tpa : public Object
   virtual geometry_msgs::PoseStamped getPoseStamped() const;
 
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
 };
 
 typedef Tpa::Ptr TpaPtr;
