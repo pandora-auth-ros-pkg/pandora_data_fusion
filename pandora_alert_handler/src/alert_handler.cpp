@@ -294,7 +294,7 @@ void AlertHandler::updateMap(const nav_msgs::OccupancyGridConstPtr& msg) {
 
   prevxMin = msg->info.origin.position.x / msg->info.resolution 
              + msg->info.width / 2;
-  prevyMin = (msg->info.origin.position.y) / msg->info.resolution 
+  prevyMin = msg->info.origin.position.y / msg->info.resolution 
              + msg->info.height / 2;
 
   *map_ = *msg;
@@ -326,7 +326,6 @@ bool AlertHandler::getObjectsServiceCb(
     data_fusion_communications::GetObjectsSrv::Request& rq,
       data_fusion_communications::GetObjectsSrv::Response &rs) {
 
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "ORDER ARRIVED!");
   holes_->getObjectsPosesStamped(&rs.holes);
   qrs_->getObjectsPosesStamped(&rs.qrs);
   hazmats_->getObjectsPosesStamped(&rs.hazmats);

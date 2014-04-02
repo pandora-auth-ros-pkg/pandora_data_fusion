@@ -185,7 +185,7 @@ TEST_F(PoseFinderTest, findAlertPoseTest)
   transform.setOrigin(origin);
   position.x = 5.76;
   position.y = 5.76;
-  position.z = 0.9205;
+  position.z = 0.9119;
   expected.position = position;
   orientation.z = 1;
   orientation.w = 0;
@@ -217,6 +217,8 @@ TEST_F(PoseFinderTest, positionOnWallTest)
   angle = 0;
   expected.x = 9.97;
   expected.y = 9;
+  ROS_INFO_STREAM_NAMED("pose_finder_test", "PositionOnWallTest 1: x = "
+      <<startPoint.x<<" y = "<<startPoint.y<<" angle = "<<angle);
   result = positionOnWall(startPoint, angle);
   EXPECT_NEAR( expected.x , result.x , 0.01 );
   EXPECT_NEAR( expected.y , result.y , 0.01 );
@@ -224,11 +226,25 @@ TEST_F(PoseFinderTest, positionOnWallTest)
   startPoint.x = 5;
   startPoint.y = 5;
   angle = 0.785398;
-  expected.x = 5.76;
-  expected.y = 5.76;
+  expected.x = 5.7495;
+  expected.y = 5.7495;
+  ROS_INFO_STREAM_NAMED("pose_finder_test", "PositionOnWallTest 2: x = "
+      <<startPoint.x<<" y = "<<startPoint.y<<" angle = "<<angle);
   result = positionOnWall(startPoint, angle);
   EXPECT_NEAR( expected.x , result.x , 0.01 );
   EXPECT_NEAR( expected.y , result.y , 0.01 );
+
+  startPoint.x = 1;
+  startPoint.y = 3;
+  angle = 0;
+  expected.x = 2.63;
+  expected.y = 3;
+  ROS_INFO_STREAM_NAMED("pose_finder_test", "PositionOnWallTest 3: x = "
+      <<startPoint.x<<" y = "<<startPoint.y<<" angle = "<<angle);
+  result = positionOnWall(startPoint, angle);
+  EXPECT_NEAR( expected.x , result.x , 0.01 );
+  EXPECT_NEAR( expected.y , result.y , 0.01 );
+
 }
 
 TEST_F(PoseFinderTest, calcHeightTest) 

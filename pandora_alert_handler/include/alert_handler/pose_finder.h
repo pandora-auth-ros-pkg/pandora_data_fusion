@@ -54,6 +54,9 @@ class PoseFinder {
 
  private:
 
+  //ros::Publisher testPub;
+  //ros::NodeHandle temp;
+
   const MapPtr& map_;
 
   TfListenerPtr listener_;
