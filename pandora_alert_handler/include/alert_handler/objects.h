@@ -249,6 +249,44 @@ class Object
     counter_++;
   }
   
+  /**
+  @brief Initialize filter for the current object
+  @return void
+  **/
+  void initializeFilter();
+  
+  /**
+  @brief Getter for member sysModel
+  @return BFL::LinearAnalyticSystemModelGaussianUncertainty* sysModel
+  **/
+  BFL::LinearAnalyticSystemModelGaussianUncertainty* getSysModel() {
+    return sysModel_;
+  }
+  
+  /**
+  @brief Getter for member measModel
+  @return BFL::LinearAnalyticMeasurementModelGaussianUncertainty* measModel
+  **/
+  BFL::LinearAnalyticMeasurementModelGaussianUncertainty* getMeasModel() {
+    return measModel_;
+  }
+  
+  /**
+  @brief Getter for member input
+  @return MatrixWrapper::ColumnVector input
+  **/
+  MatrixWrapper::ColumnVector getInput(){
+    return input_;
+  }
+  
+  /**
+  @brief Getter for member filter
+  @return BFL::ExtendedKalmanFilter* filter
+  **/
+  BFL::ExtendedKalmanFilter* getFilter() {
+    return filter_;
+  }
+  
  protected:
  
   //!< The object's id
@@ -267,24 +305,23 @@ class Object
   //!< The reference frame for the pose. Should normally be "/world"
   std::string frame_id_;
   
-  public:
-  //filter variables
-  MatrixWrapper::Matrix A;
-  MatrixWrapper::Matrix B;
-  std::vector<MatrixWrapper::Matrix> AB;
-  MatrixWrapper::ColumnVector sysNoise_Mu;
-  MatrixWrapper::SymmetricMatrix sysNoise_Cov;
   
-  MatrixWrapper::Matrix H;
-  MatrixWrapper::ColumnVector measNoise_Mu;
-  MatrixWrapper::SymmetricMatrix measNoise_Cov;
+  MatrixWrapper::Matrix matrixA_;
+  MatrixWrapper::Matrix matrixB_;
+  std::vector<MatrixWrapper::Matrix> matrixAB_;
+  MatrixWrapper::ColumnVector sysNoiseMu_;
+  MatrixWrapper::SymmetricMatrix sysNoiseCov_;
   
-  MatrixWrapper::ColumnVector prior_Mu;
-  MatrixWrapper::SymmetricMatrix prior_Cov;
+  MatrixWrapper::Matrix matrixH_;
+  MatrixWrapper::ColumnVector measNoiseMu_;
+  MatrixWrapper::SymmetricMatrix measNoiseCov_;
   
-  BFL::ExtendedKalmanFilter* filter;
-  BFL::LinearAnalyticSystemModelGaussianUncertainty* sys_model;
-  BFL::LinearAnalyticMeasurementModelGaussianUncertainty* meas_model;
+  MatrixWrapper::ColumnVector priorMu_;
+  MatrixWrapper::SymmetricMatrix priorCov_;
+  
+  BFL::ExtendedKalmanFilter* filter_;
+  BFL::LinearAnalyticSystemModelGaussianUncertainty* sysModel_;
+  BFL::LinearAnalyticMeasurementModelGaussianUncertainty* measModel_;
   
   MatrixWrapper::ColumnVector input;
 

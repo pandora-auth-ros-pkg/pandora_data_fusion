@@ -137,84 +137,8 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
     return false;
   }
   
-  // System Model Initialization
-  object->A(1,1) = 1.0;
-  object->A(1,2) = 0.0;
-  object->A(1,3) = 0.0;
-  object->A(2,1) = 0.0;
-  object->A(2,2) = 1.0;
-  object->A(2,3) = 0.0;
-  object->A(3,1) = 0.0;
-  object->A(3,2) = 0.0;
-  object->A(3,3) = 1.0;
-  object->B(1,1) = 0.0;
-  object->B(1,2) = 0.0;
-  object->B(1,3) = 0.0;
-  object->B(2,1) = 0.0;
-  object->B(2,2) = 0.0;
-  object->B(2,3) = 0.0;
-  object->B(3,1) = 0.0;
-  object->B(3,2) = 0.0;
-  object->B(3,3) = 0.0;
-
-  object->AB[0] = object->A;
-  object->AB[1] = object->B;
+  object->initializeFilter();
   
-  object->sysNoise_Mu(1) = 0.0;
-  object->sysNoise_Mu(2) = 0.0;
-  object->sysNoise_Mu(2) = 0.0;
-
-  object->sysNoise_Cov = 0.0;
-  object->sysNoise_Cov(1,1) = pow(0.01,2);
-  object->sysNoise_Cov(1,2) = 0.0;
-  object->sysNoise_Cov(1,3) = 0.0;
-  object->sysNoise_Cov(2,1) = 0.0;
-  object->sysNoise_Cov(2,2) = pow(0.01,2);
-  object->sysNoise_Cov(2,3) = 0.0;
-  object->sysNoise_Cov(3,1) = 0.0;
-  object->sysNoise_Cov(3,2) = 0.0;
-  object->sysNoise_Cov(3,3) = pow(0.01,2);
-
-  BFL::Gaussian system_Uncertainty(object->sysNoise_Mu, object->sysNoise_Cov);
-
-  BFL::LinearAnalyticConditionalGaussian sys_pdf(object->AB, system_Uncertainty);
-  object->sys_model = new BFL::LinearAnalyticSystemModelGaussianUncertainty(&sys_pdf);
-  
-  // Measurement Model Initialization
-  object->H(1,1) = 1;
-  object->H(1,2) = 1;
-  object->H(1,3) = 1;
-  
-  object->measNoise_Mu(1) = 0;
-
-  object->measNoise_Cov(1,1) = pow(0.05,2);
-  BFL::Gaussian measurement_Uncertainty(object->measNoise_Mu, object->measNoise_Cov);
-
-  BFL::LinearAnalyticConditionalGaussian meas_pdf(object->H, measurement_Uncertainty);
-  object->meas_model = new BFL::LinearAnalyticMeasurementModelGaussianUncertainty(&meas_pdf);
-  
-  // Prior
-  object->prior_Mu(1) = 0;
-  object->prior_Mu(2) = 0;
-  object->prior_Mu(3) = 0;
-  object->prior_Cov(1,1) = pow(0.2,2);
-  object->prior_Cov(1,2) = 0.0;
-  object->prior_Cov(1,3) = 0.0;
-  object->prior_Cov(2,1) = 0.0;
-  object->prior_Cov(2,2) = pow(0.2,2);
-  object->prior_Cov(2,3) = 0.0;
-  object->prior_Cov(3,1) = 0.0;
-  object->prior_Cov(3,2) = 0.0;
-  object->prior_Cov(3,3) = pow(0.2,2);
-  BFL::Gaussian prior(object->prior_Mu, object->prior_Cov);
-  
-  object->filter = new BFL::ExtendedKalmanFilter(&prior);
-  
-  // Input
-  object->input(1) = 0.0;
-  object->input(2) = 0.0;
-  object->input(3) = 0.0;
-
   object->setId(id_++);
   //object->incrementCounter();
   objects_.push_back(object);
@@ -372,14 +296,25 @@ void ObjectList<ObjectType>::updateObject(
     measurementVector(2) = objectPosition.y;
     measurementVector(3) = objectPosition.z;
     
-    (*(*it))->filter->Update(object->sys_model, object->input, object->meas_model, measurementVector);
+    (*(*it))->getFilter()->Update((*(*it))->getSysModel(), (*(*it))->getInput(),
+                                    (*(*it))->getMeasModel(), measurementVector);
     
     //Debug info
-    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior = object->filter->PostGet();
+    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior = (*(*it))->getFilter()->PostGet();
     std::cout << "Mesurement = (" << measurementVector(1) << ", " <<
       measurementVector(2) << ", "<< measurementVector(3) << ")" << std::endl;
     std::cout << "Expected = " << posterior->ExpectedValueGet() << std::endl;
     std::cout << "Covariance = " << posterior->CovarianceGet() << std::endl;
+    
+    Pose newObjectPose;
+    
+    newObjectPose.position.x = posterior->ExpectedValueGet()(1);
+    newObjectPose.position.y = posterior->ExpectedValueGet()(2);
+    newObjectPose.position.z = posterior->ExpectedValueGet()(3);
+    
+    newObjectPose.orientation = (*(*it))->getPose().orientation;
+    
+    (*(*it))->setPose(newObjectPose);
 
     removeElementAt(*it);
   }
@@ -392,7 +327,7 @@ void ObjectList<ObjectType>::updateObject(
     object->setLegit(true);
   }*/
 
-  objects_.push_back(object);
+  //objects_.push_back(object);
 }
 
 }  // namespace pandora_alert_handler
