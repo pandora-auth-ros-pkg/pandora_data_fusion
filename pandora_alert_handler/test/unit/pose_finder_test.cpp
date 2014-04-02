@@ -187,8 +187,8 @@ TEST_F(PoseFinderTest, findAlertPoseTest)
   position.y = 5.76;
   position.z = 0.9119;
   expected.position = position;
-  orientation.z = 1;
-  orientation.w = 0;
+  orientation.z = -0.70711;
+  orientation.w = 0.70711;
   expected.orientation = orientation;
   result = poseFinder_->findAlertPose(alertYaw, alertPitch, transform);
   EXPECT_NEAR( expected.position.x , result.position.x , 0.1 );
@@ -215,7 +215,7 @@ TEST_F(PoseFinderTest, positionOnWallTest)
   startPoint.x = 8;
   startPoint.y = 9;
   angle = 0;
-  expected.x = 9.97;
+  expected.x = 10.48;
   expected.y = 9;
   ROS_INFO_STREAM_NAMED("pose_finder_test", "PositionOnWallTest 1: x = "
       <<startPoint.x<<" y = "<<startPoint.y<<" angle = "<<angle);
@@ -237,7 +237,7 @@ TEST_F(PoseFinderTest, positionOnWallTest)
   startPoint.x = 1;
   startPoint.y = 3;
   angle = 0;
-  expected.x = 2.63;
+  expected.x = 2.62;
   expected.y = 3;
   ROS_INFO_STREAM_NAMED("pose_finder_test", "PositionOnWallTest 3: x = "
       <<startPoint.x<<" y = "<<startPoint.y<<" angle = "<<angle);
@@ -289,7 +289,7 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest1)
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
-  testOrientation(1, 0, 5, 5, 5.76, 5.76);
+  testOrientation(-0.70711, 0.70711, 5, 5, 5.76, 5.76);
 }
 
 TEST_F(PoseFinderTest, findNormalVectorOnWallTest2) 
@@ -299,7 +299,7 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest2)
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
-  testOrientation(-0.70711, 0.70711, 1, 7, 1, 7.86);
+  testOrientation(1, 0, 7, 1, 7.86, 1);
 }
 
 TEST_F(PoseFinderTest, findNormalVectorOnWallTest3) 
@@ -309,7 +309,7 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest3)
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
-  testOrientation(-0.70711, 0.70711, 12.3, 10.0, 12.6, 10.5);
+  testOrientation(1, 0, 10.0, 12.3, 10.5, 12.6);
 }
 
 TEST_F(PoseFinderTest, findNormalVectorOnWallTest4) 
@@ -319,57 +319,101 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest4)
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
-  testOrientation(0.70711, 0.70711, 11, 12, 11.7, 11.5);
+  testOrientation(0, 1, 12, 11, 11.5, 11);
 }
 
 
 TEST_F(PoseFinderTest, findNormalVectorOnWallTest5) 
 {
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.25);
+  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.15);
   // Test if the returned normal vector on wall is right 
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
-  testOrientation(0 , 1, 4.7, 4.14, 3.58, 3);
-}
+  testOrientation(0.70171 , 0.70711, 4.14, 4.7, 3, 3.58);
 
-TEST_F(PoseFinderTest, findNormalVectorOnWallTest6) 
-{ 
-  // Test if the returned normal vector on wall is right 
-  // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
-  // and various frame points [Point] and alert points [Point]
-
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 1, 0.5);
-  testOrientation(0 , 1, 4.7, 4.14, 3.58, 3);
-}
-
-// These tests serve to show us the implementation of PoseFinder.cpp 158-168.
-// Are being commented out, because there is no reason to be automated,
-// because it's difficult to get a good estimation other than the eye's in 
-// these cases.
-/*
-TEST_F(PoseFinderTest, findNormalVectorOnWallTest7) 
-{ 
   poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.25);
+
+  float expectedYaw = 0;
+  geometry_msgs::Quaternion result;
+  Point framePoint;
+  framePoint.z = 0;
+  Point alertPoint;
+  alertPoint.z = 0;
+  framePoint.x = 4.14;
+  framePoint.y = 4.7;
+  alertPoint.x = 3;
+  alertPoint.y = 3.58;
+  result = findNormalVectorOnWall(framePoint, alertPoint);
+  expectedYaw = acos(result.w);
+  if(asin(result.z) < 0)
+    expectedYaw = -expectedYaw;
+  expectedYaw = 2*expectedYaw*180/PI;
+  EXPECT_NEAR( 0.0 , result.x , 0.001 );
+  EXPECT_NEAR( 0.0 , result.y , 0.001 );
+  EXPECT_LT( expectedYaw , 70 );
+  EXPECT_GT( expectedYaw , 20 );
+}
+
+TEST_F(PoseFinderTest, findNormalVectorTestOnCorners1) 
+{ 
+  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.2);
   // Test if the returned normal vector on wall is right 
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
   // Near corner (inside)
-  testOrientation(0.38268 , 0.92388, 8.33, 5.25, 7.76, 4.95);
+  
+  float expectedYaw = 0;
+  geometry_msgs::Quaternion result;
+  Point framePoint;
+  framePoint.z = 0;
+  Point alertPoint;
+  alertPoint.z = 0;
+  framePoint.x = 5.25;
+  framePoint.y = 8.33;
+  alertPoint.x = 4.85;
+  alertPoint.y = 7.78;
+  result = findNormalVectorOnWall(framePoint, alertPoint);
+  expectedYaw = acos(result.w);
+  if(asin(result.z) < 0)
+    expectedYaw = -expectedYaw;
+  expectedYaw = 2*expectedYaw*180/PI;
+  EXPECT_NEAR( 0.0 , result.x , 0.001 );
+  EXPECT_NEAR( 0.0 , result.y , 0.001 );
+  EXPECT_LT( expectedYaw , 70 );
+  EXPECT_GT( expectedYaw , 20 );
 }
 
-TEST_F(PoseFinderTest, findNormalVectorOnWallTest8) 
+TEST_F(PoseFinderTest, findNormalVectorTestOnCorners2) 
 {
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.25);
+  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.2);
   // Test if the returned normal vector on wall is right 
   // [geometry_msgs::Quaternion] with the given map [OccupancyGrid] 
   // and various frame points [Point] and alert points [Point]
 
   // Near corner (outside)
-  testOrientation(0.38268 , 0.92388, 7.34, 4.7, 7.66, 4.85);
+
+  float expectedYaw = 0;
+  geometry_msgs::Quaternion result;
+  Point framePoint;
+  framePoint.z = 0;
+  Point alertPoint;
+  alertPoint.z = 0;
+  framePoint.x = 4.7;
+  framePoint.y = 7.34;
+  alertPoint.x = 4.85;
+  alertPoint.y = 7.66;
+  result = findNormalVectorOnWall(framePoint, alertPoint);
+  expectedYaw = acos(result.w);
+  if(asin(result.z) < 0)
+    expectedYaw = -expectedYaw;
+  expectedYaw = 2*expectedYaw*180/PI;
+  EXPECT_NEAR( 0.0 , result.x , 0.001 );
+  EXPECT_NEAR( 0.0 , result.y , 0.001 );
+  EXPECT_LT( expectedYaw , -110 );
+  EXPECT_GT( expectedYaw , -160 );
 }
-*/
 
 TEST_F(PoseFinderTest, findDiameterEndPointsOnWallTest) 
 {
