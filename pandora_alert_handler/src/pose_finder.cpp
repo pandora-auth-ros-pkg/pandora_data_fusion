@@ -5,11 +5,6 @@
 
 #include "alert_handler/pose_finder.h"
 
-#define COORDS(X, Y, MAP) ceil((X - MAP->info.origin.position.x)\
-    / MAP->info.resolution) + ceil((Y - MAP->info.origin.position.y)\
-      / MAP->info.resolution) * MAP->info.width
-
-
 PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType, 
     float occupiedCellThres, 
     float heightHighThres, float heightLowThres,
@@ -127,8 +122,8 @@ Point PoseFinder::positionOnWall(Point startPoint, float angle) {
     D += resolution;
     x = D * cos(omega) + currX;
     y = D * sin(omega) + currY;
-    ROS_INFO_STREAM_NAMED("pose_finder", "x: "<<x<<" y: "<<y<<" D: "<<D);
-    ROS_INFO_STREAM_NAMED("pose_finder", ceil(x/resolution) * map_->info.width + ceil(y/resolution));
+    //ROS_INFO_STREAM_NAMED("pose_finder", "x: "<<x<<" y: "<<y<<" D: "<<D);
+    //ROS_INFO_STREAM_NAMED("pose_finder", COORDS(x, y, map_));
     //testMap.data[COORDS(x, y, map_)] = 100;
   }
   //testPub.publish(testMap);
@@ -150,8 +145,8 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   float x = 0, y = 0;
 
   for (unsigned int i = 0; i < 360; i += 5) {
-    x = alertPoint.x + ORIENTATION_CIRCLE * cos((i / 180.0) * D_PI);
-    y = alertPoint.y + ORIENTATION_CIRCLE * sin((i / 180.0) * D_PI);
+    x = alertPoint.x + ORIENTATION_CIRCLE * cos((i / 180.0) * PI);
+    y = alertPoint.y + ORIENTATION_CIRCLE * sin((i / 180.0) * PI);
 
     if (map_->data[COORDS(x, y, map_)]
         > OCCUPIED_CELL_THRES * 100) {
@@ -187,13 +182,13 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   std::pair<Point, Point> approachPoints;
 
   Point first;
-  first.x = alertPoint.x + ORIENTATION_DIST * cos((D_PI / 2) + angle);
-  first.y = alertPoint.y + ORIENTATION_DIST * sin((D_PI / 2) + angle);
+  first.x = alertPoint.x + ORIENTATION_DIST * cos((PI / 2) + angle);
+  first.y = alertPoint.y + ORIENTATION_DIST * sin((PI / 2) + angle);
   approachPoints.first = first;
 
   Point second;
-  second.x = alertPoint.x + ORIENTATION_DIST * cos((-D_PI / 2) + angle);
-  second.y = alertPoint.y + ORIENTATION_DIST * sin((-D_PI / 2) + angle);
+  second.x = alertPoint.x + ORIENTATION_DIST * cos((-PI / 2) + angle);
+  second.y = alertPoint.y + ORIENTATION_DIST * sin((-PI / 2) + angle);
   approachPoints.second = second;
 
   if ( Utils::distanceBetweenPoints2D(framePoint, approachPoints.first) < 

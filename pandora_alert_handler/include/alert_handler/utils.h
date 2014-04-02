@@ -19,10 +19,6 @@ class Utils {
 
  public:
 
-  /* redundant ??
-  static float pixelCoords2Meters(int pixels);
-  static int meters2PixelCoords(float meters);
-  */
   static Point point2DAndHeight2Point3D(Point position, float height);
   static float distanceBetweenPoints2D(Point a, Point b);
   static float distanceBetweenPoints3D(Point a, Point b);

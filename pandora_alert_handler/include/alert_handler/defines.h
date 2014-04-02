@@ -3,14 +3,14 @@
 #ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_DEFINES_H_
 #define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_DEFINES_H_
 
-//!< The coefficient that needs to be multiplied with pixels to get meters
-#define D_PI            3.141592654    //!< PI
+#include <boost/math/constants/constants.hpp>
 
-//!< Global coordinates in the map fro start - X coord
-#define  START_X      MAP_HEIGHT/2  
+//!< Macro for pi.
+#define PI boost::math::constants::pi<float>()
 
-//!< Global coordinates in the map fro start - Y coord
-#define  START_Y     MAP_HEIGHT/2  
-
+//!< Macro to convert to map coordinates from meters.
+#define COORDS(X, Y, MAP) ceil((X - MAP->info.origin.position.x)\
+    / MAP->info.resolution) + ceil((Y - MAP->info.origin.position.y)\
+      / MAP->info.resolution) * MAP->info.width
 
 #endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_DEFINES_H_

@@ -179,7 +179,7 @@ tf::Transform Victim::getRotatedTransform() const {
   tfScalar roll, pitch, yaw;
   trans.getBasis().getRPY(roll, pitch, yaw);
   trans.setRotation(
-    tf::createQuaternionFromRPY(roll, pitch, (yaw + D_PI)));
+    tf::createQuaternionFromRPY(roll, pitch, (yaw + PI)));
   return trans;
 }
 
@@ -203,7 +203,7 @@ geometry_msgs::Pose Victim::calculateApproachPose(float approachDistance)
   transformation.getBasis().getRPY(roll, pitch, yaw);
 
   approachPose.orientation =
-    tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, (yaw + D_PI));
+    tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, (yaw + PI));
 
   return approachPose;
 }
