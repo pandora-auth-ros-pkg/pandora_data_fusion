@@ -17,8 +17,9 @@ class ObjectFactoryTest : public ::testing::Test
   // very small orientation circle(The other Params are the same)
   ObjectFactoryTest(): map_type1("TEST"), MapPtr1(new Map) 
   { 
-    *MapPtr1 = map_loader::loadMap(ros::package::getPath
-      ("pandora_alert_handler")+"/test/test_maps/map1.yaml");
+    *MapPtr1 = map_loader::loadMap(
+      ros::package::getPath("pandora_alert_handler")
+        +"/test/test_maps/map1.yaml");
     ObjectFactoryPtr1.reset(new ObjectFactory(
       MapPtr1,map_type1, 0.5, 1.2, 0, 0.5, 20, 0.25)); 
   }

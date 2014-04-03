@@ -54,7 +54,6 @@
 #include "data_fusion_communications/VictimToFsmMsg.h"
 #include "data_fusion_communications/VictimInfoMsg.h"
 
-#include "alert_handler/object_list.h"
 #include "alert_handler/victim.h"
 #include "alert_handler/victim_clusterer.h"
 #include "alert_handler/victim_list.h"

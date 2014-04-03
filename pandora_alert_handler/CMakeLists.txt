@@ -178,6 +178,7 @@ target_link_libraries(victim_handler
           ${catkin_LIBRARIES}
           victim
           victim_clusterer
+          victim_list
           )
 add_dependencies(victim_handler 
   data_fusion_communications_gencpp

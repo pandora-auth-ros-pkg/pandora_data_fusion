@@ -1,6 +1,12 @@
 ################# MapLoader ############################################
 
-find_package(catkin REQUIRED COMPONENTS map_server)
+
+find_package(catkin REQUIRED COMPONENTS
+          rostest
+          roslib 
+          map_server
+          )
+
 
 find_package(PkgConfig)
 pkg_check_modules(NEW_YAMLCPP yaml-cpp>=0.5)
@@ -21,6 +27,8 @@ target_link_libraries(map_loader
 ################# Tests ################################################
 # add tests here so that CMakelists is not polluted
 
+
+################### Unit Tests #########################
 ##########  ObjectListTest ###########  
 
 catkin_add_gtest(object_list_test test/unit/object_list_test.cpp)
@@ -48,8 +56,12 @@ target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
 
 ######### VictimTest #################
 catkin_add_gtest(victim_test test/unit/victim_test.cpp)
-target_link_libraries(victim_test ${catkin_LIBRARIES}
-   victim gtest_main) 
+target_link_libraries(victim_test
+   ${catkin_LIBRARIES}
+  hole
+  tpa
+  victim 
+  gtest_main) 
    
 
 
@@ -58,7 +70,8 @@ target_link_libraries(victim_test ${catkin_LIBRARIES}
 catkin_add_gtest(victim_list_test test/unit/victim_list_test.cpp)
 target_link_libraries(victim_list_test 
   ${catkin_LIBRARIES}
-  objects  
+  hole
+  tpa
   victim_list
   gtest_main
   ) 
@@ -67,15 +80,25 @@ target_link_libraries(victim_list_test
 catkin_add_gtest(victim_clusterer_test test/unit/victim_clusterer_test.cpp)
 target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   victim_clusterer 
+  hole
+  tpa
   victim
   gtest_main) 
 
 
 ##########  ObjectsTest ###########       
 catkin_add_gtest(objects_test test/unit/objects_test.cpp)
-target_link_libraries(objects_test ${catkin_LIBRARIES} objects  ) 
+target_link_libraries(objects_test 
+${catkin_LIBRARIES}
+  hazmat
+  hole
+  qr
+  tpa
+   ) 
 
+########## Functional Tests #########
 
+add_rostest(test/functional/alert_handler_test.launch)
 
 ########### RosLint ###################################################
 set(ROSLINT_CPP_OPTS 
