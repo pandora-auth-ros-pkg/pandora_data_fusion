@@ -75,9 +75,9 @@ class VictimTest : public ::testing::Test {
     setPose(4, 3, 2, HolePtr1, pi/4);
     HolePtr HolePtr2(new Hole);
     setPose(0, 4, 2, HolePtr2);
-    ObjConstPtrVectPtr2->push_back(TpaConstPtr(TpaPtr1));
-    ObjConstPtrVectPtr2->push_back(HoleConstPtr(HolePtr1));
-    ObjConstPtrVectPtr2->push_back(HoleConstPtr(HolePtr2));
+    ObjConstPtrVectPtr3->push_back(TpaConstPtr(TpaPtr1));
+    ObjConstPtrVectPtr3->push_back(HoleConstPtr(HolePtr1));
+    ObjConstPtrVectPtr3->push_back(HoleConstPtr(HolePtr2));
   } 
   
   void setPose ( float x, float y, float z, ObjectPtr Object, float yaw=0)
@@ -286,7 +286,6 @@ TEST_F(VictimTest, SanityCheck)
 
 // ObjectvectorPtr3 Tpa1(2, 3, 4) Hole1(4, 3, 2) Hole2(0, 4, 2)
 
-
   Victim1->setObjects(ObjConstPtrVect1, 5);
   Victim1->sanityCheck(ObjConstPtrVectPtr3, 0.5, 3);
   EXPECT_EQ(1, Victim1->getObjects().size());
@@ -312,6 +311,3 @@ TEST_F(VictimTest, SanityCheck)
 
 }
   
-  
-
-

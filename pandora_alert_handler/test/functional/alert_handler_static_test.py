@@ -30,20 +30,20 @@ class TestAlertHandlerStatic(unittest.TestCase):
 
         rospy.wait_for_service('/data_fusion/get_objects')
         self.deliveryBoy.deliverHazmatOrder(0.4, 0, 1)
-        rospy.sleep(1)
+        rospy.sleep(1.2)
         get_objects = rospy.ServiceProxy('/data_fusion/get_objects', GetObjectsSrv)
         try:
             resp = get_objects()
         except rospy.ServiceException as exc:
             print("Service did not process request: " + str(exc))
         pose = resp.hazmats.pop().pose
-        self.assertAlmostEqual(pose.position.x, 2.22)
-        self.assertAlmostEqual(pose.position.y, 0.45999997)
+        self.assertAlmostEqual(pose.position.x, 2.10527276)
+        self.assertAlmostEqual(pose.position.y, 0.53269821)
         self.assertAlmostEqual(pose.position.z, 1)
         self.assertAlmostEqual(pose.orientation.x, 0)
         self.assertAlmostEqual(pose.orientation.y, 0)
-        self.assertAlmostEqual(pose.orientation.z, 0)
-        self.assertAlmostEqual(pose.orientation.w, 1)
+        self.assertAlmostEqual(pose.orientation.z, 0.70710679)
+        self.assertAlmostEqual(pose.orientation.w, 0.70710679)
         
 
 if __name__ == '__main__':

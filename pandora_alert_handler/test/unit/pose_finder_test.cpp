@@ -331,28 +331,6 @@ TEST_F(PoseFinderTest, findNormalVectorOnWallTest5)
   // and various frame points [Point] and alert points [Point]
 
   testOrientation(0.70171 , 0.70711, 4.14, 4.7, 3, 3.58);
-
-  poseFinder_->updateParams(0.5, 1.5, 0, 0.5, 0.5, 0.25);
-
-  float expectedYaw = 0;
-  geometry_msgs::Quaternion result;
-  Point framePoint;
-  framePoint.z = 0;
-  Point alertPoint;
-  alertPoint.z = 0;
-  framePoint.x = 4.14;
-  framePoint.y = 4.7;
-  alertPoint.x = 3;
-  alertPoint.y = 3.58;
-  result = findNormalVectorOnWall(framePoint, alertPoint);
-  expectedYaw = acos(result.w);
-  if(asin(result.z) < 0)
-    expectedYaw = -expectedYaw;
-  expectedYaw = 2*expectedYaw*180/PI;
-  EXPECT_NEAR( 0.0 , result.x , 0.001 );
-  EXPECT_NEAR( 0.0 , result.y , 0.001 );
-  EXPECT_LT( expectedYaw , 70 );
-  EXPECT_GT( expectedYaw , 20 );
 }
 
 TEST_F(PoseFinderTest, findNormalVectorTestOnCorners1) 
