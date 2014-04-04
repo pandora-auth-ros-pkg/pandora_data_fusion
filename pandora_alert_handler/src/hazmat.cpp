@@ -16,11 +16,15 @@ geometry_msgs::PoseStamped Hazmat::getPoseStamped() const {
 
 bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const {
 
-  bool cond = Object::isSameObject(object, distance);
-
-  if (!object->getType().compare(type_)) {
-    cond = cond &&
-    pattern_ == boost::dynamic_pointer_cast<const Hazmat>(object)->getPattern();
+  bool cond = false;
+  
+  if(object->getType().compare(std::string("tpa"))) {
+    cond = Object::isSameObject(object, distance);
+    if (!object->getType().compare(type_)) {
+      cond = cond &&
+        pattern_ == boost::dynamic_pointer_cast<const Hazmat>(
+            object)->getPattern();
+    } 
   }
 
   return cond;

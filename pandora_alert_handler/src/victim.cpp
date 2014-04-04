@@ -169,7 +169,8 @@ void Victim::addSensor(int sensorId) {
   sensorIds_.insert(sensorId);
 } 
 
-void Victim::eraseObjectAt(int index, float approachDistance) {
+void Victim::eraseObjectAt(int index,
+    float approachDistance) {
   objects_.erase(objects_.begin() + index);
   updateRepresentativeObject(approachDistance);
 }
@@ -222,16 +223,19 @@ tf::Transform Victim::getTransform() const {
 void Victim::sanityCheck(
     const ObjectConstPtrVectorPtr& allObjects,
       float distThreshold, float approachDistance) {
-  for ( int ii = 0 ; ii < objects_.size() ; ii++) {
-    bool objectStillExists = false;
+  bool objectStillExists = true;
+  for ( ObjectConstPtrVector::iterator it = objects_.begin() ;
+      it != objects_.end() ; it++) {
+    objectStillExists = false;
     for ( int jj = 0 ; jj < allObjects->size() ; jj++) {
-      if (objects_[ii]->isSameObject(allObjects->at(jj), distThreshold)) {
+      if ((*it)->isSameObject(allObjects->at(jj), distThreshold)) {
         objectStillExists = true;
         break;
       }
     }
     if (!objectStillExists) {
-      eraseObjectAt(ii, approachDistance);
+      it = --objects_.erase(it);
+      updateRepresentativeObject(approachDistance);
     }
   }
 }

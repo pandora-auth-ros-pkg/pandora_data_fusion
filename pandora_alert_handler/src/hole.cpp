@@ -39,3 +39,14 @@ void Hole::getVisualization(visualization_msgs::MarkerArray* markers) const {
 
 }
 
+bool Hole::isSameObject(const ObjectConstPtr& object, float distance) const {
+
+  bool cond = false;
+
+  if (object->getType().compare(std::string("tpa"))) {
+      cond = Object::isSameObject(object, distance);
+  }
+
+  return cond;
+
+}

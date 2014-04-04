@@ -39,3 +39,14 @@ void Tpa::getVisualization(visualization_msgs::MarkerArray* markers) const {
 
 }
 
+bool Tpa::isSameObject(const ObjectConstPtr& object, float distance) const {
+
+  bool cond = false;
+
+  if (!object->getType().compare(type_)) {
+      cond = Object::isSameObject(object, distance);
+  }
+
+  return cond;
+
+}

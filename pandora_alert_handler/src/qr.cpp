@@ -16,11 +16,15 @@ geometry_msgs::PoseStamped Qr::getPoseStamped() const {
 
 bool Qr::isSameObject(const ObjectConstPtr& object, float distance) const {
 
-  bool cond = Object::isSameObject(object, distance);
+  bool cond = false;
 
-  if (!object->getType().compare(type_)) {
-    cond = cond && !content_.compare(
-             boost::dynamic_pointer_cast<const Qr>(object)->getContent() );
+  if(object->getType().compare(std::string("tpa"))) {
+    cond = Object::isSameObject(object, distance);
+    if (!object->getType().compare(type_)) {
+      cond = cond &&
+        !content_.compare(
+          boost::dynamic_pointer_cast<const Qr>(object)->getContent());
+    }
   }
 
   return cond;
@@ -44,7 +48,7 @@ void Qr::getVisualization(visualization_msgs::MarkerArray* markers) const {
 
   marker.header.frame_id = "/world";
   marker.header.stamp = ros::Time::now();
-  marker.ns = "Hazmat";
+  marker.ns = "Qr";
   marker.id = id_;
 
   marker.pose = pose_;

@@ -17,8 +17,7 @@ geometry_msgs::PoseStamped Object::getPoseStamped() const {
 
 bool Object::isSameObject(const ConstPtr& object, float distance) const {
 
-  return 
-    Utils::distanceBetweenPoints3D(pose_.position, object->getPose().position)
+  return Utils::distanceBetweenPoints3D(pose_.position, object->getPose().position)
       < distance;
 
 }

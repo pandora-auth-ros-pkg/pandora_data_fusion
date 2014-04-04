@@ -369,6 +369,8 @@ class Hole : public Object {
   **/
   Hole();
 
+  virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
+
   virtual geometry_msgs::PoseStamped getPoseStamped() const;
 
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
@@ -412,6 +414,8 @@ class Tpa : public Object {
   @brief Constructor
   **/
   Tpa();
+
+  virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
 
   virtual geometry_msgs::PoseStamped getPoseStamped() const;
 
