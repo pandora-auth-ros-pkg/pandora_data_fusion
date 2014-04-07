@@ -10,19 +10,22 @@
 #include "alert_handler/tf_listener.h"
 
 
-class TfFinder {
-
+class TfFinder
+{
  public:
  
-  static TfListener* newTfListener(const std::string& type) {
-
-    if( type == "SLAM" ) {
+  static TfListener* newTfListener(const std::string& type)
+  {
+    if( type == "SLAM" )
+    {
       return new RosTfListener;
     }
-    if( type == "TEST" ) {
+    if( type == "TEST" )
+    {
       return new TfListener;
     }
-    else {
+    else
+    {
       ROS_ERROR("[ALERT_HANDLER %d]Runtime error: map_type not found.", __LINE__);
       return NULL;
     }

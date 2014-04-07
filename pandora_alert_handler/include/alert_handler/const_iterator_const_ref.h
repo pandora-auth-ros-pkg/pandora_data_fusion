@@ -29,15 +29,15 @@ class const_iterator_const_ref
     const_iterator_const_ref(
         const_iterator_const_ref<OtherIterator, OtherValue, OtherReference> const& other
       , typename boost::enable_if<
-            boost::is_convertible<Iterator,OtherIterator>
+            boost::is_convertible<Iterator, OtherIterator>
           , enabler
         >::type = enabler()
       , typename boost::enable_if<
-            boost::is_convertible<Value,OtherValue>
+            boost::is_convertible<Value, OtherValue>
           , enabler
         >::type = enabler()
       , typename boost::enable_if<
-            boost::is_convertible<ConstReference,OtherReference>
+            boost::is_convertible<ConstReference, OtherReference>
           , enabler
         >::type = enabler()
     )

@@ -6,8 +6,8 @@
 #include "alert_handler/object_list.h"
 #include "data_fusion_communications/QrNotificationMsg.h"
 
-class ObjectHandler {
-
+class ObjectHandler
+{
  public:
 
   ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,

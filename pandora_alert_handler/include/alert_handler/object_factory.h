@@ -24,8 +24,8 @@ typedef nav_msgs::OccupancyGrid Map;
 typedef nav_msgs::OccupancyGridPtr MapPtr;
 typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
 
-class ObjectFactory {
-
+class ObjectFactory
+{
  public:
 
   ObjectFactory(const MapPtr& map, const std::string& mapType,
@@ -49,7 +49,8 @@ class ObjectFactory {
   QrPtrVectorPtr makeQrs(
                       const vision_communications::QRAlertsVectorMsg& msg);
 
-  const tf::Transform& getTransform() const {
+  const tf::Transform& getTransform() const
+  {
     return currentTransform_;
   }
 

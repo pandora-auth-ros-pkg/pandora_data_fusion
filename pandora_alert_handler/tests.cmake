@@ -1,6 +1,5 @@
 ################# MapLoader ############################################
 
-
 find_package(catkin REQUIRED COMPONENTS
           rostest
           roslib 
@@ -27,7 +26,6 @@ target_link_libraries(map_loader
 ################# Tests ################################################
 # add tests here so that CMakelists is not polluted
 
-
 ################### Unit Tests #########################
 ##########  ObjectListTest ###########  
 
@@ -35,12 +33,10 @@ catkin_add_gtest(object_list_test test/unit/object_list_test.cpp)
 target_link_libraries(object_list_test ${catkin_LIBRARIES}  objects utils
   gtest_main) 
 
-
 ##########  ObjectFactoryTest ########### 
 
 catkin_add_gtest(object_factory_test test/unit/object_factory_test.cpp)
 target_link_libraries(object_factory_test 
-
 ${catkin_LIBRARIES} 
 object_factory
 map_loader
@@ -52,19 +48,18 @@ gtest_main
 set(CMAKE_BUILD_TYPE Debug)
 catkin_add_gtest(pose_finder_test test/unit/pose_finder_test.cpp)
 target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
-    pose_finder map_loader  gtest_main)
+    pose_finder map_loader gtest_main)
 
 ######### VictimTest #################
 catkin_add_gtest(victim_test test/unit/victim_test.cpp)
 target_link_libraries(victim_test
-   ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES}
   hole
   tpa
   victim 
-  gtest_main) 
+  gtest_main
+  ) 
    
-
-
 ##########  VictimListTest ###########  
 
 catkin_add_gtest(victim_list_test test/unit/victim_list_test.cpp)
@@ -83,8 +78,8 @@ target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   hole
   tpa
   victim
-  gtest_main) 
-
+  gtest_main
+  ) 
 
 ##########  ObjectsTest ###########       
 catkin_add_gtest(objects_test test/unit/objects_test.cpp)
@@ -105,8 +100,8 @@ set(ROSLINT_CPP_OPTS
     "--filter=-whitespace/end_of_line,-build/include_order,-build/include,-whitespace/blank_line,-whitespace/parens,-whitespace/comments")
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS 
      RELATIVE ${PROJECT_SOURCE_DIR} 
-            #include/alert_handler/*.h 
-            #src/*.cpp 
-            test/unit/object_factory_test.cpp
+            include/alert_handler/*.h 
+            src/*.cpp 
+            #test/unit/*.cpp
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})

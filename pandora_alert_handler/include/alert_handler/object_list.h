@@ -16,8 +16,8 @@
 
 
 template <class ObjectType>
-class ObjectList {
-
+class ObjectList 
+{
  public:
  
   typedef boost::shared_ptr< ObjectType > Ptr;
@@ -81,7 +81,6 @@ class ObjectList {
   int id_;
 };
 
-
 typedef boost::shared_ptr< ObjectList<Object> > ObjectListPtr;
 typedef boost::shared_ptr< ObjectList<Hole> >  HoleListPtr;
 typedef boost::shared_ptr< ObjectList<Qr> >  QrListPtr;
@@ -96,7 +95,8 @@ typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::ObjectList(int counterThreshold,
-    float distanceThreshold) {
+    float distanceThreshold)
+{
   id_ = 0;
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
@@ -104,21 +104,25 @@ ObjectList<ObjectType>::ObjectList(int counterThreshold,
 
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator
-  ObjectList<ObjectType>::begin() const {
+  ObjectList<ObjectType>::begin() const
+{
     return objects_.begin();
 }
 
 template <class ObjectType>
 typename ObjectList<ObjectType>::const_iterator
-  ObjectList<ObjectType>::end() const {
+  ObjectList<ObjectType>::end() const
+{
     return objects_.end();
 }
 
 template <class ObjectType>
-bool ObjectList<ObjectType>::add(const Ptr& object) {
+bool ObjectList<ObjectType>::add(const Ptr& object)
+{
   IteratorList iteratorList;
 
-  if (isAnExistingObject(object, &iteratorList)) {
+  if (isAnExistingObject(object, &iteratorList))
+  {
     updateObject(object, iteratorList);
     return false;
   }
@@ -131,42 +135,49 @@ bool ObjectList<ObjectType>::add(const Ptr& object) {
 
 template <class ObjectType>
 void ObjectList<ObjectType>::removeElementAt(
-  ObjectList<ObjectType>::iterator it) {
+  ObjectList<ObjectType>::iterator it)
+{
     objects_.erase(it);
 }
 
 template <class ObjectType>
 void ObjectList<ObjectType>::setParams(int counterThreshold,
-    float distanceThreshold) {
+    float distanceThreshold)
+{
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
 }
 
 template <class ObjectType>
-int ObjectList<ObjectType>::size() const {
+int ObjectList<ObjectType>::size() const
+{
   return objects_.size();
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::pop_back() {
+void ObjectList<ObjectType>::pop_back()
+{
   objects_.pop_back();
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::clear() {
+void ObjectList<ObjectType>::clear()
+{
   objects_.clear();
 }
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isObjectPoseInList(
-    const ObjectConstPtr& object, float range) const {
-
-  for (const_iterator it = this->begin(); it != this->end(); ++it) {
+    const ObjectConstPtr& object, float range) const
+{
+  for (const_iterator it = this->begin(); it != this->end(); ++it)
+  {
     float distance =
       Utils::distanceBetweenPoints3D(object->getPose().position,
                                       (*it)->getPose().position);
          
-    if (distance < range) {
+    if (distance < range)
+    {
       return true;
     }
   }
@@ -176,73 +187,72 @@ bool ObjectList<ObjectType>::isObjectPoseInList(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::removeInRangeOfObject(
-    const ObjectConstPtr& object, float range) {
-
+    const ObjectConstPtr& object, float range)
+{
   iterator iter = objects_.begin();
 
-  while (iter != objects_.end() ) {
-
+  while (iter != objects_.end())
+  {
     bool inRange = Utils::distanceBetweenPoints3D(
       object->getPose().position, (*iter)->getPose().position) < range;
 
-    if ( inRange ) {
+    if ( inRange ) 
+    {
       ROS_DEBUG_NAMED("object_handler",
          "[OBJECT_HANDLER %d] Deleting hole...", __LINE__);
       objects_.erase(iter++);
-    } else {
+    }
+    else 
+    {
       ++iter;
     }
-
   }
-
 }
 
 template <class ObjectType>
 void ObjectList<ObjectType>::getObjectsPosesStamped(
-    std::vector<geometry_msgs::PoseStamped>* poses) const {
-
-  for (const_iterator it = this->begin(); it != this->end(); ++it) {
-
+    std::vector<geometry_msgs::PoseStamped>* poses) const
+{
+  for (const_iterator it = this->begin(); it != this->end(); ++it)
+  {
     poses->push_back((*it)->getPoseStamped());
-
   }
-
 }
 
 template <class ObjectType>
 void ObjectList<ObjectType>::fillGeotiff(
-    data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
-
-  for (const_iterator it = this->begin(); it != this->end(); ++it) {
+    data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
+{
+  for (const_iterator it = this->begin(); it != this->end(); ++it)
+  {
     (*it)->fillGeotiff(res);
   }
-
 }
 
 template <class ObjectType>
 void ObjectList<ObjectType>::getVisualization(
-    visualization_msgs::MarkerArray* markers) const {
-
+    visualization_msgs::MarkerArray* markers) const
+{
   markers->markers.clear();
-
-
-  for (const_iterator it = this->begin(); it != this->end(); ++it) {
-
+  for (const_iterator it = this->begin(); it != this->end(); ++it)
+  {
     (*it)->getVisualization(markers);
-
   }
-
 }
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isAnExistingObject(
-    const ConstPtr& object, IteratorList* iteratorListPtr) {
-  for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
-    if ((*it)->isSameObject(object, DIST_THRESHOLD)) {
+    const ConstPtr& object, IteratorList* iteratorListPtr)
+{
+  for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+  {
+    if ((*it)->isSameObject(object, DIST_THRESHOLD))
+    {
       iteratorListPtr->push_back(it);
     }
   }
-  if (!iteratorListPtr->empty()) {
+  if (!iteratorListPtr->empty()) 
+  {
     return true;
   }
   return false;
@@ -251,29 +261,31 @@ bool ObjectList<ObjectType>::isAnExistingObject(
 template <class ObjectType>
 void ObjectList<ObjectType>::updateObject(
     const Ptr& object,
-      const IteratorList& iteratorList) {
-
+      const IteratorList& iteratorList)
+{
   int totalCounter = 0;
   int maxCounter = (*iteratorList.front())->getCounter();
   int maxId = (*iteratorList.front())->getId();
 
   for ( typename IteratorList::const_iterator it = iteratorList.begin();
-         it != iteratorList.end() ; ++it) {
+         it != iteratorList.end() ; ++it)
+  {
     // find total counter value, set new object's id as the id of the
     // object with the highest counter as of now.
     totalCounter += (*(*it))->getCounter();
-    if ((*(*it))->getCounter() > maxCounter) {
+    if ((*(*it))->getCounter() > maxCounter)
+    {
       maxCounter = (*(*it))->getCounter();
       maxId = (*(*it))->getId();
     }
-
     removeElementAt(*it);
   }
 
   object->setId(maxId);
   object->setCounter(++totalCounter);
 
-  if (object->getCounter() > COUNTER_THRES) {
+  if (object->getCounter() > COUNTER_THRES)
+  {
     object->setLegit(true);
   }
 

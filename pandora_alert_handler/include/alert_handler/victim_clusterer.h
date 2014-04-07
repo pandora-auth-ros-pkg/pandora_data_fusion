@@ -37,8 +37,8 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
+#ifndef PANDORA_ALERT_HANDLER_ALERT_HANDLER_VICTIM_CLUSTERER_H_
+#define PANDORA_ALERT_HANDLER_ALERT_HANDLER_VICTIM_CLUSTERER_H_
 
 #include <vector>
 
@@ -50,12 +50,10 @@
   @class VictimClusterer
   @brief Controller that keeps track of victims 
 **/ 
-class VictimClusterer {
-
+class VictimClusterer
+{
  public:
  
- 
-  friend class VictimClustererTest;
   /**
   @brief Constructor
   **/
@@ -94,6 +92,10 @@ class VictimClusterer {
 
 
  private:
+
+  friend class VictimClustererTest;
+ 
+ private:
   
   //!< The radius used for clustering
   float CLUSTER_RADIUS;
@@ -104,4 +106,4 @@ class VictimClusterer {
 
 typedef boost::scoped_ptr<VictimClusterer> VictimClustererPtr;
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_CLUSTERER_H_
+#endif  // PANDORA_ALERT_HANDLER_ALERT_HANDLER_VICTIM_CLUSTERER_H_

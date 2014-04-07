@@ -62,8 +62,8 @@
   @class VictimHandler
   @brief Controller that keeps track of victims 
 **/ 
-class VictimHandler {
-
+class VictimHandler
+{
  public:
  
   /**

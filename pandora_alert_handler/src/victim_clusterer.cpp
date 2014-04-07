@@ -39,25 +39,24 @@
 
 #include "alert_handler/victim_clusterer.h"
 
-VictimClusterer::VictimClusterer(float clusterRadius, float approachDist) {
-  
+VictimClusterer::VictimClusterer(float clusterRadius, float approachDist)
+{  
   CLUSTER_RADIUS = clusterRadius;
-  APPROACH_DIST = approachDist;
-  
+  APPROACH_DIST = approachDist; 
 }
 
 /**
 @details 
 **/
 VictimPtrVector VictimClusterer::createVictimList(
-  const ObjectConstPtrVectorPtr& allObjects) {
-  
+  const ObjectConstPtrVectorPtr& allObjects)
+{  
   ObjectConstPtrVectorVector groupedObjects = groupObjects(allObjects);
     
   VictimPtrVector newVictimVector;
 
-  for (int ii = 0; ii < groupedObjects.size(); ii++) {
-
+  for (int ii = 0; ii < groupedObjects.size(); ++ii)
+  {
     VictimPtr newVictim(new Victim);
 
     newVictim->setObjects(groupedObjects[ii], APPROACH_DIST);
@@ -72,22 +71,18 @@ VictimPtrVector VictimClusterer::createVictimList(
 @details 
 **/
 ObjectConstPtrVectorVector 
-  VictimClusterer::groupObjects(const ObjectConstPtrVectorPtr& allObjects) {
-
+  VictimClusterer::groupObjects(const ObjectConstPtrVectorPtr& allObjects)
+{
   ObjectConstPtrVectorVector groupedObjects;
 
-  
-
-  for ( int objectIt = 0 ; objectIt < allObjects->size() ; objectIt++ ) {
-
+  for ( int objectIt = 0 ; objectIt < allObjects->size() ; ++objectIt )
+  {
     ObjectConstPtr currentObj = allObjects->at(objectIt);
 
     bool isAdded = false;
 
-
-
-    for (int ii = 0; ii < groupedObjects.size(); ii++) {
-
+    for (int ii = 0; ii < groupedObjects.size(); ++ii)
+    {
       geometry_msgs::Point groupCenterPoint =
         findGroupCenterPoint(groupedObjects[ii]);
 
@@ -95,35 +90,37 @@ ObjectConstPtrVectorVector
         Utils::distanceBetweenPoints2D(currentObj->
                                        getPose().position, groupCenterPoint);
 
-      if ( distance < CLUSTER_RADIUS) {
+      if (distance < CLUSTER_RADIUS)
+      {
         groupedObjects[ii].push_back(currentObj);
         isAdded = true;
         break;
       }
     }
 
-    if (!isAdded) {
+    if (!isAdded)
+    {
       ObjectConstPtrVector newVect;
       newVect.push_back(currentObj);
       groupedObjects.push_back(newVect);
       isAdded = false;
     }
-
   }
 
   return groupedObjects;
-
 }
 
 /**
 @details 
 **/
 geometry_msgs::Point VictimClusterer::findGroupCenterPoint(
-  const ObjectConstPtrVector& objects) {
+  const ObjectConstPtrVector& objects)
+{
   geometry_msgs::Point centerPoint;
 
   for (ObjectConstPtrVector::const_iterator it = objects.begin();
-       it != objects.end(); ++it) {
+       it != objects.end(); ++it)
+  {
     centerPoint.x += (*it)->getPose().position.x;
     centerPoint.y += (*it)->getPose().position.y;
   }
@@ -137,10 +134,9 @@ geometry_msgs::Point VictimClusterer::findGroupCenterPoint(
 /**
 @details 
 **/
-void VictimClusterer::updateParams(float clusterRadius, float approachDist) {
+void VictimClusterer::updateParams(float clusterRadius, float approachDist)
+{
   CLUSTER_RADIUS = clusterRadius;
   APPROACH_DIST = approachDist;
 }
-
-
 

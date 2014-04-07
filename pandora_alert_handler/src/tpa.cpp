@@ -2,19 +2,20 @@
 
 #include "alert_handler/objects.h"
 
-Tpa::Tpa() {
+Tpa::Tpa()
+{
   type_ = "tpa";
 }
 
-geometry_msgs::PoseStamped Tpa::getPoseStamped() const {
-
+geometry_msgs::PoseStamped Tpa::getPoseStamped() const
+{
   geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "tpa_" + boost::to_string(id_);
   return objPose;
 }
 
-void Tpa::getVisualization(visualization_msgs::MarkerArray* markers) const {
-
+void Tpa::getVisualization(visualization_msgs::MarkerArray* markers) const
+{
   visualization_msgs::Marker marker;
 
   marker.header.frame_id = "/world";
@@ -36,17 +37,17 @@ void Tpa::getVisualization(visualization_msgs::MarkerArray* markers) const {
   marker.color.a = 0.7;
 
   markers->markers.push_back(marker);
-
 }
 
-bool Tpa::isSameObject(const ObjectConstPtr& object, float distance) const {
-
+bool Tpa::isSameObject(const ObjectConstPtr& object, float distance) const
+{
   bool cond = false;
 
-  if (!object->getType().compare(type_)) {
+  if (!object->getType().compare(type_))
+  {
       cond = Object::isSameObject(object, distance);
   }
 
   return cond;
-
 }
+

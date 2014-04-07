@@ -2,8 +2,8 @@
 
 #include "alert_handler/alert_handler.h"
 
-int main (int argc, char **argv) {
-
+int main (int argc, char **argv)
+{
   ros::init(argc, argv, "alert_handler", ros::init_options::NoSigintHandler);
   AlertHandler alertHandler;
   ROS_INFO("Beginning Alert Handler node");

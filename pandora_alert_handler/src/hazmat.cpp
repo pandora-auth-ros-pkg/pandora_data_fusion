@@ -2,25 +2,28 @@
 
 #include "alert_handler/objects.h"
 
-Hazmat::Hazmat() {
+Hazmat::Hazmat()
+{
   type_ = "hazmat";
 }
 
-geometry_msgs::PoseStamped Hazmat::getPoseStamped() const {
-
+geometry_msgs::PoseStamped Hazmat::getPoseStamped() const
+{
   geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "hazmat_" + boost::to_string(id_) + "_" +
                             boost::to_string(pattern_);
   return objPose;
 }
 
-bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const {
-
+bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const
+{
   bool cond = false;
   
-  if(object->getType().compare(std::string("tpa"))) {
+  if(object->getType().compare(std::string("tpa")))
+  {
     cond = Object::isSameObject(object, distance);
-    if (!object->getType().compare(type_)) {
+    if (!object->getType().compare(type_))
+    {
       cond = cond &&
         pattern_ == boost::dynamic_pointer_cast<const Hazmat>(
             object)->getPattern();
@@ -28,19 +31,18 @@ bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const {
   }
 
   return cond;
-
 }
 
 void Hazmat::fillGeotiff(
-  data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
-
+  data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
+{
   res->hazmatx.push_back( pose_.position.x );
   res->hazmaty.push_back( pose_.position.y );
   res->pattern.push_back( pattern_ );
 }
 
-void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const {
-
+void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const
+{
   visualization_msgs::Marker marker;
 
   marker.header.frame_id = "/world";
@@ -62,6 +64,5 @@ void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const {
   marker.color.a = 0.7;
 
   markers->markers.push_back(marker);
-
 }
 

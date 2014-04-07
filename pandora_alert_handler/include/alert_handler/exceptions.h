@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-class AlertException : public std::runtime_error {
+class AlertException : public std::runtime_error
+{
  public:
   explicit AlertException(const std::string errorDescription) :
      std::runtime_error(errorDescription) {}

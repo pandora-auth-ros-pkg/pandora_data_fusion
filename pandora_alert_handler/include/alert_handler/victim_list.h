@@ -52,11 +52,9 @@
 #include "alert_handler/utils.h"
 #include "alert_handler/victim.h"
 
-class VictimList : public ObjectList<Victim> {
-  
+class VictimList : public ObjectList<Victim>
+{  
  public:
- 
- friend class VictimListTest;
   
   /**
   @brief Constructor
@@ -192,6 +190,11 @@ class VictimList : public ObjectList<Victim> {
   float APPROACH_DIST;
   //!< The approach pose distance threshold for informing fsm of change 
   float VICTIM_UPDATE;
+
+ private:
+
+  friend class VictimListTest;
+ 
 };
 
 

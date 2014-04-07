@@ -20,8 +20,8 @@ typedef nav_msgs::OccupancyGrid Map;
 typedef nav_msgs::OccupancyGridPtr MapPtr;
 typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
 
-class PoseFinder {
-
+class PoseFinder
+{
  public:
 
   PoseFinder(const MapPtr& map, const std::string& mapType,
@@ -49,6 +49,8 @@ class PoseFinder {
 
   void publishVisionTransform(float alertYaw, float alertPitch,
       tf::Transform worldHeadCameraTransform);
+
+ private:
 
   friend class PoseFinderTest;
 

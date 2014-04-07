@@ -52,8 +52,8 @@ typedef nav_msgs::OccupancyGrid Map;
 typedef nav_msgs::OccupancyGridPtr MapPtr;
 typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
 
-class AlertHandler: public StateClient {
-
+class AlertHandler: public StateClient
+{
  public:
 
   /**
@@ -121,7 +121,7 @@ class AlertHandler: public StateClient {
 
   /* Dynamic Reconfiguration Callback */
   void dynamicReconfigCallback(
-      alert_handler::AlertHandlerConfig &config,
+      const alert_handler::AlertHandlerConfig &config,
         uint32_t level);
 
   /* Services Callbacks */

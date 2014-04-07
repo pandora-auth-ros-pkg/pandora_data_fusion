@@ -2,19 +2,20 @@
 
 #include "alert_handler/objects.h"
 
-Hole::Hole() {
+Hole::Hole()
+{
   type_ = "hole";
 }
 
-geometry_msgs::PoseStamped Hole::getPoseStamped() const {
-
+geometry_msgs::PoseStamped Hole::getPoseStamped() const
+{
   geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "hole_" + boost::to_string(id_);
   return objPose;
 }
 
-void Hole::getVisualization(visualization_msgs::MarkerArray* markers) const {
-
+void Hole::getVisualization(visualization_msgs::MarkerArray* markers) const
+{
   visualization_msgs::Marker marker;
 
   marker.header.frame_id = "/world";
@@ -36,17 +37,17 @@ void Hole::getVisualization(visualization_msgs::MarkerArray* markers) const {
   marker.color.a = 0.7;
 
   markers->markers.push_back(marker);
-
 }
 
-bool Hole::isSameObject(const ObjectConstPtr& object, float distance) const {
-
+bool Hole::isSameObject(const ObjectConstPtr& object, float distance) const
+{
   bool cond = false;
 
-  if (object->getType().compare(std::string("tpa"))) {
-      cond = Object::isSameObject(object, distance);
+  if (object->getType().compare(std::string("tpa")))
+  {
+    cond = Object::isSameObject(object, distance);
   }
 
   return cond;
-
 }
+

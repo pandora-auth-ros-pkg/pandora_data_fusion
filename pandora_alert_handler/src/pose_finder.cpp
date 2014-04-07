@@ -1,29 +1,23 @@
 // "Copyright [year] <Copyright Owner>"
 
-#include <utility> 
-#include <vector> 
-
 #include "alert_handler/pose_finder.h"
 
 PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType, 
     float occupiedCellThres, 
     float heightHighThres, float heightLowThres,
     float approachDist, float orientationDist,
-    float orientationCircle) : map_(map) {
-
-
-  //testPub = temp.advertise<Map>("test_map", 10, true);
+    float orientationCircle) : map_(map)
+{
   updateParams(occupiedCellThres, heightHighThres, heightLowThres, approachDist,
                             orientationDist, orientationCircle);
   
   listener_.reset( TfFinder::newTfListener(mapType) );
-
 }
 
 void PoseFinder::updateParams(float occupiedCellThres,
       float heightHighThres, float heightLowThres,
-      float approachDist, float orientationDist, float orientationCircle) {
-
+      float approachDist, float orientationDist, float orientationCircle)
+{
   OCCUPIED_CELL_THRES = occupiedCellThres;
   HEIGHT_HIGH_THRES = heightHighThres;
   HEIGHT_LOW_THRES = heightLowThres;
@@ -33,9 +27,9 @@ void PoseFinder::updateParams(float occupiedCellThres,
 
 }
 
-void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch,
-                                      tf::Transform worldHeadCameraTransform) {
-
+void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch, 
+    tf::Transform worldHeadCameraTransform)
+{
   tfScalar cameraYaw, cameraPitch, cameraRoll;
 
   worldHeadCameraTransform.getBasis().getRPY(cameraRoll,
@@ -48,12 +42,11 @@ void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch,
 
   //~ victimFrameBroadcaster.sendTransform(
     //~ tf::StampedTransform( transVision , ros::Time::now(), "world", "vision")  );
-
 }
 
-
 Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
-    tf::Transform tfTransform) {
+    tf::Transform tfTransform)
+{
   Pose outPose;
 
   publishVisionTransform(alertYaw, alertPitch, tfTransform);
@@ -79,11 +72,11 @@ Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
   outPose.orientation = findNormalVectorOnWall(framePosition, outPose.position);
 
   return outPose;
-
 }
 
 float PoseFinder::calcHeight(float alertPitch,
-    float height, float distFromAlert) {
+    float height, float distFromAlert)
+{
   float alertHeight = tan(alertPitch) * distFromAlert;
 
   alertHeight += height;
@@ -97,12 +90,10 @@ float PoseFinder::calcHeight(float alertPitch,
     throw AlertException("Alert either too low or two high");
 
   return alertHeight;
-
 }
 
-
-Point PoseFinder::positionOnWall(Point startPoint, float angle) {
-
+Point PoseFinder::positionOnWall(Point startPoint, float angle)
+{
   const float resolution = map_->info.resolution;
   float x = 0, y = 0, D = 5 * resolution;
 
@@ -113,43 +104,40 @@ Point PoseFinder::positionOnWall(Point startPoint, float angle) {
 
   x = D * cos(omega) + currX;
   y = D * sin(omega) + currY;
-  //ROS_INFO_STREAM_NAMED("pose_finder" , "x: "<<x<<" y: "<<y<<" D: "<<D);
-  
-  //Map testMap(*map_);
 
   while (map_->data[COORDS(x, y, map_)]
-      < OCCUPIED_CELL_THRES * 100) {
+      < OCCUPIED_CELL_THRES * 100)
+  {
     D += resolution;
     x = D * cos(omega) + currX;
     y = D * sin(omega) + currY;
-    //ROS_INFO_STREAM_NAMED("pose_finder", "x: "<<x<<" y: "<<y<<" D: "<<D);
-    //ROS_INFO_STREAM_NAMED("pose_finder", COORDS(x, y, map_));
-    //testMap.data[COORDS(x, y, map_)] = 100;
   }
-  //testPub.publish(testMap);
   if (map_->data[COORDS(x, y, map_)]
-      > OCCUPIED_CELL_THRES * 100) {
+      > OCCUPIED_CELL_THRES * 100)
+  {
     Point onWall;
     onWall.x = x;
     onWall.y = y;
     return onWall;
-  } else 
+  } 
+  else 
     throw AlertException("Can not find point on wall");
-
 }
 
 geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
-    Point alertPoint) {
-
+    Point alertPoint)
+{
   std::vector<Point> points;
   float x = 0, y = 0;
 
-  for (unsigned int i = 0; i < 360; i += 5) {
+  for (unsigned int i = 0; i < 360; i += 5)
+  {
     x = alertPoint.x + ORIENTATION_CIRCLE * cos((i / 180.0) * PI);
     y = alertPoint.y + ORIENTATION_CIRCLE * sin((i / 180.0) * PI);
 
     if (map_->data[COORDS(x, y, map_)]
-        > OCCUPIED_CELL_THRES * 100) {
+        > OCCUPIED_CELL_THRES * 100)
+    {
       Point temp;
       temp.x = x;
       temp.y = y;
@@ -165,8 +153,8 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   // if points are too close, first point should be the
   // diametrically opposite of the second
   if ( Utils::distanceBetweenPoints2D
-      (pointsOnWall.first, pointsOnWall.second) < ORIENTATION_CIRCLE / 2 ) {
-    
+      (pointsOnWall.first, pointsOnWall.second) < ORIENTATION_CIRCLE / 2 )
+  {  
     angle = atan2((alertPoint.y - pointsOnWall.second.y),
         (alertPoint.x - pointsOnWall.second.x));
     
@@ -192,19 +180,21 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
   approachPoints.second = second;
 
   if ( Utils::distanceBetweenPoints2D(framePoint, approachPoints.first) < 
-        Utils::distanceBetweenPoints2D(framePoint, approachPoints.second) ) {
+        Utils::distanceBetweenPoints2D(framePoint, approachPoints.second) )
+  {
     return Utils::calculateQuaternion(alertPoint, approachPoints.first);
-  } else {
+  }
+  else
+  {
     return Utils::calculateQuaternion(alertPoint, approachPoints.second);
   }
-
 }
 
-
 std::pair<Point, Point> PoseFinder::findDiameterEndPointsOnWall(
-    std::vector<Point> points) {
-
-  if (points.size() < 2) {
+    std::vector<Point> points)
+{
+  if (points.size() < 2)
+  {
     throw AlertException("Can not calculate approach point");
   }
 
@@ -212,10 +202,13 @@ std::pair<Point, Point> PoseFinder::findDiameterEndPointsOnWall(
 
   std::pair<Point, Point> pointsOnWall;
 
-  for (unsigned int i = 0; i < points.size(); i++) {
-    for (unsigned int j = i + 1; j < points.size(); j++) {
+  for (unsigned int i = 0; i < points.size(); i++)
+  {
+    for (unsigned int j = i + 1; j < points.size(); j++)
+    {
       dist = Utils::distanceBetweenPoints2D(points[i], points[j]);
-      if (dist > maxDist) {
+      if (dist > maxDist)
+      {
         maxDist = dist;
         pointsOnWall = std::make_pair(points[i], points[j]);
       }
@@ -226,17 +219,16 @@ std::pair<Point, Point> PoseFinder::findDiameterEndPointsOnWall(
 }
 
 
-tf::Transform PoseFinder::lookupTransformFromWorld(std_msgs::Header header) {
-
+tf::Transform PoseFinder::lookupTransformFromWorld(std_msgs::Header header)
+{
   tf::StampedTransform tfTransform;
 
   listener_->waitForTransform("/world", header.frame_id,
       header.stamp, ros::Duration(1));
 
-  listener_->lookupTransform( "/world", header.frame_id,
-                                           header.stamp, tfTransform);
+  listener_->lookupTransform( "/world", header.frame_id, 
+      header.stamp, tfTransform);
 
   return tfTransform;
-
 }
 

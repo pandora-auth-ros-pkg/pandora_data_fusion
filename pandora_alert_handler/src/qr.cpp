@@ -2,25 +2,28 @@
 
 #include "alert_handler/objects.h"
 
-Qr::Qr() {
+Qr::Qr()
+{
   type_ = "qr";
   timeFound_ = ros::Time::now();
 }
 
-geometry_msgs::PoseStamped Qr::getPoseStamped() const {
-
+geometry_msgs::PoseStamped Qr::getPoseStamped() const
+{
   geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "qr_" + boost::to_string(id_) + "_" + content_;
   return objPose;
 }
 
-bool Qr::isSameObject(const ObjectConstPtr& object, float distance) const {
-
+bool Qr::isSameObject(const ObjectConstPtr& object, float distance) const
+{
   bool cond = false;
 
-  if(object->getType().compare(std::string("tpa"))) {
+  if(object->getType().compare(std::string("tpa")))
+  {
     cond = Object::isSameObject(object, distance);
-    if (!object->getType().compare(type_)) {
+    if (!object->getType().compare(type_))
+    {
       cond = cond &&
         !content_.compare(
           boost::dynamic_pointer_cast<const Qr>(object)->getContent());
@@ -28,12 +31,11 @@ bool Qr::isSameObject(const ObjectConstPtr& object, float distance) const {
   }
 
   return cond;
-
 }
 
 void Qr::fillGeotiff(
-  data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {
-
+  data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
+{
   res->qrx.push_back( pose_.position.x );
   res->qry.push_back( pose_.position.y );
   res->qrworldx.push_back( pose_.position.x );
@@ -42,8 +44,8 @@ void Qr::fillGeotiff(
   res->qrtimestamp.push_back(timeFound_);
 }
 
-void Qr::getVisualization(visualization_msgs::MarkerArray* markers) const {
-
+void Qr::getVisualization(visualization_msgs::MarkerArray* markers) const
+{
   visualization_msgs::Marker marker;
 
   marker.header.frame_id = "/world";
