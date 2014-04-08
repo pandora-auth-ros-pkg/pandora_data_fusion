@@ -1,12 +1,16 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
+#ifndef ALERT_HANDLER_OBJECT_HANDLER_H
+#define ALERT_HANDLER_OBJECT_HANDLER_H
 
-#include "alert_handler/object_list.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
+
 #include "data_fusion_communications/QrNotificationMsg.h"
 
-class ObjectHandler
+#include "alert_handler/object_list.h"
+
+class ObjectHandler : private boost::noncopyable
 {
  public:
 
@@ -17,8 +21,8 @@ class ObjectHandler
                 float hazmatClosestalert = 0.5);
 
   void handleHoles(const HolePtrVectorPtr& newHoles, const tf::Transform& transform);
-  void handleQrs(const QrPtrVectorPtr& newQrs,
-   const tf::Transform& transform, bool eraseHoles);
+  void handleQrs(const QrPtrVectorPtr& newQrs, 
+      const tf::Transform& transform, bool eraseHoles);
   void handleHazmats(const HazmatPtrVectorPtr& newHazmats, const tf::Transform& transform);
   void handleTpas(const TpaPtrVectorPtr& newTpas, const tf::Transform& transform);
 
@@ -50,4 +54,4 @@ class ObjectHandler
 
 typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_HANDLER_H_
+#endif  // ALERT_HANDLER_OBJECT_HANDLER_H

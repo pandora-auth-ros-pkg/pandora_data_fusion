@@ -38,9 +38,6 @@
 *********************************************************************/
 
 #include "alert_handler/victim_handler.h"
-#include <string>
-#include <vector>
-#include <set>
 
 /**
 @details 

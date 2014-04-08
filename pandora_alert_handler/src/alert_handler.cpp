@@ -1,9 +1,8 @@
 // "Copyright [year] <Copyright Owner>"
 
 #include "alert_handler/alert_handler.h"
-#include <string> 
 
-AlertHandler::AlertHandler(): nh_("/data_fusion/alert_handler")
+AlertHandler::AlertHandler(const std::string& ns): nh_(ns)
 {
   map_.reset( new Map );
 
@@ -30,7 +29,7 @@ void AlertHandler::initRosInterfaces()
 {
   std::string param; 
 
-  //~ alert-concerned subscribers
+  //!< alert-concerned subscribers
 
   if (nh_.getParam("subscribed_topic_names/holeDirection", param))
   {
@@ -75,7 +74,7 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
 
-  //~ subscribers
+  //!< subscribers
 
   if (nh_.getParam("subscribed_topic_names/victimVerification", param))
   {
@@ -109,7 +108,7 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
 
-  //~ action servers
+  //!< action servers
 
   if (nh_.getParam("action_server_names/get_victims", param))
   {
@@ -151,7 +150,7 @@ void AlertHandler::initRosInterfaces()
     boost::bind( &AlertHandler::validateCurrentHoleCallback, this) );
   validateCurrentHoleServer_->start();
 
-  //~ service servers
+  //!< service servers
 
   if (nh_.getParam("service_server_names/flush_queues", param))
   {
@@ -197,18 +196,18 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
 
-  //~ dynamic reconfigure server
+  //!< dynamic reconfigure server
 
   dynReconfserver_.setCallback(boost::bind(
     &AlertHandler::dynamicReconfigCallback, this, _1, _2));
 
-  //~ timers
+  //!< timers
 
   currentVictimTimer_ = nh_.createTimer(ros::Duration(0.1),
                                   &AlertHandler::currentVictimTimerCb, this);
 }  
 
-//~ Alert-concerned callbacks
+//!< Alert-concerned callbacks
 
 void AlertHandler::holeDirectionAlertCallback(
     const vision_communications::HolesDirectionsVectorMsg& msg)
@@ -298,7 +297,7 @@ void AlertHandler::tpaDirectionAlertCallback(
 
 }
 
-//~ Other Callbacks
+//!< Other Callbacks
 
 void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
 {
@@ -391,8 +390,8 @@ bool AlertHandler::getObjectsServiceCb(
   hazmats_->getObjectsPosesStamped(&rs.hazmats);
   tpas_->getObjectsPosesStamped(&rs.tpas);
 
-  //~ victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited
-                                         //~ , &rs.approachPoints);
+  // victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited
+                                         // , &rs.approachPoints);
 
   return true;
 }
@@ -454,12 +453,12 @@ void AlertHandler::startTransition(int newState)
 {
   curState = newState;
 
-  //check if face detection algorithm should be running now
+  //!< check if face detection algorithm should be running now
   eraseHolesQrs =
     curState == state_manager_communications::robotModeMsg::MODE_EXPLORATION ||
     curState == state_manager_communications::robotModeMsg::MODE_IDENTIFICATION;
 
-  //shutdown if the robot is switched off
+  //!< shutdown if the robot is switched off
   if (curState ==
         state_manager_communications::robotModeMsg::MODE_TERMINATING)
   {

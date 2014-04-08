@@ -66,8 +66,8 @@ void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
   for (int ii = 0; ii < newHazmats->size(); ++ii)
   {
     hazmatListPtr_->add( newHazmats->at(ii) );
-    //~ _holeListPtr->removeInRangeOfObject(newHazmats.at(ii),
-      //~ HAZMAT_CLOSEST_ALERT);
+    // _holeListPtr->removeInRangeOfObject(newHazmats.at(ii),
+      // HAZMAT_CLOSEST_ALERT);
   }
 }
 

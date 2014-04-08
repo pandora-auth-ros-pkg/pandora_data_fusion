@@ -1,22 +1,20 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_LIST_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_LIST_H_
+#ifndef ALERT_HANDLER_OBJECT_LIST_H
+#define ALERT_HANDLER_OBJECT_LIST_H
 
 #include <list>
 #include <vector>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 #include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/objects.h"
-//#include "alert_handler/const_iterator_const_ref.h"
+// #include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
 
-#include <boost/iterator/iterator_adaptor.hpp>
-
-
 template <class ObjectType>
-class ObjectList 
+class ObjectList
 {
  public:
  
@@ -26,8 +24,8 @@ class ObjectList
   typedef typename List::iterator iterator;  
   typedef typename List::const_iterator const_iterator_vers_ref;
   typedef typename List::const_iterator const_iterator;
-  //typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
-            //ConstPtr> const_iterator;
+  // typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
+            // ConstPtr> const_iterator;
   typedef std::list<iterator> IteratorList;
 
  public:
@@ -79,6 +77,7 @@ class ObjectList
  private:
 
   int id_;
+
 };
 
 typedef boost::shared_ptr< ObjectList<Object> > ObjectListPtr;
@@ -292,4 +291,4 @@ void ObjectList<ObjectType>::updateObject(
   objects_.push_back(object);
 }
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_LIST_H_
+#endif  // ALERT_HANDLER_OBJECT_LIST_H

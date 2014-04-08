@@ -1,16 +1,17 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_H_
+#ifndef ALERT_HANDLER_VICTIM_H
+#define ALERT_HANDLER_VICTIM_H
 
 #include <vector>
 #include <set>
 
-#include "geometry_msgs/Pose.h"
-#include "visualization_msgs/MarkerArray.h"
+#include <geometry_msgs/Pose.h>
+#include <visualization_msgs/MarkerArray.h>
+
+#include "data_fusion_communications/DatafusionGeotiffSrv.h"
 
 #include "alert_handler/objects.h"
-#include "data_fusion_communications/DatafusionGeotiffSrv.h"
 
 class Victim : public Object
 {
@@ -153,7 +154,7 @@ class Victim : public Object
 
   geometry_msgs::Pose approachPose_;    
   
-  //!<Holds the type of sensor that created the alarm
+  //!< Holds the type of sensor that created the alarm
   std::set<int> sensorIds_;   
   
   ObjectConstPtrVector objects_;
@@ -165,7 +166,7 @@ class Victim : public Object
 
  private:
   
-  static int lastVictimId_;    //!< The last in line victim ID
+  static int lastVictimId_;  //!< The last in line victim ID
   
 };
 
@@ -175,4 +176,4 @@ typedef Victim::ConstPtr VictimConstPtr;
 typedef std::vector<VictimPtr> VictimPtrVector;
 
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_H_
+#endif  // ALERT_HANDLER_VICTIM_H

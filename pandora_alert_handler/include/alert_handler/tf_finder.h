@@ -1,16 +1,17 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_TF_FINDER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_TF_FINDER_H_
+#ifndef ALERT_HANDLER_TF_FINDER_H
+#define ALERT_HANDLER_TF_FINDER_H
 
 #include <string>
+#include <boost/utility.hpp>
 
 #include "alert_handler/exceptions.h"
 #include "alert_handler/utils.h"
 #include "alert_handler/tf_listener.h"
 
 
-class TfFinder
+class TfFinder : private boost::noncopyable
 {
  public:
  
@@ -31,10 +32,6 @@ class TfFinder
     }
   }
 
- private:
-
-  TfFinder() {}
- 
 };
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_TF_FINDER_H_
+#endif  // ALERT_HANDLER_TF_FINDER_H

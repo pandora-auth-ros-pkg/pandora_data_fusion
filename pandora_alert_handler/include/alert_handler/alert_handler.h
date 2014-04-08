@@ -1,7 +1,10 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
+#ifndef ALERT_HANDLER_ALERT_HANDLER_H
+#define ALERT_HANDLER_ALERT_HANDLER_H
+
+#include <string>
+#include <boost/utility.hpp>
 
 #include <ros/ros.h>
 
@@ -23,14 +26,14 @@
 #include "data_fusion_communications/DatafusionGeotiffSrv.h"
 #include "data_fusion_communications/GetMarkersSrv.h"
 
-#include "state_manager/state_client.h"
-
 #include "vision_communications/HolesDirectionsVectorMsg.h"
 #include "vision_communications/FaceDirectionMsg.h"
 #include "vision_communications/QRAlertsVectorMsg.h"
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
+
+#include "state_manager/state_client.h"
 
 #include "pandora_alert_handler/AlertHandlerConfig.h"
 #include "alert_handler/defines.h"
@@ -48,22 +51,17 @@ typedef actionlib::SimpleActionServer
     <data_fusion_communications::ValidateCurrentHoleAction>
                                                     ValidateCurrentHoleServer;
 
-typedef nav_msgs::OccupancyGrid Map;
-typedef nav_msgs::OccupancyGridPtr MapPtr;
-typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
-
-class AlertHandler: public StateClient
+class AlertHandler : public StateClient, private boost::noncopyable
 {
  public:
 
   /**
   @brief Constructor
-  @param nh [const ros::NodeHandle&] AlertHandler's NodeHandle
-  @param map_type [const std::string&] Says if map originates from SLAM or TEST
+  @param ns [std::string const&] Has the namespace of the node.
   **/
-  AlertHandler();
+  explicit AlertHandler(const std::string& ns);
 
-  //* Alert-concerned Subscribers */
+  /* Alert-concerned Subscribers */
   void holeDirectionAlertCallback(
     const vision_communications::HolesDirectionsVectorMsg& msg);
   void holePositionAlertCallback(
@@ -78,7 +76,7 @@ class AlertHandler: public StateClient
     const vision_communications::HazmatAlertsVectorMsg& msg);
   void qrAlertCallback(const vision_communications::QRAlertsVectorMsg& msg);
 
-  //* Victim-concerned Subscribers */
+  /* Victim-concerned Subscribers */
   /**
   @brief Communication with VictimFusion (possibly needs to change).
   @param msg [const data_fusion_communications::VictimVerificationMsg&] Msg
@@ -128,7 +126,7 @@ class AlertHandler: public StateClient
   bool flushQueues(
     std_srvs::Empty::Request& rq,
       std_srvs::Empty::Response &rs);
-  //~ Map Visualization Callbacks
+  //!< Map Visualization Callbacks
   bool getObjectsServiceCb(
     data_fusion_communications::GetObjectsSrv::Request& rq,
       data_fusion_communications::GetObjectsSrv::Response &rs);
@@ -184,7 +182,7 @@ class AlertHandler: public StateClient
 
   MapPtr map_;
 
-  // save for geotiff
+  //!< save for geotiff
   int prevxMin;
   int prevyMin;
 
@@ -204,4 +202,4 @@ class AlertHandler: public StateClient
 
 };
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_ALERT_HANDLER_H_
+#endif  // ALERT_HANDLER_ALERT_HANDLER_H

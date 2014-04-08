@@ -1,11 +1,13 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_TF_LISTENER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_TF_LISTENER_H_
+#ifndef ALERT_HANDLER_TF_LISTENER_H
+#define ALERT_HANDLER_TF_LISTENER_H
 
 #include <string>
-#include "boost/shared_ptr.hpp"
+#include <boost/shared_ptr.hpp>
+
 #include <ros/ros.h>
+
 #include "alert_handler/utils.h"
 
 class TfListener
@@ -58,4 +60,4 @@ class RosTfListener: public TfListener
 
 };
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_TF_LISTENER_H_
+#endif  // ALERT_HANDLER_TF_LISTENER_H

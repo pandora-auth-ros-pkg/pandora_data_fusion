@@ -1,4 +1,5 @@
 // "Copyright [year] <Copyright Owner>"
+
 #include "alert_handler/object_factory.h"
 
 ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType,

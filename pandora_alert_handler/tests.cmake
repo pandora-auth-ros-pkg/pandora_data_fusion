@@ -27,6 +27,7 @@ target_link_libraries(map_loader
 # add tests here so that CMakelists is not polluted
 
 ################### Unit Tests #########################
+
 ##########  ObjectListTest ###########  
 
 catkin_add_gtest(object_list_test test/unit/object_list_test.cpp)
@@ -51,6 +52,7 @@ target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
     pose_finder map_loader gtest_main)
 
 ######### VictimTest #################
+
 catkin_add_gtest(victim_test test/unit/victim_test.cpp)
 target_link_libraries(victim_test
   ${catkin_LIBRARIES}
@@ -72,6 +74,7 @@ target_link_libraries(victim_list_test
   ) 
 
 ######### VictimClustererTest #################
+
 catkin_add_gtest(victim_clusterer_test test/unit/victim_clusterer_test.cpp)
 target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   victim_clusterer 
@@ -81,7 +84,8 @@ target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   gtest_main
   ) 
 
-##########  ObjectsTest ###########       
+##########  ObjectsTest #########
+
 catkin_add_gtest(objects_test test/unit/objects_test.cpp)
 target_link_libraries(objects_test 
 ${catkin_LIBRARIES}
@@ -96,12 +100,32 @@ ${catkin_LIBRARIES}
 add_rostest(test/functional/alert_handler_test.launch)
 
 ########### RosLint ###################################################
+
 set(ROSLINT_CPP_OPTS 
-    "--filter=-whitespace/end_of_line,-build/include_order,-build/include,-whitespace/blank_line,-whitespace/parens,-whitespace/comments")
+    "--filter=-whitespace/end_of_line,-build/include,-whitespace/blank_line,-whitespace/parens, -whitespace/braces")
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS 
      RELATIVE ${PROJECT_SOURCE_DIR} 
             include/alert_handler/*.h 
             src/*.cpp 
             #test/unit/*.cpp
             )
+LIST(REMOVE_ITEM ${PROJECT_NAME}_LINT_SRCS
+      RELATIVE ${PROJECT_SOURCE_DIR}
+            include/alert_handler/alert_handler.h
+            include/alert_handler/tf_listener.h
+            src/alert_handler.cpp
+            src/ros_tf_listener.cpp
+            )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
+set(ROSLINT_CPP_OPTS 
+    "--filter=-whitespace/end_of_line,-build/include,-whitespace/blank_line,-whitespace/parens, -whitespace/braces, -runtime/references")
+FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS_WITH_REFS
+     RELATIVE ${PROJECT_SOURCE_DIR} 
+            include/alert_handler/alert_handler.h
+            include/alert_handler/tf_listener.h
+            src/alert_handler.cpp
+            src/ros_tf_listener.cpp
+            )
+          roslint_cpp(${${PROJECT_NAME}_LINT_SRCS_WITH_REFS})
+roslint_add_test()
+

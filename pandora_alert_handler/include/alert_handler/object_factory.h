@@ -1,11 +1,14 @@
 // "Copyright [year] <Copyright Owner>"
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_FACTORY_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_FACTORY_H_
+//
+#ifndef ALERT_HANDLER_OBJECT_FACTORY_H
+#define ALERT_HANDLER_OBJECT_FACTORY_H
 
-#include <nav_msgs/OccupancyGrid.h>
-
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
 #include <string>
 #include <vector>
+
+#include <nav_msgs/OccupancyGrid.h>
 
 #include "vision_communications/HolesDirectionsVectorMsg.h"
 #include "vision_communications/FaceDirectionMsg.h"
@@ -18,13 +21,7 @@
 #include "alert_handler/objects.h"
 #include "alert_handler/utils.h"
 
-#include <boost/shared_ptr.hpp>
-
-typedef nav_msgs::OccupancyGrid Map;
-typedef nav_msgs::OccupancyGridPtr MapPtr;
-typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
-
-class ObjectFactory
+class ObjectFactory : private boost::noncopyable
 {
  public:
 
@@ -86,8 +83,9 @@ class ObjectFactory
   tf::Transform currentTransform_;
   
   PoseFinderPtr poseFinder_;
+
 };
 
 typedef boost::scoped_ptr< ObjectFactory > ObjectFactoryPtr;
 
-#endif // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECT_FACTORY_H_
+#endif  // ALERT_HANDLER_OBJECT_FACTORY_H

@@ -37,34 +37,33 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_
-
-#include <ros/ros.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/PoseStamped.h>
+#ifndef ALERT_HANDLER_OBJECTS_H
+#define ALERT_HANDLER_OBJECTS_H
 
 #include <set>
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
+#include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
+
 #include "data_fusion_communications/DatafusionGeotiffSrv.h"
+#include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/utils.h"
 
-#include "visualization_msgs/MarkerArray.h"
-
-#include <boost/shared_ptr.hpp>
-
 /**
-  @class Object
-  @brief Abstract class representing an Object in 3d space
+@class Object
+@brief Abstract class representing an Object in 3d space
 **/ 
 class Object
 {
  public:
+
   typedef boost::shared_ptr<Object> Ptr;
   typedef boost::shared_ptr<Object const> ConstPtr;
 
@@ -452,4 +451,4 @@ typedef Tpa::ConstPtr TpaConstPtr;
 typedef std::vector< TpaPtr > TpaPtrVector;
 typedef boost::shared_ptr< TpaPtrVector > TpaPtrVectorPtr;
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_OBJECTS_H_
+#endif  // ALERT_HANDLER_OBJECTS_H

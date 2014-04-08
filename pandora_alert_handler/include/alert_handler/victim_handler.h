@@ -37,16 +37,18 @@
 *   Triantafyllos Afouras <afourast@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
+#ifndef ALERT_HANDLER_VICTIM_HANDLER_H
+#define ALERT_HANDLER_VICTIM_HANDLER_H
 
 #include <map>
 #include <string>
 #include <vector>
+#include <boost/utility.hpp>
 
-#include "ros/ros.h"
-#include "visualization_msgs/MarkerArray.h"
-#include "std_msgs/Empty.h"
+#include <ros/ros.h>
+
+#include <visualization_msgs/MarkerArray.h>
+#include <std_msgs/Empty.h>
 
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
@@ -57,12 +59,13 @@
 #include "alert_handler/victim.h"
 #include "alert_handler/victim_clusterer.h"
 #include "alert_handler/victim_list.h"
+#include "alert_handler/defines.h"
 
 /**
   @class VictimHandler
   @brief Controller that keeps track of victims 
 **/ 
-class VictimHandler
+class VictimHandler : private boost::noncopyable
 {
  public:
  
@@ -237,8 +240,9 @@ class VictimHandler
 
   //!< The probability threshold for informing fsm of victim verification 
   float VICTIM_VERIFICATION_PROB;
+
 };
 
 typedef boost::scoped_ptr<VictimHandler> VictimHandlerPtr;
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_VICTIM_HANDLER_H_
+#endif  // ALERT_HANDLER_VICTIM_HANDLER_H

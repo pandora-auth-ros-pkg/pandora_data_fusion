@@ -1,20 +1,21 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_UTILS_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_UTILS_H_
+#ifndef ALERT_HANDLER_UTILS_H
+#define ALERT_HANDLER_UTILS_H
 
+#include <utility>
 #include <boost/utility.hpp>
-#include "ros/ros.h"
+
+#include <ros/ros.h>
 #include <tf/transform_listener.h>
-#include "std_msgs/Empty.h"
+
+#include <std_msgs/Empty.h>
 #include <geometry_msgs/Pose.h>
+
 #include "alert_handler/exceptions.h"
 #include "alert_handler/defines.h"
 
-typedef geometry_msgs::Pose Pose;
-typedef geometry_msgs::Point Point;
-
-class Utils : boost::noncopyable
+class Utils : private boost::noncopyable
 {
  public:
 
@@ -26,9 +27,6 @@ class Utils : boost::noncopyable
     Point b);
   static Point vector3ToPoint(tf::Vector3 vector);
 
- private:
-
-  Utils() {}
 };
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_UTILS_H_
+#endif  // ALERT_HANDLER_UTILS_H

@@ -24,7 +24,6 @@ void PoseFinder::updateParams(float occupiedCellThres,
   ORIENTATION_CIRCLE = orientationCircle;
   ORIENTATION_DIST = orientationDist;
   APPROACH_DIST = approachDist;
-
 }
 
 void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch, 
@@ -40,8 +39,8 @@ void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch,
   rotation.setRPY(0, cameraPitch - alertPitch, cameraYaw - alertYaw);
   transVision.setRotation(rotation);
 
-  //~ victimFrameBroadcaster.sendTransform(
-    //~ tf::StampedTransform( transVision , ros::Time::now(), "world", "vision")  );
+  // victimFrameBroadcaster.sendTransform(
+    // tf::StampedTransform( transVision , ros::Time::now(), "world", "vision")  );
 }
 
 Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
@@ -150,8 +149,8 @@ geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
 
   float angle;
 
-  // if points are too close, first point should be the
-  // diametrically opposite of the second
+  //!< if points are too close, first point should be the
+  //!< diametrically opposite of the second
   if ( Utils::distanceBetweenPoints2D
       (pointsOnWall.first, pointsOnWall.second) < ORIENTATION_CIRCLE / 2 )
   {  

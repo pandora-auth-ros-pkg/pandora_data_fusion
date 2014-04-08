@@ -59,7 +59,7 @@ geometry_msgs::PoseStamped Victim::getApproachPoint() const
 
 void Victim::getVisualization(visualization_msgs::MarkerArray* markers) const
 {
-  //~ fill victim pose
+  //!< fill victim pose
   visualization_msgs::Marker victimMarker;
 
   victimMarker.header.frame_id = "/world";
@@ -75,7 +75,7 @@ void Victim::getVisualization(visualization_msgs::MarkerArray* markers) const
   victimMarker.scale.y = 0.1;
   victimMarker.scale.z = 0.1;
 
-  //~ fill victim approach pose
+  //!< fill victim approach pose
   visualization_msgs::Marker approachPointMarker;
 
   approachPointMarker.header.frame_id = "/world";

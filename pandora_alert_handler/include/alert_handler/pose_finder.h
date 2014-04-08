@@ -1,14 +1,15 @@
 // "Copyright [year] <Copyright Owner>"
 
-#ifndef PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_POSE_FINDER_H_
-#define PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_POSE_FINDER_H_
+#ifndef ALERT_HANDLER_POSE_FINDER_H
+#define ALERT_HANDLER_POSE_FINDER_H
 
 #include <utility> 
-#include <vector> 
-
-#include <nav_msgs/OccupancyGrid.h>
+#include <vector>
+#include <boost/utility.hpp>
 
 #include <tf/transform_broadcaster.h>
+
+#include <nav_msgs/OccupancyGrid.h>
 
 #include "alert_handler/defines.h"
 #include "alert_handler/tf_finder.h"
@@ -16,11 +17,7 @@
 #include "alert_handler/objects.h"
 #include "alert_handler/utils.h"
 
-typedef nav_msgs::OccupancyGrid Map;
-typedef nav_msgs::OccupancyGridPtr MapPtr;
-typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
-
-class PoseFinder
+class PoseFinder : private boost::noncopyable
 {
  public:
 
@@ -56,23 +53,21 @@ class PoseFinder
 
  private:
 
-  //ros::Publisher testPub;
-  //ros::NodeHandle temp;
-
   const MapPtr& map_;
 
   TfListenerPtr listener_;
-  //~ tf::TransformBroadcaster victimFrameBroadcaster;
+  // tf::TransformBroadcaster victimFrameBroadcaster;
 
-  //params
+  //!< params
   float ORIENTATION_CIRCLE;
   float ORIENTATION_DIST;
   float APPROACH_DIST;
   float HEIGHT_HIGH_THRES;
   float HEIGHT_LOW_THRES;
   float OCCUPIED_CELL_THRES;
+
 };
 
 typedef boost::scoped_ptr< PoseFinder > PoseFinderPtr;
 
-#endif  // PANDORA_ALERT_HANDLER_INCLUDE_ALERT_HANDLER_POSE_FINDER_H_
+#endif  // ALERT_HANDLER_POSE_FINDER_H

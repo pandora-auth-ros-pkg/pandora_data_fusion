@@ -38,7 +38,6 @@
 *********************************************************************/
 
 #include "alert_handler/victim_list.h"
-#include <vector>
 
 VictimList::VictimList(int counterThreshold, float distanceThreshold, 
       float approachDistance, float victimUpdate) :
