@@ -77,6 +77,14 @@ class Object
 
   typedef boost::shared_ptr<Object> Ptr;
   typedef boost::shared_ptr<Object const> ConstPtr;
+  typedef boost::shared_ptr<BFL::LinearAnalyticConditionalGaussian>
+                                                                AnalyticGausPtr;
+  typedef boost::shared_ptr<BFL::LinearAnalyticSystemModelGaussianUncertainty> 
+                                                                SystemModelPtr;
+  typedef boost::shared_ptr
+    <BFL::LinearAnalyticMeasurementModelGaussianUncertainty> MeasModelPtr;
+  typedef boost::shared_ptr<BFL::Gaussian> GaussianPtr;
+  typedef boost::shared_ptr<BFL::ExtendedKalmanFilter> FilterPtr;
 
   /**
   @brief Constructor
@@ -256,19 +264,47 @@ class Object
   void initializeFilter();
   
   /**
-  @brief Getter for member sysModel
-  @return BFL::LinearAnalyticSystemModelGaussianUncertainty* sysModel
+  @brief Getter for member sysModelX
+  @return SystemModelPtr sysModelX
   **/
-  BFL::LinearAnalyticSystemModelGaussianUncertainty* getSysModel() {
-    return sysModel_;
+  SystemModelPtr getSysModelX() {
+    return sysModelX_;
+  }
+  /**
+  @brief Getter for member sysModelY
+  @return SystemModelPtr sysModelY
+  **/
+  SystemModelPtr getSysModelY() {
+    return sysModelY_;
+  }
+  /**
+  @brief Getter for member sysModelZ
+  @return SystemModelPtr sysModelZ
+  **/
+  SystemModelPtr getSysModelZ() {
+    return sysModelZ_;
   }
   
   /**
-  @brief Getter for member measModel
-  @return BFL::LinearAnalyticMeasurementModelGaussianUncertainty* measModel
+  @brief Getter for member measModelX
+  @return MeasModelPtr measModelX
   **/
-  BFL::LinearAnalyticMeasurementModelGaussianUncertainty* getMeasModel() {
-    return measModel_;
+  MeasModelPtr getMeasModelX() {
+    return measModelX_;
+  }
+  /**
+  @brief Getter for member measModelY
+  @return MeasModelPtr measModelY
+  **/
+  MeasModelPtr getMeasModelY() {
+    return measModelY_;
+  }
+  /**
+  @brief Getter for member measModelZ
+  @return MeasModelPtr measModelZ
+  **/
+  MeasModelPtr getMeasModelZ() {
+    return measModelZ_;
   }
   
   /**
@@ -280,11 +316,27 @@ class Object
   }
   
   /**
-  @brief Getter for member filter
-  @return BFL::ExtendedKalmanFilter* filter
+  @brief Getter for member filterX
+  @return FilterPtr filterX
   **/
-  BFL::ExtendedKalmanFilter* getFilter() {
-    return filter_;
+  FilterPtr getFilterX() {
+    return filterX_;
+  }
+  
+  /**
+  @brief Getter for member filterY
+  @return FilterPtr filterY
+  **/
+  FilterPtr getFilterY() {
+    return filterY_;
+  }
+  
+  /**
+  @brief Getter for member filterZ
+  @return FilterPtr filterZ
+  **/
+  FilterPtr getFilterZ() {
+    return filterZ_;
   }
   
  protected:
@@ -305,25 +357,62 @@ class Object
   //!< The reference frame for the pose. Should normally be "/world"
   std::string frame_id_;
   
-  
+  //!< Filter's system matrix A
   MatrixWrapper::Matrix matrixA_;
+  //!< Filter's system matrix B
   MatrixWrapper::Matrix matrixB_;
+  //!< Filter's combined matrix
   std::vector<MatrixWrapper::Matrix> matrixAB_;
+  //!< Filter's system noise mean
   MatrixWrapper::ColumnVector sysNoiseMu_;
+  //!< Filter's system noise covariance
   MatrixWrapper::SymmetricMatrix sysNoiseCov_;
   
+  //!< Filter's measurement matrix H
   MatrixWrapper::Matrix matrixH_;
+  //!< Filter's measurement noise mean
   MatrixWrapper::ColumnVector measNoiseMu_;
+  //!< Filter's measurement noise covariance
   MatrixWrapper::SymmetricMatrix measNoiseCov_;
   
+  //!< Filter's prior mean
   MatrixWrapper::ColumnVector priorMu_;
+  //!< Filter's prior covariance
   MatrixWrapper::SymmetricMatrix priorCov_;
   
-  BFL::ExtendedKalmanFilter* filter_;
-  BFL::LinearAnalyticSystemModelGaussianUncertainty* sysModel_;
-  BFL::LinearAnalyticMeasurementModelGaussianUncertainty* measModel_;
+  //!< Filter's system pdf
+  AnalyticGausPtr sysPdf_;
+  //!< Filter's measurement pdf
+  AnalyticGausPtr measPdf_;
+  //!< Filter's system model for dimension x
+  SystemModelPtr sysModelX_;
+  //!< Filter's system model for dimension y
+  SystemModelPtr sysModelY_;
+  //!< Filter's system model for dimension z
+  SystemModelPtr sysModelZ_;
+  //!< Filter's measurement model for dimension x
+  MeasModelPtr measModelX_;
+  //!< Filter's measurement model for dimension y
+  MeasModelPtr measModelY_;
+  //!< Filter's measurement model for dimension z
+  MeasModelPtr measModelZ_;
   
-  MatrixWrapper::ColumnVector input;
+  //!< Filter's prior gaussian for dimension x
+  GaussianPtr priorX_;
+  //!< Filter's prior gaussian for dimension y
+  GaussianPtr priorY_;
+  //!< Filter's prior gaussian for dimension z
+  GaussianPtr priorZ_;
+  
+  //!< Kalman filter for dimension x
+  FilterPtr filterX_;
+  //!< Kalman filter for dimension y
+  FilterPtr filterY_;
+  //!< Kalman filter for dimension z
+  FilterPtr filterZ_;
+  
+  //!< Filter's input vector
+  MatrixWrapper::ColumnVector input_;
 
 };
 

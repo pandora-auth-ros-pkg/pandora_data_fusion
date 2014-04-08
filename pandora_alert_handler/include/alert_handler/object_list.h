@@ -130,17 +130,25 @@ template <class ObjectType>
 bool ObjectList<ObjectType>::add(const Ptr& object)
 {
   IteratorList iteratorList;
-
+  
+  ROS_INFO("printing existing objects' positions");
+  for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+  {
+      ROS_INFO("x = %f", (*it)->getPose().position.x);
+      ROS_INFO("y = %f", (*it)->getPose().position.y);
+      ROS_INFO("z = %f", (*it)->getPose().position.z);
+  }
+  
   if (isAnExistingObject(object, &iteratorList))
   {
+    ROS_INFO("updating existing object");
     updateObject(object, iteratorList);
     return false;
   }
-  
+  ROS_INFO("new object found");
   object->initializeFilter();
   
   object->setId(id_++);
-  //object->incrementCounter();
   objects_.push_back(object);
   return true;
 }
@@ -272,62 +280,64 @@ bool ObjectList<ObjectType>::isAnExistingObject(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::updateObject(
-    const Ptr& object, const IteratorList& iteratorList) {
-  
-  /*int totalCounter = 0;
-  int maxCounter = (*iteratorList.front())->getCounter();
-  int maxId = (*iteratorList.front())->getId();*/
-
+    const Ptr& object, const IteratorList& iteratorList)
+{
   for ( typename IteratorList::const_iterator it = iteratorList.begin();
          it != iteratorList.end() ; ++it)
   {
-    // find total counter value, set new object's id as the id of the
-    // object with the highest counter as of now.
-    /*totalCounter += (*(*it))->getCounter();
-    if ((*(*it))->getCounter() > maxCounter) {
-      maxCounter = (*(*it))->getCounter();
-      maxId = (*(*it))->getId();
-    }*/
-    
     Point objectPosition = object->getPose().position;
+    MatrixWrapper::ColumnVector measurement(1);
     
-    MatrixWrapper::ColumnVector measurementVector;
-    measurementVector(1) = objectPosition.x;
-    measurementVector(2) = objectPosition.y;
-    measurementVector(3) = objectPosition.z;
+    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior =
+                                              (*(*it))->getFilterX()->PostGet();
+    ROS_INFO("object's previous x position = %f",
+                                              posterior->ExpectedValueGet()(1));
+    ROS_INFO("new object's x position = %f", objectPosition.x);
+    posterior = (*(*it))->getFilterY()->PostGet();
+    ROS_INFO("object's previous y position = %f",
+                                              posterior->ExpectedValueGet()(1));
+    ROS_INFO("new object's y position = %f", objectPosition.y);
+    posterior = (*(*it))->getFilterZ()->PostGet();
+    ROS_INFO("object's previous z position = %f",
+                                              posterior->ExpectedValueGet()(1));
+    ROS_INFO("new object's z position = %f", objectPosition.z);
     
-    (*(*it))->getFilter()->Update((*(*it))->getSysModel(), (*(*it))->getInput(),
-                                    (*(*it))->getMeasModel(), measurementVector);
+    measurement(1) = objectPosition.x;
+    (*(*it))->getFilterX()->Update(&*(*(*it))->getSysModelX(),
+                (*(*it))->getInput(), &*(*(*it))->getMeasModelX(), measurement);
     
-    //Debug info
-    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior = (*(*it))->getFilter()->PostGet();
-    std::cout << "Mesurement = (" << measurementVector(1) << ", " <<
-      measurementVector(2) << ", "<< measurementVector(3) << ")" << std::endl;
-    std::cout << "Expected = " << posterior->ExpectedValueGet() << std::endl;
-    std::cout << "Covariance = " << posterior->CovarianceGet() << std::endl;
+    measurement(1) = objectPosition.y;
+    (*(*it))->getFilterY()->Update(&*(*(*it))->getSysModelY(),
+                (*(*it))->getInput(), &*(*(*it))->getMeasModelY(), measurement);
+    
+    measurement(1) = objectPosition.z;
+    (*(*it))->getFilterZ()->Update(&*(*(*it))->getSysModelZ(),
+                (*(*it))->getInput(), &*(*(*it))->getMeasModelZ(), measurement);
     
     Pose newObjectPose;
     
+    posterior = (*(*it))->getFilterX()->PostGet();
+    ROS_INFO("object's new x position = %f", posterior->ExpectedValueGet()(1));
+    ROS_INFO("object's new x covariance = %f", posterior->CovarianceGet()(1, 1));
     newObjectPose.position.x = posterior->ExpectedValueGet()(1);
-    newObjectPose.position.y = posterior->ExpectedValueGet()(2);
-    newObjectPose.position.z = posterior->ExpectedValueGet()(3);
+    posterior = (*(*it))->getFilterY()->PostGet();
+    ROS_INFO("object's new y position = %f", posterior->ExpectedValueGet()(1));
+    ROS_INFO("object's new y covariance = %f", posterior->CovarianceGet()(1, 1));
+    newObjectPose.position.y = posterior->ExpectedValueGet()(1);
+    posterior = (*(*it))->getFilterZ()->PostGet();
+    ROS_INFO("object's new z position = %f", posterior->ExpectedValueGet()(1));
+    ROS_INFO("object's new z covariance = %f", posterior->CovarianceGet()(1, 1));
+    newObjectPose.position.z = posterior->ExpectedValueGet()(1);
     
     newObjectPose.orientation = (*(*it))->getPose().orientation;
     
     (*(*it))->setPose(newObjectPose);
-
-    removeElementAt(*it);
+    
+    //~ removeElementAt(*it);
   }
-
-  /*object->setId(maxId);
-  object->setCounter(++totalCounter);
-
-  if (object->getCounter() > COUNTER_THRES)
-  {
-    object->setLegit(true);
-  }*/
-
-  //objects_.push_back(object);
+  //~ if (object->getCounter() > COUNTER_THRES) {
+    //~ object->setLegit(true);
+  //~ }
 }
 
 }  // namespace pandora_alert_handler
