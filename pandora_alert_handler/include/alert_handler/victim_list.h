@@ -52,6 +52,11 @@
 #include "alert_handler/utils.h"
 #include "alert_handler/victim.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 class VictimList : public ObjectList<Victim>
 {  
  public:
@@ -196,5 +201,8 @@ class VictimList : public ObjectList<Victim>
   friend class VictimListTest;
  
 };
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_VICTIM_LIST_H

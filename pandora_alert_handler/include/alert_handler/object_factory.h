@@ -1,5 +1,5 @@
 // "Copyright [year] <Copyright Owner>"
-//
+
 #ifndef ALERT_HANDLER_OBJECT_FACTORY_H
 #define ALERT_HANDLER_OBJECT_FACTORY_H
 
@@ -20,6 +20,11 @@
 #include "alert_handler/pose_finder.h"
 #include "alert_handler/objects.h"
 #include "alert_handler/utils.h"
+
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
 
 class ObjectFactory : private boost::noncopyable
 {
@@ -87,5 +92,8 @@ class ObjectFactory : private boost::noncopyable
 };
 
 typedef boost::scoped_ptr< ObjectFactory > ObjectFactoryPtr;
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_FACTORY_H

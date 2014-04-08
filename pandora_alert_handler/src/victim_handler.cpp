@@ -39,6 +39,11 @@
 
 #include "alert_handler/victim_handler.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 /**
 @details 
 **/
@@ -370,4 +375,7 @@ void VictimHandler::flush()
 {
   victimsToGoList_.clear();
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

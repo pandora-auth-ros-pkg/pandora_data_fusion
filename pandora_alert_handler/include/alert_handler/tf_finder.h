@@ -10,6 +10,10 @@
 #include "alert_handler/utils.h"
 #include "alert_handler/tf_listener.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
 
 class TfFinder : private boost::noncopyable
 {
@@ -33,5 +37,8 @@ class TfFinder : private boost::noncopyable
   }
 
 };
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_TF_FINDER_H

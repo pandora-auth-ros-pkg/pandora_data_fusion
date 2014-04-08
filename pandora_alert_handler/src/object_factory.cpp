@@ -2,6 +2,11 @@
 
 #include "alert_handler/object_factory.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType,
       float occupiedCellThres,
       float heightHighThres, float heightLowThres,
@@ -147,4 +152,7 @@ void ObjectFactory::setUpObject(const QrPtr& qrPtr,
                                                   msg.pitch, currentTransform_) );
   qrPtr->setContent( msg.QRcontent );
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

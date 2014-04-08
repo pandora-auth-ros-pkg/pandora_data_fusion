@@ -2,6 +2,11 @@
 
 #include "alert_handler/alert_handler.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 AlertHandler::AlertHandler(const std::string& ns): nh_(ns)
 {
   map_.reset( new Map );
@@ -468,4 +473,7 @@ void AlertHandler::startTransition(int newState)
 
   transitionComplete(curState);
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

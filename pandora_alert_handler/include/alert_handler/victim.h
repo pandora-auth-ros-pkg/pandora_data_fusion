@@ -13,6 +13,11 @@
 
 #include "alert_handler/objects.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 class Victim : public Object
 {
  public:
@@ -170,10 +175,11 @@ class Victim : public Object
   
 };
 
-
 typedef Victim::Ptr VictimPtr;
 typedef Victim::ConstPtr VictimConstPtr;
 typedef std::vector<VictimPtr> VictimPtrVector;
 
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_VICTIM_H

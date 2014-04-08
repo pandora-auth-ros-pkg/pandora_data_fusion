@@ -1,9 +1,14 @@
-
 // "Copyright [2014] <Pandora_Software_Testing_Team>" 
+
 #include <cstdlib>
 #include <ctime>
 #include "alert_handler/object_list.h"
 #include "gtest/gtest.h"
+
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
 
 class ObjectListTest : public testing::Test 
 {
@@ -311,4 +316,7 @@ TEST_F(ObjectListTest, Add)
   EXPECT_EQ( 5u, object2->getCounter() );
   EXPECT_TRUE( object2->getLegit() );
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

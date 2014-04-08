@@ -7,6 +7,11 @@
 #include "map_loader/map_loader.h"
 #include "gtest/gtest.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 /**
 @class PoseFinderTest
 @brief Basic Test Fixture for testing PoseFinder
@@ -481,4 +486,7 @@ TEST_F(PoseFinderTest, findDiameterEndPointsOnWallTest)
   EXPECT_NEAR( sixth.y , result.second.y , 0.0001 );
   EXPECT_NEAR( sixth.z , result.second.z , 0.0001 );
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

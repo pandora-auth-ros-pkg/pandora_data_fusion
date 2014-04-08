@@ -4,6 +4,11 @@
 #include <ros/package.h>
 #include "map_loader/map_loader.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 //Defining PI
 double pi= M_PI;
 
@@ -229,10 +234,13 @@ TEST_F(ObjectFactoryTest, makeHazmats)
     tpasVectorPtr = ObjectFactoryPtr1->makeTpas(TpaDir2);
   }
   
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
+
 int main(int argc, char **argv) 
 {
   ros::Time::init();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-  
+

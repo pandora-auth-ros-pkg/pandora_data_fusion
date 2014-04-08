@@ -48,6 +48,11 @@
 #include "alert_handler/victim.h"
 #include "alert_handler/defines.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 /**
   @class VictimClusterer
   @brief Controller that keeps track of victims 
@@ -107,5 +112,8 @@ class VictimClusterer : private boost::noncopyable
 };
 
 typedef boost::scoped_ptr<VictimClusterer> VictimClustererPtr;
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_VICTIM_CLUSTERER_H

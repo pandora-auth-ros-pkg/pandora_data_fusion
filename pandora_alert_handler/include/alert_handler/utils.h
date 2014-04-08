@@ -15,6 +15,11 @@
 #include "alert_handler/exceptions.h"
 #include "alert_handler/defines.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 class Utils : private boost::noncopyable
 {
  public:
@@ -28,5 +33,8 @@ class Utils : private boost::noncopyable
   static Point vector3ToPoint(tf::Vector3 vector);
 
 };
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_UTILS_H

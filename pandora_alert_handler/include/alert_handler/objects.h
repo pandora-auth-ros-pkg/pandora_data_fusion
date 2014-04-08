@@ -56,6 +56,11 @@
 
 #include "alert_handler/utils.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 /**
 @class Object
 @brief Abstract class representing an Object in 3d space
@@ -450,5 +455,8 @@ typedef Tpa::Ptr TpaPtr;
 typedef Tpa::ConstPtr TpaConstPtr;
 typedef std::vector< TpaPtr > TpaPtrVector;
 typedef boost::shared_ptr< TpaPtrVector > TpaPtrVectorPtr;
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECTS_H

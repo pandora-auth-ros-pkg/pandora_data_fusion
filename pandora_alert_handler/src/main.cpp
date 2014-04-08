@@ -2,6 +2,8 @@
 
 #include "alert_handler/alert_handler.h"
 
+using pandora_data_fusion::pandora_alert_handler::AlertHandler;
+
 int main (int argc, char **argv)
 {
   ros::init(argc, argv, "alert_handler", ros::init_options::NoSigintHandler);

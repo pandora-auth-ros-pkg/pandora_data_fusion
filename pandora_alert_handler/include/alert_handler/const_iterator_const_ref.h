@@ -5,6 +5,11 @@
 
 #include <boost/iterator/iterator_adaptor.hpp>
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 template <class Iterator, class Value, class ConstReference>
 class const_iterator_const_ref
   : public boost::iterator_adaptor<
@@ -50,5 +55,8 @@ class const_iterator_const_ref
     friend class boost::iterator_core_access;
 
 };
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_CONST_ITERATOR_CONST_REF_H

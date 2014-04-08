@@ -3,9 +3,10 @@
 #include "alert_handler/objects.h"
 #include "gtest/gtest.h"
 
-
-
- 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
 
 class ObjectsTest : public ::testing::Test 
 {
@@ -109,6 +110,8 @@ TEST_F(ObjectsTest, isSameTpa)
   EXPECT_TRUE(Tpa1.isSameObject( ObjectConstPtr(TpaPtr2), 6));
   }
 
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 int main(int argc, char **argv)
   {

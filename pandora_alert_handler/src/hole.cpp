@@ -2,6 +2,11 @@
 
 #include "alert_handler/objects.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 Hole::Hole()
 {
   type_ = "hole";
@@ -50,4 +55,7 @@ bool Hole::isSameObject(const ObjectConstPtr& object, float distance) const
 
   return cond;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

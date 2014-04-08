@@ -1,6 +1,10 @@
 #include "alert_handler/victim_clusterer.h"
 #include "gtest/gtest.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
 
 double pi= M_PI;
 typedef boost::shared_ptr<VictimClusterer> VictimClustererSharedPtr;
@@ -231,5 +235,6 @@ TEST_F(VictimClustererTest, createVictimList)
   EXPECT_EQ(3,getObjects(Victims[2]).size());
 }
 
-
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

@@ -1,6 +1,10 @@
 #include "alert_handler/victim_list.h"
 #include "gtest/gtest.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
 
 class VictimListTest : public ::testing::Test {
  
@@ -188,8 +192,6 @@ TEST_F(VictimListTest,contains)
   EXPECT_FALSE(VictimList1.contains(VictimConstPtr(Victim4)));
 }
 
-
-
-
-
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

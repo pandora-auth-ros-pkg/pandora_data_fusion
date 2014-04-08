@@ -2,6 +2,11 @@
 
 #include "alert_handler/pose_finder.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType, 
     float occupiedCellThres, 
     float heightHighThres, float heightLowThres,
@@ -230,4 +235,7 @@ tf::Transform PoseFinder::lookupTransformFromWorld(std_msgs::Header header)
 
   return tfTransform;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

@@ -2,6 +2,11 @@
 
 #include "alert_handler/tf_listener.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 RosTfListener::RosTfListener()
 {
   tf::StampedTransform tfTransform;
@@ -48,4 +53,7 @@ void RosTfListener::lookupTransform(const std::string& target_frame,
         "Something went wrong with tf, ignoring current message");
   }
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

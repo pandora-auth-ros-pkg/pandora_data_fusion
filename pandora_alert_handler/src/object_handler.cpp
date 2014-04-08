@@ -2,6 +2,11 @@
 
 #include "alert_handler/object_handler.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
                             HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr,
                             float sensorRange, float qrClosestAlert,
@@ -130,4 +135,7 @@ void ObjectHandler::updateParams(
   QR_CLOSEST_ALERT = qrClosestAlert;
   HAZMAT_CLOSEST_ALERT = hazmatClosestalert;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

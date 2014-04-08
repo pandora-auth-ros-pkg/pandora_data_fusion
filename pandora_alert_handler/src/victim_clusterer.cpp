@@ -39,6 +39,11 @@
 
 #include "alert_handler/victim_clusterer.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 VictimClusterer::VictimClusterer(float clusterRadius, float approachDist)
 {  
   CLUSTER_RADIUS = clusterRadius;
@@ -139,4 +144,7 @@ void VictimClusterer::updateParams(float clusterRadius, float approachDist)
   CLUSTER_RADIUS = clusterRadius;
   APPROACH_DIST = approachDist;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

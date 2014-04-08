@@ -10,6 +10,11 @@
 
 #include "alert_handler/object_list.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 class ObjectHandler : private boost::noncopyable
 {
  public:
@@ -53,5 +58,8 @@ class ObjectHandler : private boost::noncopyable
 };
 
 typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_HANDLER_H

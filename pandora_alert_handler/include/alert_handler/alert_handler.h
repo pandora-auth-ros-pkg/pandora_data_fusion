@@ -43,6 +43,11 @@
 #include "alert_handler/object_handler.h"
 #include "alert_handler/victim_handler.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 typedef actionlib::SimpleActionServer
     <data_fusion_communications::GetVictimsAction> GetVictimsServer;
 typedef actionlib::SimpleActionServer
@@ -201,5 +206,8 @@ class AlertHandler : public StateClient, private boost::noncopyable
   bool eraseHolesQrs;
 
 };
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_ALERT_HANDLER_H

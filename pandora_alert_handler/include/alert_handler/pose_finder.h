@@ -17,6 +17,11 @@
 #include "alert_handler/objects.h"
 #include "alert_handler/utils.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 class PoseFinder : private boost::noncopyable
 {
  public:
@@ -69,5 +74,8 @@ class PoseFinder : private boost::noncopyable
 };
 
 typedef boost::scoped_ptr< PoseFinder > PoseFinderPtr;
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_POSE_FINDER_H

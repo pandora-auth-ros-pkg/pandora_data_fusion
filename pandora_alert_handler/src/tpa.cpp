@@ -2,6 +2,11 @@
 
 #include "alert_handler/objects.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 Tpa::Tpa()
 {
   type_ = "tpa";
@@ -50,4 +55,7 @@ bool Tpa::isSameObject(const ObjectConstPtr& object, float distance) const
 
   return cond;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

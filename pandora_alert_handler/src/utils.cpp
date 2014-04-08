@@ -2,6 +2,11 @@
 
 #include "alert_handler/utils.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 Point Utils::point2DAndHeight2Point3D(Point position, float height)
 {
   position.z = height;
@@ -54,4 +59,7 @@ bool Utils::arePointsInRange(Point pointA, Point pointB, float sensor_range )
   else
     return true;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

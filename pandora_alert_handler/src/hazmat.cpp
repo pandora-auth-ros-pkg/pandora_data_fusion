@@ -2,6 +2,11 @@
 
 #include "alert_handler/objects.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 Hazmat::Hazmat()
 {
   type_ = "hazmat";
@@ -65,4 +70,7 @@ void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const
 
   markers->markers.push_back(marker);
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

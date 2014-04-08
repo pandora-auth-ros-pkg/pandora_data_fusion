@@ -39,6 +39,11 @@
 
 #include "alert_handler/victim_list.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 VictimList::VictimList(int counterThreshold, float distanceThreshold, 
       float approachDistance, float victimUpdate) :
   ObjectList<Victim>(counterThreshold, distanceThreshold)
@@ -340,4 +345,7 @@ void VictimList::sanityCheck(const ObjectConstPtrVectorPtr& allObjects)
     }
   }
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

@@ -13,6 +13,11 @@
 // #include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 template <class ObjectType>
 class ObjectList
 {
@@ -290,5 +295,8 @@ void ObjectList<ObjectType>::updateObject(
 
   objects_.push_back(object);
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_LIST_H

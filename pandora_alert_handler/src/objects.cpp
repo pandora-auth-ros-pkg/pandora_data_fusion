@@ -2,6 +2,11 @@
 
 #include "alert_handler/objects.h"
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 Object::Object()
 {
   counter_ = 0;
@@ -21,4 +26,7 @@ bool Object::isSameObject(const ConstPtr& object, float distance) const
   return Utils::distanceBetweenPoints3D(pose_.position, object->getPose().position)
       < distance;
 }
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 

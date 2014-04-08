@@ -19,11 +19,19 @@
     / MAP->info.resolution) + ceil((Y - MAP->info.origin.position.y)\
       / MAP->info.resolution) * MAP->info.width
 
+namespace pandora_data_fusion
+{
+namespace pandora_alert_handler
+{
+
 using geometry_msgs::Pose;
 using geometry_msgs::Point;
 
 typedef nav_msgs::OccupancyGrid Map;
 typedef nav_msgs::OccupancyGridPtr MapPtr;
 typedef nav_msgs::OccupancyGridConstPtr MapConstPtr;
+
+}  // namespace pandora_alert_handler
+}  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_DEFINES_H
