@@ -28,7 +28,8 @@ template <class ObjectType>
 class ObjectList
 {
  public:
- 
+
+  //!< Type Definitions
   typedef boost::shared_ptr< ObjectType > Ptr;
   typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
@@ -38,6 +39,16 @@ class ObjectList
   // typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
             // ConstPtr> const_iterator;
   typedef std::list<iterator> IteratorList;
+
+  typedef BFL::LinearAnalyticConditionalGaussian
+    AnalyticGaussian;
+  typedef boost::shared_ptr<AnalyticGaussian> AnalyticGaussianPtr;
+  typedef BFL::LinearAnalyticSystemModelGaussianUncertainty
+    SystemModel;
+  typedef boost::shared_ptr<SystemModel> SystemModelPtr;
+  typedef BFL::LinearAnalyticMeasurementModelGaussianUncertainty
+    MeasurementModel;
+  typedef boost::shared_ptr<MeasurementModel> MeasurementModelPtr;
 
  public:
 
@@ -65,6 +76,12 @@ class ObjectList
   void setParams(int counterThreshold, float distanceThreshold);
 
  protected:
+  
+  /**
+  @brief Initialize filter's pdf for the current object
+  @return void
+  **/
+  void initializeFilter();
 
   bool isAnExistingObject(
     const ConstPtr& object, IteratorList* iteratorListPtr);
@@ -80,6 +97,28 @@ class ObjectList
   List objects_;
   float DIST_THRESHOLD;
   int COUNTER_THRES;
+
+  //!< Filter's combined matrix
+  std::vector<MatrixWrapper::Matrix> matrixAB_;
+  //!< Filter's system pdf
+  AnalyticGaussianPtr systemPdfPtr_;
+  //!< Filter's system model for dimension x
+  SystemModelPtr systemModelX_;
+  //!< Filter's system model for dimension y
+  SystemModelPtr systemModelY_;
+  //!< Filter's system model for dimension z
+  SystemModelPtr systemModelZ_;
+  
+  //!< Filter's measurement matrix H
+  MatrixWrapper::Matrix matrixH_;
+  //!< Filter's measurement pdf
+  AnalyticGaussianPtr measurementPdfPtr_;
+  //!< Filter's measurement model for dimension x
+  MeasurementModelPtr measurementModelX_;
+  //!< Filter's measurement model for dimension y
+  MeasurementModelPtr measurementModelY_;
+  //!< Filter's measurement model for dimension z
+  MeasurementModelPtr measurementModelZ_;
 
  private:
 
@@ -104,12 +143,13 @@ typedef boost::shared_ptr< const ObjectList<Hazmat> > HazmatListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
-ObjectList<ObjectType>::ObjectList(int counterThreshold,
-    float distanceThreshold) 
+ObjectList<ObjectType>::
+ObjectList(int counterThreshold, float distanceThreshold) : matrixH_(1, 1)
 {
   id_ = 0;
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
+  initializeFilter();
 }
 
 template <class ObjectType>
@@ -131,6 +171,7 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
 {
   IteratorList iteratorList;
   
+  //!< Printing information about existing objects
   ROS_INFO("printing existing objects' positions");
   for (iterator it = objects_.begin(); it != objects_.end(); ++it)
   {
@@ -145,8 +186,8 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
     updateObject(object, iteratorList);
     return false;
   }
-  ROS_INFO("new object found");
-  object->initializeFilter();
+  ROS_INFO("New object found");
+  object->initializeObjectFilter();
   
   object->setId(id_++);
   objects_.push_back(object);
@@ -261,6 +302,55 @@ void ObjectList<ObjectType>::getVisualization(
 }
 
 template <class ObjectType>
+void ObjectList<ObjectType>::initializeFilter()
+{
+  //!< System Model Initialization
+  //!< Filter's system matrix A
+  MatrixWrapper::Matrix matrixA_(1, 1);
+  //!< Filter's system matrix B
+  MatrixWrapper::Matrix matrixB_(1, 1);
+  //!< Filter's system noise mean
+  MatrixWrapper::ColumnVector systemNoiseMu_(1);
+  //!< Filter's system noise covariance
+  MatrixWrapper::SymmetricMatrix systemNoiseVar_(1);
+
+  matrixA_(1, 1) = 1.0;
+  matrixB_(1, 1) = 0.0;
+  
+  matrixAB_.push_back(matrixA_);
+  matrixAB_.push_back(matrixB_);
+  
+  systemNoiseMu_(1) = 0.0;
+  systemNoiseVar_(1, 1) = pow(0.05, 2);
+  
+  BFL::Gaussian systemUncertainty(systemNoiseMu_, systemNoiseVar_); 
+  systemPdfPtr_.reset( new AnalyticGaussian(matrixAB_, systemUncertainty) );
+
+  systemModelX_.reset( new SystemModel(systemPdfPtr_.get()) );
+  systemModelY_.reset( new SystemModel(systemPdfPtr_.get()) );
+  systemModelZ_.reset( new SystemModel(systemPdfPtr_.get()) );
+
+  //!< Measurement Model Initialization
+  matrixH_(1, 1) = 1.0;
+  //!< Filter's measurement noise mean
+  MatrixWrapper::ColumnVector measurementNoiseMu_(1);
+  //!< Filter's measurement noise covariance
+  MatrixWrapper::SymmetricMatrix measurementNoiseVar_(1);
+ 
+  measurementNoiseMu_(1) = 0.0;
+  measurementNoiseVar_(1, 1) = pow(0.5, 2);
+  
+  BFL::Gaussian measurementUncertainty(measurementNoiseMu_, 
+      measurementNoiseVar_);
+  measurementPdfPtr_.reset( new AnalyticGaussian(matrixH_, 
+      measurementUncertainty ));
+
+  measurementModelX_.reset( new MeasurementModel(measurementPdfPtr_.get()) );
+  measurementModelY_.reset( new MeasurementModel(measurementPdfPtr_.get()) );
+  measurementModelZ_.reset( new MeasurementModel(measurementPdfPtr_.get()) );
+}
+
+template <class ObjectType>
 bool ObjectList<ObjectType>::isAnExistingObject(
     const ConstPtr& object, IteratorList* iteratorListPtr)
 {
@@ -288,56 +378,63 @@ void ObjectList<ObjectType>::updateObject(
     Point objectPosition = object->getPose().position;
     MatrixWrapper::ColumnVector measurement(1);
     
-    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior =
-                                              (*(*it))->getFilterX()->PostGet();
-    ROS_INFO("object's previous x position = %f",
-                                              posterior->ExpectedValueGet()(1));
+    //!< Printing object's most resest information.
+    BFL::Pdf<MatrixWrapper::ColumnVector>* posterior = 
+      (*(*it))->getFilterX()->PostGet();
+    ROS_INFO("object's previous x position = %f", 
+        posterior->ExpectedValueGet()(1));
     ROS_INFO("new object's x position = %f", objectPosition.x);
     posterior = (*(*it))->getFilterY()->PostGet();
-    ROS_INFO("object's previous y position = %f",
-                                              posterior->ExpectedValueGet()(1));
+    ROS_INFO("object's previous y position = %f", 
+        posterior->ExpectedValueGet()(1));
     ROS_INFO("new object's y position = %f", objectPosition.y);
     posterior = (*(*it))->getFilterZ()->PostGet();
-    ROS_INFO("object's previous z position = %f",
-                                              posterior->ExpectedValueGet()(1));
+    ROS_INFO("object's previous z position = %f", 
+        posterior->ExpectedValueGet()(1));
     ROS_INFO("new object's z position = %f", objectPosition.z);
     
+    //!< Updating existing object's filter pdfs.
     measurement(1) = objectPosition.x;
-    (*(*it))->getFilterX()->Update(&*(*(*it))->getSysModelX(),
-                (*(*it))->getInput(), &*(*(*it))->getMeasModelX(), measurement);
+    (*(*it))->getFilterX()->Update(systemModelX_.get(), 
+        (*(*it))->getInput(), measurementModelX_.get(), measurement);
     
     measurement(1) = objectPosition.y;
-    (*(*it))->getFilterY()->Update(&*(*(*it))->getSysModelY(),
-                (*(*it))->getInput(), &*(*(*it))->getMeasModelY(), measurement);
+    (*(*it))->getFilterY()->Update(systemModelY_.get(), 
+        (*(*it))->getInput(), measurementModelY_.get(), measurement);
     
     measurement(1) = objectPosition.z;
-    (*(*it))->getFilterZ()->Update(&*(*(*it))->getSysModelZ(),
-                (*(*it))->getInput(), &*(*(*it))->getMeasModelZ(), measurement);
-    
+    (*(*it))->getFilterZ()->Update(systemModelZ_.get(), 
+        (*(*it))->getInput(), measurementModelZ_.get(), measurement);
+
+    //!< Updating existing object's expected pose.
     Pose newObjectPose;
-    
+    newObjectPose.position.x = (*(*it))->getFilterX()->PostGet()
+      ->ExpectedValueGet()(1);
+    newObjectPose.position.y = (*(*it))->getFilterY()->PostGet()
+      ->ExpectedValueGet()(1);
+    newObjectPose.position.z = (*(*it))->getFilterZ()->PostGet()
+      ->ExpectedValueGet()(1);
+
+    //!< Printing object's current information.
     posterior = (*(*it))->getFilterX()->PostGet();
     ROS_INFO("object's new x position = %f", posterior->ExpectedValueGet()(1));
     ROS_INFO("object's new x covariance = %f", posterior->CovarianceGet()(1, 1));
-    newObjectPose.position.x = posterior->ExpectedValueGet()(1);
     posterior = (*(*it))->getFilterY()->PostGet();
     ROS_INFO("object's new y position = %f", posterior->ExpectedValueGet()(1));
     ROS_INFO("object's new y covariance = %f", posterior->CovarianceGet()(1, 1));
-    newObjectPose.position.y = posterior->ExpectedValueGet()(1);
     posterior = (*(*it))->getFilterZ()->PostGet();
     ROS_INFO("object's new z position = %f", posterior->ExpectedValueGet()(1));
     ROS_INFO("object's new z covariance = %f", posterior->CovarianceGet()(1, 1));
-    newObjectPose.position.z = posterior->ExpectedValueGet()(1);
-    
+
+    //!< Updating existing object's orientation.
     newObjectPose.orientation = (*(*it))->getPose().orientation;
-    
+
     (*(*it))->setPose(newObjectPose);
-    
-    //~ removeElementAt(*it);
-  }
-  //~ if (object->getCounter() > COUNTER_THRES) {
+
+    //~ if (object->getCounter() > COUNTER_THRES) {
     //~ object->setLegit(true);
-  //~ }
+    //~ }
+  }
 }
 
 }  // namespace pandora_alert_handler

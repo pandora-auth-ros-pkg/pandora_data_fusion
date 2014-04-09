@@ -23,7 +23,8 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
 
   if (ros::param::get("published_topic_names/qr_notification", param))
   {
-    qrPublisher_ = ros::NodeHandle().advertise<data_fusion_communications::QrNotificationMsg>(param, 10);
+    qrPublisher_ = ros::NodeHandle().
+      advertise<data_fusion_communications::QrNotificationMsg>(param, 10);
   }
   else
   {
