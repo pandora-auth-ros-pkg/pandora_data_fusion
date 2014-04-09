@@ -74,7 +74,7 @@ bool VictimList::contains(const VictimConstPtr& victim) const
 /**
 @details A victim from given the indices of the unvisited list is selected 
   (this will be the current if we track one). Its info is updated by 
-    copying the given victim object's one and the rest are deleted from the 
+    copying the given victim's objects one and the rest are deleted from the 
       unvisited list. The fsm is informed if necessary     
 **/
 void VictimList::updateObject(const VictimPtr& victim, 

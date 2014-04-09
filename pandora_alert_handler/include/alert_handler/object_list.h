@@ -81,7 +81,7 @@ class ObjectList
   @brief Initialize filter's pdf for the current object
   @return void
   **/
-  void initializeFilter();
+  void initializeFilterModel();
 
   bool isAnExistingObject(
     const ConstPtr& object, IteratorList* iteratorListPtr);
@@ -149,7 +149,7 @@ ObjectList(int counterThreshold, float distanceThreshold) : matrixH_(1, 1)
   id_ = 0;
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
-  initializeFilter();
+  initializeFilterModel();
 }
 
 template <class ObjectType>
@@ -302,7 +302,7 @@ void ObjectList<ObjectType>::getVisualization(
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::initializeFilter()
+void ObjectList<ObjectType>::initializeFilterModel()
 {
   //!< System Model Initialization
   //!< Filter's system matrix A
@@ -431,9 +431,16 @@ void ObjectList<ObjectType>::updateObject(
 
     (*(*it))->setPose(newObjectPose);
 
-    //~ if (object->getCounter() > COUNTER_THRES) {
-    //~ object->setLegit(true);
-    //~ }
+    bool setLegit = (*(*it))->getFilterX()->PostGet()->CovarianceGet()(1, 1)
+                    < 0.04 &&
+                    (*(*it))->getFilterY()->PostGet()->CovarianceGet()(1, 1)
+                    < 0.04 &&
+                    (*(*it))->getFilterZ()->PostGet()->CovarianceGet()(1, 1)
+                    < 0.04;
+    if (setLegit)
+    {
+      (*(*it))->setLegit(true);
+    }
   }
 }
 
