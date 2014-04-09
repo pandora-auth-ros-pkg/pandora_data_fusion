@@ -184,6 +184,7 @@ void Victim::addSensor(int sensorId)
   sensorIds_.insert(sensorId);
 } 
 
+<<<<<<< Updated upstream
 void Victim::eraseObjectAt(int index,
     float approachDistance)
 {
@@ -191,8 +192,8 @@ void Victim::eraseObjectAt(int index,
   updateRepresentativeObject(approachDistance);
 }
 
-tf::Transform Victim::getRotatedTransform() const
-{
+
+tf::Transform Victim::getRotatedTransform() const {
   tf::Transform trans = getTransform();
   tfScalar roll, pitch, yaw;
   trans.getBasis().getRPY(roll, pitch, yaw);
