@@ -184,7 +184,6 @@ void Victim::addSensor(int sensorId)
   sensorIds_.insert(sensorId);
 } 
 
-<<<<<<< Updated upstream
 void Victim::eraseObjectAt(int index,
     float approachDistance)
 {
