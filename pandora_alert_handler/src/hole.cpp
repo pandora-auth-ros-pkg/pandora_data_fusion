@@ -48,7 +48,7 @@ bool Hole::isSameObject(const ObjectConstPtr& object, float distance) const
 {
   bool cond = false;
 
-  if (object->getType().compare(std::string("tpa")))
+  if (!object->getType().compare(type_))
   {
     cond = Object::isSameObject(object, distance);
   }

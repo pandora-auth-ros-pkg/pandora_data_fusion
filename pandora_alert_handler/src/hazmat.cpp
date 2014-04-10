@@ -24,16 +24,12 @@ bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const
 {
   bool cond = false;
   
-  if(object->getType().compare(std::string("tpa")))
+  if (!object->getType().compare(type_))
   {
-    cond = Object::isSameObject(object, distance);
-    if (!object->getType().compare(type_))
-    {
-      cond = cond &&
-        pattern_ == boost::dynamic_pointer_cast<const Hazmat>(
-            object)->getPattern();
-    } 
-  }
+    cond = Object::isSameObject(object, distance) 
+      && pattern_ == boost::dynamic_pointer_cast<const Hazmat>(object)
+      ->getPattern();
+  } 
 
   return cond;
 }

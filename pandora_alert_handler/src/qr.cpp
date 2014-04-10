@@ -24,15 +24,11 @@ bool Qr::isSameObject(const ObjectConstPtr& object, float distance) const
 {
   bool cond = false;
 
-  if(object->getType().compare(std::string("tpa")))
+  if (!object->getType().compare(type_))
   {
-    cond = Object::isSameObject(object, distance);
-    if (!object->getType().compare(type_))
-    {
-      cond = cond &&
-        !content_.compare(
-          boost::dynamic_pointer_cast<const Qr>(object)->getContent());
-    }
+    cond = Object::isSameObject(object, distance)
+      && !content_.compare(
+      boost::dynamic_pointer_cast<const Qr>(object)->getContent());
   }
 
   return cond;
