@@ -21,9 +21,7 @@ class ObjectHandler : private boost::noncopyable
 
   ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
                 HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr ,
-                float sensorRange = 2.5,
-                float qrClosestAlert = 0.5,
-                float hazmatClosestalert = 0.5);
+                float sensorRange = 2.5);
 
   void handleHoles(const HolePtrVectorPtr& newHoles, const tf::Transform& transform);
   void handleQrs(const QrPtrVectorPtr& newQrs, 
@@ -31,11 +29,7 @@ class ObjectHandler : private boost::noncopyable
   void handleHazmats(const HazmatPtrVectorPtr& newHazmats, const tf::Transform& transform);
   void handleTpas(const TpaPtrVectorPtr& newTpas, const tf::Transform& transform);
 
-  bool isHoleQr(const HoleConstPtr& hole);
-  bool isHoleHazmat(const HoleConstPtr& hole);
-
-  void updateParams(float sensor_range,
-     float qrClosestAlert, float hazmatClosestalert);
+  void updateParams(float sensor_range);
 
  private:
 
@@ -52,8 +46,6 @@ class ObjectHandler : private boost::noncopyable
   TpaListPtr tpaListPtr_;
 
   float SENSOR_RANGE;
-  float QR_CLOSEST_ALERT;
-  float HAZMAT_CLOSEST_ALERT;
 
 };
 

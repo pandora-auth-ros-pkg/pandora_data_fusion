@@ -9,15 +9,12 @@ namespace pandora_alert_handler
 
 ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
                             HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr,
-                            float sensorRange, float qrClosestAlert,
-                            float hazmatClosestalert) :
+                            float sensorRange) :
   holeListPtr_(holeListPtr),
   qrListPtr_(qrListPtr),
   hazmatListPtr_(hazmatListPtr),
   tpaListPtr_(tpaListPtr),
-  SENSOR_RANGE(sensorRange),
-  QR_CLOSEST_ALERT(qrClosestAlert),
-  HAZMAT_CLOSEST_ALERT(hazmatClosestalert)
+  SENSOR_RANGE(sensorRange)
 {
   std::string param;
 
@@ -59,10 +56,6 @@ void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs,
       newQrNofifyMsg.content = newQrs->at(ii)->getContent();
       qrPublisher_.publish(newQrNofifyMsg);
     }
-    if (eraseHoles)
-    {
-      holeListPtr_->removeInRangeOfObject(newQrs->at(ii), QR_CLOSEST_ALERT);
-    }
   }
 }
 
@@ -72,8 +65,6 @@ void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
   for (int ii = 0; ii < newHazmats->size(); ++ii)
   {
     hazmatListPtr_->add( newHazmats->at(ii) );
-    // _holeListPtr->removeInRangeOfObject(newHazmats.at(ii),
-      // HAZMAT_CLOSEST_ALERT);
   }
 }
 
@@ -97,12 +88,10 @@ void ObjectHandler::keepValidHoles(const HolePtrVectorPtr& holesPtr,
 
   while (iter != holesPtr->end() )
   {
-    bool isQr = isHoleQr(*iter);
-    bool isHazmat = isHoleHazmat(*iter);
     bool isInRange = !Utils::arePointsInRange((*iter)->getPose().position,
       framePosition, SENSOR_RANGE );
 
-    bool inValid = isQr || isHazmat || isInRange;
+    bool inValid = isInRange;
 
     if ( inValid )
     {
@@ -117,24 +106,9 @@ void ObjectHandler::keepValidHoles(const HolePtrVectorPtr& holesPtr,
   }
 }
 
-bool ObjectHandler::isHoleQr(const HoleConstPtr& hole)
-{
-  return qrListPtr_->isObjectPoseInList(hole, QR_CLOSEST_ALERT);
-}
-
-bool ObjectHandler::isHoleHazmat(const HoleConstPtr& hole)
-{
-  return hazmatListPtr_->isObjectPoseInList(hole, HAZMAT_CLOSEST_ALERT);
-}
-
-void ObjectHandler::updateParams(
-  float sensorRange,
-  float qrClosestAlert,
-  float hazmatClosestalert )
+void ObjectHandler::updateParams(float sensorRange)
 {
   SENSOR_RANGE = sensorRange;
-  QR_CLOSEST_ALERT = qrClosestAlert;
-  HAZMAT_CLOSEST_ALERT = hazmatClosestalert;
 }
 
 }  // namespace pandora_alert_handler

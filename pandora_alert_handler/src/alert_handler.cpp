@@ -276,8 +276,6 @@ void AlertHandler::qrAlertCallback(
   objectHandler_->handleQrs(qrsVectorPtr, objectFactory_->getTransform(),
     eraseHolesQrs);
 
-  victimHandler_->fixVictims();
-
 }
 
 void AlertHandler::tpaDirectionAlertCallback(
@@ -375,9 +373,7 @@ void AlertHandler::dynamicReconfigCallback(
   qrs_->setParams(config.qrCounterThreshold, config.qrMinimumDist);
   hazmats_->setParams(config.hazmatCounterThreshold, config.hazmatMinimumDist);
 
-  objectHandler_->updateParams(config.sensorRange,
-                               config.qrClosestAlert,
-                               config.hazmatClosestAlert );
+  objectHandler_->updateParams(config.sensorRange);
 
   victimHandler_->updateParams(
     config.clusterRadius , config.sameVictimRadius,
