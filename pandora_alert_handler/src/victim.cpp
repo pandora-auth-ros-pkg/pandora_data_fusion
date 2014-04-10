@@ -23,8 +23,7 @@ bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
   ROS_ASSERT(object->getType().compare(type_) == 0);
   
   return 
-    Utils::distanceBetweenPoints2D(pose_.position, object->getPose().position)
-      < distance; 
+    Object::isSameObject(object, distance);
 }
 
 geometry_msgs::PoseStamped Victim::getPoseStamped() const

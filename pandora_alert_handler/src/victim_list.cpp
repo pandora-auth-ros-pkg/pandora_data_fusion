@@ -211,7 +211,7 @@ bool VictimList::getCurrentVictimTransform(tf::Transform* Transform) const
   {
     return false;
   }
-  *Transform =  (*currentVictimIt_)->getRotatedTransform();
+  *Transform = (*currentVictimIt_)->getRotatedTransform();
   return true;
 }
 
