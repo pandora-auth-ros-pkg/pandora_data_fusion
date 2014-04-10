@@ -107,7 +107,7 @@ FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS
      RELATIVE ${PROJECT_SOURCE_DIR} 
             include/alert_handler/*.h 
             src/*.cpp 
-            #test/unit/*.cpp
+            test/unit/*.cpp
             )
 LIST(REMOVE_ITEM ${PROJECT_NAME}_LINT_SRCS
       RELATIVE ${PROJECT_SOURCE_DIR}
