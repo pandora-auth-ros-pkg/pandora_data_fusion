@@ -45,12 +45,6 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include <bfl/filter/extendedkalmanfilter.h>
-#include <bfl/model/linearanalyticsystemmodel_gaussianuncertainty.h>
-#include <bfl/model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
-#include <bfl/pdf/analyticconditionalgaussian.h>
-#include <bfl/pdf/linearanalyticconditionalgaussian.h>
-
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 
@@ -60,6 +54,7 @@
 #include "data_fusion_communications/DatafusionGeotiffSrv.h"
 #include "visualization_msgs/MarkerArray.h"
 
+#include "alert_handler/filter_model.h"
 #include "alert_handler/utils.h"
 
 namespace pandora_data_fusion
@@ -68,8 +63,8 @@ namespace pandora_alert_handler
 {
 
 /**
-@class Object
-@brief Abstract class representing an Object in 3d space
+ * @class Object
+ * @brief Abstract class representing an Object in 3D space
 **/ 
 class Object
 {
@@ -83,47 +78,63 @@ class Object
   typedef boost::shared_ptr<Filter> FilterPtr;
 
   /**
-  @brief Constructor
+   * @brief Constructor
   **/
   Object();
+  
+  /**
+   * @brief Initialize filter's pdf for the current object
+   * @return void
+  **/
+  void initializeObjectFilter();
 
   /**
-  @brief Returns if this Object is the same with the given one
-  @param object [const Ptr&] The object to compare with
-  @param distance [float] The minimum distance between two objects so that they 
-    be regarded the same
-  @return bool
+   * @brief Returns if this Object is the same with the given one
+   * @param object [ConstPtr const&] The object to compare with
+   * @param distance [float] The minimum distance between two objects so
+   * that they be regarded the same
+   * @return bool
   **/
   virtual bool isSameObject(const ConstPtr& object, float distance) const;
 
   /**
-  @brief Returns the object's pose
-  @return geometry_msgs::PoseStamped The object's pose
+   * @brief Update with measurement Object's information the conviction pdf 
+   * of this object's filter.
+   * @param measurement [ConstPtr const&] Object that carries measurement info.
+   * @param model [FilterModel const&] Filter's model that update
+   * will be based upon.
+   * @return void
+  **/
+  void update(const ConstPtr& measurement, const FilterModel& model);
+
+  /**
+   * @brief Returns the object's pose
+   * @return geometry_msgs::PoseStamped The object's pose
   **/
   virtual geometry_msgs::PoseStamped getPoseStamped() const;
 
   /**
-  @brief Fill in the geotiff info with the object's details 
-  @param res 
-    [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
-      The output service response param
-  @return void
+   * @brief Fill in the geotiff info with the object's details 
+   * @param res 
+   * [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
+   * The output service response param
+   * @return void
   **/
   virtual void fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {}
 
   /**
-  @brief Get the object's visualization  
-  @param markers [visualization_msgs::MarkerArray*] A marker array to be filled
-    with markers containing the object's visualization
-  @return void
+   * @brief Get the object's visualization 
+   * @param markers [visualization_msgs::MarkerArray*] A marker array to be
+   * filled with markers containing the object's visualization 
+   * @return void
   **/
   virtual void getVisualization(
     visualization_msgs::MarkerArray* markers) const {};
   
   /**
-  @brief Getter for member id_
-  @return int id
+   * @brief Getter for member id_
+   * @return int id
   **/
   int getId() const
   {
@@ -131,8 +142,8 @@ class Object
   }
   
   /**
-  @brief Getter for member counter_
-  @return int counter
+   * @brief Getter for member counter_
+   * @return int counter
   **/
   int getCounter() const
   {
@@ -140,8 +151,8 @@ class Object
   }
   
   /**
-  @brief Getter for member legit_
-  @return bool legit
+   * @brief Getter for member legit_
+   * @return bool legit
   **/
   bool getLegit() const
   {
@@ -149,8 +160,8 @@ class Object
   }
   
   /**
-  @brief Getter for member type_
-  @return std::string type
+   * @brief Getter for member type_
+   * @return std::string type
   **/
   std::string getType() const
   {
@@ -158,8 +169,8 @@ class Object
   }
   
   /**
-  @brief Getter for member legit_
-  @return bool legit
+   * @brief Getter for member legit_
+   * @return bool legit
   **/
   float getProbability() const
   {
@@ -167,8 +178,8 @@ class Object
   }
   
   /**
-  @brief Getter for member pose_
-  @return geometry_msgs::Pose& The object's pose
+   * @brief Getter for member pose_
+   * @return geometry_msgs::Pose& The object's pose
   **/
   const geometry_msgs::Pose& getPose() const
   {
@@ -176,18 +187,33 @@ class Object
   }
   
   /**
-  @brief Getter for member frame_id
-  @return geometry_msgs::Pose& The object's frame_id
+   * @brief Getter for member frame_id
+   * @return geometry_msgs::Pose& The object's frame_id
   **/
   std::string getFrameId() const
   {
     return frame_id_;
   }
   
+  float getVarianceX() const
+  {
+    return filterX_->PostGet()->CovarianceGet()(1, 1);
+  }
+  
+  float getVarianceY() const
+  {
+    return filterY_->PostGet()->CovarianceGet()(1, 1);
+  }
+  
+  float getVarianceZ() const
+  {
+    return filterZ_->PostGet()->CovarianceGet()(1, 1);
+  }
+
   /**
-  @brief Setter for member id_
-  @param id [int] The new id value
-  @return void
+   * @brief Setter for member id_
+   * @param id [int] The new id value
+   * @return void
   **/
   void setId(int id)
   {
@@ -195,9 +221,9 @@ class Object
   }
 
   /**
-  @brief Setter for member counter_
-  @param counter [int] The new counter value
-  @return void
+   * @brief Setter for member counter_
+   * @param counter [int] The new counter value
+   * @return void
   **/
   void setCounter(int counter)
   {
@@ -205,9 +231,9 @@ class Object
   }
 
   /**
-  @brief Setter for member legit_
-  @param legit [int] The new legit value
-  @return void
+   * @brief Setter for member legit_
+   * @param legit [int] The new legit value
+   * @return void
   **/
   void setLegit(bool legit)
   {
@@ -215,9 +241,9 @@ class Object
   }
   
   /**
-  @brief Setter for member type_
-  @param type [std::string] The new type value
-  @return void
+   * @brief Setter for member type_
+   * @param type [std::string] The new type value
+   * @return void
   **/
   void setType(std::string type)
   {
@@ -225,9 +251,9 @@ class Object
   }
   
   /**
-  @brief Setter for member probability_
-  @param probability [float] The new probability value
-  @return void
+   * @brief Setter for member probability_
+   * @param probability [float] The new probability value
+   * @return void
   **/
   void setProbability(float probability)
   {
@@ -235,9 +261,9 @@ class Object
   }
   
   /**
-  @brief Setter for member pose_
-  @param pose [const geometry_msgs::Pose&] The new pose value
-  @return void
+   * @brief Setter for member pose_
+   * @param pose [const geometry_msgs::Pose&] The new pose value
+   * @return void
   **/
   void setPose(const geometry_msgs::Pose& pose)
   {
@@ -245,54 +271,12 @@ class Object
   }
   
   /**
-  @brief Increments counter by 1
-  @return void
+   * @brief Increments counter by 1
+   * @return void
   **/
   void incrementCounter()
   {
     counter_++;
-  }
-  
-  /**
-  @brief Initialize filter's pdf for the current object
-  @return void
-  **/
-  void initializeObjectFilter();
-  
-  /**
-  @brief Getter for member input
-  @return MatrixWrapper::ColumnVector input
-  **/
-  MatrixWrapper::ColumnVector getInput()
-  {
-    return input_;
-  }
-  
-  /**
-  @brief Getter for member filterX
-  @return FilterPtr filterX
-  **/
-  FilterPtr getFilterX()
-  {
-    return filterX_;
-  }
-  
-  /**
-  @brief Getter for member filterY
-  @return FilterPtr filterY
-  **/
-  FilterPtr getFilterY()
-  {
-    return filterY_;
-  }
-  
-  /**
-  @brief Getter for member filterZ
-  @return FilterPtr filterZ
-  **/
-  FilterPtr getFilterZ()
-  {
-    return filterZ_;
   }
   
  protected:
@@ -327,9 +311,6 @@ class Object
   //!< Kalman filter for dimension z
   FilterPtr filterZ_;
   
-  //!< Filter's input vector
-  MatrixWrapper::ColumnVector input_;
-
 };
 
 typedef Object::Ptr ObjectPtr;
@@ -344,8 +325,8 @@ typedef boost::shared_ptr<ObjectConstPtrVector> ObjectConstPtrVectorPtr;
 typedef std::vector<ObjectConstPtrVector> ObjectConstPtrVectorVector;
 
 /**
-  @class Qr
-  @brief Concrete class representing a Qr Object. Inherits from Object
+ * @class Qr
+ * @brief Concrete class representing a Qr Object. Inherits from Object
 **/ 
 class Qr : public Object
 {
@@ -355,7 +336,7 @@ class Qr : public Object
   typedef boost::shared_ptr<Qr const> ConstPtr;
 
   /**
-  @brief Constructor
+   * @brief Constructor
   **/
   Qr();
 
@@ -369,8 +350,8 @@ class Qr : public Object
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
  
   /**
-  @brief Getter for member content_
-  @return std::string The QR's content
+   * @brief Getter for member content_
+   * @return std::string The QR's content
   **/
   std::string getContent() const
   {
@@ -378,8 +359,8 @@ class Qr : public Object
   }
  
   /**
-  @brief Setter for member content_
-  @return void
+   * @brief Setter for member content_
+   * @return void
   **/
   void setContent(std::string content)
   {
@@ -401,8 +382,8 @@ typedef std::vector< QrPtr > QrPtrVector;
 typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
 
 /**
-  @class Hazmat
-  @brief Concrete class representing a Hazmat Object. Inherits from Object
+ * @class Hazmat
+ * @brief Concrete class representing a Hazmat Object. Inherits from Object
 **/ 
 class Hazmat : public Object
 {
@@ -412,7 +393,7 @@ class Hazmat : public Object
   typedef boost::shared_ptr<Hazmat const> ConstPtr;
 
   /**
-  @brief Constructor
+   * @brief Constructor
   **/
   Hazmat();
 
@@ -435,8 +416,8 @@ class Hazmat : public Object
   }
   
   /**
-  @brief Setter for member pattern_
-  @return void
+   * @brief Setter for member pattern_
+   * @return void
   **/
   void setPattern(int pattern)
   {
@@ -456,8 +437,8 @@ typedef std::vector< HazmatPtr > HazmatPtrVector;
 typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
 
 /**
-  @class Hole
-  @brief Concrete class representing a Hole Object. Inherits from Object
+ * @class Hole
+ * @brief Concrete class representing a Hole Object. Inherits from Object
 **/ 
 class Hole : public Object
 {
@@ -467,7 +448,7 @@ class Hole : public Object
   typedef boost::shared_ptr<Hole const> ConstPtr;
 
   /**
-  @brief Constructor
+   * @brief Constructor
   **/
   Hole();
 
@@ -478,8 +459,8 @@ class Hole : public Object
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
   /**
-  @brief Getter for member holeId_
-  @return int The holeId 
+   * @brief Getter for member holeId_
+   * @return int The holeId 
   **/
   unsigned int getHoleId() const 
   {
@@ -487,8 +468,8 @@ class Hole : public Object
   }
   
   /**
-  @brief Setter for member holeId_
-  @return void
+   * @brief Setter for member holeId_
+   * @return void
   **/
   void setHoleId(int holeId) 
   {
@@ -508,8 +489,8 @@ typedef std::vector< HolePtr > HolePtrVector;
 typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 
 /**
-  @class Tpa
-  @brief Concrete class representing a Tpa Object. Inherits from Object
+ * @class Tpa
+ * @brief Concrete class representing a Tpa Object. Inherits from Object
 **/ 
 class Tpa : public Object
 {
@@ -519,7 +500,7 @@ class Tpa : public Object
   typedef boost::shared_ptr<Tpa const> ConstPtr;
 
   /**
-  @brief Constructor
+   * @brief Constructor
   **/
   Tpa();
 

@@ -33,7 +33,6 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS} ${BFL_INCLUDE_DIRS})
 
 link_directories(${BFL_LIBRARY_DIRS})
-
           
 ##################### utils ############################################
 
@@ -46,6 +45,18 @@ add_dependencies(utils
   data_fusion_communications_gencpp
   )
 
+##################### filter_model ############################################
+
+add_library(filter_model
+        src/filter_model.cpp)
+target_link_libraries(filter_model 
+          ${catkin_LIBRARIES}
+          ${BFL_LIBRARIES}
+          )
+add_dependencies(filter_model 
+  data_fusion_communications_gencpp
+  )
+
 ###################### objects #########################################
 
 add_library(objects 
@@ -53,7 +64,7 @@ add_library(objects
 target_link_libraries(objects
           ${catkin_LIBRARIES}
           utils
-          ${BFL_LIBRARIES}
+          filter_model
           )
 add_dependencies(objects 
   data_fusion_communications_gencpp
@@ -116,6 +127,7 @@ add_library(victim_list
 target_link_libraries(victim_list
           ${catkin_LIBRARIES}
           utils
+          filter_model
           victim
           )
 add_dependencies(victim_list 
@@ -231,6 +243,7 @@ target_link_libraries(alert_handler_node
           victim_clusterer
           victim_list
           utils
+          filter_model
           objects
           hazmat
           hole
