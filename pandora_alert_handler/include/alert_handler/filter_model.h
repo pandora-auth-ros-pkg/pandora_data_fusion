@@ -66,6 +66,9 @@ class FilterModel
 
 };
 
+typedef boost::shared_ptr<FilterModel> FilterModelPtr;
+typedef boost::shared_ptr<FilterModel const> FilterModelConstPtr;
+
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

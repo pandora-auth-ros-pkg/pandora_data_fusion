@@ -59,6 +59,7 @@
 #include "alert_handler/victim.h"
 #include "alert_handler/victim_clusterer.h"
 #include "alert_handler/victim_list.h"
+#include "alert_handler/filter_model.h"
 #include "alert_handler/defines.h"
 
 namespace pandora_data_fusion
@@ -67,16 +68,16 @@ namespace pandora_alert_handler
 {
 
 /**
-  @class VictimHandler
-  @brief Controller that keeps track of victims 
-**/ 
+ * @class VictimHandler
+ * @brief Controller that keeps track of victims 
+ */ 
 class VictimHandler : private boost::noncopyable
 {
  public:
  
   /**
-  @brief Constructor
-  **/
+   * @brief Constructor
+   */
   VictimHandler(const HoleListConstPtr& holeListPtr, 
                 const TpaListConstPtr& tpaListPtr ,
                 float clusterRadius = 0.5, float sameVictimRadius = 0.5,
@@ -84,136 +85,139 @@ class VictimHandler : private boost::noncopyable
 
 
   /**
-  @brief Updates the victim lists with the existing objects
-  @return void
-  **/
+   * @brief Updates the victim lists with the existing objects
+   * @return void
+   */
   void notify();
   
   /**
-  @brief Deletes holes that no longer exist in unvisited victims list
-  @return void
-  **/
+   * @brief Deletes holes that no longer exist in unvisited victims list
+   * @return void
+   */
   void fixVictims();
 
   /**
-  @brief Handles a victim verification message
-  @param msg [data_fusion_communications::VictimVerificationMsg&] : 
-    The victim verirification message
-  @return void
-  **/
+   * @brief Handles a victim verification message
+   * @param msg [data_fusion_communications::VictimVerificationMsg&] : 
+   * The victim verirification message
+   * @return void
+   */
   void handleVictimVerification(
     const data_fusion_communications::VictimVerificationMsg& msg);
 
   /**
-  @brief Updates the victim handler's parameters
-  @param clusterRadius [float] The new cluster radius
-  @param sameVictimRadius [float] The new same victim radius
-  @param approachDist [float] The new approach distance
-  @param victimUpdate [float] The new victim update distance
-  @param verificationProbability [float] The new verification probability
-  @return void
-  **/
+   * @brief Updates the victim handler's parameters
+   * @param clusterRadius [float] The new cluster radius
+   * @param sameVictimRadius [float] The new same victim radius
+   * @param approachDist [float] The new approach distance
+   * @param victimUpdate [float] The new victim update distance
+   * @param verificationProbability [float] The new verification probability
+   * @return void
+   */
   void updateParams(float clusterRadius, float sameVictimRadius,
                     float approachDist, float victimUpdate,
                     float verificationProbability);
 
   /**
-  @brief Clears unvisited victims list and selected victim index (if any)
-  @return void
-  **/
+   * @brief Clears unvisited victims list and selected victim index (if any)
+   * @return void
+   */
   void flush();
   
   /**
-  @brief Returns a vector containing a VictimInfoMsg for each unvisited victim
-  @param victimMsgVector 
-    [std::vector< data_fusion_communications::VictimInfoMsg >*] 
-      The output vector
-  @return void
-  **/
+   * @brief Returns a vector containing a VictimInfoMsg for each
+   * unvisited victim
+   * @param victimMsgVector 
+   * [std::vector< data_fusion_communications::VictimInfoMsg >*] 
+   * The output vector
+   * @return void
+   */
   void getVictimsMsg(
     std::vector< data_fusion_communications::VictimInfoMsg >* victimMsgVector);
   
   /**
-  @brief Sets the current victim index  
-  @param index [int] The index of the selected victim referring to the vector
-    that was last returned by getVictimsMsg()
-  @return void
-  **/
+   * @brief Sets the current victim index  
+   * @param index [int] The index of the selected victim referring to the
+   * vector
+   * that was last returned by getVictimsMsg()
+   * @return void
+   */
   void setCurrentVictimIndex(int index);
   
   /**
-  @brief Deletes the current VictimPtr  
-  @return void
-  **/
+   * @brief Deletes the current VictimPtr  
+   * @return void
+   */
   void deleteCurrentVictim();
   
   /**
-  @brief Validates the selected object of the current victim 
-  @param holeValid [bool] True for positive and false for negative validation
-  @return void
-  **/
+   * @brief Validates the selected object of the current victim 
+   * @param holeValid [bool] True for positive and false for 
+   * negative validation
+   * @return void
+   */
   void validateCurrentHole(bool holeValid);
   
   /**
-  @brief Get the current victim pose as a stamped transform
-  @param stampedTranform [tf::StampedTransform*] The output param
-  @return bool -1 if no victim is tracked
-  **/
+   * @brief Get the current victim pose as a stamped transform
+   * @param stampedTranform [tf::StampedTransform*] The output param
+   * @return bool -1 if no victim is tracked
+   */
   bool getCurrentVictimTransform(tf::StampedTransform* stampedTranform);
   
   /**
-  @brief Fill in the geotiff info with the victims details 
-  @param res 
-    [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
-      The output service response param
-  @return void
-  **/
+   * @brief Fill in the geotiff info with the victims details 
+   * @param res 
+   * [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
+   * The output service response param
+   * @return void
+   */
   void fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res);
     
   /**
-  @brief Get the victims visualization  
-  @param victimsVisitedMarkers [visualization_msgs::MarkerArray*] The output
-    param for the visited victims 
-  @param victimsToGoMarkers [visualization_msgs::MarkerArray*] The output
-    param for the unvisited victims 
-  @return void
-  **/
+   * @brief Get the victims visualization
+   * @param victimsVisitedMarkers [visualization_msgs::MarkerArray*] 
+   * The output param for the visited victims 
+   * @param victimsToGoMarkers [visualization_msgs::MarkerArray*] 
+   * The output param for the unvisited victims 
+   * @return void
+   */
   void getVisualization(visualization_msgs::MarkerArray* victimsVisitedMarkers,
                         visualization_msgs::MarkerArray* victimsToGoMarkers);
 
  private:
 
   /**
-  @brief Returns all the legit Objects from all the Object lists concatenated 
-    into a single vector
-  @return ObjectConstPtrVector A vector contaiing all the legit Objects
-  **/
+   * @brief Returns all the legit Objects from all the Object lists 
+   * concatenated into a single vector
+   * @return ObjectConstPtrVector A vector contaiing all the legit Objects
+   */
   ObjectConstPtrVectorPtr getAllLegitObjects();
 
   /**
-  @brief Publishes a message that a victim was found
-  @return void
-  **/
+   * @brief Publishes a message that a victim was found
+   * @return void
+   */
   void publishVictimFoundMsg();
 
   /**
-  @brief Publishes a message to fsm to inform it of victim change
-  @return void
-  **/
+   * @brief Publishes a message to fsm to inform it of victim change
+   * @return void
+   */
   void publishVictimUpdatedMsg();
 
   /**
-  @brief Publishes a message to fsm containing the sensor verification info
-    for the selected victim
-  @return void
-  **/
+   * @brief Publishes a message to fsm containing the sensor verification info
+   * for the selected victim
+   * @return void
+   */
   void publishVictimToFsmMsg(const VictimPtr& victim);
   
   /**
-  @brief Returns the string representation corresponding to a sensorId
-  @return std::string The string representation
-  **/
+   * @brief Returns the string representation corresponding to a sensorId
+   * @return std::string The string representation
+   */
   std::string sensorIdToString(int sensorId);
 
  private:

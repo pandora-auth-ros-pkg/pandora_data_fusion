@@ -60,7 +60,7 @@ class ObjectList
 
   void setParams(int counterThreshold, float distanceThreshold);
 
-  const FilterModel& getFilterModel() const;
+  FilterModelConstPtr getFilterModel() const;
 
  protected:
 
@@ -75,7 +75,7 @@ class ObjectList
   float DIST_THRESHOLD;
   int COUNTER_THRES;
 
-  const FilterModel filterModel_;
+  FilterModelConstPtr filterModelPtr_;
 
  private:
 
@@ -101,8 +101,9 @@ typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::
-ObjectList(int counterThreshold, float distanceThreshold) : filterModel_()
+ObjectList(int counterThreshold, float distanceThreshold)
 {
+  filterModelPtr_.reset( new FilterModel() );
   id_ = 0;
   COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
@@ -141,7 +142,7 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
     for ( typename IteratorList::const_iterator it = iteratorList.begin();
         it != iteratorList.end(); ++it)
     {
-      (*(*it))->update(object, filterModel_);
+      (*(*it))->update(object, filterModelPtr_);
     }
     return false;
   }
@@ -188,9 +189,9 @@ void ObjectList<ObjectType>::clear()
 }
 
 template <class ObjectType>
-const FilterModel& ObjectList<ObjectType>::getFilterModel() const
+FilterModelConstPtr ObjectList<ObjectType>::getFilterModel() const
 {
-  return filterModel_;
+  return filterModelPtr_;
 }
 
 template <class ObjectType>

@@ -45,8 +45,8 @@ namespace pandora_alert_handler
 {
 
 /**
-@details 
-**/
+ * @details 
+ */
 VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
                              const TpaListConstPtr& tpaListPtr,
                              float clusterRadius,
@@ -55,9 +55,12 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
                              float victimUpdate) :
   holePtrListPtr_(holeListPtr),
   tpaPtrListPtr_(tpaListPtr),
-  victimsToGoList_(1, sameVictimRadius, approachDist),
+  victimsToGoList_(1 , sameVictimRadius, approachDist),
   victimsVisitedList_(1, sameVictimRadius, approachDist)
 {
+  Victim::setHoleModel(holePtrListPtr_->getFilterModel());
+  Victim::setTpaModel(tpaPtrListPtr_->getFilterModel());
+
   clusterer_.reset( new VictimClusterer(clusterRadius, approachDist) );
 
   std::string param; 
@@ -96,9 +99,9 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
 }
 
 /**
-@details Clusters the existing Objects into victims and then updates
-  the list with the unvisited victims with it
-**/
+ * @details Clusters the existing Objects into victims and then updates
+ * the list with the unvisited victims with it.
+ */
 void VictimHandler::notify()
 {  
   ObjectConstPtrVectorPtr allObjects = getAllLegitObjects();  
@@ -128,8 +131,10 @@ void VictimHandler::notify()
 }
 
 /**
-@details 
-**/
+ * @details Collects from hole and tpa list, all these objects
+ * that are thought to be legitimate and are to be grouped to 
+ * Victim objects.
+ */
 ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
 {
   ObjectConstPtrVectorPtr result(new ObjectConstPtrVector);
@@ -162,11 +167,11 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
-@details Iterates the unvistied victims list and checks if any holes that 
-  are contained in every victim still exist. If not they are deleted. If the
-  victim contains no more objects after the deletion it is deleted from the
-  list itself. The fsm is informed if necessary
-**/
+ * @details Iterates the unvistied victims list and checks if any holes that 
+ * are contained in every victim still exist. If not they are deleted. If the
+ * victim contains no more objects after the deletion it is deleted from the
+ * list itself. The fsm is informed if necessary
+ */
 void VictimHandler::fixVictims()
 {
   ObjectConstPtrVectorPtr allObjects = getAllLegitObjects();  
@@ -183,8 +188,8 @@ void VictimHandler::fixVictims()
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
-@details Delegate to victimList
-**/
+ * @details Delegate to victimList
+ */
 void VictimHandler::getVictimsMsg (
   std::vector< data_fusion_communications::VictimInfoMsg>* victimMsgVector)
 {  
@@ -192,8 +197,8 @@ void VictimHandler::getVictimsMsg (
 }
 
 /**
-@details Delegate to victimList
-**/
+ * @details Delegate to victimList
+ */
 void VictimHandler::setCurrentVictimIndex(int index)
 {
     // race condition !! If victim is
@@ -205,8 +210,8 @@ void VictimHandler::setCurrentVictimIndex(int index)
 }
 
 /**
-@details Delegate to victimList and add Stamp
-**/
+ * @details Delegate to victimList and add Stamp
+ */
 bool VictimHandler::getCurrentVictimTransform(
     tf::StampedTransform* stampedTranform)
 {
@@ -222,9 +227,9 @@ bool VictimHandler::getCurrentVictimTransform(
 }
 
 /**
-@details Delegate to victimList and publish verification msg if porbability
-  exceeds threshold
-**/
+ * @details Delegate to victimList and publish verification msg if probability
+ * exceeds threshold
+ */
 void VictimHandler::handleVictimVerification(
     const data_fusion_communications::VictimVerificationMsg& msg)
 {
@@ -245,8 +250,8 @@ void VictimHandler::handleVictimVerification(
 
 
 /**
-@details Delegate to victimList
-**/
+ * @details Delegate to victimList
+ */
 void VictimHandler::deleteCurrentVictim()
 {
   bool victimTracked = victimsToGoList_.deleteCurrentVictim();
@@ -259,8 +264,8 @@ void VictimHandler::deleteCurrentVictim()
 }
 
 /**
-@details Delegate to victimList
-**/
+ * @details Delegate to victimList
+ */
 void VictimHandler::validateCurrentHole(bool objectValid)
 {
   VictimPtr currentVictim = victimsToGoList_.validateCurrentObject(objectValid);
@@ -274,8 +279,8 @@ void VictimHandler::validateCurrentHole(bool objectValid)
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
-@details 
-**/
+ * @details 
+ */
 void VictimHandler::fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res)
 {
@@ -283,8 +288,8 @@ void VictimHandler::fillGeotiff(
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 void VictimHandler::getVisualization(
   visualization_msgs::MarkerArray* victimsVisitedMarkers ,
   visualization_msgs::MarkerArray* victimsToGoMarkers)
@@ -294,8 +299,8 @@ void VictimHandler::getVisualization(
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 void  VictimHandler::publishVictimFoundMsg()
 {
   ROS_INFO_NAMED("victim_handler",
@@ -306,8 +311,8 @@ void  VictimHandler::publishVictimFoundMsg()
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 void VictimHandler::publishVictimUpdatedMsg() 
 {
   std_msgs::Empty msg;
@@ -316,8 +321,8 @@ void VictimHandler::publishVictimUpdatedMsg()
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
 {
   data_fusion_communications::VictimToFsmMsg msg;
@@ -335,8 +340,8 @@ void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 std::string VictimHandler::sensorIdToString(int sensorId)
 {
   switch (sensorId)
@@ -357,8 +362,8 @@ std::string VictimHandler::sensorIdToString(int sensorId)
 
 
 /**
-@details 
-**/
+ * @details 
+ */
 void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
                                  float approachDist, float victimUpdate,
                                  float verificationProbability)
@@ -369,8 +374,8 @@ void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 void VictimHandler::flush()
 {
   victimsToGoList_.clear();

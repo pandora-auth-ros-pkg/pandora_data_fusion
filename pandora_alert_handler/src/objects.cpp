@@ -59,7 +59,7 @@ void Object::initializeObjectFilter()
  * and the current measurement. The filter is an implementation of
  * Kalman Filter.
  */
-void Object::update(const ConstPtr& measurement, const FilterModel& model)
+void Object::update(const ConstPtr& measurement, const FilterModelConstPtr& model)
 {
   Point measurementPosition = measurement->getPose().position;
   MatrixWrapper::ColumnVector newPosition(1);
@@ -84,9 +84,8 @@ void Object::update(const ConstPtr& measurement, const FilterModel& model)
   ROS_INFO("new object's z position = %f", measurementPosition.z);
     
   //!< Updating existing object's filter pdfs.
-  SystemModelPtrVector systemModels = model.getSystemModels();
-  MeasurementModelPtrVector measurementModels = model.getMeasurementModels();
-
+  SystemModelPtrVector systemModels = model->getSystemModels();
+  MeasurementModelPtrVector measurementModels = model->getMeasurementModels();
   
   newPosition(1) = measurementPosition.x;
   filterX_->Update(systemModels[0].get(), 

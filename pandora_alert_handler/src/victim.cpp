@@ -17,6 +17,8 @@ Victim::Victim()
 }
 
 int Victim::lastVictimId_ = 0;
+FilterModelConstPtr Victim::holeModelPtr_ = FilterModelPtr();
+FilterModelConstPtr Victim::tpaModelPtr_ = FilterModelPtr();
 
 bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
 {  
@@ -130,16 +132,73 @@ void Victim::fillGeotiff(
   }
 }
 
-void Victim::setObjects(const ObjectConstPtrVector& objects, 
+/**
+ * @details Representative Object should be the one in the cluster 
+ * with the most confidence (least standard deviation) with its conviction pdf 
+ * updated by the rest objects in victim. Between the hole and the tpa 
+ * candidate, hole will be prefered.
+ */
+void Victim::setObjects(const ObjectConstPtrVector& objects,
     float approachDistance) 
 {
-  objects_ = objects;
+  int holeIndex = -1;
+  float minHoleVariance = 1;
+  int tpaIndex = -1;
+  float minTpaVariance = 1;
+
+  for (int ii = 0; ii < objects.size(); ++ii)
+  {
+    if (!objects[ii]->getType().compare(std::string("hole")))
+    {
+      if (objects[ii]->getVarianceX() < minHoleVariance)
+      {
+        minHoleVariance = objects[ii]->getVarianceX();
+        holeIndex = ii;
+      }
+    }
+    if (!objects[ii]->getType().compare(std::string("tpa")))
+    {
+        if (objects[ii]->getVarianceX() < minTpaVariance)
+      {
+        minTpaVariance = objects[ii]->getVarianceX();
+        tpaIndex = ii;
+      }
+    }
+  }
+
+  ObjectPtr representativeHole( new Hole );
+  ObjectPtr representativeTpa( new Tpa );
+
+  if (holeIndex != -1)
+    *representativeHole = *objects[holeIndex];
+  if (tpaIndex != -1)
+    *representativeTpa = *objects[tpaIndex];
+
+  for (int ii = 0; ii < objects.size(); ++ii)
+  {
+    if (!objects[ii]->getType().compare(std::string("hole")))
+    {
+      if (ii == holeIndex)
+        continue;
+      representativeHole->update(objects[ii], holeModelPtr_);
+    }
+    if (!objects[ii]->getType().compare(std::string("tpa")))
+    {
+      if (ii == tpaIndex)
+        continue;
+      representativeTpa->update(objects[ii], tpaModelPtr_);
+    }
+  }
+
+  objects_.push_back(representativeHole);
+  objects_.push_back(representativeTpa);
+
   updateRepresentativeObject(approachDistance);
 }
   
 /**
-@details Should always be called after any change on the objects_
-**/
+ * @details Should always be called after any change on the objects_
+ */
 void Victim::updateRepresentativeObject(float approachDistance)
 {  
   selectedObjectIndex_ = findRepresentativeObject();
@@ -151,8 +210,12 @@ void Victim::updateRepresentativeObject(float approachDistance)
 }
 
 /**
-@details 
-**/
+ * @details As for now, hole objects are prefered over tpa objects,
+ * because it is more likely to verify a victim though vision means
+ * rather than thermal sensors. In a future implementation of the robot
+ * where the thermal sensor would be more informative and trustworthy this
+ * method would have been changed.
+ */
 int Victim::findRepresentativeObject() const
 {
   if (objects_.size() == 0)
@@ -160,9 +223,9 @@ int Victim::findRepresentativeObject() const
     return -1;
   }
 
-  for ( int ii = 0 ; ii < objects_.size() ; ii++)
+  for ( int ii = 0 ; ii < objects_.size() ; ++ii)
   {
-    if (objects_[ii]->getType() == "hole")
+    if (!objects_[ii]->getType().compare(std::string("hole")))
     {
       return ii;
     }
@@ -201,8 +264,8 @@ tf::Transform Victim::getRotatedTransform() const {
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 geometry_msgs::Pose Victim::calculateApproachPose(float approachDistance) 
     const
 {
@@ -236,8 +299,8 @@ tf::Transform Victim::getTransform() const
 }
 
 /**
-@details 
-**/
+ * @details 
+ */
 void Victim::sanityCheck(
     const ObjectConstPtrVectorPtr& allObjects,
       float distThreshold, float approachDistance)

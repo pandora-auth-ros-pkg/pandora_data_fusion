@@ -12,6 +12,7 @@
 #include "data_fusion_communications/DatafusionGeotiffSrv.h"
 
 #include "alert_handler/objects.h"
+#include "alert_handler/filter_model.h"
 
 namespace pandora_data_fusion
 {
@@ -40,7 +41,8 @@ class Victim : public Object
 
   geometry_msgs::PoseStamped getApproachPoint() const;
   
-  void setObjects(const ObjectConstPtrVector& objects, float approachDistance);
+  void setObjects(const ObjectConstPtrVector& objects, 
+      float approachDistance);
   
   void eraseObjectAt(int index, float approachDistance);
   
@@ -52,96 +54,118 @@ class Victim : public Object
   tf::Transform getRotatedTransform() const;
   
   /**
-  @brief Getter for member valid_
-  @return bool valid_
-  **/
+   * @brief Getter for member valid_
+   * @return bool valid_
+   */
   bool getValid() const
   {
     return valid_;
   }
    
   /**
-  @brief Getter for member visited_
-  @return bool visited_
-  **/
+   * @brief Getter for member visited_
+   * @return bool visited_
+   */
   bool getVisited() const
   {
     return visited_;
   }
    
   /**
-  @brief Getter for member selectedObjectIndex_
-  @return bool selectedObjectIndex_
-  **/
+   * @brief Getter for member selectedObjectIndex_
+   * @return bool selectedObjectIndex_
+   */
   int getSelectedObjectIndex() const
   {
     return selectedObjectIndex_;
   }
   
   /**
-  @brief Getter for member approachPose_
-  @return const geometry_msgs::Pose& approachPose_
-  **/
+   * @brief Getter for member approachPose_
+   * @return const geometry_msgs::Pose& approachPose_
+   */
   const geometry_msgs::Pose& getApproachPose() const
   {
     return approachPose_;
   }
   
   /**
-  @brief Getter for member sensorIds_
-  @return std::set<int>& sensorIds_
-  **/
+   * @brief Getter for member sensorIds_
+   * @return std::set<int>& sensorIds_
+   */
   const std::set<int>& getSensorIds() const
   {
     return sensorIds_;
   }
   
   /**
-  @brief Getter for member objects_
-  @return std::set<int>& objects_
-  **/
+   * @brief Getter for member objects_
+   * @return std::set<int>& objects_
+   */
   const ObjectConstPtrVector& getObjects() const
   {
     return objects_;
   }
    
   /**
-  @brief Setter for member valid_
-  @param valid [bool] The new valid_ value
-  @return void
-  **/
+   * @brief Setter for member valid_
+   * @param valid [bool] The new valid_ value
+   * @return void
+   */
   void setValid(bool valid)
   {
     valid_ = valid;
   }
   
   /**
-  @brief Setter for member visited_
-  @param visited [bool] The new visited_ value
-  @return void
-  **/
+   * @brief Setter for member visited_
+   * @param visited [bool] The new visited_ value
+   * @return void
+   */
   void setVisited(bool visited)
   {
     visited_ = visited;
   }
     
+  /**
+   * @brief Setter for the reference of hole filter model.
+   * @param holeModelPtr [FilterModelConstPtr const&] 
+   * Reference to hole filter model.
+   * @return void
+   */
+  static void setHoleModel(const FilterModelConstPtr& holeModelPtr)
+  {
+    holeModelPtr_ = holeModelPtr;
+  }
+    
+  /**
+   * @brief Setter for the reference of tpa filter model.
+   * @param tpaModelPtr [FilterModelConstPtr const&] 
+   * Reference to tpa filter model.
+   * @return void
+   */
+  static void setTpaModel(const FilterModelConstPtr& tpaModelPtr)
+  {
+    tpaModelPtr_ = tpaModelPtr;
+  }
+
  private:
    
   void updatePose(const geometry_msgs::Pose& newPose, float approachDistance);
 
   /**
-  @brief Calculates the approach pose of the victim for it's current pose
-  @param approachDistance [float] The disired distance from the wall
-  @return geometry_msgs::Pose The approach pose
-  **/
+   * @brief Calculates the approach pose of the victim for it's current pose
+   * @param approachDistance [float] The disired distance from the wall
+   * @return geometry_msgs::Pose The approach pose
+   */
   geometry_msgs::Pose calculateApproachPose(float approachDistance) const;
   
   /**
-  @brief Updates the representative object and consequently the pose 
-  @param approachDistance [float] The disired distance from the wall
-  @details Should be always called after any change on the objects_
-  @return void
-  **/
+   * @brief Updates the representative object and consequently the pose 
+   * @param approachDistance [float] The disired distance from the wall
+   * @details Should be always called after any change on the objects_
+   * @return void
+   */
   void updateRepresentativeObject(float approachDistance);
   
   int findRepresentativeObject() const;
@@ -149,7 +173,7 @@ class Victim : public Object
   tf::Transform getTransform() const;
   
  protected:
-  
+
   //!< The validity of the Victim
   bool valid_;      
   //!< True if the victim was visited false otherwise     
@@ -173,6 +197,11 @@ class Victim : public Object
   
   static int lastVictimId_;  //!< The last in line victim ID
   
+  //!< Pointer to filter's model used in HoleList.
+  static FilterModelConstPtr holeModelPtr_;
+  //!< Pointer to filter's model used in TpaList.
+  static FilterModelConstPtr tpaModelPtr_;
+
 };
 
 typedef Victim::Ptr VictimPtr;

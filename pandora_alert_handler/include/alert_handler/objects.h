@@ -101,11 +101,11 @@ class Object
    * @brief Update with measurement Object's information the conviction pdf 
    * of this object's filter.
    * @param measurement [ConstPtr const&] Object that carries measurement info.
-   * @param model [FilterModel const&] Filter's model that update
+   * @param model [FilterModelConstPtr const&] Filter's model that the update
    * will be based upon.
    * @return void
   **/
-  void update(const ConstPtr& measurement, const FilterModel& model);
+  void update(const ConstPtr& measurement, const FilterModelConstPtr& model);
 
   /**
    * @brief Returns the object's pose
