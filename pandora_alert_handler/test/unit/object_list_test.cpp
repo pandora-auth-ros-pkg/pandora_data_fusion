@@ -97,9 +97,9 @@ class ObjectListTest : public testing::Test
     object10->setPose(pose10);
     object10->setId(10);
     
-    pose11.position.x = 0.7;
+    pose11.position.x = -0.75;
     pose11.position.y = 0;
-    pose11.position.z = 0.1;
+    pose11.position.z = 0;
     object11->setPose(pose11);
     object11->setId(11);
     
@@ -142,14 +142,34 @@ class ObjectListTest : public testing::Test
     ROS_INFO("z = %f", ObjectX->getPose().position.z);
   }
   
-    
   
-  ObjectPtr ObjectSpawner(ObjectPtr ,float radius)
+  //!< Spawns Objects In a fixed radius Around the objectX
+  ObjectPtr ObjectSpawner(ObjectPtr objectX ,float radius)
   {
-    ObjectPtr object
+   ObjectPtr closeObject(new Object);
+   double angle1( double((rand_r(&seed) % 314)) /100);
+   double angle2( double((rand_r(&seed) % 314)) / 200);
     
+    geometry_msgs::Pose pose;
+    
+    
+    //~ ROS_INFO("angle1 = %f",angle1);
+    //~ ROS_INFO("angle2 = %f",angle2);
+    
+    pose.position.x = (cos(angle2)*radius )*sin(angle1) + objectX->getPose().position.x;
+    pose.position.y = (cos(angle2)*radius )*cos(angle1) + objectX->getPose().position.y;
+    pose.position.z = sin(angle2)*radius  + objectX->getPose().position.z;
+    //~ ROS_INFO("posex = %f",pose.position.x);
+    //~ ROS_INFO("posex = %f",pose.position.y);
+    //~ ROS_INFO("posex = %f",pose.position.z);
+    //~ ROS_INFO("Close to 1 = %f",pose.position.z*pose.position.z+pose.position.y*pose.position.y + pose.position.x*pose.position.x);
+    
+    closeObject->setPose(pose);
+     
+    return closeObject;
     
   }
+    
   
   void setPose ( float  x, float  y, float  z, ObjectPtr Object)
   {
@@ -364,14 +384,6 @@ TEST_F(ObjectListTest, Add)
   printPose(  object9);
   
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
-  EXPECT_FALSE( objectList.add(object11) );
-  ASSERT_EQ( 1u, objectList.size() );
-  it = getObjects(&objectList).begin();
-  EXPECT_EQ( object9 , *it );
-  EXPECT_FALSE( object9->getLegit() );
-  printPose(  object9);
-  
-  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object9) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
@@ -384,26 +396,91 @@ TEST_F(ObjectListTest, Add)
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
-  EXPECT_TRUE( object9->getLegit() );
+  EXPECT_FALSE( object9->getLegit() );
   printPose(  object9);
   
-  //~ // Add (0.125, 0.125, 0), deletes (-0.125,-0,125, 0) and (0.5, 0, 0). 
-  //~ // object8 will replace both object5 and object3
-  //~ EXPECT_FALSE( objectList.add(object8) );
-  //~ ASSERT_EQ( 1u, objectList.size() );
-  //~ it = getObjects(&objectList).begin();
-  //~ EXPECT_EQ(object8, *it );
-  //~ EXPECT_EQ( 4u, object8->getCounter() );
-  //~ EXPECT_FALSE( object8->getLegit() );
-//~ 
-  //~ // Add (0, 0, 0), deletes (0.125, 0.125, 0).
-  //~ // object2 replaces object8
-  //~ EXPECT_FALSE( objectList.add(object2));
-  //~ ASSERT_EQ( 1u, objectList.size() );
-  //~ it = getObjects(&objectList).begin();
-  //~ EXPECT_EQ( object2, *it );
-  //~ EXPECT_EQ( 5u, object2->getCounter() );
-  //~ EXPECT_TRUE( object2->getLegit() );
+ // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object9) );
+  ASSERT_EQ( 1u, objectList.size() );
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object9 , *it );
+  EXPECT_TRUE( object9->getLegit() );
+  printPose(  object9);
+
+  
+}
+
+
+
+TEST_F(ObjectListTest, Add2) 
+{ 
+  ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
+  ASSERT_EQ( 0u, objectList.size() );
+  ASSERT_EQ( 0.5, *DIST_THRESHOLD(&objectList) );
+  
+  EXPECT_TRUE( objectList.add(object2) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.4)));
+  ASSERT_EQ(1, objectList.size());
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object2, *it );
+  EXPECT_FALSE( object2->getLegit() );
+  
+  printPose(  object2);
+  
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.3)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.3)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
+  EXPECT_TRUE( object2->getLegit());
+  
+  
+  
+  
+}
+
+
+
+TEST_F(ObjectListTest, AddTwoObjects) 
+{ 
+  ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
+  ASSERT_EQ( 0u, objectList.size() );
+  ASSERT_EQ( 0.5, *DIST_THRESHOLD(&objectList) );
+  
+  EXPECT_TRUE( objectList.add(object1) );
+  ASSERT_EQ(1, objectList.size());
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object1, *it );
+  EXPECT_FALSE( object1->getLegit() );
+  printPose(object1);
+  
+  
+  EXPECT_TRUE( objectList.add(object4) );
+  ASSERT_EQ(2, objectList.size());
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object4, *(++it) );
+  EXPECT_FALSE( object4->getLegit() );
+  printPose(object4);
+  
+  
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.3)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.3)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
+  
+  
+  EXPECT_TRUE( object4->getLegit() );
+  EXPECT_TRUE( object1->getLegit() );
+  
+  
+  
 }
 
 }  // namespace pandora_alert_handler
