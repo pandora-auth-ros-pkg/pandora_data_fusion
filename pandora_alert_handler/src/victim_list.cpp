@@ -78,7 +78,7 @@ bool VictimList::contains(const VictimConstPtr& victim) const
  * copying the given victim's objects one and the rest are deleted from the 
  * unvisited list. The fsm is informed if necessary     
  */
-void VictimList::updateObject(const VictimPtr& victim, 
+void VictimList::updateObjects(const VictimConstPtr& victim, 
     const IteratorList& iteratorList)
 {                                   
   ROS_ASSERT(iteratorList.size() > 0);

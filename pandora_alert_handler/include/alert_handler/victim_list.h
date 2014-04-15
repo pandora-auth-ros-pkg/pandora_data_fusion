@@ -175,8 +175,8 @@ class VictimList : public ObjectList<Victim>
   /**
    * @override
    */
-  void updateObject(const VictimPtr& victim,
-                                 const IteratorList& iteratorList);
+  virtual void updateObjects(const VictimConstPtr& object,
+    const IteratorList& iteratorList);
   
  protected:
  

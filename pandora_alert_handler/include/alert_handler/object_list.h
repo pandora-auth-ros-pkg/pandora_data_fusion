@@ -67,6 +67,9 @@ class ObjectList
   bool isAnExistingObject(
     const ConstPtr& object, IteratorList* iteratorListPtr);
 
+  virtual void updateObjects(const ConstPtr& object,
+    const IteratorList& iteratorList);
+
   void removeElementAt(iterator it);
 
  protected:
@@ -128,6 +131,7 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
 {
   IteratorList iteratorList;
   
+  /*
   //!< Printing information about existing objects
   ROS_INFO("printing existing objects' positions");
   for (iterator it = objects_.begin(); it != objects_.end(); ++it)
@@ -136,14 +140,11 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
       ROS_INFO("y = %f", (*it)->getPose().position.y);
       ROS_INFO("z = %f", (*it)->getPose().position.z);
   }
-  
+  */
+
   if (isAnExistingObject(object, &iteratorList))
   {
-    for ( typename IteratorList::const_iterator it = iteratorList.begin();
-        it != iteratorList.end(); ++it)
-    {
-      (*(*it))->update(object, filterModelPtr_);
-    }
+    updateObjects(object, iteratorList);
     return false;
   }
 
@@ -284,6 +285,17 @@ bool ObjectList<ObjectType>::isAnExistingObject(
     return true;
   }
   return false;
+}
+
+template <class ObjectType>
+void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
+    const IteratorList& iteratorList)
+{
+  for ( typename IteratorList::const_iterator it = iteratorList.begin(); 
+      it != iteratorList.end(); ++it)
+  {
+    (*(*it))->update(object, filterModelPtr_);
+  }
 }
 
 }  // namespace pandora_alert_handler
