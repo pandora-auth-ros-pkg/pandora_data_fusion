@@ -72,18 +72,18 @@ void Object::update(const ConstPtr& measurement, const FilterModelConstPtr& mode
   //!< Printing object's most resest information.
   BFL::Pdf<MatrixWrapper::ColumnVector>* posterior = 
     filterX_->PostGet();
-  ROS_INFO("object's previous x position = %f", 
-      posterior->ExpectedValueGet()(1));
-  ROS_INFO("new object's x position = %f", measurementPosition.x);
-  posterior = filterY_->PostGet();
-  ROS_INFO("object's previous y position = %f", 
-      posterior->ExpectedValueGet()(1));
-  ROS_INFO("new object's y position = %f", measurementPosition.y);
-  posterior = filterZ_->PostGet();
-  ROS_INFO("object's previous z position = %f", 
-      posterior->ExpectedValueGet()(1));
-  ROS_INFO("new object's z position = %f", measurementPosition.z);
-    
+  //~ ROS_INFO("object's previous x position = %f", 
+      //~ posterior->ExpectedValueGet()(1));
+  //~ ROS_INFO("new object's x position = %f", measurementPosition.x);
+  //~ posterior = filterY_->PostGet();
+  //~ ROS_INFO("object's previous y position = %f", 
+      //~ posterior->ExpectedValueGet()(1));
+  //~ ROS_INFO("new object's y position = %f", measurementPosition.y);
+  //~ posterior = filterZ_->PostGet();
+  //~ ROS_INFO("object's previous z position = %f", 
+      //~ posterior->ExpectedValueGet()(1));
+  //~ ROS_INFO("new object's z position = %f", measurementPosition.z);
+    //~ 
   //!< Updating existing object's filter pdfs.
   SystemModelPtrVector systemModels = model->getSystemModels();
   MeasurementModelPtrVector measurementModels = model->getMeasurementModels();
@@ -110,15 +110,15 @@ void Object::update(const ConstPtr& measurement, const FilterModelConstPtr& mode
     ->ExpectedValueGet()(1);
 
   //!< Printing object's current information.
-  posterior = filterX_->PostGet();
-  ROS_INFO("object's new x position = %f", posterior->ExpectedValueGet()(1));
-  ROS_INFO("object's new x covariance = %f", posterior->CovarianceGet()(1, 1));
-  posterior = filterY_->PostGet();
-  ROS_INFO("object's new y position = %f", posterior->ExpectedValueGet()(1));
-  ROS_INFO("object's new y covariance = %f", posterior->CovarianceGet()(1, 1));
-  posterior = filterZ_->PostGet();
-  ROS_INFO("object's new z position = %f", posterior->ExpectedValueGet()(1));
-  ROS_INFO("object's new z covariance = %f", posterior->CovarianceGet()(1, 1));
+  //~ posterior = filterX_->PostGet();
+  //~ ROS_INFO("object's new x position = %f", posterior->ExpectedValueGet()(1));
+  //~ ROS_INFO("object's new x covariance = %f", posterior->CovarianceGet()(1, 1));
+  //~ posterior = filterY_->PostGet();
+  //~ ROS_INFO("object's new y position = %f", posterior->ExpectedValueGet()(1));
+  //~ ROS_INFO("object's new y covariance = %f", posterior->CovarianceGet()(1, 1));
+  //~ posterior = filterZ_->PostGet();
+  //~ ROS_INFO("object's new z position = %f", posterior->ExpectedValueGet()(1));
+  //~ ROS_INFO("object's new z covariance = %f", posterior->CovarianceGet()(1, 1));
 
   //!< Setting existing object's orientation.
   newObjectPose.orientation = pose_.orientation;

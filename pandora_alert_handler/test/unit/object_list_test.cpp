@@ -19,7 +19,8 @@ class ObjectListTest : public testing::Test
   ObjectListTest() : objectList(), objectList2(3, 10.669),
   object1(new Object), object2(new Object), object3(new Object),
   object4(new Object), object5(new Object), object6(new Object),
-  object7(new Object), object8(new Object) {}
+  object7(new Object), object8(new Object), object9(new Object),
+  object10(new Object), object11(new Object){}
 
   /* SetUp/TearDown definitions */
 
@@ -28,10 +29,12 @@ class ObjectListTest : public testing::Test
     std::srand(std::time(0));
     
     seed = time(NULL);
+    
+    
     pose1.position.x = -0.5;
     pose1.position.y = 0;
-    pose1.position.z = 0;      
-    object1->setPose(pose1);
+    pose1.position.z = 0;
+    object1->setPose(pose1)  ;    
     object1->setId(1);
     
     pose2.position.x = 0;
@@ -81,6 +84,25 @@ class ObjectListTest : public testing::Test
     pose8.position.z = 0;      
     object8->setPose(pose8);
     object8->setId(8);
+    
+    pose9.position.x = 0.4;
+    pose9.position.y = 0.1;
+    pose9.position.z = 0;
+    object9->setPose(pose9);
+    object9->setId(9);
+    
+    pose10.position.x = 0.6;
+    pose10.position.y = 0.2;
+    pose10.position.z = 0.1;
+    object10->setPose(pose10);
+    object10->setId(10);
+    
+    pose11.position.x = 0.7;
+    pose11.position.y = 0;
+    pose11.position.z = 0.1;
+    object11->setPose(pose11);
+    object11->setId(11);
+    
   }
 
   /* Function to fill objectList.objects_ */
@@ -111,6 +133,32 @@ class ObjectListTest : public testing::Test
       getObjects(objList).push_back(object);
     }
   }
+  void printPose( ObjectPtr ObjectX)
+  {
+     //!< Printing information about existing objects
+    ROS_INFO("printing  objects' position");
+    ROS_INFO("x = %f", ObjectX->getPose().position.x);
+    ROS_INFO("y = %f", ObjectX->getPose().position.y);
+    ROS_INFO("z = %f", ObjectX->getPose().position.z);
+  }
+  
+    
+  
+  ObjectPtr ObjectSpawner(ObjectPtr ,float radius)
+  {
+    ObjectPtr object
+    
+    
+  }
+  
+  void setPose ( float  x, float  y, float  z, ObjectPtr Object)
+  {
+    geometry_msgs::Pose pose1;
+    pose1.position.x = x;
+    pose1.position.y = y;
+    pose1.position.z = z;
+    Object->setPose(pose1);
+  }  
 
   /* Accessors for private methods/members of ObjectList */
 
@@ -121,12 +169,6 @@ class ObjectListTest : public testing::Test
     return objList->isAnExistingObject(object, iteratorListPtr);
   }
 
-  void updateObject(
-      ObjectList<Object>* objList, const ObjectPtr& object, 
-      const ObjectList<Object>::IteratorList& iteratorList) 
-  {
-    objList->updateObject(object, iteratorList);
-  }
 
   int* id(ObjectList<Object>* objList) 
   {
@@ -162,6 +204,9 @@ class ObjectListTest : public testing::Test
   ObjectPtr object6;
   ObjectPtr object7;
   ObjectPtr object8;
+  ObjectPtr object9;
+  ObjectPtr object10;
+  ObjectPtr object11;
   geometry_msgs::Pose pose1;
   geometry_msgs::Pose pose2;
   geometry_msgs::Pose pose3;
@@ -170,6 +215,9 @@ class ObjectListTest : public testing::Test
   geometry_msgs::Pose pose6;
   geometry_msgs::Pose pose7;
   geometry_msgs::Pose pose8;
+  geometry_msgs::Pose pose9;
+  geometry_msgs::Pose pose10;
+  geometry_msgs::Pose pose11;
 
 };
 
@@ -202,7 +250,7 @@ TEST_F(ObjectListTest, IsAnExistingObject)
   EXPECT_TRUE( iteratorList.empty() );
   iteratorList.clear();
 
-  // It should find that newObject2 exists in 2 places.
+  // It should find that object5  exists in 2 places.
 
   EXPECT_TRUE( isAnExistingObject(&objectList, object5, &iteratorList) );
   it = iteratorList.begin();
@@ -219,6 +267,7 @@ TEST_F(ObjectListTest, IsAnExistingObject)
   it = iteratorList.begin();
   EXPECT_FALSE( iteratorList.empty() );
   ASSERT_EQ( 1u , iteratorList.size() );
+  EXPECT_EQ( object2 , **it );
   EXPECT_EQ( object2 , **it );
 
   iteratorList.clear();
@@ -269,52 +318,92 @@ TEST_F(ObjectListTest, IsAnExistingObject)
 TEST_F(ObjectListTest, Add) 
 { 
   ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
-  *(COUNTER_THRES(&objectList)) = 4;
-  
   ASSERT_EQ( 0u, objectList.size() );
-  EXPECT_TRUE( objectList.add(object1) );
+  ASSERT_EQ( 0.5, *DIST_THRESHOLD(&objectList) );
+  
+  // Add (0.4,0.1,0)
+  EXPECT_TRUE( objectList.add(object9) );
+  ASSERT_EQ( 1, objectList.size() );
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object9, *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
+  
+
+  // Add (0.5, 0, 0) Object 3 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object3) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
-  EXPECT_EQ( object1, *it );
-  EXPECT_EQ(1u, object1->getCounter() );
-  EXPECT_FALSE( object1->getLegit() );
+  EXPECT_EQ( object9 , *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
 
-  // Add (0.5, 0, 0)
-  EXPECT_TRUE( objectList.add(object3) );
-  ASSERT_EQ( 2u, objectList.size() );
-  it = getObjects(&objectList).begin();
-  EXPECT_EQ( object1 , *(it++) );
-  EXPECT_EQ( object3 , *it );
-  EXPECT_EQ( 1u, object3->getCounter() );
-  EXPECT_FALSE( object3->getLegit() );
-
-  // Add (-0.125,-0,125, 0), deletes (-0.5, 0, 0). 
-  // object5 will replace object1
-  EXPECT_FALSE( objectList.add(object5) );
-  ASSERT_EQ( 2u, objectList.size() );
-  it = getObjects(&objectList).begin();
-  EXPECT_EQ( object3, *(it++) );
-  EXPECT_EQ( object5, *it );
-  EXPECT_EQ( 2u, object5->getCounter() );
-  EXPECT_FALSE( object5->getLegit() );
-    
-  // Add (0.125, 0.125, 0), deletes (-0.125,-0,125, 0) and (0.5, 0, 0). 
-  // object8 will replace both object5 and object3
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object8) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
-  EXPECT_EQ(object8, *it );
-  EXPECT_EQ( 4u, object8->getCounter() );
-  EXPECT_FALSE( object8->getLegit() );
+  EXPECT_EQ( object9 , *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
 
-  // Add (0, 0, 0), deletes (0.125, 0.125, 0).
-  // object2 replaces object8
-  EXPECT_FALSE( objectList.add(object2));
+
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
-  EXPECT_EQ( object2, *it );
-  EXPECT_EQ( 5u, object2->getCounter() );
-  EXPECT_TRUE( object2->getLegit() );
+  EXPECT_EQ( object9 , *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
+  
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object10) );
+  ASSERT_EQ( 1u, objectList.size() );
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object9 , *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
+  
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object11) );
+  ASSERT_EQ( 1u, objectList.size() );
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object9 , *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
+  
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object9) );
+  ASSERT_EQ( 1u, objectList.size() );
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object9 , *it );
+  EXPECT_FALSE( object9->getLegit() );
+  printPose(  object9);
+  
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  EXPECT_FALSE( objectList.add(object8) );
+  ASSERT_EQ( 1u, objectList.size() );
+  it = getObjects(&objectList).begin();
+  EXPECT_EQ( object9 , *it );
+  EXPECT_TRUE( object9->getLegit() );
+  printPose(  object9);
+  
+  //~ // Add (0.125, 0.125, 0), deletes (-0.125,-0,125, 0) and (0.5, 0, 0). 
+  //~ // object8 will replace both object5 and object3
+  //~ EXPECT_FALSE( objectList.add(object8) );
+  //~ ASSERT_EQ( 1u, objectList.size() );
+  //~ it = getObjects(&objectList).begin();
+  //~ EXPECT_EQ(object8, *it );
+  //~ EXPECT_EQ( 4u, object8->getCounter() );
+  //~ EXPECT_FALSE( object8->getLegit() );
+//~ 
+  //~ // Add (0, 0, 0), deletes (0.125, 0.125, 0).
+  //~ // object2 replaces object8
+  //~ EXPECT_FALSE( objectList.add(object2));
+  //~ ASSERT_EQ( 1u, objectList.size() );
+  //~ it = getObjects(&objectList).begin();
+  //~ EXPECT_EQ( object2, *it );
+  //~ EXPECT_EQ( 5u, object2->getCounter() );
+  //~ EXPECT_TRUE( object2->getLegit() );
 }
 
 }  // namespace pandora_alert_handler

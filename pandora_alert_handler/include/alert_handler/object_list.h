@@ -159,16 +159,6 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
 {
   IteratorList iteratorList;
   
-  /*
-  //!< Printing information about existing objects
-  ROS_INFO("printing existing objects' positions");
-  for (iterator it = objects_.begin(); it != objects_.end(); ++it)
-  {
-      ROS_INFO("x = %f", (*it)->getPose().position.x);
-      ROS_INFO("y = %f", (*it)->getPose().position.y);
-      ROS_INFO("z = %f", (*it)->getPose().position.z);
-  }
-  */
 
   if (isAnExistingObject(object, &iteratorList))
   {
