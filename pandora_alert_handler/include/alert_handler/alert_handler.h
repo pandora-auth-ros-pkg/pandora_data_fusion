@@ -61,9 +61,9 @@ class AlertHandler : public StateClient, private boost::noncopyable
  public:
 
   /**
-  @brief Constructor
-  @param ns [std::string const&] Has the namespace of the node.
-  **/
+   * @brief Constructor
+   * @param ns [std::string const&] Has the namespace of the node.
+   */
   explicit AlertHandler(const std::string& ns);
 
   /* Alert-concerned Subscribers */
@@ -83,43 +83,43 @@ class AlertHandler : public StateClient, private boost::noncopyable
 
   /* Victim-concerned Subscribers */
   /**
-  @brief Communication with VictimFusion (possibly needs to change).
-  @param msg [const data_fusion_communications::VictimVerificationMsg&] Msg
-  @return void
-  **/
+   * @brief Communication with VictimFusion (possibly needs to change).
+   * @param msg [const data_fusion_communications::VictimVerificationMsg&] Msg
+   * @return void
+   */
   void victimVerificationCallback(
     const data_fusion_communications::VictimVerificationMsg& msg);
   /**
-  @brief Communication with Navigation (possibly needs to change).
-  @param msg [const std_msgs::Int16&] Msg
-  @return void
-  **/
+   * @brief Communication with Navigation (possibly needs to change).
+   * @param msg [const std_msgs::Int16&] Msg
+   * @return void
+   */
   void selectedVictimCallback(const std_msgs::Int16& msg);
 
   /* MapSubsriber Callback - Communication with SLAM */
   /**
-  @brief Communication with SLAM. Gets current global map.
-  @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
-  @return void
-  **/
+   * @brief Communication with SLAM. Gets current global map.
+   * @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
+   * @return void
+   */
   void updateMap(const nav_msgs::OccupancyGridConstPtr& msg);
 
   /* Victim-concerned Goal Callbacks */
   /**
-  @brief Client is Navigation. Sends Victims (possibly needs to change).
-  @return void
-  **/
+   * @brief Client is Navigation. Sends Victims (possibly needs to change).
+   * @return void
+   */
   void getVictimsCallback();
   /**
-  @brief Client is FSM. Order to delete Victim.
-  @return void
-  **/
+   * @brief Client is FSM. Order to delete Victim.
+   * @return void
+   */
   void deleteVictimCallback();
   /**
-  @brief Client is FSM. Orded to validate current hole (identification mode).
-  @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
-  @return void
-  **/
+   * @brief Client is FSM. Orded to validate current hole (identification mode).
+   * @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
+   * @return void
+   */
   void validateCurrentHoleCallback();
 
   /* Dynamic Reconfiguration Callback */

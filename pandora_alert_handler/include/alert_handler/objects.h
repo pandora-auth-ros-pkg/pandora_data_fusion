@@ -65,7 +65,7 @@ namespace pandora_alert_handler
 /**
  * @class Object
  * @brief Abstract class representing an Object in 3D space
-**/ 
+ */ 
 class Object
 {
  public:
@@ -79,13 +79,13 @@ class Object
 
   /**
    * @brief Constructor
-  **/
+   */
   Object();
   
   /**
    * @brief Initialize filter's pdf for the current object
    * @return void
-  **/
+   */
   void initializeObjectFilter();
 
   /**
@@ -94,7 +94,7 @@ class Object
    * @param distance [float] The minimum distance between two objects so
    * that they be regarded the same
    * @return bool
-  **/
+   */
   virtual bool isSameObject(const ConstPtr& object, float distance) const;
 
   /**
@@ -104,13 +104,13 @@ class Object
    * @param model [FilterModelConstPtr const&] Filter's model that the update
    * will be based upon.
    * @return void
-  **/
+   */
   void update(const ConstPtr& measurement, const FilterModelConstPtr& model);
 
   /**
    * @brief Returns the object's pose
    * @return geometry_msgs::PoseStamped The object's pose
-  **/
+   */
   virtual geometry_msgs::PoseStamped getPoseStamped() const;
 
   /**
@@ -119,7 +119,7 @@ class Object
    * [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
    * The output service response param
    * @return void
-  **/
+   */
   virtual void fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const {}
 
@@ -128,14 +128,14 @@ class Object
    * @param markers [visualization_msgs::MarkerArray*] A marker array to be
    * filled with markers containing the object's visualization 
    * @return void
-  **/
+   */
   virtual void getVisualization(
     visualization_msgs::MarkerArray* markers) const {};
   
   /**
    * @brief Getter for member id_
    * @return int id
-  **/
+   */
   int getId() const
   {
     return id_;
@@ -144,7 +144,7 @@ class Object
   /**
    * @brief Getter for member counter_
    * @return int counter
-  **/
+   */
   int getCounter() const
   {
     return counter_;
@@ -153,7 +153,7 @@ class Object
   /**
    * @brief Getter for member legit_
    * @return bool legit
-  **/
+   */
   bool getLegit() const
   {
     return legit_;
@@ -162,7 +162,7 @@ class Object
   /**
    * @brief Getter for member type_
    * @return std::string type
-  **/
+   */
   std::string getType() const
   {
     return type_;
@@ -171,7 +171,7 @@ class Object
   /**
    * @brief Getter for member legit_
    * @return bool legit
-  **/
+   */
   float getProbability() const
   {
     return probability_;
@@ -180,7 +180,7 @@ class Object
   /**
    * @brief Getter for member pose_
    * @return geometry_msgs::Pose& The object's pose
-  **/
+   */
   const geometry_msgs::Pose& getPose() const
   {
     return pose_;
@@ -189,7 +189,7 @@ class Object
   /**
    * @brief Getter for member frame_id
    * @return geometry_msgs::Pose& The object's frame_id
-  **/
+   */
   std::string getFrameId() const
   {
     return frame_id_;
@@ -214,7 +214,7 @@ class Object
    * @brief Setter for member id_
    * @param id [int] The new id value
    * @return void
-  **/
+   */
   void setId(int id)
   {
     id_ = id;
@@ -224,7 +224,7 @@ class Object
    * @brief Setter for member counter_
    * @param counter [int] The new counter value
    * @return void
-  **/
+   */
   void setCounter(int counter)
   {
     counter_ = counter;
@@ -234,7 +234,7 @@ class Object
    * @brief Setter for member legit_
    * @param legit [int] The new legit value
    * @return void
-  **/
+   */
   void setLegit(bool legit)
   {
     legit_ = legit;
@@ -244,7 +244,7 @@ class Object
    * @brief Setter for member type_
    * @param type [std::string] The new type value
    * @return void
-  **/
+   */
   void setType(std::string type)
   {
     type_ = type;
@@ -254,7 +254,7 @@ class Object
    * @brief Setter for member probability_
    * @param probability [float] The new probability value
    * @return void
-  **/
+   */
   void setProbability(float probability)
   {
     probability_ = probability;
@@ -264,7 +264,7 @@ class Object
    * @brief Setter for member pose_
    * @param pose [const geometry_msgs::Pose&] The new pose value
    * @return void
-  **/
+   */
   void setPose(const geometry_msgs::Pose& pose)
   {
     pose_ = pose;
@@ -273,7 +273,7 @@ class Object
   /**
    * @brief Increments counter by 1
    * @return void
-  **/
+   */
   void incrementCounter()
   {
     counter_++;
@@ -327,7 +327,7 @@ typedef std::vector<ObjectConstPtrVector> ObjectConstPtrVectorVector;
 /**
  * @class Qr
  * @brief Concrete class representing a Qr Object. Inherits from Object
-**/ 
+ */ 
 class Qr : public Object
 {
  public:
@@ -337,7 +337,7 @@ class Qr : public Object
 
   /**
    * @brief Constructor
-  **/
+   */
   Qr();
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
@@ -352,7 +352,7 @@ class Qr : public Object
   /**
    * @brief Getter for member content_
    * @return std::string The QR's content
-  **/
+   */
   std::string getContent() const
   {
     return content_;
@@ -361,7 +361,7 @@ class Qr : public Object
   /**
    * @brief Setter for member content_
    * @return void
-  **/
+   */
   void setContent(std::string content)
   {
     content_ = content;
