@@ -329,33 +329,6 @@ bool VictimList::currentVictimUpdated()
   }
 }
 
-/**
- * @details If a victim is erased during sanity check, we should inform it,
- * that's why currentVictimDied_ the is used. See currentVictimUpdated()
- */
-void VictimList::sanityCheck(const ObjectConstPtrVectorPtr& allObjects)
-{  
-  iterator it = objects_.begin();
-    
-  while (it != objects_.end())
-  {
-    (*it)->sanityCheck(allObjects, DIST_THRESHOLD, APPROACH_DIST);
-    if((*it)->getObjects().empty())
-    {
-      if (it == currentVictimIt_)
-      {
-        currentVictimIt_ =  objects_.end();
-        currentVictimDied_ = true;
-      }
-      objects_.erase(it++);
-    }
-    else
-    {
-      ++it;
-    }
-  }
-}
-
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

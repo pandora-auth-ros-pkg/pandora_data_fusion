@@ -89,12 +89,6 @@ class VictimHandler : private boost::noncopyable
    * @return void
    */
   void notify();
-  
-  /**
-   * @brief Deletes holes that no longer exist in unvisited victims list
-   * @return void
-   */
-  void fixVictims();
 
   /**
    * @brief Handles a victim verification message

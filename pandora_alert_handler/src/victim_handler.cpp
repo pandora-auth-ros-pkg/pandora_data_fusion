@@ -162,29 +162,6 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
   return result;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @details Iterates the unvistied victims list and checks if any holes that 
- * are contained in every victim still exist. If not they are deleted. If the
- * victim contains no more objects after the deletion it is deleted from the
- * list itself. The fsm is informed if necessary
- */
-void VictimHandler::fixVictims()
-{
-  ObjectConstPtrVectorPtr allObjects = getAllLegitObjects();  
-  
-  victimsToGoList_.sanityCheck(allObjects);
-  
-  if (victimsToGoList_.currentVictimUpdated())
-  {
-    publishVictimUpdatedMsg();
-  }
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 /**
  * @details Delegate to victimList
  */

@@ -152,14 +152,6 @@ class VictimList : public ObjectList<Victim>
   bool currentVictimUpdated(); 
 
   /**
-   * @brief Performs a check to see if all the objects that comprise each
-   * victim still exist
-   * @param allObjects [const ObjectPtrVector&] All the legit objects
-   * @return void
-   */
-  void sanityCheck(const ObjectConstPtrVectorPtr& allObjects);
-
-  /**
    * @override
    */
   void clear();

@@ -270,7 +270,10 @@ tf::Transform Victim::getRotatedTransform() const {
 }
 
 /**
- * @details 
+ * @details Basically returns an approach point that is some length in front of
+ * the position of the victim in the direction of its orientation. Also sets
+ * its orientation to be the yaw-reversed of the victim's (as it's if we look
+ * to the victim).
  */
 geometry_msgs::Pose Victim::calculateApproachPose(float approachDistance) 
     const
@@ -302,34 +305,6 @@ tf::Transform Victim::getTransform() const
       pose_.orientation.z, pose_.orientation.w );
   tf::Vector3 vec(pose_.position.x, pose_.position.y, pose_.position.z);
   return tf::Transform(tfQuaternion, vec);
-}
-
-/**
- * @details 
- */
-void Victim::sanityCheck(
-    const ObjectConstPtrVectorPtr& allObjects,
-      float distThreshold, float approachDistance)
-{
-  bool objectStillExists = true;
-  for ( ObjectConstPtrVector::iterator it = objects_.begin() ;
-      it != objects_.end() ; it++)
-  {
-    objectStillExists = false;
-    for ( int jj = 0 ; jj < allObjects->size() ; jj++)
-    {
-      if ((*it)->isSameObject(allObjects->at(jj), distThreshold))
-      {
-        objectStillExists = true;
-        break;
-      }
-    }
-    if (!objectStillExists)
-    {
-      it = --objects_.erase(it);
-      updateRepresentativeObject(approachDistance);
-    }
-  }
 }
 
 }  // namespace pandora_alert_handler

@@ -45,9 +45,6 @@ class Victim : public Object
       float approachDistance);
   
   void eraseObjectAt(int index, float approachDistance);
-  
-  void sanityCheck(const ObjectConstPtrVectorPtr& allObjects,
-            float distThreshold, float approachDistance);
    
   void addSensor(int sensorId);
 
