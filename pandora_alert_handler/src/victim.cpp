@@ -141,27 +141,28 @@ void Victim::fillGeotiff(
 void Victim::setObjects(const ObjectConstPtrVector& objects,
     float approachDistance) 
 {
-  int holeIndex = -1;
+  ObjectConstPtrVector::const_iterator holeIt = objects.end();
   float minHoleVariance = 1;
-  int tpaIndex = -1;
+  ObjectConstPtrVector::const_iterator tpaIt = objects.end();
   float minTpaVariance = 1;
 
-  for (int ii = 0; ii < objects.size(); ++ii)
+  for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+      it != objects.end(); it++)
   {
-    if (!objects[ii]->getType().compare(std::string("hole")))
+    if (!(*it)->getType().compare(std::string("hole")))
     {
-      if (objects[ii]->getVarianceX() < minHoleVariance)
+      if ((*it)->getVarianceX() < minHoleVariance)
       {
-        minHoleVariance = objects[ii]->getVarianceX();
-        holeIndex = ii;
+        minHoleVariance = (*it)->getVarianceX();
+        holeIt = it;
       }
     }
-    if (!objects[ii]->getType().compare(std::string("tpa")))
+    if (!(*it)->getType().compare(std::string("tpa")))
     {
-        if (objects[ii]->getVarianceX() < minTpaVariance)
+      if ((*it)->getVarianceX() < minTpaVariance)
       {
-        minTpaVariance = objects[ii]->getVarianceX();
-        tpaIndex = ii;
+        minTpaVariance = (*it)->getVarianceX();
+        tpaIt = it;
       }
     }
   }
@@ -169,29 +170,34 @@ void Victim::setObjects(const ObjectConstPtrVector& objects,
   ObjectPtr representativeHole( new Hole );
   ObjectPtr representativeTpa( new Tpa );
 
-  if (holeIndex != -1)
-    *representativeHole = *objects[holeIndex];
-  if (tpaIndex != -1)
-    *representativeTpa = *objects[tpaIndex];
+  if (holeIt != objects.end())
+    *representativeHole = *(*holeIt);
+  if (tpaIt != objects.end())
+    *representativeTpa = *(*tpaIt);
 
-  for (int ii = 0; ii < objects.size(); ++ii)
+  for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+      it != objects.end(); it++)
   {
-    if (!objects[ii]->getType().compare(std::string("hole")))
+    if (!(*it)->getType().compare(std::string("hole")))
     {
-      if (ii == holeIndex)
+      if (it == holeIt)
         continue;
-      representativeHole->update(objects[ii], holeModelPtr_);
+      representativeHole->update((*it), holeModelPtr_);
     }
-    if (!objects[ii]->getType().compare(std::string("tpa")))
+    if (!(*it)->getType().compare(std::string("tpa")))
     {
-      if (ii == tpaIndex)
+      if (it == tpaIt)
         continue;
-      representativeTpa->update(objects[ii], tpaModelPtr_);
+      representativeTpa->update((*it), tpaModelPtr_);
     }
   }
 
-  objects_.push_back(representativeHole);
-  objects_.push_back(representativeTpa);
+  objects_.clear();
+
+  if (holeIt != objects.end())
+    objects_.push_back(representativeHole);
+  if (tpaIt != objects.end())
+    objects_.push_back(representativeTpa);
 
   updateRepresentativeObject(approachDistance);
 }

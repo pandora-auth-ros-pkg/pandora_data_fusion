@@ -110,8 +110,6 @@ void VictimHandler::notify()
 
   for (int ii = 0; ii < newVictimVector.size(); ii++)
   {
-    std::vector<int> iteratorList;
-
     if ( victimsVisitedList_.contains( newVictimVector[ii] ) )
     {
       continue;
