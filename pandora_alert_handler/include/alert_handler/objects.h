@@ -325,6 +325,10 @@ class Object
   //!< Kalman filter for dimension z
   FilterPtr filterZ_;
   
+  
+  private:
+  
+  friend class ObjectListTest;
 };
 
 typedef Object::Ptr ObjectPtr;

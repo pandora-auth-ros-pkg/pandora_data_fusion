@@ -94,6 +94,7 @@ class VictimTest : public ::testing::Test {
     pose1.position.z = 0;
     pose1.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
     Object->setPose(pose1);
+    Object->initializeObjectFilter();  
   }
   
   /* accesing private functions*/
@@ -276,39 +277,39 @@ TEST_F(VictimTest, eraseObjectAt)
 }
 
 
-
-TEST_F(VictimTest, SanityCheck)
-{
-// Objectvector1 Tpa1(2, 3, 4) Tpa2(4, 3, 2) Hole1(1, 2, 0) 
-
-// Objectvector2 Tpa1(2, 3, 4) Hole1(4, 3, 2) Hole2(0, 4, 2) 
-
-// ObjectvectorPtr3 Tpa1(2, 3, 4) Hole1(4, 3, 2) Hole2(0, 4, 2)
-
-  Victim1->setObjects(ObjConstPtrVect1, 5);
-  Victim1->sanityCheck(ObjConstPtrVectPtr3, 0.5, 3);
-  EXPECT_EQ(1, Victim1->getObjects().size());
-  EXPECT_EQ(0, Victim1->getSelectedObjectIndex());
-  
-  
-  Victim1->setObjects(ObjConstPtrVect1, 5);
-  Victim1->sanityCheck(ObjConstPtrVectPtr3, 10, 3);
-  EXPECT_EQ(3, Victim1->getObjects().size());
-  EXPECT_EQ(2, Victim1->getSelectedObjectIndex());
-  
-  Victim1->setObjects(ObjConstPtrVect1, 5);
-  Victim1->sanityCheck(ObjConstPtrVectPtr3, -3, 3);
-  EXPECT_EQ(0, Victim1->getObjects().size());
-  EXPECT_EQ(-1, Victim1->getSelectedObjectIndex());
-  
-  
-  Victim1->setObjects(ObjConstPtrVect1, 5);
-  Victim1->sanityCheck(ObjConstPtrVectPtr3, 10, 3);
-  EXPECT_EQ(3, Victim1->getObjects().size());
-  EXPECT_EQ(2, Victim1->getSelectedObjectIndex());
-  
-
-}
+//~ 
+//~ TEST_F(VictimTest, SanityCheck)
+//~ {
+//~ // Objectvector1 Tpa1(2, 3, 4) Tpa2(4, 3, 2) Hole1(1, 2, 0) 
+//~ 
+//~ // Objectvector2 Tpa1(2, 3, 4) Hole1(4, 3, 2) Hole2(0, 4, 2) 
+//~ 
+//~ // ObjectvectorPtr3 Tpa1(2, 3, 4) Hole1(4, 3, 2) Hole2(0, 4, 2)
+//~ 
+  //~ Victim1->setObjects(ObjConstPtrVect1, 5);
+  //~ Victim1->sanityCheck(ObjConstPtrVectPtr3, 0.5, 3);
+  //~ EXPECT_EQ(1, Victim1->getObjects().size());
+  //~ EXPECT_EQ(0, Victim1->getSelectedObjectIndex());
+  //~ 
+  //~ 
+  //~ Victim1->setObjects(ObjConstPtrVect1, 5);
+  //~ Victim1->sanityCheck(ObjConstPtrVectPtr3, 10, 3);
+  //~ EXPECT_EQ(3, Victim1->getObjects().size());
+  //~ EXPECT_EQ(2, Victim1->getSelectedObjectIndex());
+  //~ 
+  //~ Victim1->setObjects(ObjConstPtrVect1, 5);
+  //~ Victim1->sanityCheck(ObjConstPtrVectPtr3, -3, 3);
+  //~ EXPECT_EQ(0, Victim1->getObjects().size());
+  //~ EXPECT_EQ(-1, Victim1->getSelectedObjectIndex());
+  //~ 
+  //~ 
+  //~ Victim1->setObjects(ObjConstPtrVect1, 5);
+  //~ Victim1->sanityCheck(ObjConstPtrVectPtr3, 10, 3);
+  //~ EXPECT_EQ(3, Victim1->getObjects().size());
+  //~ EXPECT_EQ(2, Victim1->getSelectedObjectIndex());
+  //~ 
+//~ 
+//~ }
   
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

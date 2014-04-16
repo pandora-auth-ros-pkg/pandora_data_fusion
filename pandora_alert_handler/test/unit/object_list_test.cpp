@@ -140,8 +140,16 @@ class ObjectListTest : public testing::Test
     ROS_INFO("x = %f", ObjectX->getPose().position.x);
     ROS_INFO("y = %f", ObjectX->getPose().position.y);
     ROS_INFO("z = %f", ObjectX->getPose().position.z);
+    
   }
   
+  void printCovariance( ObjectPtr ObjectX)
+  {
+    ROS_INFO("Covariance x = %f",ObjectX->filterX_->PostGet()->CovarianceGet()(1, 1));
+    ROS_INFO("Covariance y = %f",ObjectX->filterY_->PostGet()->CovarianceGet()(1, 1));
+    ROS_INFO("Covariance z = %f",ObjectX->filterZ_->PostGet()->CovarianceGet()(1, 1));
+    
+  }
   
   //!< Spawns Objects In a fixed radius Around the objectX
   ObjectPtr ObjectSpawner(ObjectPtr objectX ,float radius)
@@ -151,19 +159,10 @@ class ObjectListTest : public testing::Test
    double angle2( double((rand_r(&seed) % 314)) / 200);
     
     geometry_msgs::Pose pose;
-    
-    
-    //~ ROS_INFO("angle1 = %f",angle1);
-    //~ ROS_INFO("angle2 = %f",angle2);
-    
     pose.position.x = (cos(angle2)*radius )*sin(angle1) + objectX->getPose().position.x;
     pose.position.y = (cos(angle2)*radius )*cos(angle1) + objectX->getPose().position.y;
     pose.position.z = sin(angle2)*radius  + objectX->getPose().position.z;
-    //~ ROS_INFO("posex = %f",pose.position.x);
-    //~ ROS_INFO("posex = %f",pose.position.y);
-    //~ ROS_INFO("posex = %f",pose.position.z);
-    //~ ROS_INFO("Close to 1 = %f",pose.position.z*pose.position.z+pose.position.y*pose.position.y + pose.position.x*pose.position.x);
-    
+
     closeObject->setPose(pose);
      
     return closeObject;
@@ -335,7 +334,7 @@ TEST_F(ObjectListTest, IsAnExistingObject)
 }
 
 
-TEST_F(ObjectListTest, Add) 
+TEST_F(ObjectListTest, Add_Manually) 
 { 
   ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
   ASSERT_EQ( 0u, objectList.size() );
@@ -347,7 +346,7 @@ TEST_F(ObjectListTest, Add)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9, *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(  object9);
+  printPose(object9);
   
 
   // Add (0.5, 0, 0) Object 3 will not be Added Same as Object 9
@@ -412,7 +411,7 @@ TEST_F(ObjectListTest, Add)
 
 
 
-TEST_F(ObjectListTest, Add2) 
+TEST_F(ObjectListTest, Add_Randomly) 
 { 
   ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
   ASSERT_EQ( 0u, objectList.size() );
@@ -426,6 +425,7 @@ TEST_F(ObjectListTest, Add2)
   EXPECT_FALSE( object2->getLegit() );
   
   printPose(  object2);
+  printCovariance(object2);
   
   EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
@@ -436,10 +436,6 @@ TEST_F(ObjectListTest, Add2)
   EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
   EXPECT_TRUE( object2->getLegit());
-  
-  
-  
-  
 }
 
 
@@ -465,16 +461,21 @@ TEST_F(ObjectListTest, AddTwoObjects)
   EXPECT_FALSE( object4->getLegit() );
   printPose(object4);
   
-  
+  // Object  1(-0,5,0,0) Object 4 (-1 ,0,0) Object11 (-0.75 ,0, 0) 
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
+  printCovariance(object4);
+  printPose(object4);
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.3)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.3)));
+  printCovariance(object4);
+  printPose(object4);
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
-  
+  printCovariance(object4);
+  printPose(object4);
   
   EXPECT_TRUE( object4->getLegit() );
   EXPECT_TRUE( object1->getLegit() );

@@ -111,6 +111,7 @@ void fillVictim(VictimPtr Victim, ObjectConstPtrVector ObjConstPtrVect)
     pose1.position.z = 0;
     pose1.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
     Object->setPose(pose1);
+    Object->initializeObjectFilter(); 
   }
 // accesing private variables
   VictimList::iterator getCurrentVictimIt(VictimList VictimList1)
