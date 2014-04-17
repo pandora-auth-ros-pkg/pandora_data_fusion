@@ -97,7 +97,7 @@ class VictimHandler : private boost::noncopyable
    * @return void
    */
   void handleVictimVerification(
-    const data_fusion_communications::VictimVerificationMsg& msg);
+      const data_fusion_communications::VictimVerificationMsg& msg);
 
   /**
    * @brief Updates the victim handler's parameters

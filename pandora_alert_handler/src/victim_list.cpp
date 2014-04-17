@@ -44,10 +44,9 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-VictimList::VictimList(
-    int counterThreshold, float distanceThreshold, 
+VictimList::VictimList(float distanceThreshold, 
     float approachDistance, float victimUpdate) :
-  ObjectList<Victim>(counterThreshold, distanceThreshold)
+  ObjectList<Victim>(distanceThreshold)
 {
   currentVictimIt_ = objects_.end();
   victimsRequestedAndGiven_ = false;
@@ -114,10 +113,10 @@ void VictimList::updateObjects(const VictimConstPtr& victim,
 /**
  * @details Sets various thresholds and params for VictimList
  */
-void VictimList::setParams(int counterThreshold, float distanceThreshold, 
+void VictimList::setParams(float distanceThreshold, 
     float approachDistance, float victimUpdate)
 {    
-  ObjectList<Victim>::setParams(counterThreshold, distanceThreshold);
+  ObjectList<Victim>::setParams(distanceThreshold);
   APPROACH_DIST = approachDistance;
   VICTIM_UPDATE = victimUpdate;  
 }

@@ -24,7 +24,7 @@ class ObjectList
 {
  public:
 
-  //!< Type Definitions
+  //!< Type definitions
   typedef boost::shared_ptr< ObjectType > Ptr;
   typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
@@ -37,12 +37,16 @@ class ObjectList
 
  public:
 
-  ObjectList(int counterThreshold = 1, float distanceThreshold = 0.5);
+  ObjectList(float distanceThreshold = 0.5, float x_var_thres = 0.05, 
+      float y_var_thres = 0.05, float z_var_thres = 0.05,
+      float prior_x_sd = 0.5, float prior_y_sd = 0.5, float prior_z_sd = 0.5,
+      float system_noise_sd = 0.05, float measurement_noise_sd = 0.5);
 
   const_iterator begin() const;
   const_iterator end() const;
   int size() const;
-  bool isObjectPoseInList(const ObjectConstPtr& object, float closestAlert) const;
+  bool isObjectPoseInList(const ObjectConstPtr& object,
+      float closestAlert) const;
 
   bool add(const Ptr& object);
   void pop_back();
@@ -58,9 +62,12 @@ class ObjectList
 
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
-  void setParams(int counterThreshold, float distanceThreshold);
+  void setParams(float distanceThreshold, float x_var_thres = 0.05, 
+      float y_var_thres = 0.05, float z_var_thres = 0.05,
+      float prior_x_sd = 0.5, float prior_y_sd = 0.5, float prior_z_sd = 0.5,
+      float system_noise_sd = 0.05, float measurement_noise_sd = 0.05);
 
-  FilterModelConstPtr getFilterModel() const;
+  FilterModelPtr getFilterModel() const;
 
  protected:
 
@@ -70,15 +77,18 @@ class ObjectList
   virtual void updateObjects(const ConstPtr& object,
     const IteratorList& iteratorList);
 
+  void checkLegit(const Ptr& object);
+
   void removeElementAt(iterator it);
 
  protected:
 
   List objects_;
-  float DIST_THRESHOLD;
-  int COUNTER_THRES;
 
-  FilterModelConstPtr filterModelPtr_;
+  FilterModelPtr filterModelPtr_;
+
+  //!< params
+  float DIST_THRESHOLD;
 
  private:
 
@@ -87,6 +97,15 @@ class ObjectList
  private:
 
   int id_;
+
+  //!< params
+  float X_VAR_THRES;
+  float Y_VAR_THRES;
+  float Z_VAR_THRES;
+
+  float PRIOR_X_SD;
+  float PRIOR_Y_SD;
+  float PRIOR_Z_SD;
 
 };
 
@@ -104,12 +123,21 @@ typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::
-ObjectList(int counterThreshold, float distanceThreshold)
+ObjectList(float distanceThreshold, 
+    float x_var_thres, float y_var_thres, float z_var_thres,
+    float prior_x_sd, float prior_y_sd, float prior_z_sd,
+    float system_noise_sd, float measurement_noise_sd)
 {
-  filterModelPtr_.reset( new FilterModel() );
+  filterModelPtr_.reset( new FilterModel(system_noise_sd, 
+        measurement_noise_sd) );
   id_ = 0;
-  COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
+  X_VAR_THRES = x_var_thres;
+  Y_VAR_THRES = y_var_thres;
+  Z_VAR_THRES = z_var_thres;
+  PRIOR_X_SD = prior_x_sd;
+  PRIOR_Y_SD = prior_y_sd;
+  PRIOR_Z_SD = prior_z_sd;
 }
 
 template <class ObjectType>
@@ -148,8 +176,8 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
     return false;
   }
 
-  ROS_INFO("New object found");
-  object->initializeObjectFilter();
+  ROS_INFO("New Object found");
+  object->initializeObjectFilter(PRIOR_X_SD, PRIOR_Y_SD, PRIOR_Z_SD);
   
   object->setId(id_++);
   objects_.push_back(object);
@@ -164,11 +192,20 @@ void ObjectList<ObjectType>::removeElementAt(
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::setParams(int counterThreshold,
-    float distanceThreshold)
+void ObjectList<ObjectType>::setParams(float distanceThreshold, 
+    float x_var_thres, float y_var_thres, float z_var_thres,
+    float prior_x_sd, float prior_y_sd, float prior_z_sd,
+    float system_noise_sd, float measurement_noise_sd)
 {
-  COUNTER_THRES = counterThreshold;
   DIST_THRESHOLD = distanceThreshold;
+  X_VAR_THRES = x_var_thres;
+  Y_VAR_THRES = y_var_thres;
+  Z_VAR_THRES = z_var_thres;
+  PRIOR_X_SD = prior_x_sd;
+  PRIOR_Y_SD = prior_y_sd;
+  PRIOR_Z_SD = prior_z_sd;
+  filterModelPtr_->setParams(system_noise_sd, measurement_noise_sd);
+  filterModelPtr_->initializeFilterModel();
 }
 
 template <class ObjectType>
@@ -190,7 +227,7 @@ void ObjectList<ObjectType>::clear()
 }
 
 template <class ObjectType>
-FilterModelConstPtr ObjectList<ObjectType>::getFilterModel() const
+FilterModelPtr ObjectList<ObjectType>::getFilterModel() const
 {
   return filterModelPtr_;
 }
@@ -295,6 +332,19 @@ void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
       it != iteratorList.end(); ++it)
   {
     (*(*it))->update(object, filterModelPtr_);
+    checkLegit((*(*it)));
+  }
+}
+
+template <class ObjectType>
+void ObjectList<ObjectType>::checkLegit(const Ptr& object)
+{
+  bool objectIsLegit = object->getVarianceX() < X_VAR_THRES && 
+                       object->getVarianceY() < Y_VAR_THRES &&
+                       object->getVarianceZ() < Z_VAR_THRES;
+  if (objectIsLegit)
+  {
+    object->setLegit(true);
   }
 }
 

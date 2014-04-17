@@ -28,7 +28,8 @@ bool Object::isSameObject(const ConstPtr& object, float distance) const
       < distance;
 }
 
-void Object::initializeObjectFilter()
+void Object::initializeObjectFilter(float prior_x_sd, float prior_y_sd,
+    float prior_z_sd)
 {
   //!< Priors  
   //!< Filter's prior mean
@@ -37,17 +38,17 @@ void Object::initializeObjectFilter()
   MatrixWrapper::SymmetricMatrix priorVar_(1, 1);
 
   priorMu_(1) = pose_.position.x;
-  priorVar_(1, 1) = pow(0.5, 2);
+  priorVar_(1, 1) = pow(prior_x_sd, 2);
   priorX_.reset( new BFL::Gaussian(priorMu_, priorVar_) );
   filterX_.reset( new Filter(priorX_.get()) );
   
   priorMu_(1) = pose_.position.y;
-  priorVar_(1, 1) = pow(0.5, 2);
+  priorVar_(1, 1) = pow(prior_y_sd, 2);
   priorY_.reset( new BFL::Gaussian(priorMu_, priorVar_) );
   filterY_.reset( new Filter(priorY_.get()) );
   
   priorMu_(1) = pose_.position.z;
-  priorVar_(1, 1) = pow(0.5, 2);
+  priorVar_(1, 1) = pow(prior_z_sd, 2);
   priorZ_.reset( new BFL::Gaussian(priorMu_, priorVar_) );
   filterZ_.reset( new Filter(priorZ_.get()) );
 }
@@ -123,17 +124,6 @@ void Object::update(const ConstPtr& measurement, const FilterModelConstPtr& mode
   newObjectPose.orientation = pose_.orientation;
 
   pose_ = newObjectPose;
-
-  bool setLegit = filterX_->PostGet()->CovarianceGet()(1, 1)
-                  < 0.04 &&
-                  filterY_->PostGet()->CovarianceGet()(1, 1)
-                  < 0.04 &&
-                  filterZ_->PostGet()->CovarianceGet()(1, 1)
-                  < 0.04;
-  if (setLegit)
-  {
-    legit_ = true;
-  }
 }
 
 }  // namespace pandora_alert_handler

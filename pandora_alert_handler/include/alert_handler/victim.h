@@ -130,7 +130,7 @@ class Victim : public Object
    * Reference to hole filter model.
    * @return void
    */
-  static void setHoleModel(const FilterModelConstPtr& holeModelPtr)
+  static void setHoleModel(const FilterModelPtr& holeModelPtr)
   {
     holeModelPtr_ = holeModelPtr;
   }
@@ -141,7 +141,7 @@ class Victim : public Object
    * Reference to tpa filter model.
    * @return void
    */
-  static void setTpaModel(const FilterModelConstPtr& tpaModelPtr)
+  static void setTpaModel(const FilterModelPtr& tpaModelPtr)
   {
     tpaModelPtr_ = tpaModelPtr;
   }
@@ -195,9 +195,9 @@ class Victim : public Object
   static int lastVictimId_;  //!< The last in line victim ID
   
   //!< Pointer to filter's model used in HoleList.
-  static FilterModelConstPtr holeModelPtr_;
+  static FilterModelPtr holeModelPtr_;
   //!< Pointer to filter's model used in TpaList.
-  static FilterModelConstPtr tpaModelPtr_;
+  static FilterModelPtr tpaModelPtr_;
 
 };
 

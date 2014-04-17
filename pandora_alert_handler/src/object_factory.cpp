@@ -140,16 +140,16 @@ void ObjectFactory::setUpObject(const TpaPtr& tpaPtr,
 void ObjectFactory::setUpObject(const HazmatPtr& hazmatPtr, 
     const vision_communications::HazmatAlertMsg& msg)
 {
-  hazmatPtr->setPose( poseFinder_->findAlertPose(msg.yaw,
-                                                  msg.pitch, currentTransform_) );
+  hazmatPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
+        msg.pitch, currentTransform_) );
   hazmatPtr->setPattern( msg.patternType );
 }
 
 void ObjectFactory::setUpObject(const QrPtr& qrPtr, 
     const vision_communications::QRAlertMsg& msg)
 {
-  qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw,
-                                                  msg.pitch, currentTransform_) );
+  qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
+        msg.pitch, currentTransform_) );
   qrPtr->setContent( msg.QRcontent );
 }
 

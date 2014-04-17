@@ -17,8 +17,8 @@ Victim::Victim()
 }
 
 int Victim::lastVictimId_ = 0;
-FilterModelConstPtr Victim::holeModelPtr_ = FilterModelPtr();
-FilterModelConstPtr Victim::tpaModelPtr_ = FilterModelPtr();
+FilterModelPtr Victim::holeModelPtr_ = FilterModelPtr();
+FilterModelPtr Victim::tpaModelPtr_ = FilterModelPtr();
 
 bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
 {  

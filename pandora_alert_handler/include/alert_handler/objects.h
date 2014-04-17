@@ -70,6 +70,7 @@ class Object
 {
  public:
 
+  //!< Type definitions
   typedef boost::shared_ptr<Object> Ptr;
   typedef boost::shared_ptr<Object const> ConstPtr;
 
@@ -86,7 +87,8 @@ class Object
    * @brief Initialize filter's pdf for the current object
    * @return void
    */
-  void initializeObjectFilter();
+  void initializeObjectFilter(float prior_x_sd, float prior_y_sd, 
+      float prior_z_sd);
 
   /**
    * @brief Returns if this Object is the same with the given one
@@ -195,16 +197,28 @@ class Object
     return frame_id_;
   }
   
+  /**
+   * @brief Getter for variance in x dimension.
+   * @return float variance
+   */
   float getVarianceX() const
   {
     return filterX_->PostGet()->CovarianceGet()(1, 1);
   }
   
+  /**
+   * @brief Getter for variance in z dimension.
+   * @return float variance
+   */
   float getVarianceY() const
   {
     return filterY_->PostGet()->CovarianceGet()(1, 1);
   }
   
+  /**
+   * @brief Getter for variance in y dimension.
+   * @return float variance
+   */
   float getVarianceZ() const
   {
     return filterZ_->PostGet()->CovarianceGet()(1, 1);

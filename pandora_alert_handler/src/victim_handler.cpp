@@ -55,8 +55,8 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
                              float victimUpdate) :
   holePtrListPtr_(holeListPtr),
   tpaPtrListPtr_(tpaListPtr),
-  victimsToGoList_(1 , sameVictimRadius, approachDist),
-  victimsVisitedList_(1, sameVictimRadius, approachDist)
+  victimsToGoList_(sameVictimRadius, approachDist, victimUpdate),
+  victimsVisitedList_(sameVictimRadius, approachDist, victimUpdate)
 {
   Victim::setHoleModel(holePtrListPtr_->getFilterModel());
   Victim::setTpaModel(tpaPtrListPtr_->getFilterModel());
@@ -345,7 +345,7 @@ void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
 {
   VICTIM_VERIFICATION_PROB = verificationProbability;
   clusterer_->updateParams(clusterRadius, approachDist);
-  victimsToGoList_.setParams(1, sameVictimRadius, approachDist, victimUpdate);
+  victimsToGoList_.setParams(sameVictimRadius, approachDist, victimUpdate);
 }
 
 /**

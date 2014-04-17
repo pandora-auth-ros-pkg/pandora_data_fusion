@@ -10,9 +10,27 @@ namespace pandora_alert_handler
 /**
  * @details Sets the parameters in filter's model and initializes it.
  */
-FilterModel::FilterModel() :  matrixH_(1, 1)
+FilterModel::FilterModel(float system_noise_sd, float measurement_noise_sd)
+{
+  SYSTEM_NOISE_SD = system_noise_sd;
+  MEASUREMENT_NOISE_SD = measurement_noise_sd;
+  initializeFilterModel();
+}
+
+/**
+ * @details Sets the parameters in filter's model.
+ */
+void FilterModel::setParams(float system_noise_sd, float measurement_noise_sd)
+{
+  SYSTEM_NOISE_SD = system_noise_sd;
+  MEASUREMENT_NOISE_SD = measurement_noise_sd;
+}
+
+void FilterModel::initializeFilterModel()
 {
   //!< System Model Initialization
+  //!< Filter's combined matrix
+  std::vector<MatrixWrapper::Matrix> matrixAB_;
   //!< Filter's system matrix A
   MatrixWrapper::Matrix matrixA_(1, 1);
   //!< Filter's system matrix B
@@ -29,7 +47,7 @@ FilterModel::FilterModel() :  matrixH_(1, 1)
   matrixAB_.push_back(matrixB_);
   
   systemNoiseMu_(1) = 0.0;
-  systemNoiseVar_(1, 1) = pow(0.05, 2);
+  systemNoiseVar_(1, 1) = pow(SYSTEM_NOISE_SD, 2);
   
   BFL::Gaussian systemUncertainty(systemNoiseMu_, systemNoiseVar_); 
   systemPdfPtr_.reset( new AnalyticGaussian(matrixAB_, systemUncertainty) );
@@ -39,6 +57,8 @@ FilterModel::FilterModel() :  matrixH_(1, 1)
   systemModelZ_.reset( new SystemModel(systemPdfPtr_.get()) );
 
   //!< Measurement Model Initialization
+  //!< Filter's measurement matrix H
+  MatrixWrapper::Matrix matrixH_(1, 1);
   matrixH_(1, 1) = 1.0;
   //!< Filter's measurement noise mean
   MatrixWrapper::ColumnVector measurementNoiseMu_(1);
@@ -46,7 +66,7 @@ FilterModel::FilterModel() :  matrixH_(1, 1)
   MatrixWrapper::SymmetricMatrix measurementNoiseVar_(1);
  
   measurementNoiseMu_(1) = 0.0;
-  measurementNoiseVar_(1, 1) = pow(0.5, 2);
+  measurementNoiseVar_(1, 1) = pow(MEASUREMENT_NOISE_SD, 2);
   
   BFL::Gaussian measurementUncertainty(measurementNoiseMu_, 
       measurementNoiseVar_);

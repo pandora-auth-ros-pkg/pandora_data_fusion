@@ -67,8 +67,8 @@ class VictimList : public ObjectList<Victim>
    * @param distanceThreshold [float] Initialization value for distanceThreshold
    * @param approachDistance [float] Initialization value for approachDistance
    */ 
-  VictimList(int counterThreshold = 1, float distanceThreshold = 0.5, 
-      float approachDistance = 0.5, float victimUpdate = 0.5 );
+  VictimList(float distanceThreshold = 0.5, 
+      float approachDistance = 0.5, float victimUpdate = 0.5);
 
   /**
    * @brief Checks if the given victim is already in the list
@@ -159,7 +159,7 @@ class VictimList : public ObjectList<Victim>
   /**
    * @overload
    */
-  void setParams(int counterThreshold, float distanceThreshold, 
+  void setParams(float distanceThreshold, 
     float approachDistance, float victimUpdate);
 
  protected: 
