@@ -125,7 +125,6 @@ class VictimList : public ObjectList<Victim>
 
   /**
    * @brief Deletes the current VictimPtr  
-   * @return bool -1 if no victim is tracked
    */
   bool deleteCurrentVictim();
 

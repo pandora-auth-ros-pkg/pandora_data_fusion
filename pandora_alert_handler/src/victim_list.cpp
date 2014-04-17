@@ -250,6 +250,7 @@ bool VictimList::deleteCurrentVictim()
   ROS_ASSERT(currentVictimIt_ != objects_.end());
   objects_.erase(currentVictimIt_);
   currentVictimIt_ = objects_.end();
+  return true;
 }
 
 /**
@@ -326,6 +327,7 @@ bool VictimList::currentVictimUpdated()
   {
     return true;
   }
+  return false;
 }
 
 }  // namespace pandora_alert_handler

@@ -333,6 +333,7 @@ std::string VictimHandler::sensorIdToString(int sensorId)
   ROS_ERROR("[VICTIM_HANDLER %d] sensorIdToString was called"
             "with invalid sensor id", __LINE__);
   ROS_BREAK();
+  return "";
 }
 
 

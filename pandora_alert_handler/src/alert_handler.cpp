@@ -404,8 +404,8 @@ bool AlertHandler::getObjectsServiceCb(
   hazmats_->getObjectsPosesStamped(&rs.hazmats);
   tpas_->getObjectsPosesStamped(&rs.tpas);
 
-  // victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited
-                                         // , &rs.approachPoints);
+  // victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited, 
+      // &rs.approachPoints);
 
   return true;
 }
@@ -461,6 +461,7 @@ bool AlertHandler::flushQueues(
   qrs_->clear();
   hazmats_->clear();
   victimHandler_->flush();
+  return true;
 }
 
 void AlertHandler::startTransition(int newState)
