@@ -298,11 +298,11 @@ class Object
   FilterPtr filterY_;
   //!< Kalman filter for dimension z
   FilterPtr filterZ_;
-  
-  
-  private:
+   
+ private:
   
   friend class ObjectListTest;
+
 };
 
 typedef Object::Ptr ObjectPtr;
@@ -376,7 +376,7 @@ typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
 /**
  * @class Hazmat
  * @brief Concrete class representing a Hazmat Object. Inherits from Object
-**/ 
+ */ 
 class Hazmat : public Object
 {
  public:
@@ -386,7 +386,7 @@ class Hazmat : public Object
 
   /**
    * @brief Constructor
-  **/
+   */
   Hazmat();
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
@@ -399,9 +399,9 @@ class Hazmat : public Object
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
   
   /**
-  @brief Getter for member pattern_
-  @return int The Hazmat's pattern
-  **/
+   * @brief Getter for member pattern_
+   * @return int The Hazmat's pattern
+   */
   int getPattern() const
   {
     return pattern_;
@@ -410,7 +410,7 @@ class Hazmat : public Object
   /**
    * @brief Setter for member pattern_
    * @return void
-  **/
+   */
   void setPattern(int pattern)
   {
     pattern_ = pattern;
@@ -431,7 +431,7 @@ typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
 /**
  * @class Hole
  * @brief Concrete class representing a Hole Object. Inherits from Object
-**/ 
+ */ 
 class Hole : public Object
 {
  public:
@@ -441,7 +441,7 @@ class Hole : public Object
 
   /**
    * @brief Constructor
-  **/
+   */
   Hole();
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
@@ -453,7 +453,7 @@ class Hole : public Object
   /**
    * @brief Getter for member holeId_
    * @return int The holeId 
-  **/
+   */
   unsigned int getHoleId() const 
   {
     return holeId_;
@@ -462,7 +462,7 @@ class Hole : public Object
   /**
    * @brief Setter for member holeId_
    * @return void
-  **/
+   */
   void setHoleId(int holeId) 
   {
     holeId_ = holeId;
@@ -483,7 +483,7 @@ typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 /**
  * @class Tpa
  * @brief Concrete class representing a Tpa Object. Inherits from Object
-**/ 
+ */ 
 class Tpa : public Object
 {
  public:
@@ -493,7 +493,7 @@ class Tpa : public Object
 
   /**
    * @brief Constructor
-  **/
+   */
   Tpa();
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;

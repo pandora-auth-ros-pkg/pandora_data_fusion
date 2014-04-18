@@ -20,7 +20,7 @@ class ObjectListTest : public testing::Test
   object1(new Object), object2(new Object), object3(new Object),
   object4(new Object), object5(new Object), object6(new Object),
   object7(new Object), object8(new Object), object9(new Object),
-  object10(new Object), object11(new Object){}
+  object10(new Object), object11(new Object) {}
 
   /* SetUp/TearDown definitions */
 
@@ -34,7 +34,7 @@ class ObjectListTest : public testing::Test
     pose1.position.x = -0.5;
     pose1.position.y = 0;
     pose1.position.z = 0;
-    object1->setPose(pose1)  ;    
+    object1->setPose(pose1); 
     object1->setId(1);
     
     pose2.position.x = 0;
@@ -125,7 +125,7 @@ class ObjectListTest : public testing::Test
       pose.position.x =
         static_cast<double> (rand_r(&seed) - RAND_MAX/2)/(RAND_MAX/2) * 10000;
       pose.position.y=
-       static_cast<double> (rand_r(&seed) - RAND_MAX/2)/(RAND_MAX/2) * 10000;
+        static_cast<double> (rand_r(&seed) - RAND_MAX/2)/(RAND_MAX/2) * 10000;
       pose.position.z =
         static_cast<double> (rand_r(&seed) - RAND_MAX/2)/(RAND_MAX/2) * 10000;   
       ObjectPtr object(new Object);
@@ -133,57 +133,59 @@ class ObjectListTest : public testing::Test
       getObjects(objList).push_back(object);
     }
   }
-  void printPose( ObjectPtr ObjectX)
+
+  void printPose(ObjectPtr objectX)
   {
-     //!< Printing information about existing objects
+    //!< Printing information about existing objects
     ROS_INFO("printing  objects' position");
-    ROS_INFO("x = %f", ObjectX->getPose().position.x);
-    ROS_INFO("y = %f", ObjectX->getPose().position.y);
-    ROS_INFO("z = %f", ObjectX->getPose().position.z);
-    
+    ROS_INFO("x = %f", objectX->getPose().position.x);
+    ROS_INFO("y = %f", objectX->getPose().position.y);
+    ROS_INFO("z = %f", objectX->getPose().position.z);  
   }
   
-  void printCovariance( ObjectPtr ObjectX)
+  void printCovariance(ObjectPtr objectX)
   {
-    ROS_INFO("Covariance x = %f",ObjectX->filterX_->PostGet()->CovarianceGet()(1, 1));
-    ROS_INFO("Covariance y = %f",ObjectX->filterY_->PostGet()->CovarianceGet()(1, 1));
-    ROS_INFO("Covariance z = %f",ObjectX->filterZ_->PostGet()->CovarianceGet()(1, 1));
-    
+    ROS_INFO("Covariance x = %f", 
+        objectX->filterX_->PostGet()->CovarianceGet()(1, 1));
+    ROS_INFO("Covariance y = %f", 
+        objectX->filterY_->PostGet()->CovarianceGet()(1, 1));
+    ROS_INFO("Covariance z = %f", 
+        objectX->filterZ_->PostGet()->CovarianceGet()(1, 1));
   }
   
   //!< Spawns Objects In a fixed radius Around the objectX
-  ObjectPtr ObjectSpawner(ObjectPtr objectX ,float radius)
+  ObjectPtr ObjectSpawner(ObjectPtr objectX, float radius)
   {
-   ObjectPtr closeObject(new Object);
-   double angle1( double((rand_r(&seed) % 314)) /100);
-   double angle2( double((rand_r(&seed) % 314)) / 200);
+    ObjectPtr closeObject(new Object);
+    double angle1( static_cast<double> ((rand_r(&seed) % 314)) / 100);
+    double angle2( static_cast<double> ((rand_r(&seed) % 314)) / 200);
     
     geometry_msgs::Pose pose;
-    pose.position.x = (cos(angle2)*radius )*sin(angle1) + objectX->getPose().position.x;
-    pose.position.y = (cos(angle2)*radius )*cos(angle1) + objectX->getPose().position.y;
-    pose.position.z = sin(angle2)*radius  + objectX->getPose().position.z;
+    pose.position.x = (cos(angle2) * radius) * sin(angle1) + 
+      objectX->getPose().position.x;
+    pose.position.y = (cos(angle2) * radius) * cos(angle1) + 
+      objectX->getPose().position.y;
+    pose.position.z = sin(angle2) * radius  + objectX->getPose().position.z;
 
     closeObject->setPose(pose);
      
     return closeObject;
-    
   }
-    
   
-  void setPose ( float  x, float  y, float  z, ObjectPtr Object)
+  void setPose(float x, float y, float z, ObjectPtr object)
   {
     geometry_msgs::Pose pose1;
     pose1.position.x = x;
     pose1.position.y = y;
     pose1.position.z = z;
-    Object->setPose(pose1);
+    object->setPose(pose1);
   }  
 
   /* Accessors for private methods/members of ObjectList */
 
   bool isAnExistingObject(
       ObjectList<Object>* objList, const ObjectConstPtr& object, 
-      ObjectList<Object>::IteratorList* iteratorListPtr) 
+      ObjectList<Object>::IteratorList* iteratorListPtr)
   {
     return objList->isAnExistingObject(object, iteratorListPtr);
   }
@@ -204,6 +206,36 @@ class ObjectListTest : public testing::Test
   float* DIST_THRESHOLD(ObjectList<Object>* objList) 
   {
     return &(objList->DIST_THRESHOLD);
+  }
+
+  float* X_VAR_THRES(ObjectList<Object>* objList) 
+  {
+    return &(objList->X_VAR_THRES);
+  }
+
+  float* Y_VAR_THRES(ObjectList<Object>* objList) 
+  {
+    return &(objList->Y_VAR_THRES);
+  }
+
+  float* Z_VAR_THRES(ObjectList<Object>* objList) 
+  {
+    return &(objList->Z_VAR_THRES);
+  }
+
+  float* PRIOR_X_SD(ObjectList<Object>* objList) 
+  {
+    return &(objList->PRIOR_X_SD);
+  }
+
+  float* PRIOR_Y_SD(ObjectList<Object>* objList) 
+  {
+    return &(objList->PRIOR_Y_SD);
+  }
+
+  float* PRIOR_Z_SD(ObjectList<Object>* objList) 
+  {
+    return &(objList->PRIOR_Z_SD);
   }
 
   /* Variables */
@@ -340,7 +372,6 @@ TEST_F(ObjectListTest, AddManually)
   EXPECT_EQ( object9, *it );
   EXPECT_FALSE( object9->getLegit() );
   printPose(object9);
-  
 
   // Add (0.5, 0, 0) Object 3 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object3) );
@@ -348,7 +379,7 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(  object9);
+  printPose(object9);
 
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object8) );
@@ -356,8 +387,7 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(  object9);
-
+  printPose(object9);
 
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
@@ -365,7 +395,7 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(  object9);
+  printPose(object9);
   
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
@@ -373,7 +403,7 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(  object9);
+  printPose(object9);
   
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object9) );
@@ -381,7 +411,7 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_TRUE( object9->getLegit() );
-  printPose(  object9);
+  printPose(object9);
   
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object8) );
@@ -389,20 +419,16 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_TRUE( object9->getLegit() );
-  printPose(  object9);
+  printPose(object9);
   
- // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object9) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_TRUE( object9->getLegit() );
-  printPose(  object9);
-
-  
+  printPose(object9);
 }
-
-
 
 TEST_F(ObjectListTest, AddRandomly) 
 { 
@@ -411,7 +437,7 @@ TEST_F(ObjectListTest, AddRandomly)
   ASSERT_EQ( 0.5, *DIST_THRESHOLD(&objectList) );
   
   EXPECT_TRUE( objectList.add(object2) );
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.4)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.4)) );
   ASSERT_EQ(1, objectList.size());
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object2, *it );
@@ -420,18 +446,16 @@ TEST_F(ObjectListTest, AddRandomly)
   printPose(  object2);
   printCovariance(object2);
   
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.3)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.3)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.2)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object2,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.1)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.2)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.3)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.2)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.1)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.3)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.2)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.1)) );
   EXPECT_TRUE( object2->getLegit());
 }
-
-
 
 TEST_F(ObjectListTest, AddTwoObjects) 
 { 
@@ -455,26 +479,23 @@ TEST_F(ObjectListTest, AddTwoObjects)
   printPose(object4);
   
   // Object  1(-0,5,0,0) Object 4 (-1 ,0,0) Object11 (-0.75 ,0, 0) 
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
   printCovariance(object4);
   printPose(object4);
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.3)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.3)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.2)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.3)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.2)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.3)) );
   printCovariance(object4);
   printPose(object4);
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.2)));
-  EXPECT_FALSE( objectList.add(ObjectSpawner(object11,0.1)));
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.2)) );
+  EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
   printCovariance(object4);
   printPose(object4);
   
   EXPECT_TRUE( object4->getLegit() );
   EXPECT_TRUE( object1->getLegit() );
-  
-  
-  
 }
 
 }  // namespace pandora_alert_handler

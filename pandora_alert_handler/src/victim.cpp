@@ -203,7 +203,7 @@ void Victim::setObjects(const ObjectConstPtrVector& objects,
 }
   
 /**
- * @details Should always be called after any change on the objects_
+ * @details Should always be called after any change on the objects_.
  */
 void Victim::updateRepresentativeObject(float approachDistance)
 {  

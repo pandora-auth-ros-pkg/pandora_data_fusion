@@ -12,8 +12,7 @@ namespace pandora_alert_handler
 // Defining PI
 double pi= M_PI;
 
-class ObjectFactoryTest : public ::testing::Test
-{ 
+class ObjectFactoryTest : public ::testing::Test { 
   protected: 
 
 /*Constructor SetUp */

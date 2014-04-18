@@ -9,12 +9,11 @@ namespace pandora_alert_handler
 
 class VictimListTest : public ::testing::Test {
  
-  protected:
+ protected:
 
-  VictimListTest():VictimList1(), VictimList2(2, 1, 1.5), Victim1(new Victim), 
-  Victim2( new Victim), Victim3( new Victim), Victim4( new Victim),
-  Victim5( new Victim), Victim6( new Victim) { }
-
+  VictimListTest() : VictimList1(), VictimList2(2, 1, 1.5), 
+  Victim1(new Victim), Victim2( new Victim), Victim3( new Victim), 
+  Victim4( new Victim), Victim5( new Victim), Victim6( new Victim) {}
 
   virtual void SetUp()
   {
