@@ -1,6 +1,8 @@
 #!usr/bin/env python
 
+import os
 import rospy
+from collections import deque
 
 from vision_communications.msg import HoleDirectionMsg
 from vision_communications.msg import HolesDirectionsVectorMsg
@@ -22,7 +24,7 @@ class AlertDeliveryBoy:
 
         self.frame_id = 'headCamera'
 
-        self.orderWaitingList = []
+        self.orderWaitingList = deque([])
         
         self.hazmat_msg = HazmatAlertsVectorMsg()
         self.hazmat_msg.header.frame_id = self.frame_id
@@ -104,7 +106,9 @@ class AlertDeliveryBoy:
 
     def deliverNextOrder(self):
         
-        nextOrder = self.orderWaitingList.pop()
+        if len(self.orderWaitingList) == 0:
+            raise BadBossOrderFile("No orders left.")
+        nextOrder = self.orderWaitingList.popleft()
         if nextOrder[1] == 'qr':
             self.qr_pub.publish(nextOrder[0])
         elif nextOrder[1] == 'hazmat':
@@ -116,13 +120,15 @@ class AlertDeliveryBoy:
 
     def clearOrderList(self):
 
-        self.orderWaitingList = []
+        self.orderWaitingList = deque([])
 
     def getOrderListFromBoss(self, boss):
-        
-        with open(boss, 'r') as bossList:
+       
+        __dir__ = os.path.dirname(os.path.abspath(__file__))
+        filepath = os.path.join(__dir__, boss)
+        with open(filepath, 'r') as bossList:
             for order in bossList:
-                a = order[:-2].split()
+                a = order.split()
                 if a[0] == 'qr:':
                     if len(a) != 4:
                         raise BadBossOrderFile("Not right argument numbers.")

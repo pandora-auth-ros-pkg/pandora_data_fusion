@@ -460,6 +460,7 @@ bool AlertHandler::flushQueues(
   holes_->clear();
   qrs_->clear();
   hazmats_->clear();
+  tpas_->clear();
   victimHandler_->flush();
   return true;
 }
