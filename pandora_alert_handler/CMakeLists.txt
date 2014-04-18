@@ -285,6 +285,14 @@ FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS_WITH_REFS
             src/ros_tf_listener.cpp
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS_WITH_REFS})
+set(ROSLINT_CPP_OPTS 
+    "--filter=-whitespace/end_of_line,-build/include,-whitespace/blank_line,-whitespace/parens,-whitespace/braces")
+FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_TEST 
+    RELATIVE ${PROJECT_SOURCE_DIR} 
+    test/*
+    )
+roslint_cpp(${${PROJECT_NAME}_LINT_TEST})
+#roslint_add_test()
 
 ####### Testing ####
 
