@@ -11,7 +11,7 @@ class VictimListTest : public ::testing::Test {
  
   protected:
 
-  VictimListTest():VictimList1(), VictimList2(2, 1, 1.5, 1), Victim1(new Victim), 
+  VictimListTest():VictimList1(), VictimList2(2, 1, 1.5), Victim1(new Victim), 
   Victim2( new Victim), Victim3( new Victim), Victim4( new Victim),
   Victim5( new Victim), Victim6( new Victim) { }
 
@@ -111,7 +111,7 @@ void fillVictim(VictimPtr Victim, ObjectConstPtrVector ObjConstPtrVect)
     pose1.position.z = 0;
     pose1.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
     Object->setPose(pose1);
-    Object->initializeObjectFilter(); 
+    Object->initializeObjectFilter(0.5, 0.5, 0.5); 
   }
 // accesing private variables
   VictimList::iterator getCurrentVictimIt(VictimList VictimList1)

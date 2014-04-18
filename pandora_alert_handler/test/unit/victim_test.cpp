@@ -94,10 +94,13 @@ class VictimTest : public ::testing::Test {
     pose1.position.z = 0;
     pose1.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
     Object->setPose(pose1);
-    Object->initializeObjectFilter();  
+    Object->initializeObjectFilter(0.5,0.5,0.5);  
   }
   
+  
   /* accesing private functions*/
+  
+  
   void updatePose(VictimPtr Victim, geometry_msgs::Pose poseVic, float dist)
   {
     Victim->updatePose(poseVic, dist);

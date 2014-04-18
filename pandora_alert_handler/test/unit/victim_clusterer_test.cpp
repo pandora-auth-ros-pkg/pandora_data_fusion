@@ -83,7 +83,7 @@ void setPose ( float  x, float  y, float  z, ObjectPtr Object, float yaw = 0)
     pose1.position.z = 0;
     pose1.orientation = tf::createQuaternionMsgFromRollPitchYaw(0,  0,  yaw);
     Object->setPose(pose1);
-    Object->initializeObjectFilter(); 
+    Object->initializeObjectFilter(0.5 , 0.5 , 0.5); 
   }
 
   

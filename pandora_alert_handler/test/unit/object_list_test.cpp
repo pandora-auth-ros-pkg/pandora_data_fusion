@@ -16,7 +16,7 @@ class ObjectListTest : public testing::Test
  
   /* Constructor/Destructor */
 
-  ObjectListTest() : objectList(), objectList2(3, 10.669),
+  ObjectListTest() : objectList(), objectList2(10.669),
   object1(new Object), object2(new Object), object3(new Object),
   object4(new Object), object5(new Object), object6(new Object),
   object7(new Object), object8(new Object), object9(new Object),
@@ -206,11 +206,6 @@ class ObjectListTest : public testing::Test
     return &(objList->DIST_THRESHOLD);
   }
 
-  int* COUNTER_THRES(ObjectList<Object>* objList) 
-  {
-    return &(objList->COUNTER_THRES);
-  }
-
   /* Variables */
   unsigned int  seed;
   ObjectList<Object> objectList;
@@ -244,12 +239,10 @@ TEST_F(ObjectListTest, Constructor)
 {
   EXPECT_EQ( 0u , objectList.size() );
   EXPECT_EQ( 0u , *id(&objectList) );
-  EXPECT_EQ( 1u , *COUNTER_THRES(&objectList) );
   EXPECT_NEAR( 0.5 , *DIST_THRESHOLD(&objectList) , 0.0001 );
 
   EXPECT_EQ( 0u , objectList2.size() );
   EXPECT_EQ( 0u , *id(&objectList2) );
-  EXPECT_EQ( 3 , *COUNTER_THRES(&objectList2) );
   EXPECT_NEAR( 10.669 , *DIST_THRESHOLD(&objectList2) , 0.0001 );
 }
 
@@ -334,7 +327,7 @@ TEST_F(ObjectListTest, IsAnExistingObject)
 }
 
 
-TEST_F(ObjectListTest, Add_Manually) 
+TEST_F(ObjectListTest, AddManually) 
 { 
   ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
   ASSERT_EQ( 0u, objectList.size() );
@@ -387,7 +380,7 @@ TEST_F(ObjectListTest, Add_Manually)
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
-  EXPECT_FALSE( object9->getLegit() );
+  EXPECT_TRUE( object9->getLegit() );
   printPose(  object9);
   
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
@@ -395,7 +388,7 @@ TEST_F(ObjectListTest, Add_Manually)
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
-  EXPECT_FALSE( object9->getLegit() );
+  EXPECT_TRUE( object9->getLegit() );
   printPose(  object9);
   
  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
@@ -411,7 +404,7 @@ TEST_F(ObjectListTest, Add_Manually)
 
 
 
-TEST_F(ObjectListTest, Add_Randomly) 
+TEST_F(ObjectListTest, AddRandomly) 
 { 
   ObjectList<Object>::const_iterator_vers_ref it = getObjects(&objectList).begin();
   ASSERT_EQ( 0u, objectList.size() );
