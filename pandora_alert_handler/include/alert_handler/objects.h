@@ -144,15 +144,6 @@ class Object
   }
   
   /**
-   * @brief Getter for member counter_
-   * @return int counter
-   */
-  int getCounter() const
-  {
-    return counter_;
-  }
-  
-  /**
    * @brief Getter for member legit_
    * @return bool legit
    */
@@ -234,15 +225,6 @@ class Object
     id_ = id;
   }
 
-  /**
-   * @brief Setter for member counter_
-   * @param counter [int] The new counter value
-   * @return void
-   */
-  void setCounter(int counter)
-  {
-    counter_ = counter;
-  }
 
   /**
    * @brief Setter for member legit_
@@ -284,14 +266,6 @@ class Object
     pose_ = pose;
   }
   
-  /**
-   * @brief Increments counter by 1
-   * @return void
-   */
-  void incrementCounter()
-  {
-    counter_++;
-  }
   
  protected:
  

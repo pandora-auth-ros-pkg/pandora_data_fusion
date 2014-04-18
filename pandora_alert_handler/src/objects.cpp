@@ -9,7 +9,6 @@ namespace pandora_alert_handler
 
 Object::Object()
 {
-  counter_ = 0;
   legit_ = false;
   frame_id_ = "/world";
 }
