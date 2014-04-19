@@ -72,8 +72,8 @@ bool VictimList::contains(const VictimConstPtr& victim) const
 }
 
 /**
- * @details A victim from given the indices of the unvisited list is selected 
- * (this will be the current if we track one). Its info is updated by 
+ * @details A victim from the unvisited list( using its indices) is selected 
+ * (this will be the current if we are tracking one). Its info is updated by 
  * copying the given victim's objects one and the rest are deleted from the 
  * unvisited list. The fsm is informed if necessary     
  */
@@ -254,7 +254,7 @@ bool VictimList::deleteCurrentVictim()
 }
 
 /**
- * @details If the objcect is valid then the current victim is erased from the
+ * @details If the object is valid then the current victim is erased from the
  * list and returned. If it is not valid, it is erased from the victim's 
  * objects. If after this erasal the victim is empty, then it is erased and 
  * returned.

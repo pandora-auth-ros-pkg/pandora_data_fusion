@@ -33,7 +33,8 @@ class VictimListTest : public ::testing::Test {
     fillVictim(victim3, ObjConstPtrVect3);
     fillVictim(victim4, ObjConstPtrVect4);
      
-    fillVictimList(&victimList1);
+    fillVictimListAdd(&victimList1);
+    
     
   } 
   
@@ -45,79 +46,115 @@ class VictimListTest : public ::testing::Test {
   
   
 // helper functions
-void fillVictimList( VictimList* victimList1 )
+void fillVictimListAdd( VictimList* victimList1 )
   {
     victimList1->clear();
     victimList1->add(victim1);
     victimList1->add(victim2);
     victimList1->add(victim3);
+    victimList1->add(victim4);
   }
+  
+void fillVictimListAddUnchanged( VictimList* victimList2 )
+  {
+    victimList2->clear();
+    victimList2->addUnchanged(victim1);
+    victimList2->addUnchanged(victim2);
+    victimList2->addUnchanged(victim3);
+    victimList2->addUnchanged(victim4);
+    
+  }
+
   
 void fillVictim(VictimPtr Victim, ObjectConstPtrVector ObjConstPtrVect)
 {
   Victim->setObjects(ObjConstPtrVect, 5);
 }
 
+// We fill the iteratorList specificcaly around victim2
+void fillIteratorList(VictimList* victimListX, ObjectList<Victim>::IteratorList* iteratorListPtr )
+{
+    for (ObjectList<Victim>:: iterator it = victimListX->objects_.begin(); it != victimListX->objects_.end(); ++it)
+    {
+      if ((*it)->isSameObject(victim2, 0.5))
+      {
+        iteratorListPtr->push_back(it);
+      }
+    }
+}
+
+
 // Tpa1(-1, 0, 0)  Tpa2(1, 0, 0) Hole1(0 , 1, 0)  
   void createVariousObjects1(ObjectConstPtrVector*   ObjConstPtrVect)
   {
-    TpaPtr TpaPtr1(new Tpa);
-    setPose(-1, 0, 0, TpaPtr1);
-    TpaPtr TpaPtr2(new Tpa);
-    setPose(1, 0, 0, TpaPtr2);
-    HolePtr HolePtr1(new Hole);
-    setPose(0, 1, 0, HolePtr1);
-    ObjConstPtrVect->push_back(TpaConstPtr(TpaPtr1));
-    ObjConstPtrVect->push_back(TpaConstPtr(TpaPtr2));
-    ObjConstPtrVect->push_back(HoleConstPtr(HolePtr1));
+    TpaPtr tpaPtr1(new Tpa);
+    setPose(-1, 0, 0, tpaPtr1);
+    TpaPtr tpaPtr2(new Tpa);
+    setPose(1, 0, 0, tpaPtr2);
+    tpaPtr2->update(tpaPtr2, filterModelPtr);
+    tpaPtr2->update(tpaPtr2, filterModelPtr);
+    HolePtr holePtr1(new Hole);
+    setPose(0, 1, 0, holePtr1);
+    ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr1));
+    ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr2));
+    ObjConstPtrVect->push_back(HoleConstPtr(holePtr1));
   }
 // Tpa1(2, 3, 0) Hole1(3, 3, 0) Hole2(2, 2.5, 0) 
   void createVariousObjects2(ObjectConstPtrVector*   ObjConstPtrVect)
   {
-    TpaPtr TpaPtr1(new Tpa);
-    setPose(2, 3, 0, TpaPtr1);
-    HolePtr HolePtr1(new Hole);
-    setPose(3, 3, 0, HolePtr1);
-    HolePtr HolePtr2(new Hole);
-    setPose(2, 2.5, 0, HolePtr2);
-    ObjConstPtrVect->push_back(TpaConstPtr(TpaPtr1));
-    ObjConstPtrVect->push_back(HoleConstPtr(HolePtr1));
-    ObjConstPtrVect->push_back(HoleConstPtr(HolePtr2));
+    TpaPtr tpaPtr1(new Tpa); 
+    setPose(2, 3, 0, tpaPtr1);
+    
+    HolePtr holePtr1(new Hole);
+    setPose(3, 3, 0, holePtr1);
+    holePtr1->update(holePtr1, filterModelPtr);
+    holePtr1->update(holePtr1, filterModelPtr);
+    
+    HolePtr holePtr2(new Hole); 
+    setPose(2, 2.5, 0,holePtr2);
+    
+    ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr1)); 
+    ObjConstPtrVect->push_back(HoleConstPtr(holePtr1)); 
+    ObjConstPtrVect->push_back(HoleConstPtr(holePtr2));
   }
 // Tpa1(2.7, 3, 0) Tpa2(3, 3, 0) 
   void createVariousObjects3(ObjectConstPtrVector*   ObjConstPtrVect)
   {
-    TpaPtr TpaPtr1(new Tpa);
-    setPose(2.7, 3, 0, TpaPtr1);
-    TpaPtr TpaPtr2(new Tpa);
-    setPose(3, 3, 0, TpaPtr2);
-    ObjConstPtrVect->push_back(TpaConstPtr(TpaPtr1));
-    ObjConstPtrVect->push_back(TpaConstPtr(TpaPtr2));
+    TpaPtr tpaPtr1(new Tpa);
+    setPose(2.7, 3, 0, tpaPtr1);
+    
+    TpaPtr tpaPtr2(new Tpa);
+    setPose(3, 3, 0, tpaPtr2);
+    tpaPtr2->update(tpaPtr2, filterModelPtr);
+    tpaPtr2->update(tpaPtr2, filterModelPtr);
+    
+    ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr1));
+    ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr2));
   } 
   
 // Tpa1(3, 3, 0) Hole1(10, 3, 0) 
   void createVariousObjects4(ObjectConstPtrVector*   ObjConstPtrVect)
   {
-    TpaPtr TpaPtr1(new Tpa);
-    setPose(3, 3, 0, TpaPtr1);
-    HolePtr HolePtr1(new Hole);
-    setPose(10, 3, 0, HolePtr1);
-    ObjConstPtrVect->push_back(TpaConstPtr(TpaPtr1));
-    ObjConstPtrVect->push_back(HoleConstPtr(HolePtr1));
+    TpaPtr tpaPtr1(new Tpa);
+    setPose(3, 3, 0, tpaPtr1);
+    HolePtr holePtr1(new Hole);
+    setPose(10, 3, 0, holePtr1);
+    ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr1));
+    ObjConstPtrVect->push_back(HoleConstPtr(holePtr1));
   } 
   
   void setPose ( float x, float y, float z, ObjectPtr Object, float yaw =0)
   {
-    // z is set zero because this test is written for 2d
+    
     geometry_msgs::Pose pose1;
     pose1.position.x = x;
     pose1.position.y = y;
-    pose1.position.z = 0;
+    pose1.position.z = z;
     pose1.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
     Object->setPose(pose1);
     Object->initializeObjectFilter(0.5, 0.5, 0.5); 
   }
-// accesing private variables
+// accessors to private variables
   VictimList::iterator getCurrentVictimIt(VictimList victimList1)
   {
     return victimList1.currentVictimIt_;
@@ -153,6 +190,15 @@ void fillVictim(VictimPtr Victim, ObjectConstPtrVector ObjConstPtrVect)
   {
       return victimList1.VICTIM_UPDATE;
   }
+  
+// accesors to private functions/
+
+  void updateObjects( VictimPtr& victim, 
+     ObjectList<Victim>::IteratorList& iteratorList, VictimList* victimListX)
+     {
+       victimListX->updateObjects( victim , iteratorList);
+     }
+
 
 // variables 
 VictimList victimList1;
@@ -168,6 +214,7 @@ ObjectConstPtrVector   ObjConstPtrVect1;
 ObjectConstPtrVector   ObjConstPtrVect2;
 ObjectConstPtrVector   ObjConstPtrVect3;
 ObjectConstPtrVector   ObjConstPtrVect4;
+ObjectList<Victim> ::IteratorList iteratorList;
 
 };
 
@@ -192,11 +239,39 @@ TEST_F(VictimListTest, Constructor)
 TEST_F(VictimListTest, contains)
 {
   
-  ASSERT_EQ(2, victimList1.size());
+  //Victim1 Tpa(1, 0, 0) Hole(0 , 1, 0)  
+  //Victim2 Tpa(2, 3, 0) Hole(3, 3, 0)
+  //Victim3 Tpa(3, 3, 0)
+  //Victim4 Tpa(3, 3, 0) Hole(10, 3, 0) 
+  
+  //victim 3 is the same as victim 2 (samePosition)
+  //victim 4 is not the same with anything  differentHole
+  ASSERT_EQ(3, victimList1.size());
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim1)));
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim2)));
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim3)));
-  EXPECT_FALSE(victimList1.contains(VictimConstPtr(victim4)));
+  EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim4)));
+  
+}
+
+
+TEST_F(VictimListTest ,updateObjects)
+{
+  
+  
+  fillVictimListAddUnchanged(&victimList2);
+  fillIteratorList(&victimList2 , &iteratorList);
+   ASSERT_EQ(4, victimList2.size());
+  //Because none Victim is tracked Victim3 will be erased and victim 2 will be kept
+  updateObjects(victim2, iteratorList,&victimList2);
+  ASSERT_EQ(3, victimList2.size());
+  
+  
+  
+  
+  
+  
+  
 }
 
 }  // namespace pandora_alert_handler
