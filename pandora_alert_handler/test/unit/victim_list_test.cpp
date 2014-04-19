@@ -11,41 +11,46 @@ class VictimListTest : public ::testing::Test {
  
  protected:
 
-  VictimListTest() : VictimList1(), VictimList2(2, 1, 1.5), 
-  Victim1(new Victim), Victim2( new Victim), Victim3( new Victim), 
-  Victim4( new Victim), Victim5( new Victim), Victim6( new Victim) {}
+  VictimListTest() : victimList1(), victimList2(2, 1, 1.5), 
+  victim1(new Victim), victim2( new Victim), victim3( new Victim), 
+  victim4( new Victim), victim5( new Victim), victim6( new Victim) {}
 
   virtual void SetUp()
   {
      
-     createVariousObjects1(&ObjConstPtrVect1);
-     createVariousObjects2(&ObjConstPtrVect2);
-     createVariousObjects3(&ObjConstPtrVect3);
-     createVariousObjects4(&ObjConstPtrVect4);
      
-     fillVictim(Victim1, ObjConstPtrVect1);
-     fillVictim(Victim2, ObjConstPtrVect2);
-     fillVictim(Victim3, ObjConstPtrVect3);
-     fillVictim(Victim4, ObjConstPtrVect4);
+    filterModelPtr.reset( new FilterModel );
+    Victim::setHoleModel(filterModelPtr);
+    Victim::setTpaModel(filterModelPtr);
+    
+    createVariousObjects1(&ObjConstPtrVect1);
+    createVariousObjects2(&ObjConstPtrVect2);
+    createVariousObjects3(&ObjConstPtrVect3);
+    createVariousObjects4(&ObjConstPtrVect4);
      
-     fillVictimList(&VictimList1);
+    fillVictim(victim1, ObjConstPtrVect1);
+    fillVictim(victim2, ObjConstPtrVect2);
+    fillVictim(victim3, ObjConstPtrVect3);
+    fillVictim(victim4, ObjConstPtrVect4);
+     
+    fillVictimList(&victimList1);
     
   } 
   
   virtual void TearDown()
   {
-    VictimList1.clear();
+    victimList1.clear();
     
   }
   
   
 // helper functions
-void fillVictimList( VictimList* VictimList1 )
+void fillVictimList( VictimList* victimList1 )
   {
-    VictimList1->clear();
-    VictimList1->add(Victim1);
-    VictimList1->add(Victim2);
-    VictimList1->add(Victim3);
+    victimList1->clear();
+    victimList1->add(victim1);
+    victimList1->add(victim2);
+    victimList1->add(victim3);
   }
   
 void fillVictim(VictimPtr Victim, ObjectConstPtrVector ObjConstPtrVect)
@@ -113,51 +118,52 @@ void fillVictim(VictimPtr Victim, ObjectConstPtrVector ObjConstPtrVect)
     Object->initializeObjectFilter(0.5, 0.5, 0.5); 
   }
 // accesing private variables
-  VictimList::iterator getCurrentVictimIt(VictimList VictimList1)
+  VictimList::iterator getCurrentVictimIt(VictimList victimList1)
   {
-    return VictimList1.currentVictimIt_;
+    return victimList1.currentVictimIt_;
   }
  //!< The pose of the currently tracked victim when tracking was last updated 
-  geometry_msgs::Pose getCurrentApproachPose(VictimList VictimList1)
+  geometry_msgs::Pose getCurrentApproachPose(VictimList victimList1)
   {
-      return VictimList1.currentApproachPose_;
+      return victimList1.currentApproachPose_;
   }
   //!< A map containing correspondence of victims returned indices with ids
-  std::map<int, int> getMap(VictimList VictimList1)
+  std::map<int, int> getMap(VictimList victimList1)
   {
-    return VictimList1.victimIndicesMap_;
+    return victimList1.victimIndicesMap_;
   }
   //!< True if the victims were requested and given, false otherwise
-  bool getVictimsRequestAndGiven(VictimList VictimList1)
+  bool getVictimsRequestAndGiven(VictimList victimList1)
   {
-     return VictimList1.victimsRequestedAndGiven_;
+     return victimList1.victimsRequestedAndGiven_;
   }
   //!< True if the victims were requested and given, false otherwise
-  bool getCurrentVictimDied(VictimList VictimList1)
+  bool getCurrentVictimDied(VictimList victimList1)
   {
-    return VictimList1.currentVictimDied_;
+    return victimList1.currentVictimDied_;
   }
   
   //!< The distance of the approach pose from the wall
-  float getApproachDist(VictimList VictimList1)
+  float getApproachDist(VictimList victimList1)
   { 
-     return VictimList1.APPROACH_DIST;
+     return victimList1.APPROACH_DIST;
   }
   //!< The approach pose distance threshold for informing fsm of change 
-  float getVictimUpdate(VictimList VictimList1)
+  float getVictimUpdate(VictimList victimList1)
   {
-      return VictimList1.VICTIM_UPDATE;
+      return victimList1.VICTIM_UPDATE;
   }
 
 // variables 
-VictimList VictimList1;
-VictimList VictimList2;
-VictimPtr Victim1;
-VictimPtr Victim2;
-VictimPtr Victim3;
-VictimPtr Victim4;
-VictimPtr Victim5;
-VictimPtr Victim6;
+VictimList victimList1;
+VictimList victimList2;
+FilterModelPtr filterModelPtr;
+VictimPtr victim1;
+VictimPtr victim2;
+VictimPtr victim3;
+VictimPtr victim4;
+VictimPtr victim5;
+VictimPtr victim6;
 ObjectConstPtrVector   ObjConstPtrVect1;
 ObjectConstPtrVector   ObjConstPtrVect2;
 ObjectConstPtrVector   ObjConstPtrVect3;
@@ -168,17 +174,17 @@ ObjectConstPtrVector   ObjConstPtrVect4;
 
 TEST_F(VictimListTest, Constructor)
 {
-  EXPECT_FALSE(getVictimsRequestAndGiven(VictimList1));
-  EXPECT_FALSE(getCurrentVictimDied( VictimList1));
-  EXPECT_EQ(0.5, getApproachDist(VictimList1));
-  EXPECT_EQ(0.5, getVictimUpdate(VictimList1));
+  EXPECT_FALSE(getVictimsRequestAndGiven(victimList1));
+  EXPECT_FALSE(getCurrentVictimDied( victimList1));
+  EXPECT_EQ(0.5, getApproachDist(victimList1));
+  EXPECT_EQ(0.5, getVictimUpdate(victimList1));
   
 
 
-  EXPECT_FALSE(getVictimsRequestAndGiven(VictimList2));
-  EXPECT_FALSE(getCurrentVictimDied( VictimList2));
-  EXPECT_EQ(1.5, getApproachDist(VictimList2));
-  EXPECT_EQ(1, getVictimUpdate(VictimList2));
+  EXPECT_FALSE(getVictimsRequestAndGiven(victimList2));
+  EXPECT_FALSE(getCurrentVictimDied( victimList2));
+  EXPECT_EQ(1, getApproachDist(victimList2));
+  EXPECT_EQ(1.5, getVictimUpdate(victimList2));
 
 }
 
@@ -186,11 +192,11 @@ TEST_F(VictimListTest, Constructor)
 TEST_F(VictimListTest, contains)
 {
   
-  ASSERT_EQ(2, VictimList1.size());
-  EXPECT_TRUE(VictimList1.contains(VictimConstPtr(Victim1)));
-  EXPECT_TRUE(VictimList1.contains(VictimConstPtr(Victim2)));
-  EXPECT_TRUE(VictimList1.contains(VictimConstPtr(Victim3)));
-  EXPECT_FALSE(VictimList1.contains(VictimConstPtr(Victim4)));
+  ASSERT_EQ(2, victimList1.size());
+  EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim1)));
+  EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim2)));
+  EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim3)));
+  EXPECT_FALSE(victimList1.contains(VictimConstPtr(victim4)));
 }
 
 }  // namespace pandora_alert_handler

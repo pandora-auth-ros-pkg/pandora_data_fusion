@@ -164,7 +164,6 @@ bool ObjectList<ObjectType>::add(const Ptr& object)
     return false;
   }
 
-  ROS_INFO("New Object found");
   object->initializeObjectFilter(PRIOR_X_SD, PRIOR_Y_SD, PRIOR_Z_SD);
   
   object->setId(id_++);

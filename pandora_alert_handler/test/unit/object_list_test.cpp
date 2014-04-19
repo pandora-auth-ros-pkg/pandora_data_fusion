@@ -16,7 +16,8 @@ class ObjectListTest : public testing::Test
  
   /* Constructor/Destructor */
 
-  ObjectListTest() : objectList(), objectList2(10.669),
+  ObjectListTest() : objectList(),objectList2(10.699, 
+  0.5, 0.4, 0.3, 0.1, 0.15, 0.20 ),
   object1(new Object), object2(new Object), object3(new Object),
   object4(new Object), object5(new Object), object6(new Object),
   object7(new Object), object8(new Object), object9(new Object),
@@ -134,25 +135,6 @@ class ObjectListTest : public testing::Test
     }
   }
 
-  void printPose(ObjectPtr objectX)
-  {
-    //!< Printing information about existing objects
-    ROS_INFO("printing  objects' position");
-    ROS_INFO("x = %f", objectX->getPose().position.x);
-    ROS_INFO("y = %f", objectX->getPose().position.y);
-    ROS_INFO("z = %f", objectX->getPose().position.z);  
-  }
-  
-  void printCovariance(ObjectPtr objectX)
-  {
-    ROS_INFO("Covariance x = %f", 
-        objectX->filterX_->PostGet()->CovarianceGet()(1, 1));
-    ROS_INFO("Covariance y = %f", 
-        objectX->filterY_->PostGet()->CovarianceGet()(1, 1));
-    ROS_INFO("Covariance z = %f", 
-        objectX->filterZ_->PostGet()->CovarianceGet()(1, 1));
-  }
-  
   //!< Spawns Objects In a fixed radius Around the objectX
   ObjectPtr ObjectSpawner(ObjectPtr objectX, float radius)
   {
@@ -170,6 +152,16 @@ class ObjectListTest : public testing::Test
     closeObject->setPose(pose);
      
     return closeObject;
+  }
+  
+  
+  //!< Returns distance between 2 objects.
+  float distance(const ObjectConstPtr& object1, const ObjectConstPtr& object2)
+  {
+    float x_ = object1->getPose().position.x - object2->getPose().position.x;
+    float y_ = object1->getPose().position.y - object2->getPose().position.y;
+    float z_ = object1->getPose().position.z - object2->getPose().position.z;
+    return sqrt(x_ * x_ + y_ * y_ + z_ * z_);
   }
   
   void setPose(float x, float y, float z, ObjectPtr object)
@@ -275,7 +267,12 @@ TEST_F(ObjectListTest, Constructor)
 
   EXPECT_EQ( 0u , objectList2.size() );
   EXPECT_EQ( 0u , *id(&objectList2) );
-  EXPECT_NEAR( 10.669 , *DIST_THRESHOLD(&objectList2) , 0.0001 );
+  EXPECT_NEAR( 0.5 , *X_VAR_THRES(&objectList2) , 0.0001 );
+  EXPECT_NEAR( 0.4 , *Y_VAR_THRES(&objectList2) , 0.0001 );
+  EXPECT_NEAR( 0.3 , *Z_VAR_THRES(&objectList2) , 0.0001 );
+  EXPECT_NEAR( 0.1 , *PRIOR_X_SD(&objectList2) , 0.0001 );
+  EXPECT_NEAR( 0.15 , *PRIOR_Y_SD(&objectList2) , 0.0001 );
+  EXPECT_NEAR( 0.20 , *PRIOR_Z_SD(&objectList2) , 0.0001 );
 }
 
 TEST_F(ObjectListTest, IsAnExistingObject) 
@@ -371,7 +368,6 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9, *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(object9);
 
   // Add (0.5, 0, 0) Object 3 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object3) );
@@ -379,7 +375,6 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(object9);
 
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object8) );
@@ -387,31 +382,27 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(object9);
 
-  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  // Add (0.125, 0.125, 0) Object 10 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(object9);
   
-  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  // Add (0.125, 0.125, 0) Object 10 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
-  printPose(object9);
   
-  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  // Add (0.125, 0.125, 0) Object 9 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object9) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_TRUE( object9->getLegit() );
-  printPose(object9);
   
   // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object8) );
@@ -419,15 +410,13 @@ TEST_F(ObjectListTest, AddManually)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_TRUE( object9->getLegit() );
-  printPose(object9);
   
-  // Add (0.125, 0.125, 0) Object 8 will not be Added Same as Object 9
+  // Add (0.125, 0.125, 0) Object 9 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object9) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_TRUE( object9->getLegit() );
-  printPose(object9);
 }
 
 TEST_F(ObjectListTest, AddRandomly) 
@@ -442,9 +431,6 @@ TEST_F(ObjectListTest, AddRandomly)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object2, *it );
   EXPECT_FALSE( object2->getLegit() );
-  
-  printPose(  object2);
-  printCovariance(object2);
   
   EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.1)) );
   EXPECT_FALSE( objectList.add(ObjectSpawner(object2, 0.2)) );
@@ -468,7 +454,6 @@ TEST_F(ObjectListTest, AddTwoObjects)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object1, *it );
   EXPECT_FALSE( object1->getLegit() );
-  printPose(object1);
   
   
   EXPECT_TRUE( objectList.add(object4) );
@@ -476,23 +461,20 @@ TEST_F(ObjectListTest, AddTwoObjects)
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object4, *(++it) );
   EXPECT_FALSE( object4->getLegit() );
-  printPose(object4);
   
-  // Object  1(-0,5,0,0) Object 4 (-1 ,0,0) Object11 (-0.75 ,0, 0) 
+  // Object  1(-0,5,0,0) Object 4 (-1 ,0,0) Object11 (-0.75 ,0, 0)
+  // This will spawn Objects in the middle so both Objects should became legit 
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
-  printCovariance(object4);
-  printPose(object4);
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.2)) );
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.3)) );
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.2)) );
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.3)) );
-  printCovariance(object4);
-  printPose(object4);
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.2)) );
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
-  printCovariance(object4);
-  printPose(object4);
+  
+  // They should have moved closer to each other
+  EXPECT_LT(distance(object1 ,object4), 0.5);
   
   EXPECT_TRUE( object4->getLegit() );
   EXPECT_TRUE( object1->getLegit() );
