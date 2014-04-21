@@ -1,8 +1,9 @@
 #!usr/bin/env python
-
 import os
-import rospy
 from collections import deque
+
+import roslib; roslib.load_manifest('pandora_alert_handler')
+import rospy
 
 from vision_communications.msg import HoleDirectionMsg
 from vision_communications.msg import HolesDirectionsVectorMsg
@@ -63,9 +64,6 @@ class AlertDeliveryBoy:
                                             probability = orderProbability,
                                             holeId = orderId))
         self.hole_pub.publish(self.hole_msg)
-        for i in range(2): 
-	    self.hole_pub.publish(self.hole_msg)
-	    rospy.sleep(1)
 
     def deliverHazmatOrder(self, orderYaw, 
                           orderPitch, orderPattern):
@@ -76,9 +74,6 @@ class AlertDeliveryBoy:
                                             pitch = orderPitch,
                                             patternType = orderPattern))
         self.hazmat_pub.publish(self.hazmat_msg)
-        for i in range(2): 
-	    self.hazmat_pub.publish(self.hazmat_msg)
-	    rospy.sleep(1)
 
     def deliverQrOrder(self, orderYaw, 
                       orderPitch, orderContent):
@@ -89,9 +84,6 @@ class AlertDeliveryBoy:
                                               pitch = orderPitch,
                                               QRcontent = orderContent))
         self.qr_pub.publish(self.qr_msg)
-        for i in range(2): 
-	    self.qr_pub.publish(self.qr_msg)
-	    rospy.sleep(1)
 
     def deliverTpaOrder(self, orderYaw, orderPitch, orderProbability):
 
@@ -100,9 +92,6 @@ class AlertDeliveryBoy:
         self.tpa_msg.pitch = orderPitch
         self.tpa_msg.probability = orderProbability
         self.tpa_pub.publish(self.tpa_msg)
-        for i in range(2): 
-	    self.tpa_pub.publish(self.tpa_msg)
-	    rospy.sleep(1)
 
     def deliverNextOrder(self):
         
