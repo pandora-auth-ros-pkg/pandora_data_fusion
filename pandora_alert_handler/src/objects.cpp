@@ -13,9 +13,9 @@ Object::Object()
   frame_id_ = "/world";
 }
 
-geometry_msgs::PoseStamped Object::getPoseStamped() const
+PoseStamped Object::getPoseStamped() const
 {
-  geometry_msgs::PoseStamped objPoseStamped;
+  PoseStamped objPoseStamped;
   objPoseStamped.pose = pose_;
   return objPoseStamped;
 }

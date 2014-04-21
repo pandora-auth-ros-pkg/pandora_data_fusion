@@ -13,9 +13,9 @@ Qr::Qr()
   timeFound_ = ros::Time::now();
 }
 
-geometry_msgs::PoseStamped Qr::getPoseStamped() const
+PoseStamped Qr::getPoseStamped() const
 {
-  geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
+  PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "qr_" + boost::to_string(id_) + "_" + content_;
   return objPose;
 }

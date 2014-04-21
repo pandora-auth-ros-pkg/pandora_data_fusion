@@ -12,9 +12,9 @@ Hazmat::Hazmat()
   type_ = "hazmat";
 }
 
-geometry_msgs::PoseStamped Hazmat::getPoseStamped() const
+PoseStamped Hazmat::getPoseStamped() const
 {
-  geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
+  PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "hazmat_" + boost::to_string(id_) + "_" +
                             boost::to_string(pattern_);
   return objPose;

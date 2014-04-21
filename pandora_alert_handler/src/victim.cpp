@@ -28,9 +28,9 @@ bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
     Object::isSameObject(object, distance);
 }
 
-geometry_msgs::PoseStamped Victim::getPoseStamped() const
+PoseStamped Victim::getPoseStamped() const
 {
-  geometry_msgs::PoseStamped victimPose;
+  PoseStamped victimPose;
 
   victimPose.pose = pose_;
   if (!visited_)
@@ -54,9 +54,9 @@ geometry_msgs::PoseStamped Victim::getPoseStamped() const
   return victimPose;
 }
 
-geometry_msgs::PoseStamped Victim::getApproachPoint() const
+PoseStamped Victim::getApproachPoseStamped() const
 {
-  geometry_msgs::PoseStamped approachPoseStamped;
+  PoseStamped approachPoseStamped;
   approachPoseStamped.pose = approachPose_;
   approachPoseStamped.header.frame_id = 
     "app_pose_" + boost::to_string(id_);
@@ -240,7 +240,7 @@ int Victim::findRepresentativeObject() const
   return 0;
 }
 
-void Victim::updatePose(const geometry_msgs::Pose& newPose,
+void Victim::updatePose(const Pose& newPose,
     float approachDistance) 
 {
   setPose(newPose);
@@ -275,7 +275,7 @@ tf::Transform Victim::getRotatedTransform() const {
  * its orientation to be the yaw-reversed of the victim's (as it's if we look
  * to the victim).
  */
-geometry_msgs::Pose Victim::calculateApproachPose(float approachDistance) 
+Pose Victim::calculateApproachPose(float approachDistance) 
     const
 {
   tf::Transform transformation = getTransform();

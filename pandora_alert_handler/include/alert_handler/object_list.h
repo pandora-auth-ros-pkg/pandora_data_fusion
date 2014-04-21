@@ -37,8 +37,8 @@ class ObjectList
 
  public:
 
-  ObjectList(float distanceThreshold = 0.5, float x_var_thres = 0.05, 
-      float y_var_thres = 0.05, float z_var_thres = 0.05,
+  ObjectList(float distanceThreshold = 0.5, float x_var_thres = 0.2, 
+      float y_var_thres = 0.2, float z_var_thres = 0.2,
       float prior_x_sd = 0.5, float prior_y_sd = 0.5, float prior_z_sd = 0.5,
       float system_noise_sd = 0.05, float measurement_noise_sd = 0.5);
 
@@ -54,8 +54,7 @@ class ObjectList
 
   void removeInRangeOfObject(const ObjectConstPtr& object, float range);
 
-  void getObjectsPosesStamped(
-    std::vector<geometry_msgs::PoseStamped>* poses) const;
+  void getObjectsPosesStamped(PoseStampedVector* poses) const;
 
   void fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const;
@@ -158,7 +157,6 @@ template <class ObjectType>
 bool ObjectList<ObjectType>::add(const Ptr& object)
 {
   IteratorList iteratorList;
-  
 
   if (isAnExistingObject(object, &iteratorList))
   {
@@ -267,7 +265,7 @@ void ObjectList<ObjectType>::removeInRangeOfObject(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::getObjectsPosesStamped(
-    std::vector<geometry_msgs::PoseStamped>* poses) const
+    PoseStampedVector* poses) const
 {
   for (const_iterator it = this->begin(); it != this->end(); ++it)
   {

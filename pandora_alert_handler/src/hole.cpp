@@ -12,9 +12,9 @@ Hole::Hole()
   type_ = "hole";
 }
 
-geometry_msgs::PoseStamped Hole::getPoseStamped() const
+PoseStamped Hole::getPoseStamped() const
 {
-  geometry_msgs::PoseStamped objPose = Object::getPoseStamped();
+  PoseStamped objPose = Object::getPoseStamped();
   objPose.header.frame_id = "hole_" + boost::to_string(id_);
   return objPose;
 }

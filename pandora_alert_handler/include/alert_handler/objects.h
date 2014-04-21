@@ -113,7 +113,7 @@ class Object
    * @brief Returns the object's pose
    * @return geometry_msgs::PoseStamped The object's pose
    */
-  virtual geometry_msgs::PoseStamped getPoseStamped() const;
+  virtual PoseStamped getPoseStamped() const;
 
   /**
    * @brief Fill in the geotiff info with the object's details 
@@ -174,7 +174,7 @@ class Object
    * @brief Getter for member pose_
    * @return geometry_msgs::Pose& The object's pose
    */
-  const geometry_msgs::Pose& getPose() const
+  const Pose& getPose() const
   {
     return pose_;
   }
@@ -261,7 +261,7 @@ class Object
    * @param pose [const geometry_msgs::Pose&] The new pose value
    * @return void
    */
-  void setPose(const geometry_msgs::Pose& pose)
+  void setPose(const Pose& pose)
   {
     pose_ = pose;
   }
@@ -281,7 +281,7 @@ class Object
   float probability_;
 
   //!< The object's pose in 3d space
-  geometry_msgs::Pose pose_;
+  Pose pose_;
   //!< The reference frame for the pose. Should normally be "/world"
   std::string frame_id_;
 
@@ -334,7 +334,7 @@ class Qr : public Object
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
 
-  virtual geometry_msgs::PoseStamped getPoseStamped() const;
+  virtual PoseStamped getPoseStamped() const;
 
   virtual void fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const;
@@ -391,7 +391,7 @@ class Hazmat : public Object
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
 
-  virtual geometry_msgs::PoseStamped getPoseStamped() const;
+  virtual PoseStamped getPoseStamped() const;
 
   virtual void fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res) const;
@@ -446,7 +446,7 @@ class Hole : public Object
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
 
-  virtual geometry_msgs::PoseStamped getPoseStamped() const;
+  virtual PoseStamped getPoseStamped() const;
 
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
@@ -498,7 +498,7 @@ class Tpa : public Object
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
 
-  virtual geometry_msgs::PoseStamped getPoseStamped() const;
+  virtual PoseStamped getPoseStamped() const;
 
   virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
