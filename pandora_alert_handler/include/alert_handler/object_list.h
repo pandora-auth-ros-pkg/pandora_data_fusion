@@ -92,6 +92,7 @@ class ObjectList
  private:
 
   friend class ObjectListTest;
+  friend class VictimListTest;
 
  private:
 

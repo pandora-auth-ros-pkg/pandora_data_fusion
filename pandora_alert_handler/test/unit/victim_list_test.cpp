@@ -41,6 +41,7 @@ class VictimListTest : public ::testing::Test {
   virtual void TearDown()
   {
     victimList1.clear();
+    victimList2.clear();
     
   }
   
@@ -194,10 +195,22 @@ void fillIteratorList(VictimList* victimListX, ObjectList<Victim>::IteratorList*
 // accesors to private functions/
 
   void updateObjects( VictimPtr& victim, 
-     ObjectList<Victim>::IteratorList& iteratorList, VictimList* victimListX)
+     ObjectList<Victim>::IteratorList& iteratorList, VictimList* victimList)
      {
-       victimListX->updateObjects( victim , iteratorList);
+       victimList->updateObjects( victim , iteratorList);
      }
+     
+ ObjectList<Victim>::List& getObjects(VictimList* objList) 
+  {
+    return objList->objects_;
+  }
+  
+  void setCurrentVictimIt( VictimList* victimList, ObjectList<Victim>::iterator &it)
+  {
+    victimList->currentVictimIt_ = it;
+    
+  }
+  
 
 
 // variables 
@@ -245,34 +258,63 @@ TEST_F(VictimListTest, contains)
   //Victim4 Tpa(3, 3, 0) Hole(10, 3, 0) 
   
   //victim 3 is the same as victim 2 (samePosition)
-  //victim 4 is not the same with anything  differentHole
   ASSERT_EQ(3, victimList1.size());
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim1)));
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim2)));
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim3)));
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim4)));
-  
 }
 
 
 TEST_F(VictimListTest ,updateObjects)
 {
-  
+  ObjectList<Victim>::iterator it;
   
   fillVictimListAddUnchanged(&victimList2);
   fillIteratorList(&victimList2 , &iteratorList);
-   ASSERT_EQ(4, victimList2.size());
-  //Because none Victim is tracked Victim3 will be erased and victim 2 will be kept
+  ASSERT_EQ(4, victimList2.size());
+  
+  //VictimList2 has all 4 victims inside
+  
+  it = getObjects(&victimList2).begin();
+  EXPECT_EQ(victim1,*(it));
+  EXPECT_EQ(victim2,*(++it));
+  EXPECT_EQ(victim3,*(++it));
+  EXPECT_EQ(victim4,*(++it));
+  
+  //Victim3 will be removed 
   updateObjects(victim2, iteratorList,&victimList2);
   ASSERT_EQ(3, victimList2.size());
+  it = getObjects(&victimList2).begin();
+  EXPECT_EQ(victim1,*(it));
+  EXPECT_EQ(victim2,*(++it));
+  EXPECT_EQ(victim4,*(++it));
+}
+
+
+TEST_F(VictimListTest ,ValidateCurrentObject)
+{
+  ObjectList<Victim>::iterator it;
+    
   
   
+  it = getObjects(&victimList1).begin();
+  /* VictimList1*/
+  //Victim1 Tpa(1, 0, 0) Hole(0 , 1, 0)  
+  //Victim2 Tpa(2, 3, 0) Hole(3, 3, 0)
+  //Victim4 Tpa(3, 3, 0) Hole(10, 3, 0)
+  ASSERT_EQ(victim1,*(it));
+  ASSERT_EQ(victim2,*(++it));
+  ASSERT_EQ(victim4,*(++it));
+  setCurrentVictimIt(&victimList1 , it);
   
-  
+   //~ victimList1.validateCurrentObject(false);
   
   
   
 }
+
+
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
