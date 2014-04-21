@@ -124,7 +124,7 @@ class AlertHandler : public StateClient, private boost::noncopyable
 
   /* Dynamic Reconfiguration Callback */
   void dynamicReconfigCallback(
-      const alert_handler::AlertHandlerConfig &config,
+      const ::pandora_alert_handler::AlertHandlerConfig &config,
         uint32_t level);
 
   /* Services Callbacks */
@@ -182,7 +182,7 @@ class AlertHandler : public StateClient, private boost::noncopyable
   boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
   boost::shared_ptr<ValidateCurrentHoleServer> validateCurrentHoleServer_;
 
-  dynamic_reconfigure::Server<alert_handler::AlertHandlerConfig>
+  dynamic_reconfigure::Server< ::pandora_alert_handler::AlertHandlerConfig >
     dynReconfserver_;
 
   MapPtr map_;

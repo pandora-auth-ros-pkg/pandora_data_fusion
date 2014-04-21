@@ -363,7 +363,7 @@ void AlertHandler::updateMap(const nav_msgs::OccupancyGridConstPtr& msg)
 }
 
 void AlertHandler::dynamicReconfigCallback(
-    const alert_handler::AlertHandlerConfig& config, uint32_t level)
+    const ::pandora_alert_handler::AlertHandlerConfig& config, uint32_t level)
 {
   objectFactory_->dynamicReconfigForward( config.occupiedCellThres,
     config.highThres, config.lowThres, config.approachDist,
@@ -404,8 +404,8 @@ bool AlertHandler::getObjectsServiceCb(
   hazmats_->getObjectsPosesStamped(&rs.hazmats);
   tpas_->getObjectsPosesStamped(&rs.tpas);
 
-  // victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited, 
-      // &rs.approachPoints);
+  victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited, 
+      &rs.approachPoints);
 
   return true;
 }
@@ -457,6 +457,7 @@ bool AlertHandler::flushQueues(
     std_srvs::Empty::Request& rq,
       std_srvs::Empty::Response &rs)
 {
+  ROS_INFO_NAMED("ALERT_HANDLER_FLUSH_SERVICE", "Flushing lists!");
   holes_->clear();
   qrs_->clear();
   hazmats_->clear();
