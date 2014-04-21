@@ -253,6 +253,18 @@ void VictimHandler::validateCurrentHole(bool objectValid)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void VictimHandler::getVictimsPosesStamped(PoseStampedVector* victimsToGo, 
+    PoseStampedVector* victimsVisited, PoseStampedVector* approachPoses)
+{
+  victimsToGoList_.getObjectsPosesStamped(victimsToGo);
+  victimsVisitedList_.getObjectsPosesStamped(victimsVisited);
+  for(VictimList::const_iterator it = victimsToGoList_.begin();
+      it != victimsToGoList_.end(); ++it)
+  {
+    approachPoses->push_back((*it)->getApproachPoseStamped());
+  }
+}
+
 /**
  * @details 
  */
@@ -266,8 +278,8 @@ void VictimHandler::fillGeotiff(
  * @details 
  */
 void VictimHandler::getVisualization(
-  visualization_msgs::MarkerArray* victimsVisitedMarkers ,
-  visualization_msgs::MarkerArray* victimsToGoMarkers)
+    visualization_msgs::MarkerArray* victimsVisitedMarkers,
+    visualization_msgs::MarkerArray* victimsToGoMarkers)
 {
   victimsVisitedList_.getVisualization(victimsVisitedMarkers);
   victimsToGoList_.getVisualization(victimsToGoMarkers);

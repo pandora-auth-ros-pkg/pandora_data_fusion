@@ -83,7 +83,6 @@ class VictimHandler : private boost::noncopyable
                 float clusterRadius = 0.5, float sameVictimRadius = 0.5,
                 float approachDist = 0.5, float victimUpdate = 0.5);
 
-
   /**
    * @brief Updates the victim lists with the existing objects
    * @return void
@@ -160,6 +159,17 @@ class VictimHandler : private boost::noncopyable
   bool getCurrentVictimTransform(tf::StampedTransform* stampedTranform);
   
   /**
+   * @brief Get Poses Stamped of all victims in victimsToGo, victimsVisited and
+   * their respective approachPoints
+   * @param victimsToGo [PoseStampedVector*] vector with victims' poses
+   * @param victimsVisited [PoseStampedVector*] vector with victims' poses
+   * @param approachPoints [PoseStampedVector*] vector with approach points.
+   * @return void
+   */
+  void getVictimsPosesStamped(PoseStampedVector* victimsToGo, 
+      PoseStampedVector* victimsVisited, PoseStampedVector* approachPoses);
+
+  /**
    * @brief Fill in the geotiff info with the victims details 
    * @param res 
    * [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
@@ -167,7 +177,7 @@ class VictimHandler : private boost::noncopyable
    * @return void
    */
   void fillGeotiff(
-    data_fusion_communications::DatafusionGeotiffSrv::Response* res);
+      data_fusion_communications::DatafusionGeotiffSrv::Response* res);
     
   /**
    * @brief Get the victims visualization
@@ -177,8 +187,8 @@ class VictimHandler : private boost::noncopyable
    * The output param for the unvisited victims 
    * @return void
    */
-  void getVisualization(visualization_msgs::MarkerArray* victimsVisitedMarkers,
-                        visualization_msgs::MarkerArray* victimsToGoMarkers);
+  void getVisualization(visualization_msgs::MarkerArray* victimsVisitedMarkers, 
+      visualization_msgs::MarkerArray* victimsToGoMarkers);
 
  private:
 
