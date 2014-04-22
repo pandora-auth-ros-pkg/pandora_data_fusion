@@ -112,7 +112,7 @@ void fillIteratorList(VictimList* victimListX, ObjectList<Victim>::IteratorList*
     holePtr1->update(holePtr1, filterModelPtr);
     
     HolePtr holePtr2(new Hole); 
-    setPose(2, 2.5, 0,holePtr2);
+    setPose(2, 2.5, 0, holePtr2);
     
     ObjConstPtrVect->push_back(TpaConstPtr(tpaPtr1)); 
     ObjConstPtrVect->push_back(HoleConstPtr(holePtr1)); 
@@ -194,10 +194,10 @@ void fillIteratorList(VictimList* victimListX, ObjectList<Victim>::IteratorList*
   
 // accesors to private functions/
 
-  void updateObjects( VictimPtr& victim, 
-     ObjectList<Victim>::IteratorList& iteratorList, VictimList* victimList)
+  void updateObjects( VictimPtr victim, 
+     ObjectList<Victim>::IteratorList* iteratorList, VictimList* victimList)
      {
-       victimList->updateObjects( victim , iteratorList);
+       victimList->updateObjects( victim , *iteratorList);
      }
      
  ObjectList<Victim>::List& getObjects(VictimList* objList) 
@@ -205,9 +205,9 @@ void fillIteratorList(VictimList* victimListX, ObjectList<Victim>::IteratorList*
     return objList->objects_;
   }
   
-  void setCurrentVictimIt( VictimList* victimList, ObjectList<Victim>::iterator &it)
+  void setCurrentVictimIt( VictimList* victimList, ObjectList<Victim>::iterator *it)
   {
-    victimList->currentVictimIt_ = it;
+    victimList->currentVictimIt_ = *it;
     
   }
   
@@ -252,12 +252,12 @@ TEST_F(VictimListTest, Constructor)
 TEST_F(VictimListTest, contains)
 {
   
-  //Victim1 Tpa(1, 0, 0) Hole(0 , 1, 0)  
-  //Victim2 Tpa(2, 3, 0) Hole(3, 3, 0)
-  //Victim3 Tpa(3, 3, 0)
-  //Victim4 Tpa(3, 3, 0) Hole(10, 3, 0) 
+  // Victim1 Tpa(1, 0, 0) Hole(0 , 1, 0)  
+  // Victim2 Tpa(2, 3, 0) Hole(3, 3, 0)
+  // Victim3 Tpa(3, 3, 0)
+  // Victim4 Tpa(3, 3, 0) Hole(10, 3, 0) 
   
-  //victim 3 is the same as victim 2 (samePosition)
+  // victim 3 is the same as victim 2 (samePosition)
   ASSERT_EQ(3, victimList1.size());
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim1)));
   EXPECT_TRUE(victimList1.contains(VictimConstPtr(victim2)));
@@ -266,7 +266,7 @@ TEST_F(VictimListTest, contains)
 }
 
 
-TEST_F(VictimListTest ,updateObjects)
+TEST_F(VictimListTest , updateObjects)
 {
   ObjectList<Victim>::iterator it;
   
@@ -274,42 +274,50 @@ TEST_F(VictimListTest ,updateObjects)
   fillIteratorList(&victimList2 , &iteratorList);
   ASSERT_EQ(4, victimList2.size());
   
-  //VictimList2 has all 4 victims inside
+  // VictimList2 has all 4 victims inside
   
   it = getObjects(&victimList2).begin();
-  EXPECT_EQ(victim1,*(it));
-  EXPECT_EQ(victim2,*(++it));
-  EXPECT_EQ(victim3,*(++it));
-  EXPECT_EQ(victim4,*(++it));
+  EXPECT_EQ(victim1, *(it));
+  EXPECT_EQ(victim2, *(++it));
+  EXPECT_EQ(victim3, *(++it));
+  EXPECT_EQ(victim4, *(++it));
   
-  //Victim3 will be removed 
-  updateObjects(victim2, iteratorList,&victimList2);
+  // Victim3 will be removed 
+  updateObjects(victim2, &iteratorList, &victimList2);
   ASSERT_EQ(3, victimList2.size());
   it = getObjects(&victimList2).begin();
-  EXPECT_EQ(victim1,*(it));
-  EXPECT_EQ(victim2,*(++it));
-  EXPECT_EQ(victim4,*(++it));
+  EXPECT_EQ(victim1, *(it));
+  EXPECT_EQ(victim2, *(++it));
+  EXPECT_EQ(victim4, *(++it));
 }
 
 
-TEST_F(VictimListTest ,ValidateCurrentObject)
+TEST_F(VictimListTest , ValidateCurrentObject)
 {
   ObjectList<Victim>::iterator it;
     
   
   
   it = getObjects(&victimList1).begin();
-  /* VictimList1*/
-  //Victim1 Tpa(1, 0, 0) Hole(0 , 1, 0)  
-  //Victim2 Tpa(2, 3, 0) Hole(3, 3, 0)
-  //Victim4 Tpa(3, 3, 0) Hole(10, 3, 0)
-  ASSERT_EQ(victim1,*(it));
-  ASSERT_EQ(victim2,*(++it));
-  ASSERT_EQ(victim4,*(++it));
-  setCurrentVictimIt(&victimList1 , it);
   
-   //~ victimList1.validateCurrentObject(false);
   
+              /* VictimList1*/
+  // Victim1 Tpa(1, 0, 0) Hole(0 , 1, 0)  
+  // Victim2 Tpa(2, 3, 0) Hole(3, 3, 0)
+  // Victim4 Tpa(3, 3, 0) Hole(10, 3, 0)
+  
+  
+  ASSERT_EQ(victim1, *(it));
+  ASSERT_EQ(victim2, *(++it));
+  ASSERT_EQ(victim4, *(++it));
+  setCurrentVictimIt(&victimList1 , &it);
+  
+  
+  // RUNTIME ERROR DONT KNOW WHY
+  
+  victimList1.validateCurrentObject(false);
+   
+  // RUNTIME ERROR DONT KNOW WHY
   
   
 }

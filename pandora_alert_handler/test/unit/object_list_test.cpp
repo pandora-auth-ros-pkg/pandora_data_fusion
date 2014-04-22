@@ -16,7 +16,7 @@ class ObjectListTest : public testing::Test
  
   /* Constructor/Destructor */
 
-  ObjectListTest() : objectList(),objectList2(10.699, 
+  ObjectListTest() : objectList(), objectList2(10.699, 
   0.5, 0.4, 0.3, 0.1, 0.15, 0.20 ),
   object1(new Object), object2(new Object), object3(new Object),
   object4(new Object), object5(new Object), object6(new Object),
@@ -383,14 +383,14 @@ TEST_F(ObjectListTest, AddManually)
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
 
-  // Add (0.125, 0.125, 0) Object 10 will not be Added Same as Object 9
+  // Add (0.6, 0.2, 0.1) Object 10 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
   EXPECT_FALSE( object9->getLegit() );
   
-  // Add (0.125, 0.125, 0) Object 10 will not be Added Same as Object 9
+  // Add (0.6, 0.2, 0.1) Object 10 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
@@ -474,8 +474,9 @@ TEST_F(ObjectListTest, AddTwoObjects)
   EXPECT_FALSE( objectList.add(ObjectSpawner(object11, 0.1)) );
   
   // They should have moved closer to each other
-  EXPECT_LT(distance(object1 ,object4), 0.5);
+  EXPECT_LT(distance(object1, object4), 0.5);
   
+  // They should become Legit!
   EXPECT_TRUE( object4->getLegit() );
   EXPECT_TRUE( object1->getLegit() );
 }

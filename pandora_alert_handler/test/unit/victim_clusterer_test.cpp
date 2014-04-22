@@ -18,7 +18,7 @@ class VictimClustererTest : public ::testing::Test {
       }
   
   
-   virtual void SetUp()
+  virtual void SetUp()
   {
     
     filterModelPtr.reset( new FilterModel );
@@ -81,8 +81,8 @@ class VictimClustererTest : public ::testing::Test {
     setPose(10, 3, 0, tpaPtr1);
     HolePtr holePtr1(new Hole);
     setPose(11, 5, 2, holePtr1, pi/4);
-    holePtr1->update(holePtr1,filterModelPtr);
-    holePtr1->update(holePtr1,filterModelPtr);
+    holePtr1->update(holePtr1, filterModelPtr);
+    holePtr1->update(holePtr1, filterModelPtr);
     HolePtr holePtr2(new Hole);
     setPose(14, 3, 3, holePtr2);
     ObjConstPtrVectPtr2->push_back(TpaConstPtr(tpaPtr1));

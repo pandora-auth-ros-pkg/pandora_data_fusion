@@ -59,7 +59,7 @@ class VictimTest : public ::testing::Test
   }
  
   //!< We create manually tpa1(2, 3, 4) tpa2(4, 3, 2) hole1(1, 2, 0) 
-  //!< (no rotation)
+  //!< Yaw = 0 (no rotation)
   void createVariousObjects1(ObjectConstPtrVector* objConstPtrVectPtr)
   {
     TpaPtr tpaPtr1(new Tpa);
@@ -108,7 +108,8 @@ class VictimTest : public ::testing::Test
     objConstPtrVectPtr->push_back(tpaPtr2);
     objConstPtrVectPtr->push_back(tpaPtr3);
   } 
-  
+  //!< We create manually tpa1(2, 3, 4) tpa2(4, 3, 2) tpa3(0, 4, 2) 
+  //!< Yaw = pi/4
   void setPose(float x, float y, float z, ObjectPtr object, float yaw = 0)
   {
     geometry_msgs::Pose pose1;
@@ -159,8 +160,7 @@ class VictimTest : public ::testing::Test
   ObjectConstPtrVectorPtr objConstPtrVectPtr3;
 
 };
-
-//!< Checks if the construstor behaves correctly 
+ 
 TEST_F(VictimTest, constructor)
 {
   clear();
@@ -177,7 +177,8 @@ TEST_F(VictimTest, constructor)
   EXPECT_EQ(2, *getLastVictimId(second));
   EXPECT_EQ(-1, second->getSelectedObjectIndex());
 }
-    
+
+
 TEST_F(VictimTest, isSameObject)
 {
   EXPECT_EQ(2, *getLastVictimId(victim1));
