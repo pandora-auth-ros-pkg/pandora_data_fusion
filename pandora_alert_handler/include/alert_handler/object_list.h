@@ -212,6 +212,7 @@ template <class ObjectType>
 void ObjectList<ObjectType>::clear()
 {
   objects_.clear();
+  id_ = 0;
 }
 
 template <class ObjectType>
