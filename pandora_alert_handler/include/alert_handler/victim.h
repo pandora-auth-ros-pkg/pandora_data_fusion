@@ -61,7 +61,7 @@ class Victim : public Object
       float approachDistance);
   
   /**
-   * @brief Erases from victim's associated objects [deprecated]
+   * @brief Erases from victim's associated objects
    * @param index [int] Index in victim's vector of objects
    * @param approachDistance [float] Approach point's desired distance away from victim
    * @return void
@@ -249,9 +249,13 @@ class Victim : public Object
  protected:
 
   //!< The validity of the Victim
-  bool valid_;      
+  bool valid_;
   //!< True if the victim was visited false otherwise     
-  bool visited_;            
+  bool visited_;
+  //!< True if hole failed to pass validation and thus deleted
+  bool holeDeleted_;
+  //!< True if tpa failed to pass validation and thus deleted
+  bool tpaDeleted_;
 
   //!< Index pointing to representative object
   int selectedObjectIndex_;

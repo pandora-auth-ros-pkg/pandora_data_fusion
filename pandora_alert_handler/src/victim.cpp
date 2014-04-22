@@ -13,6 +13,8 @@ Victim::Victim()
   id_ = lastVictimId_;
   valid_ = false;
   visited_ = false;
+  holeDeleted_ = false;
+  tpaDeleted_ = false;
   selectedObjectIndex_ = -1;
 }
 
@@ -141,63 +143,75 @@ void Victim::fillGeotiff(
 void Victim::setObjects(const ObjectConstPtrVector& objects,
     float approachDistance) 
 {
-  ObjectConstPtrVector::const_iterator holeIt = objects.end();
-  float minHoleVariance = 1;
-  ObjectConstPtrVector::const_iterator tpaIt = objects.end();
-  float minTpaVariance = 1;
+  objects_.clear();
 
-  for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
-      it != objects.end(); it++)
+  if(!holeDeleted_)
   {
-    if (!(*it)->getType().compare(std::string("hole")))
+    ObjectConstPtrVector::const_iterator holeIt = objects.end();
+    float minHoleVariance = 1;
+
+    for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+        it != objects.end(); it++)
     {
-      if ((*it)->getVarianceX() < minHoleVariance)
+      if (!(*it)->getType().compare(std::string("hole")) && 
+          (*it)->getVarianceX() < minHoleVariance)
       {
         minHoleVariance = (*it)->getVarianceX();
         holeIt = it;
       }
     }
-    if (!(*it)->getType().compare(std::string("tpa")))
+
+    ObjectPtr representativeHole( new Hole );
+
+    if (holeIt != objects.end())
+      *representativeHole = *(*holeIt);
+
+    for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+        it != objects.end(); it++)
     {
-      if ((*it)->getVarianceX() < minTpaVariance)
+      if (!(*it)->getType().compare(std::string("hole")) && it != holeIt)
+      {
+        representativeHole->update((*it), holeModelPtr_);
+      }
+    }
+  
+    if (holeIt != objects.end())
+      objects_.push_back(representativeHole);
+  }
+
+  if(!tpaDeleted_)
+  {
+    ObjectConstPtrVector::const_iterator tpaIt = objects.end();
+    float minTpaVariance = 1;
+
+    for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+        it != objects.end(); it++)
+    {
+      if (!(*it)->getType().compare(std::string("tpa")) && 
+          (*it)->getVarianceX() < minTpaVariance)
       {
         minTpaVariance = (*it)->getVarianceX();
         tpaIt = it;
       }
     }
-  }
 
-  ObjectPtr representativeHole( new Hole );
-  ObjectPtr representativeTpa( new Tpa );
+    ObjectPtr representativeTpa( new Tpa );
 
-  if (holeIt != objects.end())
-    *representativeHole = *(*holeIt);
-  if (tpaIt != objects.end())
-    *representativeTpa = *(*tpaIt);
+    if (tpaIt != objects.end())
+      *representativeTpa = *(*tpaIt);
 
-  for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
-      it != objects.end(); it++)
-  {
-    if (!(*it)->getType().compare(std::string("hole")))
+    for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+        it != objects.end(); it++)
     {
-      if (it == holeIt)
-        continue;
-      representativeHole->update((*it), holeModelPtr_);
+      if (!(*it)->getType().compare(std::string("tpa")) && it != tpaIt)
+      {
+        representativeTpa->update((*it), tpaModelPtr_);
+      }
     }
-    if (!(*it)->getType().compare(std::string("tpa")))
-    {
-      if (it == tpaIt)
-        continue;
-      representativeTpa->update((*it), tpaModelPtr_);
-    }
+  
+    if (tpaIt != objects.end())
+      objects_.push_back(representativeTpa);
   }
-
-  objects_.clear();
-
-  if (holeIt != objects.end())
-    objects_.push_back(representativeHole);
-  if (tpaIt != objects.end())
-    objects_.push_back(representativeTpa);
 
   updateRepresentativeObject(approachDistance);
 }
@@ -252,15 +266,25 @@ void Victim::addSensor(int sensorId)
   sensorIds_.insert(sensorId);
 } 
 
+/**
+ * @details Erasing an object will get the appropriate objectDeleted_
+ * flag set to true, so that this victim will be ignorant to that type of
+ * objects.
+ */
 void Victim::eraseObjectAt(int index,
     float approachDistance)
 {
+  if(objects_[index]->getType() == "hole")
+    holeDeleted_ = true;
+  else if(objects_[index]->getType() == "tpa")
+    tpaDeleted_ = true;
   objects_.erase(objects_.begin() + index);
   updateRepresentativeObject(approachDistance);
 }
 
 
-tf::Transform Victim::getRotatedTransform() const {
+tf::Transform Victim::getRotatedTransform() const
+{
   tf::Transform trans = getTransform();
   tfScalar roll, pitch, yaw;
   trans.getBasis().getRPY(roll, pitch, yaw);
