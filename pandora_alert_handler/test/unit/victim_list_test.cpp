@@ -294,7 +294,7 @@ TEST_F(VictimListTest , updateObjects)
 
 TEST_F(VictimListTest , ValidateCurrentObject)
 {
-  ObjectList<Victim>::iterator it;
+  VictimList::iterator it;
     
   
   

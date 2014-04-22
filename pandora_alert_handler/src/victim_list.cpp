@@ -55,10 +55,6 @@ VictimList::VictimList(float distanceThreshold,
   VICTIM_UPDATE = victimUpdate;
 }
 
-/**
- * @details Also returns a vector containing the indices of the victims in the
- * vector that match the given one
- */
 bool VictimList::contains(const VictimConstPtr& victim) const
 {
   for (const_iterator it = this->begin(); it != this->end(); ++it)
@@ -72,10 +68,10 @@ bool VictimList::contains(const VictimConstPtr& victim) const
 }
 
 /**
- * @details A victim from the unvisited list( using its indices) is selected 
- * (this will be the current if we are tracking one). Its info is updated by 
- * copying the given victim's objects one and the rest are deleted from the 
- * unvisited list. The fsm is informed if necessary     
+ * @details A victimToUpdate from victim list is selected (this will be the 
+ * current if we are tracking one). Its info is updated by copying the given 
+ * victim's objects and the rest victims that are thought to be the same are 
+ * deleted from victim list. The fsm is informed if necessary.
  */
 void VictimList::updateObjects(const VictimConstPtr& victim, 
     const IteratorList& iteratorList)
@@ -132,7 +128,7 @@ bool VictimList::isVictimBeingTracked() const
 }
 
 /**
- * @details Assuming that a victim is being tracked
+ * @details Assuming that a victim is being tracked,
  * this method returns that victim.
  */
 const VictimPtr& VictimList::getCurrentVictim() const
@@ -142,9 +138,9 @@ const VictimPtr& VictimList::getCurrentVictim() const
 }
 
 /**
- * @details Keeps track of the victims indices in the sequence they are 
+ * @details Keeps track of the victims' indices in the sequence they are 
  * returned so that when setCurrentVictimIndex is called, we can still find
- * the correct index
+ * the correct index by its victimId_.
  */
 void VictimList::getVictimsMsg(
     std::vector< data_fusion_communications::VictimInfoMsg>* victimMsgVector)
@@ -174,10 +170,9 @@ void VictimList::getVictimsMsg(
 }
 
 /**
- * @details This method should always be called after getVictimsMsg() so if that
- * is not the case the assertion should fire.
- * Victim id = -1 means that no victim was chosen so
- * if a victim is tracked it is unset. This behavior may very possibly change 
+ * @details This method should always be called after getVictimsMsg() so if 
+ * that is not the case the assertion should fire. Also, index = -1 means 
+ * that no victim was chosen from victimMsgVector.
  */
 bool VictimList::setCurrentVictim(int index)
 {
@@ -271,20 +266,21 @@ VictimPtr VictimList::validateCurrentObject(bool objectValid)
     currentVictim->setValid(true);
     currentVictim->setVisited(true);
     objects_.erase(currentVictimIt_);
+    currentVictimIt_ = objects_.end();
   }
   else
   {
     (*currentVictimIt_)->eraseObjectAt(
-      currentVictim->getSelectedObjectIndex(), APPROACH_DIST);
-    if (currentVictim->getObjects().empty())
+      (*currentVictimIt_)->getSelectedObjectIndex(), APPROACH_DIST);
+    if ((*currentVictimIt_)->getObjects().empty())
     {
       currentVictim = *currentVictimIt_;
       currentVictim->setValid(false);
       currentVictim->setVisited(true);
       objects_.erase(currentVictimIt_);
+      currentVictimIt_ = objects_.end();
     } 
   }
-  currentVictimIt_ = objects_.end();
   
   return currentVictim;
 }

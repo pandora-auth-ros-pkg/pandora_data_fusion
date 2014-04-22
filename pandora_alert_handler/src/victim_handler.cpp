@@ -245,7 +245,7 @@ void VictimHandler::validateCurrentHole(bool objectValid)
 {
   VictimPtr currentVictim = victimsToGoList_.validateCurrentObject(objectValid);
   
-  if(currentVictim)
+  if(currentVictim.get())
   {
     victimsVisitedList_.addUnchanged(currentVictim);
   }
