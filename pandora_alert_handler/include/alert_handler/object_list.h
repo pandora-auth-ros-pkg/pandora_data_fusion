@@ -37,10 +37,10 @@ class ObjectList
 
  public:
 
-  ObjectList(float distanceThreshold = 0.5, float x_var_thres = 0.2, 
-      float y_var_thres = 0.2, float z_var_thres = 0.2,
-      float prior_x_sd = 0.5, float prior_y_sd = 0.5, float prior_z_sd = 0.5,
-      float system_noise_sd = 0.05, float measurement_noise_sd = 0.5);
+  ObjectList(float distanceThreshold = 0.5, float x_var_thres = 0.0009, 
+      float y_var_thres = 0.0009, float z_var_thres = 0.0009,
+      float prior_x_sd = 0.05, float prior_y_sd = 0.05, float prior_z_sd = 0.05,
+      float system_noise_sd = 0.003, float measurement_noise_sd = 0.05);
 
   const_iterator begin() const;
   const_iterator end() const;
@@ -61,10 +61,10 @@ class ObjectList
 
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
-  void setParams(float distanceThreshold, float x_var_thres = 0.05, 
-      float y_var_thres = 0.05, float z_var_thres = 0.05,
-      float prior_x_sd = 0.5, float prior_y_sd = 0.5, float prior_z_sd = 0.5,
-      float system_noise_sd = 0.05, float measurement_noise_sd = 0.05);
+  void setParams(float distanceThreshold, float x_var_thres = 0.0009, 
+      float y_var_thres = 0.0009, float z_var_thres = 0.0009,
+      float prior_x_sd = 0.05, float prior_y_sd = 0.05, float prior_z_sd = 0.05,
+      float system_noise_sd = 0.003, float measurement_noise_sd = 0.05);
 
   FilterModelPtr getFilterModel() const;
 

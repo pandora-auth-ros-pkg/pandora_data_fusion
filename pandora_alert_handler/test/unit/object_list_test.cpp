@@ -381,21 +381,21 @@ TEST_F(ObjectListTest, AddManually)
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
-  EXPECT_FALSE( object9->getLegit() );
+  EXPECT_TRUE( object9->getLegit() );
 
   // Add (0.6, 0.2, 0.1) Object 10 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
-  EXPECT_FALSE( object9->getLegit() );
+  EXPECT_TRUE( object9->getLegit() );
   
   // Add (0.6, 0.2, 0.1) Object 10 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object10) );
   ASSERT_EQ( 1u, objectList.size() );
   it = getObjects(&objectList).begin();
   EXPECT_EQ( object9 , *it );
-  EXPECT_FALSE( object9->getLegit() );
+  EXPECT_TRUE( object9->getLegit() );
   
   // Add (0.125, 0.125, 0) Object 9 will not be Added Same as Object 9
   EXPECT_FALSE( objectList.add(object9) );

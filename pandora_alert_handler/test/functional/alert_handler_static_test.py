@@ -22,7 +22,7 @@ from geometry_msgs.msg import Point
 
 def distance(a, b):
 
-    return math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2 )
+    return float(math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2 ))
 
 def direction(a, b):
         
@@ -201,7 +201,6 @@ class AlertHandlerStaticTest(unittest.TestCase):
             rospy.sleep(0.1)
             self.fillInfo(outs)
             # The order had only holes in it!
-            rospy.logdebug("That is the %d-th alert.", len(outs))
             self.assertEqual(len(outs[-1].holes), 1)
             self.assertEqual(len(outs[-1].hazmats), 0)
             self.assertEqual(len(outs[-1].qrs), 0)
@@ -209,13 +208,15 @@ class AlertHandlerStaticTest(unittest.TestCase):
             if len(outs) > 1:
                 self.assertEqual(distance(outs[-1].holes[0].pose.position, 
                   outs[-2].holes[0].pose.position), 0)
-        position0 = outs[0].holes[0].pose.position
 
         # A measurement off will not throw away very much a stable object.
         self.deliveryBoy.deliverHoleOrder(0.13, 0, 1)
+        rospy.sleep(0.1)
         self.fillInfo(outs)
+        position0 = outs[0].holes[0].pose.position
         position1 = outs[-1].holes[0].pose.position
         distanceLessConviction = distance(position0, position1)
+        rospy.logdebug("Less conviction distance: %f", distanceLessConviction)
         self.assertLess(distanceLessConviction, 0.03)
         
         self.setUp()
@@ -231,12 +232,16 @@ class AlertHandlerStaticTest(unittest.TestCase):
         # That measurement off will throw away the object even less, if more
         # stable measurements have occured.
         self.deliveryBoy.deliverHoleOrder(0, 0, 1)
+        rospy.sleep(0.1)
         self.fillInfo(outs)
         self.deliveryBoy.deliverHoleOrder(0.13, 0, 1)
+        rospy.sleep(0.1)
         self.fillInfo(outs)
         position0 = outs[0].holes[0].pose.position
         position1 = outs[1].holes[0].pose.position
-        self.assertLess(distance(position0, position1), distanceLessConviction)
+        distanceMoreConviction = distance(position0, position1)
+        rospy.logdebug("More conviction distance: %f", distanceMoreConviction)
+        self.assertLess(distanceMoreConviction, distanceLessConviction)
         
 
     def test_2_objects_colliding(self):

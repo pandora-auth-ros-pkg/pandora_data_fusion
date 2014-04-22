@@ -270,8 +270,7 @@ TEST_F(VictimTest, eraseObjectAt)
 {  
   // Tpa1(2, 3, 4) Tpa2(4, 3, 2) Hole1(1, 2, 0)
   victim1->setObjects(objConstPtrVect1, 5);
-  // A bigger index should erase the last element.
-  victim1->eraseObjectAt(20, 5);
+  victim1->eraseObjectAt(1, 5);
   // tpa1 is erased.
   EXPECT_EQ(1, victim1->getPose().position.x);
   EXPECT_EQ(2, victim1->getPose().position.y);
