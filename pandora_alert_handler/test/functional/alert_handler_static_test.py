@@ -465,7 +465,31 @@ class AlertHandlerStaticTest(unittest.TestCase):
 
     def test_kalman_resistance_to_gaussian(self):
 
-        pass
+        import numpy as np
+
+        mu, sigma, size = 0, 0.03, 10
+        k = np.random.normal(mu, sigma, size)
+        l = np.random.normal(mu, sigma, size)
+        yaw = np.arctan(k)
+        pitch = np.arctan(l * np.cos(yaw))
+        out = []
+        self.deliveryBoy.deliverHoleOrder(0, 0, 1)
+        rospy.sleep(0.1)
+        self.fillInfo(out)
+        for i in range(size):
+            self.deliveryBoy.deliverHoleOrder(yaw[i], pitch[i], 1)
+            rospy.sleep(0.1)
+        self.fillInfo(out)
+        self.assertEqual(len(out[0].holes), 1)
+        self.assertEqual(len(out[0].victimsToGo), 0)
+        self.assertEqual(len(out[1].holes), 1)
+        self.assertEqual(len(out[1].victimsToGo), 1)
+        self.assertEqual(distance(out[1].holes[0].pose.position,
+          out[1].victimsToGo[0].pose.position), 0)
+        # Filtering makes object resistant to gaussian noise!
+        self.assertLess(distance(out[0].holes[0].pose.position,
+          out[1].victimsToGo[0].pose.position), 0.03)
+
 
 if __name__ == '__main__':
 
