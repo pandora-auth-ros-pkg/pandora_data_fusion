@@ -49,6 +49,7 @@
 
 #include <visualization_msgs/MarkerArray.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/Int32.h>
 
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
@@ -229,12 +230,14 @@ class VictimHandler : private boost::noncopyable
   //!< a nodehandle
   ros::NodeHandle nh_;
 
-  //!< publisher for publishing victim found messages to fsm
+  //!< publisher for victim found messages to fsm
   ros::Publisher victimFoundPublisher_;
-  //!< publisher for publishing victim update messages to fsm
+  //!< publisher for victim update messages to fsm
   ros::Publisher victimUpdatePublisher_;
-  //!< publisher for publishing victim verification messages to fsm
+  //!< publisher for victim verification messages to fsm
   ros::Publisher victimVerifiedPublisher_;
+  //!< publisher for valid victims counter
+  ros::Publisher validVictimsPublisher_;
 
   //!< The list of Hole Objects passed on construction
   HoleListConstPtr holePtrListPtr_;
@@ -247,6 +250,8 @@ class VictimHandler : private boost::noncopyable
   VictimList victimsToGoList_;
   //!< The visited victims list  
   VictimList victimsVisitedList_;
+  //!< counts verified victims that were validated by user
+  int validVictimsCounter_;
 
   //!< The approach pose of the currently tracked victim  
   geometry_msgs::Pose currentApproachPose_;

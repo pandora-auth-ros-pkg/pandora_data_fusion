@@ -63,12 +63,14 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
 
   clusterer_.reset( new VictimClusterer(clusterRadius, approachDist) );
 
+  validVictimsCounter_ = 0;
+
   std::string param; 
   
   if (nh_.getParam("published_topic_names/victim_found", param))
   {
-  victimFoundPublisher_ =  
-    nh_.advertise<data_fusion_communications::VictimFoundMsg>(param, 1);
+    victimFoundPublisher_ =  
+      nh_.advertise<data_fusion_communications::VictimFoundMsg>(param, 1);
   }
   else
   {
@@ -78,7 +80,7 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
   
   if (nh_.getParam("published_topic_names/victim_update", param))
   {
-  victimUpdatePublisher_ = nh_.advertise<std_msgs::Empty>(param, 1);
+    victimUpdatePublisher_ = nh_.advertise<std_msgs::Empty>(param, 1);
   }
   else
   {
@@ -94,6 +96,17 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
   else
   {
     ROS_FATAL("victim_verified topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("published_topic_names/valid_victims_counter", param))
+  {
+    validVictimsPublisher_ =  
+      nh_.advertise<std_msgs::Int32>(param, 1);
+  }
+  else
+  {
+    ROS_FATAL("valid_victims_counter topic name param not found");
     ROS_BREAK();
   }
 }
@@ -247,6 +260,12 @@ void VictimHandler::validateCurrentHole(bool objectValid)
   
   if(currentVictim.get())
   {
+    if(currentVictim->getValid())
+    {
+      std_msgs::Int32 updateValidVictims;
+      updateValidVictims.data = ++validVictimsCounter_;
+      validVictimsPublisher_.publish(updateValidVictims);
+    }
     victimsVisitedList_.addUnchanged(currentVictim);
   }
 }
