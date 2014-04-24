@@ -112,7 +112,7 @@ void VictimList::updateObjects(const VictimConstPtr& victim,
 void VictimList::setParams(float distanceThreshold, 
     float approachDistance, float victimUpdate)
 {    
-  ObjectList<Victim>::setParams(distanceThreshold);
+  ObjectList<Victim>::setParams(0, distanceThreshold);
   APPROACH_DIST = approachDistance;
   VICTIM_UPDATE = victimUpdate;  
 }

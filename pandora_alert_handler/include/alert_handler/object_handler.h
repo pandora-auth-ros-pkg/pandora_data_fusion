@@ -6,6 +6,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
+#include <std_msgs/Int32.h>
+
 #include "data_fusion_communications/QrNotificationMsg.h"
 
 #include "alert_handler/object_list.h"
@@ -39,12 +41,15 @@ class ObjectHandler : private boost::noncopyable
  private:
 
   ros::Publisher qrPublisher_;
+  ros::Publisher scorePublisher_;
 
   QrListPtr qrListPtr_;
   HazmatListPtr hazmatListPtr_;
   HoleListPtr holeListPtr_;
   TpaListPtr tpaListPtr_;
 
+  int roboCupScore_;
+  
   float SENSOR_RANGE;
 
 };

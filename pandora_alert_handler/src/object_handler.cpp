@@ -16,6 +16,8 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
   tpaListPtr_(tpaListPtr),
   SENSOR_RANGE(sensorRange)
 {
+  roboCupScore_ = 0;
+
   std::string param;
 
   if (ros::param::get("published_topic_names/qr_notification", param))
@@ -26,6 +28,17 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
   else
   {
     ROS_FATAL("qr_notification topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (ros::param::get("published_topic_names/robocup_score", param))
+  {
+    qrPublisher_ = ros::NodeHandle().
+      advertise<std_msgs::Int32>(param, 10);
+  }
+  else
+  {
+    ROS_FATAL("robocup_score topic name param not found");
     ROS_BREAK();
   }
 }
@@ -46,8 +59,8 @@ void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs,
 {
   for (int ii = 0; ii < newQrs->size(); ++ii)
   {
-    bool isQrNew = qrListPtr_->add( newQrs->at(ii) );
-    if (isQrNew)
+    int qrScore = qrListPtr_->add( newQrs->at(ii) );
+    if (qrScore)
     {
       data_fusion_communications::QrNotificationMsg newQrNofifyMsg;
       newQrNofifyMsg.header.stamp = ros::Time::now();
@@ -55,6 +68,10 @@ void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs,
       newQrNofifyMsg.y = newQrs->at(ii)->getPose().position.y;
       newQrNofifyMsg.content = newQrs->at(ii)->getContent();
       qrPublisher_.publish(newQrNofifyMsg);
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += qrScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
     }
   }
 }
@@ -64,7 +81,14 @@ void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
 {
   for (int ii = 0; ii < newHazmats->size(); ++ii)
   {
-    hazmatListPtr_->add( newHazmats->at(ii) );
+    int hazmatScore = hazmatListPtr_->add( newHazmats->at(ii) );
+    if (hazmatScore)
+    {
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += hazmatScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
+    }
   }
 }
 
@@ -73,7 +97,14 @@ void ObjectHandler::handleTpas(const TpaPtrVectorPtr& newTpas,
 {
   for (int ii = 0; ii < newTpas->size(); ++ii)
   {
-    tpaListPtr_->add( newTpas->at(ii) );
+    int tpaScore = tpaListPtr_->add( newTpas->at(ii) );
+    if (tpaScore)
+    {
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += tpaScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
+    }
   }
 }
 

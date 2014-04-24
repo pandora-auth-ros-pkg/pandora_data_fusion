@@ -369,19 +369,19 @@ void AlertHandler::dynamicReconfigCallback(
     config.highThres, config.lowThres, config.approachDist,
     config.orientationCircle, config.orientationDist); 
 
-  holes_->setParams(config.holeMinimumDist,
+  holes_->setParams(0, config.holeMinimumDist,
       config.holeXVarThres, config.holeYVarThres, config.holeZVarThres,
       config.holePriorXSD, config.holePriorYSD, config.holePriorZSD,
       config.holeSystemNoiseSD, config.holeMeasNoiseSD);
-  qrs_->setParams(config.qrMinimumDist,
+  qrs_->setParams(config.qrScore, config.qrMinimumDist,
       config.qrXVarThres, config.qrYVarThres, config.qrZVarThres,
       config.qrPriorXSD, config.qrPriorYSD, config.qrPriorZSD,
       config.qrSystemNoiseSD, config.qrMeasNoiseSD);
-  hazmats_->setParams(config.hazmatMinimumDist,
+  hazmats_->setParams(config.hazmatScore, config.hazmatMinimumDist,
       config.hazmatXVarThres, config.hazmatYVarThres, config.hazmatZVarThres,
       config.hazmatPriorXSD, config.hazmatPriorYSD, config.hazmatPriorZSD,
       config.hazmatSystemNoiseSD, config.hazmatMeasNoiseSD);
-  tpas_->setParams(config.tpaMinimumDist,
+  tpas_->setParams(config.tpaScore, config.tpaMinimumDist,
       config.tpaXVarThres, config.tpaYVarThres, config.tpaZVarThres,
       config.tpaPriorXSD, config.tpaPriorYSD, config.tpaPriorZSD,
       config.tpaSystemNoiseSD, config.tpaMeasNoiseSD);

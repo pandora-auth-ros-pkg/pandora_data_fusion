@@ -11,6 +11,7 @@ published_topic_names:
   victim_update : victim_update
   victim_verified : victim_verified
   qr_notification : qr_notification
+  robocup_score : robocup_score
 action_server_names:
   get_victims: get_victims
   delete_current_victim: delete_current_victim

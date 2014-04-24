@@ -37,9 +37,10 @@ class ObjectList
 
  public:
 
-  ObjectList(float distanceThreshold = 0.5, float x_var_thres = 0.0009, 
-      float y_var_thres = 0.0009, float z_var_thres = 0.0009,
-      float prior_x_sd = 0.05, float prior_y_sd = 0.05, float prior_z_sd = 0.05,
+  ObjectList(int objectScore = 0, float distanceThreshold = 0.5, 
+      float x_var_thres = 0.0009, float y_var_thres = 0.0009, 
+      float z_var_thres = 0.0009, float prior_x_sd = 0.05, 
+      float prior_y_sd = 0.05, float prior_z_sd = 0.05,
       float system_noise_sd = 0.003, float measurement_noise_sd = 0.05);
 
   const_iterator begin() const;
@@ -48,7 +49,7 @@ class ObjectList
   bool isObjectPoseInList(const ObjectConstPtr& object,
       float closestAlert) const;
 
-  bool add(const Ptr& object);
+  int add(const Ptr& object);
   void pop_back();
   void clear();
 
@@ -61,7 +62,7 @@ class ObjectList
 
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
-  void setParams(float distanceThreshold, float x_var_thres = 0.0009, 
+  void setParams(int objectScore, float distanceThreshold, float x_var_thres = 0.0009, 
       float y_var_thres = 0.0009, float z_var_thres = 0.0009,
       float prior_x_sd = 0.05, float prior_y_sd = 0.05, float prior_z_sd = 0.05,
       float system_noise_sd = 0.003, float measurement_noise_sd = 0.05);
@@ -98,6 +99,8 @@ class ObjectList
   int id_;
 
   //!< params
+  int OBJECT_SCORE;
+
   float X_VAR_THRES;
   float Y_VAR_THRES;
   float Z_VAR_THRES;
@@ -122,7 +125,7 @@ typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::
-ObjectList(float distanceThreshold, 
+ObjectList(int objectScore, float distanceThreshold, 
     float x_var_thres, float y_var_thres, float z_var_thres,
     float prior_x_sd, float prior_y_sd, float prior_z_sd,
     float system_noise_sd, float measurement_noise_sd)
@@ -130,6 +133,7 @@ ObjectList(float distanceThreshold,
   filterModelPtr_.reset( new FilterModel(system_noise_sd, 
         measurement_noise_sd) );
   id_ = 0;
+  OBJECT_SCORE = objectScore;
   DIST_THRESHOLD = distanceThreshold;
   X_VAR_THRES = x_var_thres;
   Y_VAR_THRES = y_var_thres;
@@ -154,21 +158,21 @@ typename ObjectList<ObjectType>::const_iterator
 }
 
 template <class ObjectType>
-bool ObjectList<ObjectType>::add(const Ptr& object)
+int ObjectList<ObjectType>::add(const Ptr& object)
 {
   IteratorList iteratorList;
 
   if (isAnExistingObject(object, &iteratorList))
   {
     updateObjects(object, iteratorList);
-    return false;
+    return 0;
   }
 
   object->initializeObjectFilter(PRIOR_X_SD, PRIOR_Y_SD, PRIOR_Z_SD);
   
   object->setId(id_++);
   objects_.push_back(object);
-  return true;
+  return OBJECT_SCORE;
 }
 
 template <class ObjectType>
@@ -179,11 +183,13 @@ void ObjectList<ObjectType>::removeElementAt(
 }
 
 template <class ObjectType>
-void ObjectList<ObjectType>::setParams(float distanceThreshold, 
-    float x_var_thres, float y_var_thres, float z_var_thres,
+void ObjectList<ObjectType>::setParams(int objectScore, 
+    float distanceThreshold, float x_var_thres, 
+    float y_var_thres, float z_var_thres,
     float prior_x_sd, float prior_y_sd, float prior_z_sd,
     float system_noise_sd, float measurement_noise_sd)
 {
+  OBJECT_SCORE = objectScore;
   DIST_THRESHOLD = distanceThreshold;
   X_VAR_THRES = x_var_thres;
   Y_VAR_THRES = y_var_thres;
