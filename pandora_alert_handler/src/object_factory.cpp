@@ -7,15 +7,9 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType,
-      float occupiedCellThres,
-      float heightHighThres, float heightLowThres,
-      float approachDist, float orientationDist,
-      float orientationCircle)
+ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType)
 {
-  poseFinder_.reset( new PoseFinder(map, mapType, occupiedCellThres, 
-           heightHighThres, heightLowThres, approachDist, 
-           orientationDist, orientationCircle) );
+  poseFinder_.reset( new PoseFinder(map, mapType) );
 }
 
 HolePtrVectorPtr ObjectFactory::makeHoles(

@@ -48,20 +48,14 @@ namespace pandora_alert_handler
  * @details 
  */
 VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
-                             const TpaListConstPtr& tpaListPtr,
-                             float clusterRadius,
-                             float sameVictimRadius,
-                             float approachDist,
-                             float victimUpdate) :
+                             const TpaListConstPtr& tpaListPtr) :
   holePtrListPtr_(holeListPtr),
-  tpaPtrListPtr_(tpaListPtr),
-  victimsToGoList_(sameVictimRadius, approachDist, victimUpdate),
-  victimsVisitedList_(sameVictimRadius, approachDist, victimUpdate)
+  tpaPtrListPtr_(tpaListPtr)
 {
   Victim::setHoleModel(holePtrListPtr_->getFilterModel());
   Victim::setTpaModel(tpaPtrListPtr_->getFilterModel());
 
-  clusterer_.reset( new VictimClusterer(clusterRadius, approachDist) );
+  clusterer_.reset( new VictimClusterer(0.2, 0.5) );
 
   validVictimsCounter_ = 0;
 
@@ -378,6 +372,7 @@ void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
   VICTIM_VERIFICATION_PROB = verificationProbability;
   clusterer_->updateParams(clusterRadius, approachDist);
   victimsToGoList_.setParams(sameVictimRadius, approachDist, victimUpdate);
+  victimsVisitedList_.setParams(sameVictimRadius, approachDist, victimUpdate);
 }
 
 /**

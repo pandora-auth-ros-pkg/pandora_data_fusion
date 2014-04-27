@@ -80,9 +80,7 @@ class VictimHandler : private boost::noncopyable
    * @brief Constructor
    */
   VictimHandler(const HoleListConstPtr& holeListPtr, 
-                const TpaListConstPtr& tpaListPtr ,
-                float clusterRadius = 0.5, float sameVictimRadius = 0.5,
-                float approachDist = 0.5, float victimUpdate = 0.5);
+                const TpaListConstPtr& tpaListPtr);
 
   /**
    * @brief Updates the victim lists with the existing objects

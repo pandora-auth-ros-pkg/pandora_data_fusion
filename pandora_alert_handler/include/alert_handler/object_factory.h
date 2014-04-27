@@ -30,11 +30,7 @@ class ObjectFactory : private boost::noncopyable
 {
  public:
 
-  ObjectFactory(const MapPtr& map, const std::string& mapType,
-      float occupiedCellThres = 0.5,
-      float heightHighThres = 1.2, float heightLowThres = 0,
-      float approachDist = 0.5, float orientationDist = 0.5,
-      float orientationCircle = 0.25);
+  ObjectFactory(const MapPtr& map, const std::string& mapType);
 
   HolePtrVectorPtr makeHoles(
       const vision_communications::HolesDirectionsVectorMsg& msg);

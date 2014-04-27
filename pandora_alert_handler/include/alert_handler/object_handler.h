@@ -22,8 +22,7 @@ class ObjectHandler : private boost::noncopyable
  public:
 
   ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-                HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr ,
-                float sensorRange = 2.5);
+                HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr);
 
   void handleHoles(const HolePtrVectorPtr& newHoles, const tf::Transform& transform);
   void handleQrs(const QrPtrVectorPtr& newQrs, 

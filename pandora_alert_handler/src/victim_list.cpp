@@ -44,15 +44,11 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-VictimList::VictimList(float distanceThreshold, 
-    float approachDistance, float victimUpdate) :
-  ObjectList<Victim>(distanceThreshold)
+VictimList::VictimList()
 {
   currentVictimIt_ = objects_.end();
   victimsRequestedAndGiven_ = false;
   currentVictimDied_ = false;
-  APPROACH_DIST = approachDistance;
-  VICTIM_UPDATE = victimUpdate;
 }
 
 bool VictimList::contains(const VictimConstPtr& victim) const

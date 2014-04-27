@@ -98,7 +98,7 @@ ObjectConstPtrVectorVector
         findGroupCenterPoint(groupedObjects[ii]);
 
       double distance =
-        Utils::distanceBetweenPoints2D(currentObj->
+        Utils::distanceBetweenPoints3D(currentObj->
                                        getPose().position, groupCenterPoint);
 
       if (distance < CLUSTER_RADIUS)

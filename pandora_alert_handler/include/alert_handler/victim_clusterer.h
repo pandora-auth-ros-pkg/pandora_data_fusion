@@ -46,7 +46,6 @@
 #include <ros/ros.h>
 
 #include "alert_handler/victim.h"
-#include "alert_handler/filter_model.h"
 #include "alert_handler/defines.h"
 
 namespace pandora_data_fusion

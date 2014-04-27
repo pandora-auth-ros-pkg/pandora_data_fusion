@@ -8,13 +8,11 @@ namespace pandora_alert_handler
 {
 
 ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-                            HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr,
-                            float sensorRange) :
+                            HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr) :
   holeListPtr_(holeListPtr),
   qrListPtr_(qrListPtr),
   hazmatListPtr_(hazmatListPtr),
-  tpaListPtr_(tpaListPtr),
-  SENSOR_RANGE(sensorRange)
+  tpaListPtr_(tpaListPtr)
 {
   roboCupScore_ = 0;
 
@@ -33,7 +31,7 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
 
   if (ros::param::get("published_topic_names/robocup_score", param))
   {
-    qrPublisher_ = ros::NodeHandle().
+    scorePublisher_ = ros::NodeHandle().
       advertise<std_msgs::Int32>(param, 10);
   }
   else

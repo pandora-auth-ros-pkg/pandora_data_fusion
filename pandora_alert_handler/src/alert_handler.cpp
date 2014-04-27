@@ -369,7 +369,7 @@ void AlertHandler::dynamicReconfigCallback(
     config.highThres, config.lowThres, config.approachDist,
     config.orientationCircle, config.orientationDist); 
 
-  holes_->setParams(0, config.holeMinimumDist,
+  holes_->setParams(-1, config.holeMinimumDist,
       config.holeXVarThres, config.holeYVarThres, config.holeZVarThres,
       config.holePriorXSD, config.holePriorYSD, config.holePriorZSD,
       config.holeSystemNoiseSD, config.holeMeasNoiseSD);

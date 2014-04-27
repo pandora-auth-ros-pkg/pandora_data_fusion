@@ -37,11 +37,7 @@ class ObjectList
 
  public:
 
-  ObjectList(int objectScore = 0, float distanceThreshold = 0.5, 
-      float x_var_thres = 0.0009, float y_var_thres = 0.0009, 
-      float z_var_thres = 0.0009, float prior_x_sd = 0.05, 
-      float prior_y_sd = 0.05, float prior_z_sd = 0.05,
-      float system_noise_sd = 0.003, float measurement_noise_sd = 0.05);
+  ObjectList(); 
 
   const_iterator begin() const;
   const_iterator end() const;
@@ -124,23 +120,10 @@ typedef boost::shared_ptr< const ObjectList<Hazmat> > HazmatListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
 
 template <class ObjectType>
-ObjectList<ObjectType>::
-ObjectList(int objectScore, float distanceThreshold, 
-    float x_var_thres, float y_var_thres, float z_var_thres,
-    float prior_x_sd, float prior_y_sd, float prior_z_sd,
-    float system_noise_sd, float measurement_noise_sd)
+ObjectList<ObjectType>::ObjectList() 
 {
-  filterModelPtr_.reset( new FilterModel(system_noise_sd, 
-        measurement_noise_sd) );
+  filterModelPtr_.reset( new FilterModel );
   id_ = 0;
-  OBJECT_SCORE = objectScore;
-  DIST_THRESHOLD = distanceThreshold;
-  X_VAR_THRES = x_var_thres;
-  Y_VAR_THRES = y_var_thres;
-  Z_VAR_THRES = z_var_thres;
-  PRIOR_X_SD = prior_x_sd;
-  PRIOR_Y_SD = prior_y_sd;
-  PRIOR_Z_SD = prior_z_sd;
 }
 
 template <class ObjectType>

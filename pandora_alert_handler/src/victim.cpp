@@ -26,8 +26,7 @@ bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
 {  
   ROS_ASSERT(object->getType().compare(type_) == 0);
   
-  return 
-    Object::isSameObject(object, distance);
+  return Object::isSameObject(object, distance);
 }
 
 PoseStamped Victim::getPoseStamped() const
