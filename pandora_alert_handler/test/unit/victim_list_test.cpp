@@ -11,13 +11,14 @@ class VictimListTest : public ::testing::Test {
  
  protected:
 
-  VictimListTest() : victimList1(), victimList2(2, 1, 1.5), 
+  VictimListTest() : 
   victim1(new Victim), victim2( new Victim), victim3( new Victim), 
   victim4( new Victim), victim5( new Victim), victim6( new Victim) {}
 
   virtual void SetUp()
   {
-     
+    victimList1.setParams(0.5, 0.5, 0.5);
+    victimList2.setParams(2, 1, 1.5);
      
     filterModelPtr.reset( new FilterModel );
     Victim::setHoleModel(filterModelPtr);

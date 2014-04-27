@@ -16,8 +16,7 @@ class ObjectListTest : public testing::Test
  
   /* Constructor/Destructor */
 
-  ObjectListTest() : objectList(), objectList2(10.699, 
-  0.5, 0.4, 0.3, 0.1, 0.15, 0.20 ),
+  ObjectListTest() :
   object1(new Object), object2(new Object), object3(new Object),
   object4(new Object), object5(new Object), object6(new Object),
   object7(new Object), object8(new Object), object9(new Object),
@@ -26,7 +25,10 @@ class ObjectListTest : public testing::Test
   /* SetUp/TearDown definitions */
 
   virtual void SetUp() 
-  { 
+  {
+    objectList.setParams(1, 0.5);
+    objectList2.setParams(5, 10.699, 0.5, 0.4, 0.3, 0.1, 0.15, 0.20);
+
     std::srand(std::time(0));
     
     seed = time(NULL);
