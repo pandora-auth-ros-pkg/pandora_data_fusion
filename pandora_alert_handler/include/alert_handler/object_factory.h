@@ -14,7 +14,8 @@
 #include "vision_communications/FaceDirectionMsg.h"
 #include "vision_communications/QRAlertsVectorMsg.h"
 #include "vision_communications/HazmatAlertsVectorMsg.h"
-#include "vision_communications/HolesPositionsVectorMsg.h"
+#include "vision_communications/LandoltcAlertsVectorMsg.h"
+#include "vision_communications/DataMatrixAlertsVectorMsg.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 
 #include "alert_handler/pose_finder.h"
@@ -38,6 +39,10 @@ namespace pandora_data_fusion
             const vision_communications::HazmatAlertsVectorMsg& msg);
         QrPtrVectorPtr makeQrs(
             const vision_communications::QRAlertsVectorMsg& msg);
+        LandoltcPtrVectorPtr makeLandoltcs(
+            const vision_communications::LandoltcAlertsVectorMsg& msg);
+        DataMatrixPtrVectorPtr makeDataMatrices(
+            const vision_communications::DataMatrixAlertsVectorMsg& msg);
         template <class ObjectType>
           typename ObjectType::PtrVectorPtr makeObjects(
               const pandora_common_msgs::GeneralAlertMsg& msg);
@@ -68,6 +73,10 @@ namespace pandora_data_fusion
         void setUpQr(const QrPtr& qrPtr, 
             const vision_communications::QRAlertMsg& msg,
             ros::Time timeFound);
+        void setUpLandoltc(const LandoltcPtr& landoltcPtr, 
+            const vision_communications::LandoltcAlertMsg& msg);
+        void setUpDataMatrix(const DataMatrixPtr& dataMatrixPtr, 
+            const vision_communications::DataMatrixAlertMsg& msg);
         template <class ObjectType>
           void setUpObject(
               const typename ObjectType::Ptr& objectPtr, 

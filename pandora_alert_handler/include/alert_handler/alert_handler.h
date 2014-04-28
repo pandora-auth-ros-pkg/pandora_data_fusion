@@ -29,7 +29,8 @@
 #include "vision_communications/FaceDirectionMsg.h"
 #include "vision_communications/QRAlertsVectorMsg.h"
 #include "vision_communications/HazmatAlertsVectorMsg.h"
-#include "vision_communications/HolesPositionsVectorMsg.h"
+#include "vision_communications/DataMatrixAlertsVectorMsg.h"
+#include "vision_communications/LandoltcAlertsVectorMsg.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 
 #include "pandora_alert_handler/AlertHandlerConfig.h"
@@ -70,6 +71,10 @@ namespace pandora_data_fusion
         void hazmatAlertCallback(
             const vision_communications::HazmatAlertsVectorMsg& msg);
         void qrAlertCallback(const vision_communications::QRAlertsVectorMsg& msg);
+        void landoltcAlertCallback(
+            const vision_communications::LandoltcAlertsVectorMsg& msg);
+        void dataMatrixAlertCallback(
+            const vision_communications::DataMatrixAlertsVectorMsg& msg);
         template <class ObjectType> 
           void objectDirectionAlertCallback(
               const pandora_common_msgs::GeneralAlertMsg& msg);
@@ -114,6 +119,7 @@ namespace pandora_data_fusion
         bool flushQueues(
             std_srvs::Empty::Request& rq,
             std_srvs::Empty::Response &rs);
+
         //!< Map Visualization Callbacks
         bool getObjectsServiceCb(
             pandora_data_fusion_msgs::GetObjectsSrv::Request& rq,
@@ -152,6 +158,8 @@ namespace pandora_data_fusion
         ros::Subscriber soundDirectionSubscriber_;
         ros::Subscriber qrSubscriber_;
         ros::Subscriber hazmatSubscriber_;
+        ros::Subscriber landoltcSubscriber_;
+        ros::Subscriber dataMatrixSubscriber_;
 
         ros::Subscriber mapSubscriber_;
 
@@ -188,6 +196,8 @@ namespace pandora_data_fusion
         Co2ListPtr co2s_;
         HazmatListPtr hazmats_;
         ThermalListPtr thermals_;
+        LandoltcListPtr landoltcs_;
+        DataMatrixListPtr dataMatrices_;
 
         //!< The unvisited victims list  
         VictimListPtr victimsToGo_;

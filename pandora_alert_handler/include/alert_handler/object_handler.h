@@ -62,7 +62,9 @@ namespace pandora_data_fusion
           const typename ObjectType::PtrVectorPtr& newObjects)
       {
         if(ObjectType::getObjectType() != Thermal::getObjectType() && 
-            ObjectType::getObjectType() != Hazmat::getObjectType())
+            ObjectType::getObjectType() != Hazmat::getObjectType() &&
+            ObjectType::getObjectType() != Landoltc::getObjectType() &&
+            ObjectType::getObjectType() != DataMatrix::getObjectType())
         {
           keepValidVerificationObjects<ObjectType>(newObjects);
         }

@@ -19,6 +19,8 @@ namespace pandora_data_fusion
       motions_.reset( new ObjectList<Motion> );
       sounds_.reset( new ObjectList<Sound> );
       co2s_.reset( new ObjectList<Co2> );
+      landoltcs_.reset( new ObjectList<Landoltc> );
+      dataMatrices_.reset( new ObjectList<DataMatrix> );
 
       Hole::setList(holes_);
       Qr::setList(qrs_);
@@ -28,6 +30,8 @@ namespace pandora_data_fusion
       Motion::setList(motions_);
       Sound::setList(sounds_);
       Co2::setList(co2s_);
+      Landoltc::setList(landoltcs_);
+      DataMatrix::setList(dataMatrices_);
 
       victimsToGo_.reset( new VictimList );
       victimsVisited_.reset( new VictimList );
@@ -140,6 +144,28 @@ namespace pandora_data_fusion
       else
       {
         ROS_FATAL("soundDirection topic name param not found");
+        ROS_BREAK();
+      }
+
+      if (nh_.getParam("subscribed_topic_names/landoltc", param))
+      {
+        landoltcSubscriber_ = nh_.subscribe(param, 
+            1, &AlertHandler::landoltcAlertCallback, this);
+      }
+      else
+      {
+        ROS_FATAL("landoltc topic name param not found");
+        ROS_BREAK();
+      }
+
+      if (nh_.getParam("subscribed_topic_names/dataMatrix", param))
+      {
+        dataMatrixSubscriber_ = nh_.subscribe(param, 
+            1, &AlertHandler::dataMatrixAlertCallback, this);
+      }
+      else
+      {
+        ROS_FATAL("dataMatrix topic name param not found");
         ROS_BREAK();
       }
 
@@ -333,6 +359,44 @@ namespace pandora_data_fusion
       objectHandler_->handleQrs(qrsVectorPtr);
     }
 
+    void AlertHandler::landoltcAlertCallback(
+        const vision_communications::LandoltcAlertsVectorMsg& msg)
+    {
+      ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "LANDOLTC ALERT ARRIVED!");
+
+      LandoltcPtrVectorPtr landoltcsVectorPtr;
+      try
+      {
+        landoltcsVectorPtr = objectFactory_->makeLandoltcs(msg);
+      }
+      catch (AlertException ex)
+      {
+        ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+        return;
+      }
+
+      objectHandler_->handleObjects<Landoltc>(landoltcsVectorPtr);
+    }
+
+    void AlertHandler::dataMatrixAlertCallback(
+        const vision_communications::DataMatrixAlertsVectorMsg& msg)
+    {
+      ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "DATA MATRIX ALERT ARRIVED!");
+
+      DataMatrixPtrVectorPtr dataMatricesVectorPtr;
+      try
+      {
+        dataMatricesVectorPtr = objectFactory_->makeDataMatrices(msg);
+      }
+      catch (AlertException ex)
+      {
+        ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+        return;
+      }
+
+      objectHandler_->handleObjects<DataMatrix>(dataMatricesVectorPtr);
+    }
+
     //!< Other Callbacks
 
     void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
@@ -406,6 +470,18 @@ namespace pandora_data_fusion
       Qr::getFilterModel()->setSystemSD(config.qrSystemNoiseSD);
       Qr::getFilterModel()->initializeSystemModel();
 
+      DataMatrix::setObjectScore(config.dataMatrixScore);
+      DataMatrix::setProbabilityThres(config.dataMatrixMinProbability);
+      DataMatrix::setDistanceThres(config.dataMatrixMinDistance);
+      DataMatrix::getFilterModel()->setSystemSD(config.dataMatrixSystemNoiseSD);
+      DataMatrix::getFilterModel()->initializeSystemModel();
+
+      Landoltc::setObjectScore(config.landoltcScore);
+      Landoltc::setProbabilityThres(config.landoltcMinProbability);
+      Landoltc::setDistanceThres(config.landoltcMinDistance);
+      Landoltc::getFilterModel()->setSystemSD(config.landoltcSystemNoiseSD);
+      Landoltc::getFilterModel()->initializeSystemModel();
+
       Thermal::setObjectScore(config.thermalScore);
       Thermal::setProbabilityThres(config.thermalMinProbability);
       Thermal::setDistanceThres(config.thermalMinDistance);
@@ -455,6 +531,8 @@ namespace pandora_data_fusion
       motions_->getObjectsPosesStamped(&rs.motions);
       sounds_->getObjectsPosesStamped(&rs.sounds);
       co2s_->getObjectsPosesStamped(&rs.co2s);
+      landoltcs_->getObjectsPosesStamped(&rs.landoltcs);
+      dataMatrices_->getObjectsPosesStamped(&rs.dataMatrices);
 
       victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited);
 
@@ -473,6 +551,8 @@ namespace pandora_data_fusion
       motions_->getVisualization(&rs.motions);
       sounds_->getVisualization(&rs.sounds);
       co2s_->getVisualization(&rs.co2s);
+      landoltcs_->getVisualization(&rs.landoltcs);
+      dataMatrices_->getVisualization(&rs.dataMatrices);
 
       victimHandler_->getVisualization(&rs.victimsVisited, &rs.victimsToGo);
 
@@ -521,6 +601,8 @@ namespace pandora_data_fusion
       motions_->clear();
       sounds_->clear();
       co2s_->clear();
+      landoltcs_->clear();
+      dataMatrices_->clear();
       victimHandler_->flush();
       return true;
     }

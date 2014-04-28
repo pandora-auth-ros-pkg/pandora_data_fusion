@@ -12,14 +12,16 @@ namespace pandora_data_fusion
       victimsToGoList_(victimsToGoList),
       victimsVisitedList_(victimsVisitedList)
     {
-      Hole::setType("hole");
-      Hazmat::setType("hazmat");
-      Qr::setType("qr");
-      Thermal::setType("thermal");
-      Face::setType("face");
-      Motion::setType("motion");
-      Sound::setType("sound");
-      Co2::setType("co2");
+      Hole::setType("HOLE");
+      Hazmat::setType("HAZMAT");
+      Qr::setType("QR");
+      Thermal::setType("THERMAL");
+      Face::setType("FACE");
+      Motion::setType("MOTION");
+      Sound::setType("SOUND");
+      Co2::setType("CO2");
+      Landoltc::setType("LANDOLTC");
+      DataMatrix::setType("DATA_MATRIX");
 
       roboCupScore_ = 0;
 

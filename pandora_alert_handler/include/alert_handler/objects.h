@@ -11,5 +11,7 @@
 #include "alert_handler/motion.h"
 #include "alert_handler/sound.h"
 #include "alert_handler/co2.h"
+#include "alert_handler/landoltc.h"
+#include "alert_handler/data_matrix.h"
 
-#endif  // ALERT_HANDLER_OBJECTS_H
+#endif // ALERT_HANDLER_OBJECTS_H
