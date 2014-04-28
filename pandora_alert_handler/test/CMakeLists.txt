@@ -96,5 +96,6 @@ ${catkin_LIBRARIES}
 
 ########## Functional Tests #########
  
+add_rostest(functional/alert_handler_static_test.launch)
 add_rostest(functional/alert_handler_test.launch)
 
