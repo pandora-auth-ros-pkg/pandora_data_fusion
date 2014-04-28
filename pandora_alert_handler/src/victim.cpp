@@ -142,6 +142,7 @@ void Victim::fillGeotiff(
 void Victim::setObjects(const ObjectConstPtrVector& objects,
     float approachDistance) 
 {
+  ROS_DEBUG_STREAM("Setting up victim with "<<objects.size()<<" objects.");
   objects_.clear();
 
   if(!holeDeleted_)
@@ -274,9 +275,13 @@ void Victim::eraseObjectAt(int index,
     float approachDistance)
 {
   if(objects_[index]->getType() == "hole")
+  {
     holeDeleted_ = true;
+  }
   else if(objects_[index]->getType() == "tpa")
+  {
     tpaDeleted_ = true;
+  }
   objects_.erase(objects_.begin() + index);
   updateRepresentativeObject(approachDistance);
 }

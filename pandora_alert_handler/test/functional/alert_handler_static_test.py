@@ -5,6 +5,7 @@ PKG = 'pandora_alert_handler'
 NAME = 'alert_handler_static_test'
 
 import sys
+import math
 
 import unittest
 
@@ -12,11 +13,75 @@ import roslib; roslib.load_manifest(PKG)
 import rostest
 import rospy
 
-import test_base
-from test_base import distance
-from test_base import direction
+import alert_delivery
 
-class AlertHandlerStaticTest(test_base.TestBase):
+from data_fusion_communications.srv import GetObjectsSrv
+from data_fusion_communications.srv import GetObjectsSrvResponse
+from std_srvs.srv import Empty
+from geometry_msgs.msg import Point
+
+def distance(a, b):
+
+    return float(math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 + (a.z - b.z)**2 ))
+
+def direction(a, b):
+        
+    dire = Point()
+    norm = distance(a, b)
+    dire.x = (b.x - a.x)/norm
+    dire.y = (b.y - a.y)/norm
+    dire.z = (b.z - a.z)/norm
+    return dire
+
+class AlertHandlerStaticTest(unittest.TestCase):
+     
+    deliveryBoy = alert_delivery.AlertDeliveryBoy()
+
+    @classmethod
+    def connect(cls):
+
+        cls.get_objects = rospy.ServiceProxy('/data_fusion/get_objects', GetObjectsSrv, True)
+        rospy.wait_for_service('/data_fusion/get_objects')
+        cls.flush_lists = rospy.ServiceProxy('/data_fusion/flush_queues', Empty, True)
+        rospy.wait_for_service('/data_fusion/flush_queues')
+        cls.deliveryBoy.deliverHazmatOrder(0, 0, 1)
+        rospy.sleep(0.05)
+        cls.flush_lists()
+        
+    @classmethod
+    def disconnect(cls):
+
+        cls.get_objects.close()
+        cls.flush_lists.close()
+
+    def setUp(self):
+
+        i = 0
+        while(True):
+            try:
+                self.flush_lists()
+                break
+            except rospy.ServiceException as exc:
+                if (i > 3):
+                    raise rospy.ServiceException()
+                rospy.logdebug("!< flush_lists service failed >! reconnecting and retrying...")
+                i += 1
+                self.connect()
+        self.deliveryBoy.clearOrderList()
+      
+    def fillInfo(self, outs):
+
+        i = 0
+        while(True):
+            try:
+                outs.append(self.get_objects())
+                break
+            except rospy.ServiceException as exc:
+                if (i > 3):
+                    raise rospy.ServiceException()
+                rospy.logdebug("!< get_objects service failed >! reconnecting and retrying...")
+                i += 1
+                self.connect()
 
     def test_works(self):
 
@@ -45,7 +110,7 @@ class AlertHandlerStaticTest(test_base.TestBase):
         while(True):
             try:      
                 self.deliveryBoy.deliverNextOrder()
-            except test_base.alert_delivery.BadBossOrderFile as exc:
+            except alert_delivery.BadBossOrderFile as exc:
                 break
             rospy.sleep(0.1)
             self.fillInfo(outs)
@@ -78,7 +143,7 @@ class AlertHandlerStaticTest(test_base.TestBase):
         while(True):
             try:      
                 self.deliveryBoy.deliverNextOrder()
-            except test_base.alert_delivery.BadBossOrderFile as exc:
+            except alert_delivery.BadBossOrderFile as exc:
                 break
             rospy.sleep(0.1)
             self.fillInfo(outs)
@@ -131,7 +196,7 @@ class AlertHandlerStaticTest(test_base.TestBase):
         while(True):
             try:      
                 self.deliveryBoy.deliverNextOrder()
-            except test_base.alert_delivery.BadBossOrderFile as exc:
+            except alert_delivery.BadBossOrderFile as exc:
                 break
             rospy.sleep(0.1)
             self.fillInfo(outs)
@@ -160,7 +225,7 @@ class AlertHandlerStaticTest(test_base.TestBase):
         while(True):
             try:      
                 self.deliveryBoy.deliverNextOrder()
-            except test_base.alert_delivery.BadBossOrderFile as exc:
+            except alert_delivery.BadBossOrderFile as exc:
                 break
             rospy.sleep(0.1)
 
@@ -179,224 +244,224 @@ class AlertHandlerStaticTest(test_base.TestBase):
         self.assertLess(distanceMoreConviction, distanceLessConviction)
         
 
-    #def test_2_objects_colliding(self):
+    def test_2_objects_colliding(self):
 
-    #    self.deliveryBoy.getOrderListFromBoss('orders/but_it_was_the_same_order.in')
-    #    outs = []
-    #    while(True):
-    #        try:      
-    #            self.deliveryBoy.deliverNextOrder()
-    #        except test_base.alert_delivery.BadBossOrderFile as exc:
-    #            break
-    #        rospy.sleep(0.1)
-    #        self.fillInfo(outs)
+        self.deliveryBoy.getOrderListFromBoss('orders/but_it_was_the_same_order.in')
+        outs = []
+        while(True):
+            try:      
+                self.deliveryBoy.deliverNextOrder()
+            except alert_delivery.BadBossOrderFile as exc:
+                break
+            rospy.sleep(0.1)
+            self.fillInfo(outs)
         
-    #    self.assertEqual(len(outs[0].victimsToGo), 0)
-    #    self.assertEqual(len(outs[0].holes), 1)
+        self.assertEqual(len(outs[0].victimsToGo), 0)
+        self.assertEqual(len(outs[0].holes), 1)
 
-    #    self.assertEqual(len(outs[1].victimsToGo), 0)
-    #    self.assertEqual(len(outs[1].holes), 1)
+        self.assertEqual(len(outs[1].victimsToGo), 0)
+        self.assertEqual(len(outs[1].holes), 1)
 
-    #    self.assertEqual(len(outs[2].victimsToGo), 1)
-    #    self.assertEqual(len(outs[2].holes), 1)
-    #    self.assertEqual(distance(outs[2].holes[0].pose.position,
-    #      outs[2].victimsToGo[0].pose.position), 0)
+        self.assertEqual(len(outs[2].victimsToGo), 1)
+        self.assertEqual(len(outs[2].holes), 1)
+        self.assertEqual(distance(outs[2].holes[0].pose.position,
+          outs[2].victimsToGo[0].pose.position), 0)
 
-    #    self.assertEqual(len(outs[3].victimsToGo), 1)
-    #    self.assertEqual(len(outs[3].holes), 2)
-    #    self.assertEqual(distance(outs[3].holes[0].pose.position,
-    #      outs[3].victimsToGo[0].pose.position), 0)
+        self.assertEqual(len(outs[3].victimsToGo), 1)
+        self.assertEqual(len(outs[3].holes), 2)
+        self.assertEqual(distance(outs[3].holes[0].pose.position,
+          outs[3].victimsToGo[0].pose.position), 0)
 
-    #    self.assertEqual(len(outs[4].victimsToGo), 1)
-    #    self.assertEqual(len(outs[4].holes), 2)
-    #    self.assertEqual(distance(outs[4].holes[0].pose.position,
-    #      outs[4].victimsToGo[0].pose.position), 0)
-    #    holesDistancePrev = distance(outs[4].holes[0].pose.position,
-    #        outs[4].holes[1].pose.position)
+        self.assertEqual(len(outs[4].victimsToGo), 1)
+        self.assertEqual(len(outs[4].holes), 2)
+        self.assertEqual(distance(outs[4].holes[0].pose.position,
+          outs[4].victimsToGo[0].pose.position), 0)
+        holesDistancePrev = distance(outs[4].holes[0].pose.position,
+            outs[4].holes[1].pose.position)
 
-    #    # New alert updates both holes, so that they will close their distance.
-    #    # If this pattern continues, eventually will result in the holes being 
-    #    # clustered as one victim, which replaces the previous victims and 
-    #    # locates itself between the 2 holes.
-    #    # Also, hole0 has bigger conviction that hole1, so victim will be closer
-    #    # to hole0 than to hole1.
-    #    self.assertEqual(len(outs[5].victimsToGo), 2)
-    #    self.assertEqual(len(outs[5].holes), 2)
-    #    holesDistanceNext = distance(outs[5].holes[0].pose.position,
-    #        outs[5].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertGreater(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[5].holes[0].pose.position,
-    #      outs[5].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[5].holes[1].pose.position,
-    #      outs[5].victimsToGo[1].pose.position)
-    #    self.assertLess(holesDistanceNext, holesDistancePrev)
-    #    self.assertEqual(victim2Hole0, 0)
-    #    self.assertEqual(victim2Hole1, 0)
-    #    holesDistancePrev = float(holesDistanceNext)
+        # New alert updates both holes, so that they will close their distance.
+        # If this pattern continues, eventually will result in the holes being 
+        # clustered as one victim, which replaces the previous victims and 
+        # locates itself between the 2 holes.
+        # Also, hole0 has bigger conviction that hole1, so victim will be closer
+        # to hole0 than to hole1.
+        self.assertEqual(len(outs[5].victimsToGo), 2)
+        self.assertEqual(len(outs[5].holes), 2)
+        holesDistanceNext = distance(outs[5].holes[0].pose.position,
+            outs[5].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertGreater(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[5].holes[0].pose.position,
+          outs[5].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[5].holes[1].pose.position,
+          outs[5].victimsToGo[1].pose.position)
+        self.assertLess(holesDistanceNext, holesDistancePrev)
+        self.assertEqual(victim2Hole0, 0)
+        self.assertEqual(victim2Hole1, 0)
+        holesDistancePrev = float(holesDistanceNext)
 
-    #    self.assertEqual(len(outs[6].victimsToGo), 1)
-    #    self.assertEqual(len(outs[6].holes), 2)
-    #    holesDistanceNext = distance(outs[6].holes[0].pose.position,
-    #        outs[6].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertLess(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[6].holes[0].pose.position,
-    #      outs[6].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[6].holes[1].pose.position,
-    #      outs[6].victimsToGo[0].pose.position)
-    #    self.assertLess(holesDistanceNext, holesDistancePrev)
-    #    # self.assertLess(victim2Hole0, holesDistanceNext)
-    #    self.assertLess(victim2Hole1, holesDistanceNext)
-    #    self.assertLess(victim2Hole0, victim2Hole1)
-    #    holesDistancePrev = float(holesDistanceNext)
+        self.assertEqual(len(outs[6].victimsToGo), 1)
+        self.assertEqual(len(outs[6].holes), 2)
+        holesDistanceNext = distance(outs[6].holes[0].pose.position,
+            outs[6].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertLess(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[6].holes[0].pose.position,
+          outs[6].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[6].holes[1].pose.position,
+          outs[6].victimsToGo[0].pose.position)
+        self.assertLess(holesDistanceNext, holesDistancePrev)
+        self.assertLess(victim2Hole0, holesDistanceNext)
+        self.assertLess(victim2Hole1, holesDistanceNext)
+        self.assertLess(victim2Hole0, victim2Hole1)
+        holesDistancePrev = float(holesDistanceNext)
 
-    #    # This alert will update only hole0. Its position will shift
-    #    # slightly to the left. Still hole0 and hole1 are grouped as
-    #    # one victim.
-    #    self.assertEqual(len(outs[7].victimsToGo), 1)
-    #    self.assertEqual(len(outs[7].holes), 2)
-    #    self.assertEqual(distance(outs[6].holes[1].pose.position, 
-    #      outs[7].holes[1].pose.position), 0)
-    #    holesDistanceNext = distance(outs[7].holes[0].pose.position,
-    #        outs[7].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertLess(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[7].holes[0].pose.position,
-    #      outs[7].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[7].holes[1].pose.position,
-    #      outs[7].victimsToGo[0].pose.position)
-    #    self.assertGreater(holesDistanceNext, holesDistancePrev)
-    #    self.assertLess(victim2Hole0, holesDistanceNext)
-    #    self.assertLess(victim2Hole1, holesDistanceNext)
-    #    self.assertLess(victim2Hole0, victim2Hole1)
-    #    holesDistancePrev = float(holesDistanceNext)
+        # This alert will update only hole0. Its position will shift
+        # slightly to the left. Still hole0 and hole1 are grouped as
+        # one victim.
+        self.assertEqual(len(outs[7].victimsToGo), 1)
+        self.assertEqual(len(outs[7].holes), 2)
+        self.assertEqual(distance(outs[6].holes[1].pose.position, 
+          outs[7].holes[1].pose.position), 0)
+        holesDistanceNext = distance(outs[7].holes[0].pose.position,
+            outs[7].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertLess(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[7].holes[0].pose.position,
+          outs[7].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[7].holes[1].pose.position,
+          outs[7].victimsToGo[0].pose.position)
+        self.assertGreater(holesDistanceNext, holesDistancePrev)
+        self.assertLess(victim2Hole0, holesDistanceNext)
+        self.assertLess(victim2Hole1, holesDistanceNext)
+        self.assertLess(victim2Hole0, victim2Hole1)
+        holesDistancePrev = float(holesDistanceNext)
 
-    #    # Next alerts are similar to the previous one, so that they will
-    #    # update only hole0 - shifting it to the left - and not hole1.
-    #    # To to filter's convergence shifting is goinf to be very slight,
-    #    # so they will still be clustered as one victim.
-    #    self.assertEqual(len(outs[8].victimsToGo), 1)
-    #    self.assertEqual(len(outs[8].holes), 2)
-    #    self.assertEqual(distance(outs[7].holes[1].pose.position, 
-    #      outs[8].holes[1].pose.position), 0)
-    #    holesDistanceNext = distance(outs[8].holes[0].pose.position,
-    #        outs[8].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertLess(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[8].holes[0].pose.position,
-    #      outs[8].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[8].holes[1].pose.position,
-    #      outs[8].victimsToGo[0].pose.position)
-    #    self.assertGreater(holesDistanceNext, holesDistancePrev)
-    #    self.assertLess(victim2Hole0, holesDistanceNext)
-    #    self.assertLess(victim2Hole1, holesDistanceNext)
-    #    self.assertLess(victim2Hole0, victim2Hole1)
-    #    holesDistancePrev = float(holesDistanceNext)
+        # Next alerts are similar to the previous one, so that they will
+        # update only hole0 - shifting it to the left - and not hole1.
+        # To to filter's convergence shifting is goinf to be very slight,
+        # so they will still be clustered as one victim.
+        self.assertEqual(len(outs[8].victimsToGo), 1)
+        self.assertEqual(len(outs[8].holes), 2)
+        self.assertEqual(distance(outs[7].holes[1].pose.position, 
+          outs[8].holes[1].pose.position), 0)
+        holesDistanceNext = distance(outs[8].holes[0].pose.position,
+            outs[8].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertLess(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[8].holes[0].pose.position,
+          outs[8].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[8].holes[1].pose.position,
+          outs[8].victimsToGo[0].pose.position)
+        self.assertGreater(holesDistanceNext, holesDistancePrev)
+        self.assertLess(victim2Hole0, holesDistanceNext)
+        self.assertLess(victim2Hole1, holesDistanceNext)
+        self.assertLess(victim2Hole0, victim2Hole1)
+        holesDistancePrev = float(holesDistanceNext)
 
-    #    self.assertEqual(len(outs[11].victimsToGo), 1)
-    #    self.assertEqual(len(outs[11].holes), 2)
-    #    self.assertEqual(distance(outs[10].holes[1].pose.position, 
-    #      outs[11].holes[1].pose.position), 0)
-    #    holesDistanceNext = distance(outs[11].holes[0].pose.position,
-    #        outs[11].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertLess(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[11].holes[0].pose.position,
-    #      outs[11].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[11].holes[1].pose.position,
-    #      outs[11].victimsToGo[0].pose.position)
-    #    self.assertGreater(holesDistanceNext, holesDistancePrev)
-    #    self.assertLess(victim2Hole0, holesDistanceNext)
-    #    self.assertLess(victim2Hole1, holesDistanceNext)
-    #    self.assertLess(victim2Hole0, victim2Hole1)
-    #    holesDistancePrev = float(holesDistanceNext)
+        self.assertEqual(len(outs[11].victimsToGo), 1)
+        self.assertEqual(len(outs[11].holes), 2)
+        self.assertEqual(distance(outs[10].holes[1].pose.position, 
+          outs[11].holes[1].pose.position), 0)
+        holesDistanceNext = distance(outs[11].holes[0].pose.position,
+            outs[11].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertLess(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[11].holes[0].pose.position,
+          outs[11].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[11].holes[1].pose.position,
+          outs[11].victimsToGo[0].pose.position)
+        self.assertGreater(holesDistanceNext, holesDistancePrev)
+        self.assertLess(victim2Hole0, holesDistanceNext)
+        self.assertLess(victim2Hole1, holesDistanceNext)
+        self.assertLess(victim2Hole0, victim2Hole1)
+        holesDistancePrev = float(holesDistanceNext)
 
-    #def test_2_objects_colliding2(self):
+    def test_2_objects_colliding2(self):
 
-    #    self.deliveryBoy.getOrderListFromBoss('orders/but_it_was_the_same_order2.in')
-    #    outs = []
-    #    while(True):
-    #        try:      
-    #            self.deliveryBoy.deliverNextOrder()
-    #        except test_base.alert_delivery.BadBossOrderFile as exc:
-    #            break
-    #        rospy.sleep(0.1)
-    #        self.fillInfo(outs)
+        self.deliveryBoy.getOrderListFromBoss('orders/but_it_was_the_same_order2.in')
+        outs = []
+        while(True):
+            try:      
+                self.deliveryBoy.deliverNextOrder()
+            except alert_delivery.BadBossOrderFile as exc:
+                break
+            rospy.sleep(0.1)
+            self.fillInfo(outs)
 
-    #    self.assertEqual(len(outs[0].victimsToGo), 0)
-    #    self.assertEqual(len(outs[0].holes), 1)
+        self.assertEqual(len(outs[0].victimsToGo), 0)
+        self.assertEqual(len(outs[0].holes), 1)
 
-    #    self.assertEqual(len(outs[1].victimsToGo), 0)
-    #    self.assertEqual(len(outs[1].holes), 1)
+        self.assertEqual(len(outs[1].victimsToGo), 0)
+        self.assertEqual(len(outs[1].holes), 1)
 
-    #    self.assertEqual(len(outs[2].victimsToGo), 0)
-    #    self.assertEqual(len(outs[2].holes), 2)
+        self.assertEqual(len(outs[2].victimsToGo), 0)
+        self.assertEqual(len(outs[2].holes), 2)
 
-    #    self.assertEqual(len(outs[3].victimsToGo), 0)
-    #    self.assertEqual(len(outs[3].holes), 2)
-    #    holesDistancePrev = distance(outs[3].holes[0].pose.position,
-    #        outs[3].holes[1].pose.position)
+        self.assertEqual(len(outs[3].victimsToGo), 0)
+        self.assertEqual(len(outs[3].holes), 2)
+        holesDistancePrev = distance(outs[3].holes[0].pose.position,
+            outs[3].holes[1].pose.position)
     
-    #    # New alert updates hole1, so that they will close their distance.
-    #    # If this pattern continues, eventually will result in the holes being 
-    #    # clustered as one victim, which locates itself between the 2 holes.
-    #    # Also, hole1 has bigger conviction that hole0, so victim will be closer
-    #    # to hole1 than to hole0.
-    #    self.assertEqual(len(outs[5].victimsToGo), 1)
-    #    self.assertEqual(len(outs[5].holes), 2)
-    #    holesDistanceNext = distance(outs[5].holes[0].pose.position,
-    #        outs[5].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertLess(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[5].holes[0].pose.position,
-    #      outs[5].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[5].holes[1].pose.position,
-    #      outs[5].victimsToGo[0].pose.position)
-    #    self.assertLess(holesDistanceNext, holesDistancePrev)
-    #    self.assertLess(victim2Hole0, holesDistanceNext)
-    #    self.assertLess(victim2Hole1, holesDistanceNext)
-    #    self.assertGreater(victim2Hole0, victim2Hole1)
-    #    holesDistancePrev = float(holesDistanceNext)
+        # New alert updates hole1, so that they will close their distance.
+        # If this pattern continues, eventually will result in the holes being 
+        # clustered as one victim, which locates itself between the 2 holes.
+        # Also, hole1 has bigger conviction that hole0, so victim will be closer
+        # to hole1 than to hole0.
+        self.assertEqual(len(outs[5].victimsToGo), 1)
+        self.assertEqual(len(outs[5].holes), 2)
+        holesDistanceNext = distance(outs[5].holes[0].pose.position,
+            outs[5].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertLess(holesDistanceNext, 0.2)  ##
+        victim2Hole0 = distance(outs[5].holes[0].pose.position,
+          outs[5].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[5].holes[1].pose.position,
+          outs[5].victimsToGo[0].pose.position)
+        self.assertLess(holesDistanceNext, holesDistancePrev)
+        self.assertLess(victim2Hole0, holesDistanceNext) ##
+        self.assertLess(victim2Hole1, holesDistanceNext)
+        self.assertGreater(victim2Hole0, victim2Hole1)
+        holesDistancePrev = float(holesDistanceNext)
     
-    #    # This alert will update only hole0. Its position will shift
-    #    # slightly to the left.         
-    #    self.assertEqual(len(outs[6].victimsToGo), 2)
-    #    self.assertEqual(len(outs[6].holes), 2)
-    #    self.assertEqual(distance(outs[5].holes[1].pose.position, 
-    #      outs[6].holes[1].pose.position), 0)
-    #    holesDistanceNext = distance(outs[6].holes[0].pose.position,
-    #        outs[6].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertGreater(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[6].holes[0].pose.position,
-    #      outs[6].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[6].holes[1].pose.position,
-    #      outs[6].victimsToGo[1].pose.position)
-    #    self.assertGreater(holesDistanceNext, holesDistancePrev)
-    #    self.assertEqual(victim2Hole0, 0)
-    #    self.assertEqual(victim2Hole1, 0)
+        # This alert will update only hole0. Its position will shift
+        # slightly to the left.         
+        self.assertEqual(len(outs[6].victimsToGo), 2)
+        self.assertEqual(len(outs[6].holes), 2)
+        self.assertEqual(distance(outs[5].holes[1].pose.position, 
+          outs[6].holes[1].pose.position), 0)
+        holesDistanceNext = distance(outs[6].holes[0].pose.position,
+            outs[6].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertGreater(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[6].holes[0].pose.position,
+          outs[6].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[6].holes[1].pose.position,
+          outs[6].victimsToGo[1].pose.position)
+        self.assertGreater(holesDistanceNext, holesDistancePrev)
+        self.assertEqual(victim2Hole0, 0)
+        self.assertEqual(victim2Hole1, 0)
     
-    #    # Next alerts are similar to the previous one, so that they will
-    #    # update only hole0 - shifting it to the left - and not hole1.
-    #    # Holes stop being considered as the same victim. This results in
-    #    # the last victim being deleted and replaced by two new victims
-    #    # represented by each hole.
-    #    self.assertEqual(len(outs[9].victimsToGo), 2)
-    #    self.assertEqual(len(outs[9].holes), 2)
-    #    self.assertEqual(distance(outs[8].holes[1].pose.position, 
-    #      outs[9].holes[1].pose.position), 0)
-    #    holesDistanceNext = distance(outs[9].holes[0].pose.position,
-    #        outs[9].holes[1].pose.position)
-    #    rospy.logdebug("holesDistance: %f", holesDistanceNext)
-    #    self.assertGreater(holesDistanceNext, 0.2)
-    #    victim2Hole0 = distance(outs[9].holes[0].pose.position,
-    #      outs[9].victimsToGo[0].pose.position)
-    #    victim2Hole1 = distance(outs[9].holes[1].pose.position,
-    #      outs[9].victimsToGo[1].pose.position)
-    #    self.assertGreater(holesDistanceNext, holesDistancePrev)
-    #    self.assertEqual(victim2Hole0, 0)
-    #    self.assertEqual(victim2Hole1, 0)
+        # Next alerts are similar to the previous one, so that they will
+        # update only hole0 - shifting it to the left - and not hole1.
+        # Holes stop being considered as the same victim. This results in
+        # the last victim being deleted and replaced by two new victims
+        # represented by each hole.
+        self.assertEqual(len(outs[9].victimsToGo), 2)
+        self.assertEqual(len(outs[9].holes), 2)
+        self.assertEqual(distance(outs[8].holes[1].pose.position, 
+          outs[9].holes[1].pose.position), 0)
+        holesDistanceNext = distance(outs[9].holes[0].pose.position,
+            outs[9].holes[1].pose.position)
+        rospy.logdebug("holesDistance: %f", holesDistanceNext)
+        self.assertGreater(holesDistanceNext, 0.2)
+        victim2Hole0 = distance(outs[9].holes[0].pose.position,
+          outs[9].victimsToGo[0].pose.position)
+        victim2Hole1 = distance(outs[9].holes[1].pose.position,
+          outs[9].victimsToGo[1].pose.position)
+        self.assertGreater(holesDistanceNext, holesDistancePrev)
+        self.assertEqual(victim2Hole0, 0)
+        self.assertEqual(victim2Hole1, 0)
 
     def test_kalman_resistance_to_gaussian(self):
 

@@ -61,7 +61,7 @@ VictimPtrVector VictimClusterer::createVictimList(
     const ObjectConstPtrVectorPtr& allObjects)
 {  
   ObjectConstPtrVectorVector groupedObjects = groupObjects(allObjects);
-    
+ 
   VictimPtrVector newVictimVector;
 
   for (int ii = 0; ii < groupedObjects.size(); ++ii)
@@ -135,10 +135,12 @@ geometry_msgs::Point VictimClusterer::findGroupCenterPoint(
   {
     centerPoint.x += (*it)->getPose().position.x;
     centerPoint.y += (*it)->getPose().position.y;
+    centerPoint.z += (*it)->getPose().position.z;
   }
 
   centerPoint.x /= objects.size();
   centerPoint.y /= objects.size();
+  centerPoint.z /= objects.size();
 
   return centerPoint;
 }

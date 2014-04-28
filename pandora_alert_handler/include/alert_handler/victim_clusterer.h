@@ -64,7 +64,7 @@ class VictimClusterer : private boost::noncopyable
   /**
    * @brief Constructor
    */
-  VictimClusterer(float clusterRadius, float approachDist);
+  VictimClusterer(float clusterRadius = 0.2, float approachDist = 0.5);
 
   /**
    * @brief Creates a new victim vector from groups of Objects
