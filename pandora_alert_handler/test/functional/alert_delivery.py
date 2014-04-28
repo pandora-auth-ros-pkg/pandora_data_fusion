@@ -11,6 +11,10 @@ from vision_communications.msg import HazmatAlertMsg
 from vision_communications.msg import HazmatAlertsVectorMsg
 from vision_communications.msg import QRAlertsVectorMsg
 from vision_communications.msg import QRAlertMsg
+from vision_communications.msg import LandoltcAlertsVectorMsg
+from vision_communications.msg import LandoltcAlertMsg
+from vision_communications.msg import DataMatrixAlertsVectorMsg
+from vision_communications.msg import DataMatrixAlertMsg
 from pandora_common_msgs.msg import GeneralAlertMsg
 
 class BadBossOrderFile(Exception):
@@ -30,8 +34,14 @@ class AlertDeliveryBoy:
         self.hazmat_msg = HazmatAlertsVectorMsg()
         self.hazmat_msg.header.frame_id = self.frame_id
         
+        self.landoltc_msg = LandoltcAlertsVectorMsg()
+        self.landoltc_msg.header.frame_id = self.frame_id
+        
         self.qr_msg = QRAlertsVectorMsg()
         self.qr_msg.header.frame_id = self.frame_id
+        
+        self.dataMatrix_msg = DataMatrixAlertsVectorMsg()
+        self.dataMatrix_msg.header.frame_id = self.frame_id
         
         self.hole_msg = HolesDirectionsVectorMsg()
         self.hole_msg.header.frame_id = self.frame_id
@@ -42,12 +52,18 @@ class AlertDeliveryBoy:
         self.hazmatDeliveryAddress = '/vision/hazmat_alert'
         self.hazmat_pub = rospy.Publisher(self.hazmatDeliveryAddress, 
                                           HazmatAlertsVectorMsg)
+        self.landoltcDeliveryAddress = '/vision/landoltc_alert'
+        self.landoltc_pub = rospy.Publisher(self.landoltcDeliveryAddress, 
+                                          LandoltcAlertsVectorMsg)
         self.qrDeliveryAddress = '/vision/qr_alert'
         self.qr_pub = rospy.Publisher(self.qrDeliveryAddress, 
                                       QRAlertsVectorMsg)
         self.holeDeliveryAddress = '/vision/hole_direction_alert'
         self.hole_pub = rospy.Publisher(self.holeDeliveryAddress, 
                                         HolesDirectionsVectorMsg)
+        self.dataMatrixDeliveryAddress = '/vision/dataMatrix_alert'
+        self.dataMatrix_pub = rospy.Publisher(self.dataMatrixDeliveryAddress, 
+                                      DataMatrixAlertsVectorMsg)
         self.thermalDeliveryAddress = '/sensor_processors/thermal_direction_alert'
         self.thermal_pub = rospy.Publisher(self.thermalDeliveryAddress,
                                        GeneralAlertMsg)
@@ -73,6 +89,16 @@ class AlertDeliveryBoy:
                                             patternType = orderPattern))
         self.hazmat_pub.publish(self.hazmat_msg)
 
+    def deliverLandoltcOrder(self, orderYaw, 
+                          orderPitch, orderAngles):
+
+        self.landoltc_msg.header.stamp = rospy.get_rostime()
+        self.landoltc_msg.landoltcAlerts = []
+        self.landoltc_msg.landoltcAlerts.append(LandoltcAlertMsg(yaw = orderYaw,
+                                            pitch = orderPitch,
+                                            angles = orderAngles))
+        self.landoltc_pub.publish(self.landoltc_msg)
+
     def deliverQrOrder(self, orderYaw, 
                       orderPitch, orderContent):
 
@@ -91,6 +117,16 @@ class AlertDeliveryBoy:
         self.thermal_msg.probability = orderProbability
         self.thermal_pub.publish(self.thermal_msg)
 
+    def deliverDataMatrixOrder(self, orderYaw, 
+                      orderPitch, orderContent):
+
+        self.dataMatrix_msg.header.stamp = rospy.get_rostime()
+        self.dataMatrix_msg.dataMatrixAlerts = []
+        self.dataMatrix_msg.dataMatrixAlerts.append(dataMatrixAlertMsg(yaw = orderYaw,
+                                              pitch = orderPitch,
+                                              datamatrixContent = orderContent))
+        self.dataMatrix_pub.publish(self.dataMatrix_msg)
+
     def deliverNextOrder(self):
         
         if len(self.orderWaitingList) == 0:
@@ -100,6 +136,10 @@ class AlertDeliveryBoy:
             self.qr_pub.publish(nextOrder[0])
         elif nextOrder[1] == 'hazmat':
             self.hazmat_pub.publish(nextOrder[0])
+        elif nextOrder[1] == 'landoltc':
+            self.landoltc_pub.publish(nextOrder[0])
+        elif nextOrder[1] == 'datamatrix':
+            self.dataMatrix_pub.publish(nextOrder[0])
         elif nextOrder[1] == 'hole':
             self.hole_pub.publish(nextOrder[0])
         elif nextOrder[1] == 'thermal':
@@ -137,6 +177,28 @@ class AlertDeliveryBoy:
                                                    pitch = float(a[2]),
                                                    patternType = int(a[3])))
                     self.orderWaitingList.append((hazmat_msg, 'hazmat'))
+
+                elif a[0] == 'landoltc:':
+                    if len(a) != 3:
+                        raise BadBossOrderFile("Not right argument numbers.")
+                    landoltc_msg = LandoltcAlertsVectorMsg()
+                    landoltc_msg.header.frame_id = self.frame_id
+                    landoltc_msg.landoltcAlerts.append(LandoltcAlertMsg(
+                                                   yaw = float(a[1]),
+                                                   pitch = float(a[2]),
+                                                   angles = [1, 0, -0.25]))
+                    self.orderWaitingList.append((landoltc_msg, 'landoltc'))
+
+                elif a[0] == 'datamatrix:':
+                    if len(a) != 4:
+                        raise BadBossOrderFile("Not right argument numbers.")
+                    dataMatrix_msg = DataMatrixAlertsVectorMsg()
+                    dataMatrix_msg.header.frame_id = self.frame_id
+                    dataMatrix_msg.dataMatrixAlerts.append(DataMatrixAlertMsg(
+                                                   yaw = float(a[1]),
+                                                   pitch = float(a[2]),
+                                                   datamatrixContent = a[3]))
+                    self.orderWaitingList.append((dataMatrix_msg, 'datamatrix'))
 
                 elif a[0] == 'hole:':
                     if len(a) != 4 and len(a) != 5:
