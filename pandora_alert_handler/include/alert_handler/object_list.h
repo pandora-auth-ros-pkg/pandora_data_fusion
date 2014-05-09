@@ -111,13 +111,21 @@ typedef boost::shared_ptr< ObjectList<Object> > ObjectListPtr;
 typedef boost::shared_ptr< ObjectList<Hole> >  HoleListPtr;
 typedef boost::shared_ptr< ObjectList<Qr> >  QrListPtr;
 typedef boost::shared_ptr< ObjectList<Hazmat> > HazmatListPtr;
-typedef boost::shared_ptr< ObjectList<Tpa> >  TpaListPtr;
+typedef boost::shared_ptr< ObjectList<Thermal> >  ThermalListPtr;
+typedef boost::shared_ptr< ObjectList<Face> >  FaceListPtr;
+typedef boost::shared_ptr< ObjectList<Motion> >  MotionListPtr;
+typedef boost::shared_ptr< ObjectList<Sound> >  SoundListPtr;
+typedef boost::shared_ptr< ObjectList<Co2> >  Co2ListPtr;
 
 typedef boost::shared_ptr< const ObjectList<Object> > ObjectListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Hole> >  HoleListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Qr> >  QrListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Hazmat> > HazmatListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Tpa> >  TpaListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Thermal> >  ThermalListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Face> >  FaceListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Motion> >  MotionListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Sound> >  SoundListConstPtr;
+typedef boost::shared_ptr< const ObjectList<Co2> >  Co2ListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::ObjectList() 

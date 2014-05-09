@@ -7,12 +7,18 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-                            HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr) :
+ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr, 
+    HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr, 
+    FaceListPtr faceListPtr, MotionListPtr motionListPtr,
+    SoundListPtr soundListPtr, Co2ListPtr co2ListPtr) : 
   holeListPtr_(holeListPtr),
   qrListPtr_(qrListPtr),
   hazmatListPtr_(hazmatListPtr),
-  tpaListPtr_(tpaListPtr)
+  thermalListPtr_(thermalListPtr),
+  faceListPtr_(faceListPtr),
+  motionListPtr_(motionListPtr),
+  soundListPtr_(soundListPtr),
+  co2ListPtr_(co2ListPtr)
 {
   roboCupScore_ = 0;
 
@@ -53,7 +59,7 @@ void ObjectHandler::handleHoles(const HolePtrVectorPtr& newHoles,
 }
 
 void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs, 
-  const tf::Transform& transform, bool eraseHoles)
+  const tf::Transform& transform)
 {
   for (int ii = 0; ii < newQrs->size(); ++ii)
   {
@@ -90,16 +96,80 @@ void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
   }
 }
 
-void ObjectHandler::handleTpas(const TpaPtrVectorPtr& newTpas,
+void ObjectHandler::handleThermals(const ThermalPtrVectorPtr& newThermals,
   const tf::Transform& transform)
 {
-  for (int ii = 0; ii < newTpas->size(); ++ii)
+  for (int ii = 0; ii < newThermals->size(); ++ii)
   {
-    int tpaScore = tpaListPtr_->add( newTpas->at(ii) );
-    if (tpaScore)
+    int thermalScore = thermalListPtr_->add( newThermals->at(ii) );
+    if (thermalScore)
     {
       std_msgs::Int32 updateScoreMsg;
-      roboCupScore_ += tpaScore;
+      roboCupScore_ += thermalScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
+    }
+  }
+}
+
+void ObjectHandler::handleFaces(const FacePtrVectorPtr& newFaces,
+  const tf::Transform& transform)
+{
+  for (int ii = 0; ii < newFaces->size(); ++ii)
+  {
+    int faceScore = faceListPtr_->add( newFaces->at(ii) );
+    if (faceScore)
+    {
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += faceScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
+    }
+  }
+}
+
+void ObjectHandler::handleMotions(const MotionPtrVectorPtr& newMotions,
+  const tf::Transform& transform)
+{
+  for (int ii = 0; ii < newMotions->size(); ++ii)
+  {
+    int motionScore = motionListPtr_->add( newMotions->at(ii) );
+    if (motionScore)
+    {
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += motionScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
+    }
+  }
+}
+
+void ObjectHandler::handleSounds(const SoundPtrVectorPtr& newSounds,
+  const tf::Transform& transform)
+{
+  for (int ii = 0; ii < newSounds->size(); ++ii)
+  {
+    int soundScore = soundListPtr_->add( newSounds->at(ii) );
+    if (soundScore)
+    {
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += soundScore;
+      updateScoreMsg.data = roboCupScore_;
+      scorePublisher_.publish(updateScoreMsg);
+    }
+  }
+}
+
+void ObjectHandler::handleCo2s(const Co2PtrVectorPtr& newCo2s,
+  const tf::Transform& transform)
+{
+  for (int ii = 0; ii < newCo2s->size(); ++ii)
+  {
+    int co2Score = co2ListPtr_->add( newCo2s->at(ii) );
+    if (co2Score)
+    {
+      std_msgs::Int32 updateScoreMsg;
+      roboCupScore_ += co2Score;
       updateScoreMsg.data = roboCupScore_;
       scorePublisher_.publish(updateScoreMsg);
     }

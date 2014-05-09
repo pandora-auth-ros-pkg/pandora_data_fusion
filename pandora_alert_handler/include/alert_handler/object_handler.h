@@ -22,13 +22,26 @@ class ObjectHandler : private boost::noncopyable
  public:
 
   ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-                HazmatListPtr hazmatListPtr, TpaListPtr tpaListPtr);
+                HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr,
+                FaceListPtr faceListPtr, MotionListPtr motionListPtr,
+                SoundListPtr soundListPtr, Co2ListPtr co2ListPtr);
 
-  void handleHoles(const HolePtrVectorPtr& newHoles, const tf::Transform& transform);
+  void handleHoles(const HolePtrVectorPtr& newHoles, 
+      const tf::Transform& transform);
   void handleQrs(const QrPtrVectorPtr& newQrs, 
-      const tf::Transform& transform, bool eraseHoles);
-  void handleHazmats(const HazmatPtrVectorPtr& newHazmats, const tf::Transform& transform);
-  void handleTpas(const TpaPtrVectorPtr& newTpas, const tf::Transform& transform);
+      const tf::Transform& transform);
+  void handleHazmats(const HazmatPtrVectorPtr& newHazmats, 
+      const tf::Transform& transform);
+  void handleThermals(const ThermalPtrVectorPtr& newThermals, 
+      const tf::Transform& transform);
+  void handleFaces(const FacePtrVectorPtr& newFaces, 
+      const tf::Transform& transform);
+  void handleMotions(const MotionPtrVectorPtr& newMotions, 
+      const tf::Transform& transform);
+  void handleSounds(const SoundPtrVectorPtr& newSounds, 
+      const tf::Transform& transform);
+  void handleCo2s(const Co2PtrVectorPtr& newCo2s, 
+      const tf::Transform& transform);
 
   void updateParams(float sensor_range);
 
@@ -45,7 +58,11 @@ class ObjectHandler : private boost::noncopyable
   QrListPtr qrListPtr_;
   HazmatListPtr hazmatListPtr_;
   HoleListPtr holeListPtr_;
-  TpaListPtr tpaListPtr_;
+  ThermalListPtr thermalListPtr_;
+  FaceListPtr faceListPtr_;
+  MotionListPtr motionListPtr_;
+  SoundListPtr soundListPtr_;
+  Co2ListPtr co2ListPtr_;
 
   int roboCupScore_;
   

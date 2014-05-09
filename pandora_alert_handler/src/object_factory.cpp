@@ -13,7 +13,7 @@ ObjectFactory::ObjectFactory(const MapPtr& map, const std::string& mapType)
 }
 
 HolePtrVectorPtr ObjectFactory::makeHoles(
-               const vision_communications::HolesDirectionsVectorMsg& msg)
+    const vision_communications::HolesDirectionsVectorMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
@@ -23,7 +23,7 @@ HolePtrVectorPtr ObjectFactory::makeHoles(
     try
     {
       HolePtr newHole( new Hole );
-      setUpObject( newHole, msg.holesDirections[ii] );
+      setUpHole( newHole, msg.holesDirections[ii] );
       holesVectorPtr->push_back( newHole );
     }
     catch (AlertException ex)
@@ -36,28 +36,28 @@ HolePtrVectorPtr ObjectFactory::makeHoles(
   return holesVectorPtr;
 }
 
-TpaPtrVectorPtr ObjectFactory::makeTpas(
-          const data_fusion_communications::ThermalDirectionAlertMsg& msg)
+ThermalPtrVectorPtr ObjectFactory::makeThermals(
+    const data_fusion_communications::ThermalDirectionAlertMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-  TpaPtrVectorPtr tpasVectorPtr( new TpaPtrVector );
+  ThermalPtrVectorPtr thermalsVectorPtr( new ThermalPtrVector );
   try
   {
-    TpaPtr newTpa( new Tpa );
-    setUpObject( newTpa, msg );
-    tpasVectorPtr->push_back( newTpa );
+    ThermalPtr newThermal( new Thermal );
+    setUpThermal( newThermal, msg );
+    thermalsVectorPtr->push_back( newThermal );
   }
   catch (AlertException ex)
   {
     ROS_WARN_NAMED("ALERT_HANDLER", "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
   }
 
-  return tpasVectorPtr;
+  return thermalsVectorPtr;
 }
 
 HazmatPtrVectorPtr ObjectFactory::makeHazmats(
-                  const vision_communications::HazmatAlertsVectorMsg& msg)
+    const vision_communications::HazmatAlertsVectorMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
@@ -67,7 +67,7 @@ HazmatPtrVectorPtr ObjectFactory::makeHazmats(
     try
     {
       HazmatPtr newHazmat( new Hazmat );
-      setUpObject( newHazmat, msg.hazmatAlerts[ii] );
+      setUpHazmat( newHazmat, msg.hazmatAlerts[ii] );
       hazmatsVectorPtr->push_back( newHazmat );
     }
     catch (AlertException ex)
@@ -81,7 +81,7 @@ HazmatPtrVectorPtr ObjectFactory::makeHazmats(
 }
 
 QrPtrVectorPtr ObjectFactory::makeQrs(
-                      const vision_communications::QRAlertsVectorMsg& msg)
+    const vision_communications::QRAlertsVectorMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
@@ -91,7 +91,7 @@ QrPtrVectorPtr ObjectFactory::makeQrs(
     try
     {
       QrPtr newQr( new Qr );
-      setUpObject( newQr, msg.qrAlerts[ii] );
+      setUpQr( newQr, msg.qrAlerts[ii] );
       qrsVectorPtr->push_back( newQr );
     }
     catch (AlertException ex)
@@ -114,7 +114,7 @@ void ObjectFactory::dynamicReconfigForward(float occupiedCellThres,
   );
 }
 
-void ObjectFactory::setUpObject(const HolePtr& holePtr, 
+void ObjectFactory::setUpHole(const HolePtr& holePtr, 
     const vision_communications::HoleDirectionMsg& msg)
 {
   holePtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
@@ -123,15 +123,15 @@ void ObjectFactory::setUpObject(const HolePtr& holePtr,
   holePtr->setHoleId( msg.holeId );
 }
 
-void ObjectFactory::setUpObject(const TpaPtr& tpaPtr, 
+void ObjectFactory::setUpThermal(const ThermalPtr& thermalPtr, 
     const data_fusion_communications::ThermalDirectionAlertMsg& msg)
 {
-  tpaPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
+  thermalPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
-  tpaPtr->setProbability( msg.probability );
+  thermalPtr->setProbability( msg.probability );
 }
 
-void ObjectFactory::setUpObject(const HazmatPtr& hazmatPtr, 
+void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr, 
     const vision_communications::HazmatAlertMsg& msg)
 {
   hazmatPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
@@ -139,12 +139,20 @@ void ObjectFactory::setUpObject(const HazmatPtr& hazmatPtr,
   hazmatPtr->setPattern( msg.patternType );
 }
 
-void ObjectFactory::setUpObject(const QrPtr& qrPtr, 
+void ObjectFactory::setUpQr(const QrPtr& qrPtr, 
     const vision_communications::QRAlertMsg& msg)
 {
   qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
   qrPtr->setContent( msg.QRcontent );
+}
+
+void ObjectFactory::setUpObject(const ObjectPtr& objectPtr, 
+    const vision_communications::HoleDirectionMsg& msg)
+{
+  objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
+        msg.pitch, currentTransform_) );
+  objectPtr->setProbability( msg.probability );
 }
 
 }  // namespace pandora_alert_handler

@@ -48,12 +48,20 @@ namespace pandora_alert_handler
  * @details 
  */
 VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
-                             const TpaListConstPtr& tpaListPtr) :
+                             const ThermalListConstPtr& thermalListPtr,
+                             const FaceListConstPtr& faceListPtr,
+                             const MotionListConstPtr& motionListPtr,
+                             const SoundListConstPtr& soundListPtr,
+                             const Co2ListConstPtr& co2ListPtr) :
   holePtrListPtr_(holeListPtr),
-  tpaPtrListPtr_(tpaListPtr)
+  thermalPtrListPtr_(thermalListPtr),
+  facePtrListPtr_(faceListPtr),
+  motionPtrListPtr_(motionListPtr),
+  soundPtrListPtr_(soundListPtr),
+  co2PtrListPtr_(co2ListPtr)
 {
   Victim::setHoleModel(holePtrListPtr_->getFilterModel());
-  Victim::setTpaModel(tpaPtrListPtr_->getFilterModel());
+  Victim::setThermalModel(thermalPtrListPtr_->getFilterModel());
 
   clusterer_.reset( new VictimClusterer(0.2, 0.5) );
 
@@ -136,7 +144,7 @@ void VictimHandler::notify()
 }
 
 /**
- * @details Collects from hole and tpa list, all these objects
+ * @details Collects from hole and thermal list, all these objects
  * that are thought to be legitimate and are to be grouped to 
  * Victim objects.
  */
@@ -155,14 +163,14 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
     }
   }
 
-  ObjectList<Tpa>::const_iterator tpaIt;
+  ObjectList<Thermal>::const_iterator thermalIt;
 
-  for ( tpaIt = tpaPtrListPtr_->begin();
-        tpaIt != tpaPtrListPtr_->end() ; ++tpaIt )
+  for ( thermalIt = thermalPtrListPtr_->begin();
+        thermalIt != thermalPtrListPtr_->end() ; ++thermalIt )
   {
-    if ( (*tpaIt) -> getLegit())
+    if ( (*thermalIt) -> getLegit())
     {
-      result->push_back(TpaConstPtr(*tpaIt));
+      result->push_back(ThermalConstPtr(*thermalIt));
     }
   }
 
@@ -351,7 +359,7 @@ std::string VictimHandler::sensorIdToString(int sensorId)
     case data_fusion_communications::VictimVerificationMsg::MOTION:
       return "Motion";
     case data_fusion_communications::VictimVerificationMsg::MLX:
-      return "Mlx";
+      return "Sound";
     case data_fusion_communications::VictimVerificationMsg::CO2:
       return "CO2";
   }

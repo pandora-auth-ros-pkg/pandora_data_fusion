@@ -52,7 +52,7 @@ class Victim : public Object
   /**
    * @brief Setter of the objects associated with the Victim. Selects and keeps
    * as many objects as the different types of objects comprising this victim.
-   * (as by now - Hole and Tpa)
+   * (as by now - Hole and Thermal)
    * @param objects [ObjectConstPtrVector const&] Group of objects considered a victim
    * @param approachDistance [float] Approach point's desired distance away from victim
    * @return void
@@ -197,14 +197,14 @@ class Victim : public Object
   }
     
   /**
-   * @brief Setter for the reference of tpa filter model.
-   * @param tpaModelPtr [FilterModelConstPtr const&] 
-   * Reference to tpa filter model.
+   * @brief Setter for the reference of thermal filter model.
+   * @param thermalModelPtr [FilterModelConstPtr const&] 
+   * Reference to thermal filter model.
    * @return void
    */
-  static void setTpaModel(const FilterModelPtr& tpaModelPtr)
+  static void setThermalModel(const FilterModelPtr& thermalModelPtr)
   {
-    tpaModelPtr_ = tpaModelPtr;
+    thermalModelPtr_ = thermalModelPtr;
   }
 
  private:
@@ -254,8 +254,8 @@ class Victim : public Object
   bool visited_;
   //!< True if hole failed to pass validation and thus deleted
   bool holeDeleted_;
-  //!< True if tpa failed to pass validation and thus deleted
-  bool tpaDeleted_;
+  //!< True if thermal failed to pass validation and thus deleted
+  bool thermalDeleted_;
 
   //!< Index pointing to representative object
   int selectedObjectIndex_;
@@ -266,7 +266,7 @@ class Victim : public Object
   //!< Holds the type of sensor that created the alarm
   std::set<int> sensorIds_;   
   
-  //!< Victim's characteristic group of objects (Hole or Tpa)
+  //!< Victim's characteristic group of objects (Hole or Thermal)
   ObjectConstPtrVector objects_;
  
  private:
@@ -280,8 +280,8 @@ class Victim : public Object
   
   //!< Pointer to filter's model used in HoleList.
   static FilterModelPtr holeModelPtr_;
-  //!< Pointer to filter's model used in TpaList.
-  static FilterModelPtr tpaModelPtr_;
+  //!< Pointer to filter's model used in ThermalList.
+  static FilterModelPtr thermalModelPtr_;
 
 };
 

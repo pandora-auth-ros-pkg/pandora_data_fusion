@@ -80,7 +80,11 @@ class VictimHandler : private boost::noncopyable
    * @brief Constructor
    */
   VictimHandler(const HoleListConstPtr& holeListPtr, 
-                const TpaListConstPtr& tpaListPtr);
+                const ThermalListConstPtr& thermalListPtr,
+                const FaceListConstPtr& faceListPtr,
+                const MotionListConstPtr& motionListPtr,
+                const SoundListConstPtr& soundListPtr,
+                const Co2ListConstPtr& co2ListPtr);
 
   /**
    * @brief Updates the victim lists with the existing objects
@@ -239,8 +243,16 @@ class VictimHandler : private boost::noncopyable
 
   //!< The list of Hole Objects passed on construction
   HoleListConstPtr holePtrListPtr_;
-  //!< The list of Tpa Objects passed on construction
-  TpaListConstPtr tpaPtrListPtr_;
+  //!< The list of Thermal Objects passed on construction
+  ThermalListConstPtr thermalPtrListPtr_;
+  //!< The list of Face Objects passed on construction
+  FaceListConstPtr facePtrListPtr_;
+  //!< The list of Motion Objects passed on construction
+  MotionListConstPtr motionPtrListPtr_;
+  //!< The list of Sound Objects passed on construction
+  SoundListConstPtr soundPtrListPtr_;
+  //!< The list of Co2 Objects passed on construction
+  Co2ListConstPtr co2PtrListPtr_;
 
   VictimClustererPtr clusterer_;
   

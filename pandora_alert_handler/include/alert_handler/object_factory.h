@@ -27,19 +27,22 @@ namespace pandora_alert_handler
 {
 
 class ObjectFactory : private boost::noncopyable
-{
+{ 
  public:
 
   ObjectFactory(const MapPtr& map, const std::string& mapType);
 
   HolePtrVectorPtr makeHoles(
       const vision_communications::HolesDirectionsVectorMsg& msg);
-  TpaPtrVectorPtr makeTpas(
+  ThermalPtrVectorPtr makeThermals(
       const data_fusion_communications::ThermalDirectionAlertMsg& msg);
   HazmatPtrVectorPtr makeHazmats(
       const vision_communications::HazmatAlertsVectorMsg& msg);
   QrPtrVectorPtr makeQrs(
       const vision_communications::QRAlertsVectorMsg& msg);
+  template <class ObjectType>
+    typename TypeDef< ObjectType >::PtrVectorPtr makeObjects(
+        const vision_communications::HolesDirectionsVectorMsg& msg);
 
   const tf::Transform& getTransform() const
   {
@@ -60,14 +63,16 @@ class ObjectFactory : private boost::noncopyable
    * Incoming ros message containing info.
    * @return void
    */
-  void setUpObject(const HolePtr& holePtr, 
+  void setUpHole(const HolePtr& holePtr, 
       const vision_communications::HoleDirectionMsg& msg);
-  void setUpObject(const TpaPtr& tpaPtr, 
+  void setUpThermal(const ThermalPtr& thermalPtr, 
       const data_fusion_communications::ThermalDirectionAlertMsg& msg);
-  void setUpObject(const HazmatPtr& hazmatPtr, 
+  void setUpHazmat(const HazmatPtr& hazmatPtr, 
       const vision_communications::HazmatAlertMsg& msg);
-  void setUpObject(const QrPtr& qrPtr, 
+  void setUpQr(const QrPtr& qrPtr, 
       const vision_communications::QRAlertMsg& msg);
+  void setUpObject(const ObjectPtr& objectPtr, 
+      const vision_communications::HoleDirectionMsg& msg);
 
  private:
 
@@ -76,6 +81,32 @@ class ObjectFactory : private boost::noncopyable
   PoseFinderPtr poseFinder_;
 
 };
+
+template <class ObjectType>
+  typename TypeDef< ObjectType >::PtrVectorPtr ObjectFactory::makeObjects(
+      const vision_communications::HolesDirectionsVectorMsg& msg)
+{
+  currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
+
+  typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr(
+      new typename TypeDef< ObjectType >::PtrVector);
+  for (int ii = 0; ii < msg.holesDirections.size(); ++ii)
+  {
+    try
+    {
+      typename TypeDef< ObjectType >::Ptr newObject( new ObjectType );
+      setUpObject( newObject, msg.holesDirections[ii] );
+      objectsVectorPtr->push_back( newObject );
+    }
+    catch (AlertException ex)
+    {
+      ROS_WARN_NAMED("ALERT_HANDLER",
+        "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
+    }
+  }
+
+  return objectsVectorPtr;
+}
 
 typedef boost::scoped_ptr< ObjectFactory > ObjectFactoryPtr;
 

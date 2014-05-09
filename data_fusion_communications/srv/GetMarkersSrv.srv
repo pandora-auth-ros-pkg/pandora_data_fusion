@@ -5,4 +5,4 @@ visualization_msgs/MarkerArray holes
 visualization_msgs/MarkerArray stereoHoles
 visualization_msgs/MarkerArray hazmats
 visualization_msgs/MarkerArray qrs
-visualization_msgs/MarkerArray tpas
+visualization_msgs/MarkerArray thermals

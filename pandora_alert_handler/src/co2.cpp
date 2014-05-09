@@ -7,48 +7,37 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-Hazmat::Hazmat()
+Co2::Co2()
 {
-  type_ = "hazmat";
+  type_ = "co2";
 }
 
-PoseStamped Hazmat::getPoseStamped() const
+PoseStamped Co2::getPoseStamped() const
 {
   PoseStamped objPose = Object::getPoseStamped();
-  objPose.header.frame_id = "hazmat_" + boost::to_string(id_) + "_" + 
-    boost::to_string(pattern_);
+  objPose.header.frame_id = "co2_" + boost::to_string(id_);
   return objPose;
 }
 
-bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const
+bool Co2::isSameObject(const ObjectConstPtr& object, float distance) const
 {
   bool cond = false;
   
   if (!object->getType().compare(type_))
   {
-    cond = Object::isSameObject(object, distance) 
-      && pattern_ == boost::dynamic_pointer_cast<const Hazmat>(object)
-      ->getPattern();
+    cond = Object::isSameObject(object, distance);
   } 
 
   return cond;
 }
 
-void Hazmat::fillGeotiff(
-  data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
-{
-  res->hazmatx.push_back( pose_.position.x );
-  res->hazmaty.push_back( pose_.position.y );
-  res->pattern.push_back( pattern_ );
-}
-
-void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const
+void Co2::getVisualization(visualization_msgs::MarkerArray* markers) const
 {
   visualization_msgs::Marker marker;
 
   marker.header.frame_id = "/world";
   marker.header.stamp = ros::Time::now();
-  marker.ns = "Hazmat";
+  marker.ns = "Co2";
   marker.id = id_;
 
   marker.pose = pose_;

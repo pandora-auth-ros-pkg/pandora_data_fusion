@@ -481,20 +481,20 @@ typedef std::vector< HolePtr > HolePtrVector;
 typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
 
 /**
- * @class Tpa
- * @brief Concrete class representing a Tpa Object. Inherits from Object
+ * @class Thermal
+ * @brief Concrete class representing a Thermal Object. Inherits from Object
  */ 
-class Tpa : public Object
+class Thermal : public Object
 {
  public:
 
-  typedef boost::shared_ptr<Tpa> Ptr;
-  typedef boost::shared_ptr<Tpa const> ConstPtr;
+  typedef boost::shared_ptr<Thermal> Ptr;
+  typedef boost::shared_ptr<Thermal const> ConstPtr;
 
   /**
    * @brief Constructor
    */
-  Tpa();
+  Thermal();
 
   virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
 
@@ -504,10 +504,126 @@ class Tpa : public Object
 
 };
 
-typedef Tpa::Ptr TpaPtr;
-typedef Tpa::ConstPtr TpaConstPtr;
-typedef std::vector< TpaPtr > TpaPtrVector;
-typedef boost::shared_ptr< TpaPtrVector > TpaPtrVectorPtr;
+typedef Thermal::Ptr ThermalPtr;
+typedef Thermal::ConstPtr ThermalConstPtr;
+typedef std::vector< ThermalPtr > ThermalPtrVector;
+typedef boost::shared_ptr< ThermalPtrVector > ThermalPtrVectorPtr;
+
+/**
+ * @class Face
+ * @brief Concrete class representing a Face Object. Inherits from Object
+ */ 
+class Face : public Object
+{
+ public:
+
+  typedef boost::shared_ptr<Face> Ptr;
+  typedef boost::shared_ptr<Face const> ConstPtr;
+
+  /**
+   * @brief Constructor
+   */
+  Face();
+
+  virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
+
+  virtual PoseStamped getPoseStamped() const;
+
+  virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
+};
+
+typedef Face::Ptr FacePtr;
+typedef Face::ConstPtr FaceConstPtr;
+typedef std::vector< FacePtr > FacePtrVector;
+typedef boost::shared_ptr< FacePtrVector > FacePtrVectorPtr;
+
+/**
+ * @class Sound
+ * @brief Concrete class representing a Sound Object. Inherits from Object
+ */ 
+class Sound : public Object
+{
+ public:
+
+  typedef boost::shared_ptr<Sound> Ptr;
+  typedef boost::shared_ptr<Sound const> ConstPtr;
+
+  /**
+   * @brief Constructor
+   */
+  Sound();
+
+  virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
+
+  virtual PoseStamped getPoseStamped() const;
+
+  virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
+};
+
+typedef Sound::Ptr SoundPtr;
+typedef Sound::ConstPtr SoundConstPtr;
+typedef std::vector< SoundPtr > SoundPtrVector;
+typedef boost::shared_ptr< SoundPtrVector > SoundPtrVectorPtr;
+
+/**
+ * @class Motion
+ * @brief Concrete class representing a Motion Object. Inherits from Object
+ */ 
+class Motion : public Object
+{
+ public:
+
+  typedef boost::shared_ptr<Motion> Ptr;
+  typedef boost::shared_ptr<Motion const> ConstPtr;
+
+  /**
+   * @brief Constructor
+   */
+  Motion();
+
+  virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
+
+  virtual PoseStamped getPoseStamped() const;
+
+  virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
+};
+
+typedef Motion::Ptr MotionPtr;
+typedef Motion::ConstPtr MotionConstPtr;
+typedef std::vector< MotionPtr > MotionPtrVector;
+typedef boost::shared_ptr< MotionPtrVector > MotionPtrVectorPtr;
+
+/**
+ * @class Co2
+ * @brief Concrete class representing a Co2 Object. Inherits from Object
+ */ 
+class Co2 : public Object
+{
+ public:
+
+  typedef boost::shared_ptr<Co2> Ptr;
+  typedef boost::shared_ptr<Co2 const> ConstPtr;
+
+  /**
+   * @brief Constructor
+   */
+  Co2();
+
+  virtual bool isSameObject(const ObjectConstPtr& object, float distance) const;
+
+  virtual PoseStamped getPoseStamped() const;
+
+  virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
+};
+
+typedef Co2::Ptr Co2Ptr;
+typedef Co2::ConstPtr Co2ConstPtr;
+typedef std::vector< Co2Ptr > Co2PtrVector;
+typedef boost::shared_ptr< Co2PtrVector > Co2PtrVectorPtr;
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

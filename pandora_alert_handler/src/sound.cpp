@@ -7,48 +7,38 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-Hazmat::Hazmat()
+Sound::Sound()
 {
-  type_ = "hazmat";
+  type_ = "sound";
 }
 
-PoseStamped Hazmat::getPoseStamped() const
+PoseStamped Sound::getPoseStamped() const
 {
   PoseStamped objPose = Object::getPoseStamped();
-  objPose.header.frame_id = "hazmat_" + boost::to_string(id_) + "_" + 
-    boost::to_string(pattern_);
+  objPose.header.frame_id = "sound_" + boost::to_string(id_);
   return objPose;
 }
 
-bool Hazmat::isSameObject(const ObjectConstPtr& object, float distance) const
+bool Sound::isSameObject(const ObjectConstPtr& object, float distance) const
 {
   bool cond = false;
   
   if (!object->getType().compare(type_))
   {
-    cond = Object::isSameObject(object, distance) 
-      && pattern_ == boost::dynamic_pointer_cast<const Hazmat>(object)
-      ->getPattern();
+    cond = Utils::distanceBetweenPoints2D(
+        getPose().position, object->getPose().position) < distance;
   } 
 
   return cond;
 }
 
-void Hazmat::fillGeotiff(
-  data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
-{
-  res->hazmatx.push_back( pose_.position.x );
-  res->hazmaty.push_back( pose_.position.y );
-  res->pattern.push_back( pattern_ );
-}
-
-void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const
+void Sound::getVisualization(visualization_msgs::MarkerArray* markers) const
 {
   visualization_msgs::Marker marker;
 
   marker.header.frame_id = "/world";
   marker.header.stamp = ros::Time::now();
-  marker.ns = "Hazmat";
+  marker.ns = "Sound";
   marker.id = id_;
 
   marker.pose = pose_;

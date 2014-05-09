@@ -14,18 +14,21 @@ AlertHandler::AlertHandler(const std::string& ns): nh_(ns)
   holes_.reset( new ObjectList<Hole> );
   qrs_.reset( new ObjectList<Qr> );
   hazmats_.reset( new ObjectList<Hazmat> );
-  tpas_.reset( new ObjectList<Tpa> );
+  thermals_.reset( new ObjectList<Thermal> );
+  faces_.reset( new ObjectList<Face> );
+  motions_.reset( new ObjectList<Motion> );
+  sounds_.reset( new ObjectList<Sound> );
+  co2s_.reset( new ObjectList<Co2> );
 
   std::string mapType;
   nh_.getParam("map_type", mapType);
   objectFactory_.reset( new ObjectFactory(map_, mapType) );
-  objectHandler_.reset( new ObjectHandler( holes_, qrs_, hazmats_, tpas_  ) );
-  victimHandler_.reset( new VictimHandler( holes_ , tpas_ ) );
+  objectHandler_.reset( new ObjectHandler( holes_, qrs_, hazmats_, thermals_,
+        faces_, motions_, sounds_, co2s_ ) );
+  victimHandler_.reset( new VictimHandler( holes_ , thermals_,
+        faces_, motions_, sounds_, co2s_ ) );
 
   initRosInterfaces();
-
-  curState = 0;
-  eraseHolesQrs = true;
 
   clientInitialize();
 }
@@ -47,17 +50,61 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
   
-  if (nh_.getParam("subscribed_topic_names/tpaDirection", param))
+  if (nh_.getParam("subscribed_topic_names/faceDirection", param))
   {
-    tpaDirectionSubscriber_ = nh_.subscribe(param, 
-      1, &AlertHandler::tpaDirectionAlertCallback, this);
+    faceDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::faceDirectionAlertCallback, this);
   }
   else
   {
-    ROS_FATAL("tpaDirection topic name param not found");
+    ROS_FATAL("faceDirection topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/co2Direction", param))
+  {
+    co2DirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::co2DirectionAlertCallback, this);
+  }
+  else
+  {
+    ROS_FATAL("co2Direction topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/motionDirection", param))
+  {
+    motionDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::motionDirectionAlertCallback, this);
+  }
+  else
+  {
+    ROS_FATAL("motionDirection topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/thermalDirection", param))
+  {
+    thermalDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::thermalDirectionAlertCallback, this);
+  }
+  else
+  {
+    ROS_FATAL("thermalDirection topic name param not found");
     ROS_BREAK();
   }
    
+  if (nh_.getParam("subscribed_topic_names/soundDirection", param))
+  {
+    soundDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::soundDirectionAlertCallback, this);
+  }
+  else
+  {
+    ROS_FATAL("soundDirection topic name param not found");
+    ROS_BREAK();
+  }
+
   if (nh_.getParam("subscribed_topic_names/qr", param))
   {
     qrSubscriber_ = nh_.subscribe(param, 1, &AlertHandler::qrAlertCallback, this);
@@ -159,8 +206,8 @@ void AlertHandler::initRosInterfaces()
 
   if (nh_.getParam("service_server_names/flush_queues", param))
   {
-    flushService_ = nh_.advertiseService(param,
-                                     &AlertHandler::flushQueues, this);
+    flushService_ = nh_.advertiseService(param, 
+        &AlertHandler::flushQueues, this);
   }
   else
   {
@@ -170,8 +217,8 @@ void AlertHandler::initRosInterfaces()
 
   if (nh_.getParam("service_server_names/get_objects", param))
   {
-    getObjectsService_ = nh_.advertiseService(param,
-                                     &AlertHandler::getObjectsServiceCb, this);
+    getObjectsService_ = nh_.advertiseService(param, 
+        &AlertHandler::getObjectsServiceCb, this);
   }
   else 
   {
@@ -181,8 +228,8 @@ void AlertHandler::initRosInterfaces()
 
   if (nh_.getParam("service_server_names/get_markers", param))
   {
-    getMarkersService_ = nh_.advertiseService(param,
-                                    &AlertHandler::getMarkersServiceCb, this);
+    getMarkersService_ = nh_.advertiseService(param, 
+        &AlertHandler::getMarkersServiceCb, this);
   }
   else
   {
@@ -192,8 +239,8 @@ void AlertHandler::initRosInterfaces()
 
   if (nh_.getParam("service_server_names/geotiff", param))
   {
-    geotiffService_ = nh_.advertiseService(param,
-                                     &AlertHandler::geotiffServiceCb, this);
+    geotiffService_ = nh_.advertiseService(param, 
+        &AlertHandler::geotiffServiceCb, this);
   }
   else
   {
@@ -204,12 +251,12 @@ void AlertHandler::initRosInterfaces()
   //!< dynamic reconfigure server
 
   dynReconfserver_.setCallback(boost::bind(
-    &AlertHandler::dynamicReconfigCallback, this, _1, _2));
+        &AlertHandler::dynamicReconfigCallback, this, _1, _2));
 
   //!< timers
 
-  currentVictimTimer_ = nh_.createTimer(ros::Duration(0.1),
-                                  &AlertHandler::currentVictimTimerCb, this);
+  currentVictimTimer_ = nh_.createTimer(ros::Duration(0.1), 
+      &AlertHandler::currentVictimTimerCb, this);
 }  
 
 //!< Alert-concerned callbacks
@@ -231,6 +278,94 @@ void AlertHandler::holeDirectionAlertCallback(
   }
 
   objectHandler_->handleHoles(holesVectorPtr, objectFactory_->getTransform());
+
+  victimHandler_->notify();
+
+}
+
+void AlertHandler::faceDirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg)
+{    
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
+
+  FacePtrVectorPtr facesVectorPtr;
+  try
+  {
+    facesVectorPtr = objectFactory_->makeObjects< Face >(msg);
+  }
+  catch (AlertException ex)
+  {
+    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+    return;
+  }
+
+  objectHandler_->handleFaces(facesVectorPtr, objectFactory_->getTransform());
+
+  victimHandler_->notify();
+
+}
+
+void AlertHandler::co2DirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg)
+{    
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "CO2 ALERT ARRIVED!");
+
+  Co2PtrVectorPtr co2sVectorPtr;
+  try
+  {
+    co2sVectorPtr = objectFactory_->makeObjects< Co2 >(msg);
+  }
+  catch (AlertException ex)
+  {
+    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+    return;
+  }
+
+  objectHandler_->handleCo2s(co2sVectorPtr, objectFactory_->getTransform());
+
+  victimHandler_->notify();
+
+}
+
+void AlertHandler::motionDirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg)
+{    
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "MOTION ALERT ARRIVED!");
+
+  MotionPtrVectorPtr motionsVectorPtr;
+  try
+  {
+    motionsVectorPtr = objectFactory_->makeObjects< Motion >(msg);
+  }
+  catch (AlertException ex)
+  {
+    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+    return;
+  }
+
+  objectHandler_->handleMotions(motionsVectorPtr, objectFactory_->getTransform());
+
+  victimHandler_->notify();
+
+}
+
+void AlertHandler::soundDirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg)
+{    
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "SOUND ALERT ARRIVED!");
+
+  SoundPtrVectorPtr soundsVectorPtr;
+  try
+  {
+    soundsVectorPtr = objectFactory_->makeObjects< Sound >(msg);
+  }
+  catch (AlertException ex)
+  {
+    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+    return;
+  }
+
+  objectHandler_->handleSounds(soundsVectorPtr, objectFactory_->getTransform());
 
   victimHandler_->notify();
 
@@ -273,20 +408,19 @@ void AlertHandler::qrAlertCallback(
     return;
   }
 
-  objectHandler_->handleQrs(qrsVectorPtr, objectFactory_->getTransform(),
-    eraseHolesQrs);
+  objectHandler_->handleQrs(qrsVectorPtr, objectFactory_->getTransform());
 
 }
 
-void AlertHandler::tpaDirectionAlertCallback(
+void AlertHandler::thermalDirectionAlertCallback(
     const data_fusion_communications::ThermalDirectionAlertMsg& msg)
 {
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "TPA ALERT ARRIVED!");
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "thermal ALERT ARRIVED!");
 
-  TpaPtrVectorPtr tpasVectorPtr;
+  ThermalPtrVectorPtr thermalsVectorPtr;
   try
   {
-    tpasVectorPtr = objectFactory_->makeTpas(msg);
+    thermalsVectorPtr = objectFactory_->makeThermals(msg);
   }
   catch (AlertException ex)
   {
@@ -294,7 +428,7 @@ void AlertHandler::tpaDirectionAlertCallback(
     return;
   }
 
-  objectHandler_->handleTpas(tpasVectorPtr, objectFactory_->getTransform());
+  objectHandler_->handleThermals(thermalsVectorPtr, objectFactory_->getTransform());
 
   victimHandler_->notify();
 
@@ -381,10 +515,10 @@ void AlertHandler::dynamicReconfigCallback(
       config.hazmatXVarThres, config.hazmatYVarThres, config.hazmatZVarThres,
       config.hazmatPriorXSD, config.hazmatPriorYSD, config.hazmatPriorZSD,
       config.hazmatSystemNoiseSD, config.hazmatMeasNoiseSD);
-  tpas_->setParams(config.tpaScore, config.tpaMinimumDist,
-      config.tpaXVarThres, config.tpaYVarThres, config.tpaZVarThres,
-      config.tpaPriorXSD, config.tpaPriorYSD, config.tpaPriorZSD,
-      config.tpaSystemNoiseSD, config.tpaMeasNoiseSD);
+  thermals_->setParams(config.thermalScore, config.thermalMinimumDist,
+      config.thermalXVarThres, config.thermalYVarThres, config.thermalZVarThres,
+      config.thermalPriorXSD, config.thermalPriorYSD, config.thermalPriorZSD,
+      config.thermalSystemNoiseSD, config.thermalMeasNoiseSD);
 
   objectHandler_->updateParams(config.sensorRange);
 
@@ -402,7 +536,7 @@ bool AlertHandler::getObjectsServiceCb(
   holes_->getObjectsPosesStamped(&rs.holes);
   qrs_->getObjectsPosesStamped(&rs.qrs);
   hazmats_->getObjectsPosesStamped(&rs.hazmats);
-  tpas_->getObjectsPosesStamped(&rs.tpas);
+  thermals_->getObjectsPosesStamped(&rs.thermals);
 
   victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited, 
       &rs.approachPoints);
@@ -417,7 +551,7 @@ bool AlertHandler::getMarkersServiceCb(
   holes_->getVisualization(&rs.holes);
   qrs_->getVisualization(&rs.hazmats);
   hazmats_->getVisualization(&rs.qrs);
-  tpas_->getVisualization(&rs.tpas);
+  thermals_->getVisualization(&rs.thermals);
 
   victimHandler_->getVisualization(&rs.victimsVisited, &rs.victimsToGo);
 
@@ -461,29 +595,9 @@ bool AlertHandler::flushQueues(
   holes_->clear();
   qrs_->clear();
   hazmats_->clear();
-  tpas_->clear();
+  thermals_->clear();
   victimHandler_->flush();
   return true;
-}
-
-void AlertHandler::startTransition(int newState)
-{
-  curState = newState;
-
-  //!< check if face detection algorithm should be running now
-  eraseHolesQrs =
-    curState == state_manager_communications::robotModeMsg::MODE_EXPLORATION ||
-    curState == state_manager_communications::robotModeMsg::MODE_IDENTIFICATION;
-
-  //!< shutdown if the robot is switched off
-  if (curState ==
-        state_manager_communications::robotModeMsg::MODE_TERMINATING)
-  {
-    ros::shutdown();
-    return;
-  }
-
-  transitionComplete(curState);
 }
 
 }  // namespace pandora_alert_handler

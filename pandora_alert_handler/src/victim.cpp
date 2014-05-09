@@ -14,13 +14,13 @@ Victim::Victim()
   valid_ = false;
   visited_ = false;
   holeDeleted_ = false;
-  tpaDeleted_ = false;
+  thermalDeleted_ = false;
   selectedObjectIndex_ = -1;
 }
 
 int Victim::lastVictimId_ = 0;
 FilterModelPtr Victim::holeModelPtr_ = FilterModelPtr();
-FilterModelPtr Victim::tpaModelPtr_ = FilterModelPtr();
+FilterModelPtr Victim::thermalModelPtr_ = FilterModelPtr();
 
 bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
 {  
@@ -136,7 +136,7 @@ void Victim::fillGeotiff(
 /**
  * @details Representative Object should be the one in the cluster 
  * with the most confidence (least standard deviation) with its conviction pdf 
- * updated by the rest objects in victim. Between the hole and the tpa 
+ * updated by the rest objects in victim. Between the hole and the thermal 
  * candidate, hole will be prefered.
  */
 void Victim::setObjects(const ObjectConstPtrVector& objects,
@@ -179,38 +179,38 @@ void Victim::setObjects(const ObjectConstPtrVector& objects,
       objects_.push_back(representativeHole);
   }
 
-  if(!tpaDeleted_)
+  if(!thermalDeleted_)
   {
-    ObjectConstPtrVector::const_iterator tpaIt = objects.end();
-    float minTpaVariance = 1;
+    ObjectConstPtrVector::const_iterator thermalIt = objects.end();
+    float minThermalVariance = 1;
 
     for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
         it != objects.end(); it++)
     {
-      if (!(*it)->getType().compare(std::string("tpa")) && 
-          (*it)->getVarianceX() < minTpaVariance)
+      if (!(*it)->getType().compare(std::string("thermal")) && 
+          (*it)->getVarianceX() < minThermalVariance)
       {
-        minTpaVariance = (*it)->getVarianceX();
-        tpaIt = it;
+        minThermalVariance = (*it)->getVarianceX();
+        thermalIt = it;
       }
     }
 
-    ObjectPtr representativeTpa( new Tpa );
+    ObjectPtr representativeThermal( new Thermal );
 
-    if (tpaIt != objects.end())
-      *representativeTpa = *(*tpaIt);
+    if (thermalIt != objects.end())
+      *representativeThermal = *(*thermalIt);
 
     for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
         it != objects.end(); it++)
     {
-      if (!(*it)->getType().compare(std::string("tpa")) && it != tpaIt)
+      if (!(*it)->getType().compare(std::string("thermal")) && it != thermalIt)
       {
-        representativeTpa->update((*it), tpaModelPtr_);
+        representativeThermal->update((*it), thermalModelPtr_);
       }
     }
   
-    if (tpaIt != objects.end())
-      objects_.push_back(representativeTpa);
+    if (thermalIt != objects.end())
+      objects_.push_back(representativeThermal);
   }
 
   updateRepresentativeObject(approachDistance);
@@ -230,7 +230,7 @@ void Victim::updateRepresentativeObject(float approachDistance)
 }
 
 /**
- * @details As for now, hole objects are prefered over tpa objects,
+ * @details As for now, hole objects are prefered over thermal objects,
  * because it is more likely to verify a victim though vision means
  * rather than thermal sensors. In a future implementation of the robot
  * where the thermal sensor would be more informative and trustworthy this
@@ -278,9 +278,9 @@ void Victim::eraseObjectAt(int index,
   {
     holeDeleted_ = true;
   }
-  else if(objects_[index]->getType() == "tpa")
+  else if(objects_[index]->getType() == "thermal")
   {
-    tpaDeleted_ = true;
+    thermalDeleted_ = true;
   }
   objects_.erase(objects_.begin() + index);
   updateRepresentativeObject(approachDistance);

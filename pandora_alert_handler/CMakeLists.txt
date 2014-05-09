@@ -100,13 +100,53 @@ add_dependencies(qr
   data_fusion_communications_gencpp
   ) 
 
-add_library(tpa 
-        src/tpa.cpp)
-target_link_libraries(tpa 
+add_library(thermal 
+        src/thermal.cpp)
+target_link_libraries(thermal 
           ${catkin_LIBRARIES}
           objects
           )
-add_dependencies(tpa
+add_dependencies(thermal
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(face
+        src/face.cpp)
+target_link_libraries(face
+          ${catkin_LIBRARIES}
+          objects
+          )
+add_dependencies(face
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(motion
+        src/motion.cpp)
+target_link_libraries(motion
+          ${catkin_LIBRARIES}
+          objects
+          )
+add_dependencies(motion
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(sound
+        src/sound.cpp)
+target_link_libraries(sound
+          ${catkin_LIBRARIES}
+          objects
+          )
+add_dependencies(sound
+  data_fusion_communications_gencpp
+  ) 
+
+add_library(co2
+        src/co2.cpp)
+target_link_libraries(co2
+          ${catkin_LIBRARIES}
+          objects
+          )
+add_dependencies(co2
   data_fusion_communications_gencpp
   ) 
 
@@ -169,7 +209,11 @@ target_link_libraries(object_factory
           hazmat
           hole
           qr
-          tpa
+          thermal
+          face
+          motion
+          sound
+          co2
           utils
           )
 add_dependencies(object_factory 
@@ -248,7 +292,11 @@ target_link_libraries(alert_handler_node
           hazmat
           hole
           qr
-          tpa
+          thermal
+          face
+          motion
+          sound
+          co2
           victim
           )
 add_dependencies(alert_handler_node 

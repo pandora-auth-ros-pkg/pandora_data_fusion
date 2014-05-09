@@ -49,12 +49,12 @@ namespace pandora_alert_handler
 {
 
 typedef actionlib::SimpleActionServer
-    <data_fusion_communications::GetVictimsAction> GetVictimsServer;
+  <data_fusion_communications::GetVictimsAction> GetVictimsServer;
 typedef actionlib::SimpleActionServer
-    <data_fusion_communications::DeleteCurrentVictimAction> DeleteVictimServer;
-typedef actionlib::SimpleActionServer
-    <data_fusion_communications::ValidateCurrentHoleAction>
-                                                    ValidateCurrentHoleServer;
+  <data_fusion_communications::DeleteCurrentVictimAction> DeleteVictimServer;
+typedef actionlib::SimpleActionServer 
+  <data_fusion_communications::ValidateCurrentHoleAction> 
+    ValidateCurrentHoleServer;
 
 class AlertHandler : public StateClient, private boost::noncopyable
 {
@@ -69,14 +69,16 @@ class AlertHandler : public StateClient, private boost::noncopyable
   /* Alert-concerned Subscribers */
   void holeDirectionAlertCallback(
     const vision_communications::HolesDirectionsVectorMsg& msg);
-  void holePositionAlertCallback(
-    const vision_communications::HolesPositionsVectorMsg& msg);
+  void co2DirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg);
+  void motionDirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg);
   void faceDirectionAlertCallback(
-    const vision_communications::FaceDirectionMsg& msg);
-  void tpaDirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg);
+  void thermalDirectionAlertCallback(
     const data_fusion_communications::ThermalDirectionAlertMsg& msg);
-  void mlxDirectionAlert(
-    const data_fusion_communications::ThermalDirectionAlertMsg& msg);
+  void soundDirectionAlertCallback(
+    const vision_communications::HolesDirectionsVectorMsg& msg);
   void hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg);
   void qrAlertCallback(const vision_communications::QRAlertsVectorMsg& msg);
@@ -151,16 +153,15 @@ class AlertHandler : public StateClient, private boost::noncopyable
 
   void initRosInterfaces();
 
-  virtual void startTransition(int newState);
-
  private:
 
   ros::NodeHandle nh_;
   ros::Subscriber holeDirectionSubscriber_;
-  ros::Subscriber holePositionSubscriber_;
   ros::Subscriber faceDirectionSubscriber_;
-  ros::Subscriber tpaDirectionSubscriber_;
-  ros::Subscriber mlxDirectionSubscriber_;
+  ros::Subscriber co2DirectionSubscriber_;
+  ros::Subscriber motionDirectionSubscriber_;
+  ros::Subscriber thermalDirectionSubscriber_;
+  ros::Subscriber soundDirectionSubscriber_;
   ros::Subscriber qrSubscriber_;
   ros::Subscriber hazmatSubscriber_;
   
@@ -193,17 +194,18 @@ class AlertHandler : public StateClient, private boost::noncopyable
 
   HoleListPtr holes_;
   QrListPtr qrs_;
+  MotionListPtr motions_;
+  FaceListPtr faces_;
+  SoundListPtr sounds_;
+  Co2ListPtr co2s_;
   HazmatListPtr hazmats_;
-  TpaListPtr tpas_;
+  ThermalListPtr thermals_;
 
   ObjectFactoryPtr objectFactory_;
   ObjectHandlerPtr objectHandler_;
   VictimHandlerPtr victimHandler_;
 
   int currentVictimId;
-
-  int curState;
-  bool eraseHolesQrs;
 
 };
 
