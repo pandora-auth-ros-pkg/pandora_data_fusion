@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
           dynamic_reconfigure
           roslint
           data_fusion_communications 
+          common_communications
           vision_communications
           )
 
@@ -219,6 +220,7 @@ target_link_libraries(object_factory
 add_dependencies(object_factory 
   data_fusion_communications_gencpp
   vision_communications_gencpp
+  common_communications_gencpp
   ) 
          
 #################### victim_clusterer ###################################
@@ -269,6 +271,7 @@ add_dependencies(alert_handler
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
   data_fusion_communications_gencpp
+  common_communications_gencpp
   state_manager_communications_gencpp
   ) 
 
@@ -303,6 +306,7 @@ add_dependencies(alert_handler_node
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
   data_fusion_communications_gencpp
+  common_communications_gencpp
   state_manager_communications_gencpp
   ) 
 
@@ -342,7 +346,7 @@ FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_TEST
 roslint_cpp(${${PROJECT_NAME}_LINT_TEST})
 #roslint_add_test()
 
-####### Testing ####
+####### Testing #######
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)

@@ -112,7 +112,7 @@ void ObjectHandler::handleThermals(const ThermalPtrVectorPtr& newThermals,
   }
 }
 
-void ObjectHandler::handleFaces(const FacePtrVectorPtr& newFaces,
+void ObjectHandler::handleObjects(const FacePtrVectorPtr& newFaces,
   const tf::Transform& transform)
 {
   for (int ii = 0; ii < newFaces->size(); ++ii)
@@ -128,7 +128,7 @@ void ObjectHandler::handleFaces(const FacePtrVectorPtr& newFaces,
   }
 }
 
-void ObjectHandler::handleMotions(const MotionPtrVectorPtr& newMotions,
+void ObjectHandler::handleObjects(const MotionPtrVectorPtr& newMotions,
   const tf::Transform& transform)
 {
   for (int ii = 0; ii < newMotions->size(); ++ii)
@@ -144,7 +144,7 @@ void ObjectHandler::handleMotions(const MotionPtrVectorPtr& newMotions,
   }
 }
 
-void ObjectHandler::handleSounds(const SoundPtrVectorPtr& newSounds,
+void ObjectHandler::handleObjects(const SoundPtrVectorPtr& newSounds,
   const tf::Transform& transform)
 {
   for (int ii = 0; ii < newSounds->size(); ++ii)
@@ -160,7 +160,7 @@ void ObjectHandler::handleSounds(const SoundPtrVectorPtr& newSounds,
   }
 }
 
-void ObjectHandler::handleCo2s(const Co2PtrVectorPtr& newCo2s,
+void ObjectHandler::handleObjects(const Co2PtrVectorPtr& newCo2s,
   const tf::Transform& transform)
 {
   for (int ii = 0; ii < newCo2s->size(); ++ii)

@@ -50,39 +50,6 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
   
-  if (nh_.getParam("subscribed_topic_names/faceDirection", param))
-  {
-    faceDirectionSubscriber_ = nh_.subscribe(param, 
-      1, &AlertHandler::faceDirectionAlertCallback, this);
-  }
-  else
-  {
-    ROS_FATAL("faceDirection topic name param not found");
-    ROS_BREAK();
-  }
-
-  if (nh_.getParam("subscribed_topic_names/co2Direction", param))
-  {
-    co2DirectionSubscriber_ = nh_.subscribe(param, 
-      1, &AlertHandler::co2DirectionAlertCallback, this);
-  }
-  else
-  {
-    ROS_FATAL("co2Direction topic name param not found");
-    ROS_BREAK();
-  }
-
-  if (nh_.getParam("subscribed_topic_names/motionDirection", param))
-  {
-    motionDirectionSubscriber_ = nh_.subscribe(param, 
-      1, &AlertHandler::motionDirectionAlertCallback, this);
-  }
-  else
-  {
-    ROS_FATAL("motionDirection topic name param not found");
-    ROS_BREAK();
-  }
-
   if (nh_.getParam("subscribed_topic_names/thermalDirection", param))
   {
     thermalDirectionSubscriber_ = nh_.subscribe(param, 
@@ -94,17 +61,6 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
    
-  if (nh_.getParam("subscribed_topic_names/soundDirection", param))
-  {
-    soundDirectionSubscriber_ = nh_.subscribe(param, 
-      1, &AlertHandler::soundDirectionAlertCallback, this);
-  }
-  else
-  {
-    ROS_FATAL("soundDirection topic name param not found");
-    ROS_BREAK();
-  }
-
   if (nh_.getParam("subscribed_topic_names/qr", param))
   {
     qrSubscriber_ = nh_.subscribe(param, 1, &AlertHandler::qrAlertCallback, this);
@@ -123,6 +79,50 @@ void AlertHandler::initRosInterfaces()
   else
   {
     ROS_FATAL("hazmat topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/faceDirection", param))
+  {
+    faceDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::objectDirectionAlertCallback< Face >, this);
+  }
+  else
+  {
+    ROS_FATAL("faceDirection topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/co2Direction", param))
+  {
+    co2DirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::objectDirectionAlertCallback< Co2 >, this);
+  }
+  else
+  {
+    ROS_FATAL("co2Direction topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/motionDirection", param))
+  {
+    motionDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::objectDirectionAlertCallback< Motion >, this);
+  }
+  else
+  {
+    ROS_FATAL("motionDirection topic name param not found");
+    ROS_BREAK();
+  }
+
+  if (nh_.getParam("subscribed_topic_names/soundDirection", param))
+  {
+    soundDirectionSubscriber_ = nh_.subscribe(param, 
+      1, &AlertHandler::objectDirectionAlertCallback< Sound >, this);
+  }
+  else
+  {
+    ROS_FATAL("soundDirection topic name param not found");
     ROS_BREAK();
   }
 
@@ -283,93 +283,93 @@ void AlertHandler::holeDirectionAlertCallback(
 
 }
 
-void AlertHandler::faceDirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg)
-{    
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
+//void AlertHandler::faceDirectionAlertCallback(
+//    const vision_communications::HolesDirectionsVectorMsg& msg)
+//{    
+//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
 
-  FacePtrVectorPtr facesVectorPtr;
-  try
-  {
-    facesVectorPtr = objectFactory_->makeObjects< Face >(msg);
-  }
-  catch (AlertException ex)
-  {
-    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-    return;
-  }
+//  FacePtrVectorPtr facesVectorPtr;
+//  try
+//  {
+//    facesVectorPtr = objectFactory_->makeObjects< Face >(msg);
+//  }
+//  catch (AlertException ex)
+//  {
+//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+//    return;
+//  }
 
-  objectHandler_->handleFaces(facesVectorPtr, objectFactory_->getTransform());
+//  objectHandler_->handleFaces(facesVectorPtr, objectFactory_->getTransform());
 
-  victimHandler_->notify();
+//  victimHandler_->notify();
 
-}
+//}
 
-void AlertHandler::co2DirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg)
-{    
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "CO2 ALERT ARRIVED!");
+//void AlertHandler::co2DirectionAlertCallback(
+//    const vision_communications::HolesDirectionsVectorMsg& msg)
+//{    
+//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "CO2 ALERT ARRIVED!");
 
-  Co2PtrVectorPtr co2sVectorPtr;
-  try
-  {
-    co2sVectorPtr = objectFactory_->makeObjects< Co2 >(msg);
-  }
-  catch (AlertException ex)
-  {
-    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-    return;
-  }
+//  Co2PtrVectorPtr co2sVectorPtr;
+//  try
+//  {
+//    co2sVectorPtr = objectFactory_->makeObjects< Co2 >(msg);
+//  }
+//  catch (AlertException ex)
+//  {
+//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+//    return;
+//  }
 
-  objectHandler_->handleCo2s(co2sVectorPtr, objectFactory_->getTransform());
+//  objectHandler_->handleCo2s(co2sVectorPtr, objectFactory_->getTransform());
 
-  victimHandler_->notify();
+//  victimHandler_->notify();
 
-}
+//}
 
-void AlertHandler::motionDirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg)
-{    
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "MOTION ALERT ARRIVED!");
+//void AlertHandler::motionDirectionAlertCallback(
+//    const vision_communications::HolesDirectionsVectorMsg& msg)
+//{    
+//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "MOTION ALERT ARRIVED!");
 
-  MotionPtrVectorPtr motionsVectorPtr;
-  try
-  {
-    motionsVectorPtr = objectFactory_->makeObjects< Motion >(msg);
-  }
-  catch (AlertException ex)
-  {
-    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-    return;
-  }
+//  MotionPtrVectorPtr motionsVectorPtr;
+//  try
+//  {
+//    motionsVectorPtr = objectFactory_->makeObjects< Motion >(msg);
+//  }
+//  catch (AlertException ex)
+//  {
+//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+//    return;
+//  }
 
-  objectHandler_->handleMotions(motionsVectorPtr, objectFactory_->getTransform());
+//  objectHandler_->handleMotions(motionsVectorPtr, objectFactory_->getTransform());
 
-  victimHandler_->notify();
+//  victimHandler_->notify();
 
-}
+//}
 
-void AlertHandler::soundDirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg)
-{    
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "SOUND ALERT ARRIVED!");
+//void AlertHandler::soundDirectionAlertCallback(
+//    const vision_communications::HolesDirectionsVectorMsg& msg)
+//{    
+//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "SOUND ALERT ARRIVED!");
 
-  SoundPtrVectorPtr soundsVectorPtr;
-  try
-  {
-    soundsVectorPtr = objectFactory_->makeObjects< Sound >(msg);
-  }
-  catch (AlertException ex)
-  {
-    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-    return;
-  }
+//  SoundPtrVectorPtr soundsVectorPtr;
+//  try
+//  {
+//    soundsVectorPtr = objectFactory_->makeObjects< Sound >(msg);
+//  }
+//  catch (AlertException ex)
+//  {
+//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+//    return;
+//  }
 
-  objectHandler_->handleSounds(soundsVectorPtr, objectFactory_->getTransform());
+//  objectHandler_->handleSounds(soundsVectorPtr, objectFactory_->getTransform());
 
-  victimHandler_->notify();
+//  victimHandler_->notify();
 
-}
+//}
 
 void AlertHandler::hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg)
@@ -413,9 +413,9 @@ void AlertHandler::qrAlertCallback(
 }
 
 void AlertHandler::thermalDirectionAlertCallback(
-    const data_fusion_communications::ThermalDirectionAlertMsg& msg)
+    const common_communications::GeneralAlertMsg& msg)
 {
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "thermal ALERT ARRIVED!");
+  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "THERMAL ALERT ARRIVED!");
 
   ThermalPtrVectorPtr thermalsVectorPtr;
   try

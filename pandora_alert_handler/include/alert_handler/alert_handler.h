@@ -32,6 +32,7 @@
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
+#include "common_communications/GeneralAlertMsg.h"
 
 #include "state_manager/state_client.h"
 
@@ -69,19 +70,14 @@ class AlertHandler : public StateClient, private boost::noncopyable
   /* Alert-concerned Subscribers */
   void holeDirectionAlertCallback(
     const vision_communications::HolesDirectionsVectorMsg& msg);
-  void co2DirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg);
-  void motionDirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg);
-  void faceDirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg);
   void thermalDirectionAlertCallback(
-    const data_fusion_communications::ThermalDirectionAlertMsg& msg);
-  void soundDirectionAlertCallback(
-    const vision_communications::HolesDirectionsVectorMsg& msg);
+    const common_communications::GeneralAlertMsg& msg);
   void hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg);
   void qrAlertCallback(const vision_communications::QRAlertsVectorMsg& msg);
+  template <class ObjectType> 
+    void objectDirectionAlertCallback(
+        const common_communications::GeneralAlertMsg& msg);
 
   /* Victim-concerned Subscribers */
   /**
@@ -208,6 +204,29 @@ class AlertHandler : public StateClient, private boost::noncopyable
   int currentVictimId;
 
 };
+
+template <class ObjectType> 
+void AlertHandler::objectDirectionAlertCallback(
+    const common_communications::GeneralAlertMsg& msg)
+{    
+  // ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
+
+  typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr;
+  try
+  {
+    objectsVectorPtr = objectFactory_->makeObjects< ObjectType >(msg);
+  }
+  catch (AlertException ex)
+  {
+    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
+    return;
+  }
+
+  objectHandler_->handleObjects(objectsVectorPtr, objectFactory_->getTransform());
+
+  victimHandler_->notify();
+
+}
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

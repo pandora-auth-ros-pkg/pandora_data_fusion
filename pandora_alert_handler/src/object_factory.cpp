@@ -37,7 +37,7 @@ HolePtrVectorPtr ObjectFactory::makeHoles(
 }
 
 ThermalPtrVectorPtr ObjectFactory::makeThermals(
-    const data_fusion_communications::ThermalDirectionAlertMsg& msg)
+    const common_communications::GeneralAlertMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
@@ -124,7 +124,7 @@ void ObjectFactory::setUpHole(const HolePtr& holePtr,
 }
 
 void ObjectFactory::setUpThermal(const ThermalPtr& thermalPtr, 
-    const data_fusion_communications::ThermalDirectionAlertMsg& msg)
+    const common_communications::GeneralAlertMsg& msg)
 {
   thermalPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
@@ -148,7 +148,7 @@ void ObjectFactory::setUpQr(const QrPtr& qrPtr,
 }
 
 void ObjectFactory::setUpObject(const ObjectPtr& objectPtr, 
-    const vision_communications::HoleDirectionMsg& msg)
+    const common_communications::GeneralAlertMsg& msg)
 {
   objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );

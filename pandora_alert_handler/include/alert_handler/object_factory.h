@@ -16,6 +16,7 @@
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
+#include "common_communications/GeneralAlertMsg.h"
 
 #include "alert_handler/pose_finder.h"
 #include "alert_handler/objects.h"
@@ -35,14 +36,14 @@ class ObjectFactory : private boost::noncopyable
   HolePtrVectorPtr makeHoles(
       const vision_communications::HolesDirectionsVectorMsg& msg);
   ThermalPtrVectorPtr makeThermals(
-      const data_fusion_communications::ThermalDirectionAlertMsg& msg);
+      const common_communications::GeneralAlertMsg& msg);
   HazmatPtrVectorPtr makeHazmats(
       const vision_communications::HazmatAlertsVectorMsg& msg);
   QrPtrVectorPtr makeQrs(
       const vision_communications::QRAlertsVectorMsg& msg);
   template <class ObjectType>
     typename TypeDef< ObjectType >::PtrVectorPtr makeObjects(
-        const vision_communications::HolesDirectionsVectorMsg& msg);
+        const common_communications::GeneralAlertMsg& msg);
 
   const tf::Transform& getTransform() const
   {
@@ -66,13 +67,13 @@ class ObjectFactory : private boost::noncopyable
   void setUpHole(const HolePtr& holePtr, 
       const vision_communications::HoleDirectionMsg& msg);
   void setUpThermal(const ThermalPtr& thermalPtr, 
-      const data_fusion_communications::ThermalDirectionAlertMsg& msg);
+      const common_communications::GeneralAlertMsg& msg);
   void setUpHazmat(const HazmatPtr& hazmatPtr, 
       const vision_communications::HazmatAlertMsg& msg);
   void setUpQr(const QrPtr& qrPtr, 
       const vision_communications::QRAlertMsg& msg);
   void setUpObject(const ObjectPtr& objectPtr, 
-      const vision_communications::HoleDirectionMsg& msg);
+      const common_communications::GeneralAlertMsg& msg);
 
  private:
 
@@ -84,25 +85,22 @@ class ObjectFactory : private boost::noncopyable
 
 template <class ObjectType>
   typename TypeDef< ObjectType >::PtrVectorPtr ObjectFactory::makeObjects(
-      const vision_communications::HolesDirectionsVectorMsg& msg)
+      const common_communications::GeneralAlertMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
   typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr(
       new typename TypeDef< ObjectType >::PtrVector);
-  for (int ii = 0; ii < msg.holesDirections.size(); ++ii)
+  try
   {
-    try
-    {
-      typename TypeDef< ObjectType >::Ptr newObject( new ObjectType );
-      setUpObject( newObject, msg.holesDirections[ii] );
-      objectsVectorPtr->push_back( newObject );
-    }
-    catch (AlertException ex)
-    {
-      ROS_WARN_NAMED("ALERT_HANDLER",
-        "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
-    }
+    typename TypeDef< ObjectType >::Ptr newObject( new ObjectType );
+    setUpObject( newObject, msg );
+    objectsVectorPtr->push_back( newObject );
+  }
+  catch (AlertException ex)
+  {
+    ROS_WARN_NAMED("ALERT_HANDLER",
+      "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
   }
 
   return objectsVectorPtr;

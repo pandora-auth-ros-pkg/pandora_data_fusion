@@ -34,13 +34,13 @@ class ObjectHandler : private boost::noncopyable
       const tf::Transform& transform);
   void handleThermals(const ThermalPtrVectorPtr& newThermals, 
       const tf::Transform& transform);
-  void handleFaces(const FacePtrVectorPtr& newFaces, 
+  void handleObjects(const FacePtrVectorPtr& newFaces, 
       const tf::Transform& transform);
-  void handleMotions(const MotionPtrVectorPtr& newMotions, 
+  void handleObjects(const MotionPtrVectorPtr& newMotions, 
       const tf::Transform& transform);
-  void handleSounds(const SoundPtrVectorPtr& newSounds, 
+  void handleObjects(const SoundPtrVectorPtr& newSounds, 
       const tf::Transform& transform);
-  void handleCo2s(const Co2PtrVectorPtr& newCo2s, 
+  void handleObjects(const Co2PtrVectorPtr& newCo2s, 
       const tf::Transform& transform);
 
   void updateParams(float sensor_range);
