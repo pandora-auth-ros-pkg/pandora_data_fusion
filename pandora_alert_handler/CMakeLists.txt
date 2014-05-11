@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
           dynamic_reconfigure
           roslint
           data_fusion_communications 
-          common_communications
+          pandora_common_msgs
           vision_communications
           )
 
@@ -220,7 +220,7 @@ target_link_libraries(object_factory
 add_dependencies(object_factory 
   data_fusion_communications_gencpp
   vision_communications_gencpp
-  common_communications_gencpp
+  pandora_common_msgs_gencpp
   ) 
          
 #################### victim_clusterer ###################################
@@ -271,7 +271,7 @@ add_dependencies(alert_handler
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
   data_fusion_communications_gencpp
-  common_communications_gencpp
+  pandora_common_msgs_gencpp
   state_manager_communications_gencpp
   ) 
 
@@ -306,7 +306,7 @@ add_dependencies(alert_handler_node
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
   data_fusion_communications_gencpp
-  common_communications_gencpp
+  pandora_common_msgs_gencpp
   state_manager_communications_gencpp
   ) 
 

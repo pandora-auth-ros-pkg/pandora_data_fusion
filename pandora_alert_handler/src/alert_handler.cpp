@@ -413,7 +413,7 @@ void AlertHandler::qrAlertCallback(
 }
 
 void AlertHandler::thermalDirectionAlertCallback(
-    const common_communications::GeneralAlertMsg& msg)
+    const pandora_common_msgs::GeneralAlertMsg& msg)
 {
   ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "THERMAL ALERT ARRIVED!");
 

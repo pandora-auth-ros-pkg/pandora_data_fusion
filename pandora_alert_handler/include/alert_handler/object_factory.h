@@ -16,7 +16,7 @@
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
-#include "common_communications/GeneralAlertMsg.h"
+#include "pandora_common_msgs/GeneralAlertMsg.h"
 
 #include "alert_handler/pose_finder.h"
 #include "alert_handler/objects.h"
@@ -36,14 +36,14 @@ class ObjectFactory : private boost::noncopyable
   HolePtrVectorPtr makeHoles(
       const vision_communications::HolesDirectionsVectorMsg& msg);
   ThermalPtrVectorPtr makeThermals(
-      const common_communications::GeneralAlertMsg& msg);
+      const pandora_common_msgs::GeneralAlertMsg& msg);
   HazmatPtrVectorPtr makeHazmats(
       const vision_communications::HazmatAlertsVectorMsg& msg);
   QrPtrVectorPtr makeQrs(
       const vision_communications::QRAlertsVectorMsg& msg);
   template <class ObjectType>
     typename TypeDef< ObjectType >::PtrVectorPtr makeObjects(
-        const common_communications::GeneralAlertMsg& msg);
+        const pandora_common_msgs::GeneralAlertMsg& msg);
 
   const tf::Transform& getTransform() const
   {
@@ -67,13 +67,13 @@ class ObjectFactory : private boost::noncopyable
   void setUpHole(const HolePtr& holePtr, 
       const vision_communications::HoleDirectionMsg& msg);
   void setUpThermal(const ThermalPtr& thermalPtr, 
-      const common_communications::GeneralAlertMsg& msg);
+      const pandora_common_msgs::GeneralAlertMsg& msg);
   void setUpHazmat(const HazmatPtr& hazmatPtr, 
       const vision_communications::HazmatAlertMsg& msg);
   void setUpQr(const QrPtr& qrPtr, 
       const vision_communications::QRAlertMsg& msg);
   void setUpObject(const ObjectPtr& objectPtr, 
-      const common_communications::GeneralAlertMsg& msg);
+      const pandora_common_msgs::GeneralAlertMsg& msg);
 
  private:
 
@@ -85,7 +85,7 @@ class ObjectFactory : private boost::noncopyable
 
 template <class ObjectType>
   typename TypeDef< ObjectType >::PtrVectorPtr ObjectFactory::makeObjects(
-      const common_communications::GeneralAlertMsg& msg)
+      const pandora_common_msgs::GeneralAlertMsg& msg)
 {
   currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 

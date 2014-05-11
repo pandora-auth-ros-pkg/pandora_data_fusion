@@ -32,7 +32,7 @@
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
-#include "common_communications/GeneralAlertMsg.h"
+#include "pandora_common_msgs/GeneralAlertMsg.h"
 
 #include "state_manager/state_client.h"
 
@@ -71,13 +71,13 @@ class AlertHandler : public StateClient, private boost::noncopyable
   void holeDirectionAlertCallback(
     const vision_communications::HolesDirectionsVectorMsg& msg);
   void thermalDirectionAlertCallback(
-    const common_communications::GeneralAlertMsg& msg);
+    const pandora_common_msgs::GeneralAlertMsg& msg);
   void hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg);
   void qrAlertCallback(const vision_communications::QRAlertsVectorMsg& msg);
   template <class ObjectType> 
     void objectDirectionAlertCallback(
-        const common_communications::GeneralAlertMsg& msg);
+        const pandora_common_msgs::GeneralAlertMsg& msg);
 
   /* Victim-concerned Subscribers */
   /**
@@ -207,7 +207,7 @@ class AlertHandler : public StateClient, private boost::noncopyable
 
 template <class ObjectType> 
 void AlertHandler::objectDirectionAlertCallback(
-    const common_communications::GeneralAlertMsg& msg)
+    const pandora_common_msgs::GeneralAlertMsg& msg)
 {    
   // ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
 
