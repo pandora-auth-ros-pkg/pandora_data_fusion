@@ -53,7 +53,7 @@ void AlertHandler::initRosInterfaces()
   if (nh_.getParam("subscribed_topic_names/thermalDirection", param))
   {
     thermalDirectionSubscriber_ = nh_.subscribe(param, 
-      1, &AlertHandler::thermalDirectionAlertCallback, this);
+      1, &AlertHandler::objectDirectionAlertCallback< Thermal >, this);
   }
   else
   {
@@ -321,28 +321,6 @@ void AlertHandler::qrAlertCallback(
   }
 
   objectHandler_->handleQrs(qrsVectorPtr, objectFactory_->getTransform());
-
-}
-
-void AlertHandler::thermalDirectionAlertCallback(
-    const pandora_common_msgs::GeneralAlertMsg& msg)
-{
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "THERMAL ALERT ARRIVED!");
-
-  ThermalPtrVectorPtr thermalsVectorPtr;
-  try
-  {
-    thermalsVectorPtr = objectFactory_->makeThermals(msg);
-  }
-  catch (AlertException ex)
-  {
-    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-    return;
-  }
-
-  objectHandler_->handleThermals(thermalsVectorPtr, objectFactory_->getTransform());
-
-  victimHandler_->notify();
 
 }
 
