@@ -114,15 +114,6 @@ class VictimList : public ObjectList<Victim>
   bool getCurrentVictimTransform(tf::Transform* Transform) const;
 
   /**
-   * @brief Updates current victim with sensors and fusion probability
-   * @param msg [data_fusion_communications::VictimVerificationMsg&] : 
-   * The victim verirification message
-   * @return bool -1 if no victim is tracked
-   */
-  bool updateCurrentVictimSensorsAndProb(
-    const data_fusion_communications::VictimVerificationMsg& msg);
-
-  /**
    * @brief Deletes the current VictimPtr  
    */
   bool deleteCurrentVictim();

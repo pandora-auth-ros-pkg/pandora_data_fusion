@@ -93,13 +93,11 @@ class VictimHandler : private boost::noncopyable
   void notify();
 
   /**
-   * @brief Handles a victim verification message
-   * @param msg [data_fusion_communications::VictimVerificationMsg&] : 
-   * The victim verirification message
+   * @brief Check if current alert can be associated with a victim.
+   * Verify if possible this victim.
    * @return void
    */
-  void handleVictimVerification(
-      const data_fusion_communications::VictimVerificationMsg& msg);
+  void inspect();
 
   /**
    * @brief Updates the victim handler's parameters

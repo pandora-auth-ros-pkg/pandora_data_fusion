@@ -211,27 +211,6 @@ bool VictimList::getCurrentVictimTransform(tf::Transform* Transform) const
 }
 
 /**
- * @details Sets victim's info according to the message from Victim Fusion.
- */
-bool VictimList::updateCurrentVictimSensorsAndProb(
-    const data_fusion_communications::VictimVerificationMsg& msg)
-{    
-  if (currentVictimIt_ == objects_.end())
-  {
-    return false;
-  }
-    
-  // maybe use a probability function
-  (*currentVictimIt_)->setProbability(msg.probability);
-  for (int i = 0; i < msg.sensorIds.size(); i++)
-  {
-    (*currentVictimIt_)->addSensor(msg.sensorIds[i]);
-  }
-
-  return true;
-}
-
-/**
  * @details Assuming that a victim is being tracked, that victim is erased
  * from victim list. Next currentVictim iterator points to the end of the
  * list.

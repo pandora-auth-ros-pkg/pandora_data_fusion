@@ -123,22 +123,42 @@ void VictimHandler::notify()
 
   VictimPtrVector newVictimVector = clusterer_->createVictimList(allObjects);
 
-  for (int ii = 0; ii < newVictimVector.size(); ii++)
+  for(int ii = 0; ii < newVictimVector.size(); ii++)
   {
-    if ( victimsVisitedList_.contains( newVictimVector[ii] ) )
+    if(victimsVisitedList_.contains(newVictimVector[ii]))
     {
       continue;
     }
 
-    victimsToGoList_.add(newVictimVector[ii]);
+    bool victimIsNew = victimsToGoList_.add(newVictimVector[ii]);
 
-    if ( !victimsToGoList_.isVictimBeingTracked() )
+    if(victimIsNew)
     {
       publishVictimFoundMsg();
     }
-    else if (victimsToGoList_.currentVictimUpdated())
+    else if(victimsToGoList_.currentVictimUpdated())
     {
       publishVictimUpdatedMsg();
+    }
+  }
+}
+
+void VictimHandler::inspect()
+{
+  notify();
+
+  for (VictimList::const_iterator it = victimsToGoList_.begin();
+      it != victimsToGoList_.end(); it++)
+  {
+    (*it)->inspect();
+  }
+
+  if(victimsToGoList_.isVictimBeingTracked())
+  {
+    if(victimsToGoList_.getCurrentVictim()->getProbability() 
+        > VICTIM_VERIFICATION_PROB)
+    {
+      publishVictimToFsmMsg(victimsToGoList_.getCurrentVictim());
     }
   }
 }
@@ -215,29 +235,6 @@ bool VictimHandler::getCurrentVictimTransform(
   } 
   return false;
 }
-
-/**
- * @details Delegate to victimList and publish verification msg if probability
- * exceeds threshold
- */
-void VictimHandler::handleVictimVerification(
-    const data_fusion_communications::VictimVerificationMsg& msg)
-{
-  bool victimTracked = victimsToGoList_.updateCurrentVictimSensorsAndProb(msg);
-  
-  if(!victimTracked)
-  {
-    ROS_ERROR("[VICTIM_HANDLER %d] VictimVerificationMsg was"
-              "called when no victim is tracked ", __LINE__);
-    return;
-  }
-
-  if(msg.probability > VICTIM_VERIFICATION_PROB)
-  {
-    publishVictimToFsmMsg(victimsToGoList_.getCurrentVictim());
-  }
-}
-
 
 /**
  * @details Delegate to victimList
@@ -339,36 +336,16 @@ void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
   msg.x = victim->getPose().position.x;
   msg.y = victim->getPose().position.y;
   msg.probability = victim->getProbability();
-  for (std::set<int>::iterator it = victim->getSensorIds().begin();
-       it != victim->getSensorIds().end(); ++it)
+  for (ObjectConstPtrVector::const_iterator it = victim->getObjects().begin();
+       it != victim->getObjects().end(); ++it)
   {
-    msg.sensors.push_back(sensorIdToString(*it));
+    if((*it)->getType() != "hole")
+    {
+      msg.sensors.push_back((*it)->getType());
+    }
   }
   victimVerifiedPublisher_.publish(msg);
 }
-
-/**
- * @details 
- */
-std::string VictimHandler::sensorIdToString(int sensorId)
-{
-  switch (sensorId)
-  {
-    case data_fusion_communications::VictimVerificationMsg::FACE:
-      return "Face";
-    case data_fusion_communications::VictimVerificationMsg::MOTION:
-      return "Motion";
-    case data_fusion_communications::VictimVerificationMsg::MLX:
-      return "Sound";
-    case data_fusion_communications::VictimVerificationMsg::CO2:
-      return "CO2";
-  }
-  ROS_ERROR("[VICTIM_HANDLER %d] sensorIdToString was called"
-            "with invalid sensor id", __LINE__);
-  ROS_BREAK();
-  return "";
-}
-
 
 /**
  * @details 

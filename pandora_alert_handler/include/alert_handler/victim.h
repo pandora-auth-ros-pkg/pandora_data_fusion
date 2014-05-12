@@ -53,28 +53,31 @@ class Victim : public Object
    * @brief Setter of the objects associated with the Victim. Selects and keeps
    * as many objects as the different types of objects comprising this victim.
    * (as by now - Hole and Thermal)
-   * @param objects [ObjectConstPtrVector const&] Group of objects considered a victim
-   * @param approachDistance [float] Approach point's desired distance away from victim
+   * @param objects [ObjectConstPtrVector const&] 
+   * Group of objects considered a victim
+   * @param approachDistance [float] 
+   * Approach point's desired distance away from victim
    * @return void
    */
   void setObjects(const ObjectConstPtrVector& objects, 
       float approachDistance);
   
   /**
+   * @brief Inspects this victim's objects in order to verify it. 
+   * Sets its probability.
+   * @return void
+   */
+  void inspect();
+
+  /**
    * @brief Erases from victim's associated objects
    * @param index [int] Index in victim's vector of objects
-   * @param approachDistance [float] Approach point's desired distance away from victim
+   * @param approachDistance [float] 
+   * Approach point's desired distance away from victim
    * @return void
    */
   void eraseObjectAt(int index, float approachDistance);
   
-  /**
-   * @brief Inserts a sensor type that created the alert.
-   * @param sensorId [int] sensor type (should be this enum-ed?)
-   * @return void
-   */
-  void addSensor(int sensorId);
-
   /**
    * @override
    * @brief Getter for geotiff information about the victim
@@ -140,15 +143,6 @@ class Victim : public Object
    * @return PoseStamped approachPose_ (stamped)
    */
   PoseStamped getApproachPoseStamped() const;
-  
-  /**
-   * @brief Getter for member sensorIds_
-   * @return std::set<int>& sensorIds_
-   */
-  const std::set<int>& getSensorIds() const
-  {
-    return sensorIds_;
-  }
   
   /**
    * @brief Getter for member objects_
@@ -248,7 +242,7 @@ class Victim : public Object
   
  protected:
 
-  //!< The validity of the Victim
+  //!< The validity of the victim
   bool valid_;
   //!< True if the victim was visited false otherwise     
   bool visited_;
@@ -262,9 +256,6 @@ class Victim : public Object
 
   //!< Pose with the approch point to the victim and its orientation
   geometry_msgs::Pose approachPose_;    
-  
-  //!< Holds the type of sensor that created the alarm
-  std::set<int> sensorIds_;   
   
   //!< Victim's characteristic group of objects (Hole or Thermal)
   ObjectConstPtrVector objects_;

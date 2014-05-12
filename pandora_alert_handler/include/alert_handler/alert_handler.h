@@ -224,7 +224,7 @@ void AlertHandler::objectDirectionAlertCallback(
 
   objectHandler_->handleObjects(objectsVectorPtr, objectFactory_->getTransform());
 
-  victimHandler_->notify();
+  victimHandler_->inspect();
 
 }
 

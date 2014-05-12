@@ -283,94 +283,6 @@ void AlertHandler::holeDirectionAlertCallback(
 
 }
 
-//void AlertHandler::faceDirectionAlertCallback(
-//    const vision_communications::HolesDirectionsVectorMsg& msg)
-//{    
-//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
-
-//  FacePtrVectorPtr facesVectorPtr;
-//  try
-//  {
-//    facesVectorPtr = objectFactory_->makeObjects< Face >(msg);
-//  }
-//  catch (AlertException ex)
-//  {
-//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-//    return;
-//  }
-
-//  objectHandler_->handleFaces(facesVectorPtr, objectFactory_->getTransform());
-
-//  victimHandler_->notify();
-
-//}
-
-//void AlertHandler::co2DirectionAlertCallback(
-//    const vision_communications::HolesDirectionsVectorMsg& msg)
-//{    
-//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "CO2 ALERT ARRIVED!");
-
-//  Co2PtrVectorPtr co2sVectorPtr;
-//  try
-//  {
-//    co2sVectorPtr = objectFactory_->makeObjects< Co2 >(msg);
-//  }
-//  catch (AlertException ex)
-//  {
-//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-//    return;
-//  }
-
-//  objectHandler_->handleCo2s(co2sVectorPtr, objectFactory_->getTransform());
-
-//  victimHandler_->notify();
-
-//}
-
-//void AlertHandler::motionDirectionAlertCallback(
-//    const vision_communications::HolesDirectionsVectorMsg& msg)
-//{    
-//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "MOTION ALERT ARRIVED!");
-
-//  MotionPtrVectorPtr motionsVectorPtr;
-//  try
-//  {
-//    motionsVectorPtr = objectFactory_->makeObjects< Motion >(msg);
-//  }
-//  catch (AlertException ex)
-//  {
-//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-//    return;
-//  }
-
-//  objectHandler_->handleMotions(motionsVectorPtr, objectFactory_->getTransform());
-
-//  victimHandler_->notify();
-
-//}
-
-//void AlertHandler::soundDirectionAlertCallback(
-//    const vision_communications::HolesDirectionsVectorMsg& msg)
-//{    
-//  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "SOUND ALERT ARRIVED!");
-
-//  SoundPtrVectorPtr soundsVectorPtr;
-//  try
-//  {
-//    soundsVectorPtr = objectFactory_->makeObjects< Sound >(msg);
-//  }
-//  catch (AlertException ex)
-//  {
-//    ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
-//    return;
-//  }
-
-//  objectHandler_->handleSounds(soundsVectorPtr, objectFactory_->getTransform());
-
-//  victimHandler_->notify();
-
-//}
-
 void AlertHandler::hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg)
 {
@@ -449,7 +361,6 @@ void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
 void AlertHandler::victimVerificationCallback(
     const data_fusion_communications::VictimVerificationMsg& msg)
 {
-  victimHandler_->handleVictimVerification(msg);
 }
 
 void AlertHandler::selectedVictimCallback(const std_msgs::Int16& msg)
