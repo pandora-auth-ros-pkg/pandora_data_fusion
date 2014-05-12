@@ -84,7 +84,9 @@ class VictimHandler : private boost::noncopyable
                 const FaceListConstPtr& faceListPtr,
                 const MotionListConstPtr& motionListPtr,
                 const SoundListConstPtr& soundListPtr,
-                const Co2ListConstPtr& co2ListPtr);
+                const Co2ListConstPtr& co2ListPtr,
+                VictimListPtr victimsToGoList,
+                VictimListPtr victimsVisitedList);
 
   /**
    * @brief Updates the victim lists with the existing objects
@@ -255,9 +257,9 @@ class VictimHandler : private boost::noncopyable
   VictimClustererPtr clusterer_;
   
   //!< The unvisited victims list  
-  VictimList victimsToGoList_;
+  VictimListPtr victimsToGoList_;
   //!< The visited victims list  
-  VictimList victimsVisitedList_;
+  VictimListPtr victimsVisitedList_;
   //!< counts verified victims that were validated by user
   int validVictimsCounter_;
 

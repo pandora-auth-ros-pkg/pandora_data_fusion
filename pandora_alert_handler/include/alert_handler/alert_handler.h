@@ -188,6 +188,7 @@ class AlertHandler : public StateClient, private boost::noncopyable
   int prevxMin;
   int prevyMin;
 
+  //!< The alerts list
   HoleListPtr holes_;
   QrListPtr qrs_;
   MotionListPtr motions_;
@@ -196,6 +197,11 @@ class AlertHandler : public StateClient, private boost::noncopyable
   Co2ListPtr co2s_;
   HazmatListPtr hazmats_;
   ThermalListPtr thermals_;
+
+  //!< The unvisited victims list  
+  VictimListPtr victimsToGo_;
+  //!< The visited victims list  
+  VictimListPtr victimsVisited_;
 
   ObjectFactoryPtr objectFactory_;
   ObjectHandlerPtr objectHandler_;

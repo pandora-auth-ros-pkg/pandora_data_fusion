@@ -11,6 +11,7 @@
 #include "data_fusion_communications/QrNotificationMsg.h"
 
 #include "alert_handler/object_list.h"
+#include "alert_handler/victim_list.h"
 
 namespace pandora_data_fusion
 {
@@ -24,7 +25,9 @@ class ObjectHandler : private boost::noncopyable
   ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
                 HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr,
                 FaceListPtr faceListPtr, MotionListPtr motionListPtr,
-                SoundListPtr soundListPtr, Co2ListPtr co2ListPtr);
+                SoundListPtr soundListPtr, Co2ListPtr co2ListPtr,
+                const VictimListConstPtr& victimsToGoList,
+                const VictimListConstPtr& victimsVisited);
 
   void handleHoles(const HolePtrVectorPtr& newHoles, 
       const tf::Transform& transform);
@@ -32,7 +35,7 @@ class ObjectHandler : private boost::noncopyable
       const tf::Transform& transform);
   void handleHazmats(const HazmatPtrVectorPtr& newHazmats, 
       const tf::Transform& transform);
-  void handleThermals(const ThermalPtrVectorPtr& newThermals, 
+  void handleObjects(const ThermalPtrVectorPtr& newThermals, 
       const tf::Transform& transform);
   void handleObjects(const FacePtrVectorPtr& newFaces, 
       const tf::Transform& transform);
@@ -63,6 +66,9 @@ class ObjectHandler : private boost::noncopyable
   MotionListPtr motionListPtr_;
   SoundListPtr soundListPtr_;
   Co2ListPtr co2ListPtr_;
+
+  VictimListConstPtr victimsToGoList_;
+  VictimListConstPtr victimsVisitedList_;
 
   int roboCupScore_;
   

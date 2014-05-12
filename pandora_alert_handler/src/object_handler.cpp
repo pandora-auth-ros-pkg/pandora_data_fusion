@@ -10,7 +10,9 @@ namespace pandora_alert_handler
 ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr, 
     HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr, 
     FaceListPtr faceListPtr, MotionListPtr motionListPtr,
-    SoundListPtr soundListPtr, Co2ListPtr co2ListPtr) : 
+    SoundListPtr soundListPtr, Co2ListPtr co2ListPtr,
+    const VictimListConstPtr& victimsToGoList,
+    const VictimListConstPtr& victimsVisitedList) : 
   holeListPtr_(holeListPtr),
   qrListPtr_(qrListPtr),
   hazmatListPtr_(hazmatListPtr),
@@ -18,7 +20,9 @@ ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
   faceListPtr_(faceListPtr),
   motionListPtr_(motionListPtr),
   soundListPtr_(soundListPtr),
-  co2ListPtr_(co2ListPtr)
+  co2ListPtr_(co2ListPtr),
+  victimsToGoList_(victimsToGoList),
+  victimsVisitedList_(victimsVisitedList)
 {
   roboCupScore_ = 0;
 
@@ -96,7 +100,7 @@ void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
   }
 }
 
-void ObjectHandler::handleThermals(const ThermalPtrVectorPtr& newThermals,
+void ObjectHandler::handleObjects(const ThermalPtrVectorPtr& newThermals,
   const tf::Transform& transform)
 {
   for (int ii = 0; ii < newThermals->size(); ++ii)

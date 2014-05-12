@@ -52,13 +52,17 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
                              const FaceListConstPtr& faceListPtr,
                              const MotionListConstPtr& motionListPtr,
                              const SoundListConstPtr& soundListPtr,
-                             const Co2ListConstPtr& co2ListPtr) :
+                             const Co2ListConstPtr& co2ListPtr,
+                             VictimListPtr victimsToGoList,
+                             VictimListPtr victimsVisitedList) :
   holePtrListPtr_(holeListPtr),
   thermalPtrListPtr_(thermalListPtr),
   facePtrListPtr_(faceListPtr),
   motionPtrListPtr_(motionListPtr),
   soundPtrListPtr_(soundListPtr),
-  co2PtrListPtr_(co2ListPtr)
+  co2PtrListPtr_(co2ListPtr),
+  victimsToGoList_(victimsToGoList),
+  victimsVisitedList_(victimsVisitedList)
 {
   Victim::setHoleModel(holePtrListPtr_->getFilterModel());
   Victim::setThermalModel(thermalPtrListPtr_->getFilterModel());
@@ -125,18 +129,18 @@ void VictimHandler::notify()
 
   for(int ii = 0; ii < newVictimVector.size(); ii++)
   {
-    if(victimsVisitedList_.contains(newVictimVector[ii]))
+    if(victimsVisitedList_->contains(newVictimVector[ii]))
     {
       continue;
     }
 
-    bool victimIsNew = victimsToGoList_.add(newVictimVector[ii]);
+    bool victimIsNew = victimsToGoList_->add(newVictimVector[ii]);
 
     if(victimIsNew)
     {
       publishVictimFoundMsg();
     }
-    else if(victimsToGoList_.currentVictimUpdated())
+    else if(victimsToGoList_->currentVictimUpdated())
     {
       publishVictimUpdatedMsg();
     }
@@ -147,18 +151,18 @@ void VictimHandler::inspect()
 {
   notify();
 
-  for (VictimList::const_iterator it = victimsToGoList_.begin();
-      it != victimsToGoList_.end(); it++)
+  for (VictimList::const_iterator it = victimsToGoList_->begin();
+      it != victimsToGoList_->end(); it++)
   {
     (*it)->inspect();
   }
 
-  if(victimsToGoList_.isVictimBeingTracked())
+  if(victimsToGoList_->isVictimBeingTracked())
   {
-    if(victimsToGoList_.getCurrentVictim()->getProbability() 
+    if(victimsToGoList_->getCurrentVictim()->getProbability() 
         > VICTIM_VERIFICATION_PROB)
     {
-      publishVictimToFsmMsg(victimsToGoList_.getCurrentVictim());
+      publishVictimToFsmMsg(victimsToGoList_->getCurrentVictim());
     }
   }
 }
@@ -175,7 +179,7 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
   ObjectList<Hole>::const_iterator holeIt;
 
   for ( holeIt = holePtrListPtr_->begin();
-        holeIt != holePtrListPtr_->end() ; ++holeIt )
+        holeIt != holePtrListPtr_->end(); ++holeIt )
   {
     if ( (*holeIt) -> getLegit())
     {
@@ -203,7 +207,7 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
 void VictimHandler::getVictimsMsg (
   std::vector< data_fusion_communications::VictimInfoMsg>* victimMsgVector)
 {  
-  victimsToGoList_.getVictimsMsg(victimMsgVector); 
+  victimsToGoList_->getVictimsMsg(victimMsgVector); 
 }
 
 /**
@@ -215,7 +219,7 @@ void VictimHandler::setCurrentVictimIndex(int index)
     // deleted before navigation sends back selected id.
     // Hopefully this will be quite uncommon.
     // should fix if ASSERTION ever fails
-    bool victimWasSet = victimsToGoList_.setCurrentVictim(index);
+    bool victimWasSet = victimsToGoList_->setCurrentVictim(index);
     ROS_ASSERT(victimWasSet);
 }
 
@@ -226,7 +230,7 @@ bool VictimHandler::getCurrentVictimTransform(
     tf::StampedTransform* stampedTranform)
 {
   tf::Transform trans;
-  bool victimTracked = victimsToGoList_.getCurrentVictimTransform(&trans);
+  bool victimTracked = victimsToGoList_->getCurrentVictimTransform(&trans);
   if (victimTracked)
   {
     *stampedTranform =  tf::StampedTransform(
@@ -241,7 +245,7 @@ bool VictimHandler::getCurrentVictimTransform(
  */
 void VictimHandler::deleteCurrentVictim()
 {
-  bool victimTracked = victimsToGoList_.deleteCurrentVictim();
+  bool victimTracked = victimsToGoList_->deleteCurrentVictim();
 
   if(!victimTracked)
   {
@@ -255,7 +259,7 @@ void VictimHandler::deleteCurrentVictim()
  */
 void VictimHandler::validateCurrentHole(bool objectValid)
 {
-  VictimPtr currentVictim = victimsToGoList_.validateCurrentObject(objectValid);
+  VictimPtr currentVictim = victimsToGoList_->validateCurrentObject(objectValid);
   
   if(currentVictim.get())
   {
@@ -265,7 +269,7 @@ void VictimHandler::validateCurrentHole(bool objectValid)
       updateValidVictims.data = ++validVictimsCounter_;
       validVictimsPublisher_.publish(updateValidVictims);
     }
-    victimsVisitedList_.addUnchanged(currentVictim);
+    victimsVisitedList_->addUnchanged(currentVictim);
   }
 }
 
@@ -274,10 +278,10 @@ void VictimHandler::validateCurrentHole(bool objectValid)
 void VictimHandler::getVictimsPosesStamped(PoseStampedVector* victimsToGo, 
     PoseStampedVector* victimsVisited, PoseStampedVector* approachPoses)
 {
-  victimsToGoList_.getObjectsPosesStamped(victimsToGo);
-  victimsVisitedList_.getObjectsPosesStamped(victimsVisited);
-  for(VictimList::const_iterator it = victimsToGoList_.begin();
-      it != victimsToGoList_.end(); ++it)
+  victimsToGoList_->getObjectsPosesStamped(victimsToGo);
+  victimsVisitedList_->getObjectsPosesStamped(victimsVisited);
+  for(VictimList::const_iterator it = victimsToGoList_->begin();
+      it != victimsToGoList_->end(); ++it)
   {
     approachPoses->push_back((*it)->getApproachPoseStamped());
   }
@@ -289,7 +293,7 @@ void VictimHandler::getVictimsPosesStamped(PoseStampedVector* victimsToGo,
 void VictimHandler::fillGeotiff(
     data_fusion_communications::DatafusionGeotiffSrv::Response* res)
 {
-  victimsVisitedList_.fillGeotiff(res);
+  victimsVisitedList_->fillGeotiff(res);
 }
 
 /**
@@ -299,8 +303,8 @@ void VictimHandler::getVisualization(
     visualization_msgs::MarkerArray* victimsVisitedMarkers,
     visualization_msgs::MarkerArray* victimsToGoMarkers)
 {
-  victimsVisitedList_.getVisualization(victimsVisitedMarkers);
-  victimsToGoList_.getVisualization(victimsToGoMarkers);
+  victimsVisitedList_->getVisualization(victimsVisitedMarkers);
+  victimsToGoList_->getVisualization(victimsToGoMarkers);
 }
 
 /**
@@ -356,8 +360,8 @@ void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
 {
   VICTIM_VERIFICATION_PROB = verificationProbability;
   clusterer_->updateParams(clusterRadius, approachDist);
-  victimsToGoList_.setParams(sameVictimRadius, approachDist, victimUpdate);
-  victimsVisitedList_.setParams(sameVictimRadius, approachDist, victimUpdate);
+  victimsToGoList_->setParams(sameVictimRadius, approachDist, victimUpdate);
+  victimsVisitedList_->setParams(sameVictimRadius, approachDist, victimUpdate);
 }
 
 /**
@@ -365,7 +369,7 @@ void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
  */
 void VictimHandler::flush()
 {
-  victimsToGoList_.clear();
+  victimsToGoList_->clear();
 }
 
 }  // namespace pandora_alert_handler
