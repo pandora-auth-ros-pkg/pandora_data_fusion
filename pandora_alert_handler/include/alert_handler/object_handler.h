@@ -31,27 +31,23 @@ class ObjectHandler : private boost::noncopyable
 
   void handleHoles(const HolePtrVectorPtr& newHoles, 
       const tf::Transform& transform);
-  void handleQrs(const QrPtrVectorPtr& newQrs, 
-      const tf::Transform& transform);
-  void handleHazmats(const HazmatPtrVectorPtr& newHazmats, 
-      const tf::Transform& transform);
-  void handleObjects(const ThermalPtrVectorPtr& newThermals, 
-      const tf::Transform& transform);
-  void handleObjects(const FacePtrVectorPtr& newFaces, 
-      const tf::Transform& transform);
-  void handleObjects(const MotionPtrVectorPtr& newMotions, 
-      const tf::Transform& transform);
-  void handleObjects(const SoundPtrVectorPtr& newSounds, 
-      const tf::Transform& transform);
-  void handleObjects(const Co2PtrVectorPtr& newCo2s, 
-      const tf::Transform& transform);
+  void handleQrs(const QrPtrVectorPtr& newQrs); 
+  void handleHazmats(const HazmatPtrVectorPtr& newHazmats); 
+  void handleObjects(const ThermalPtrVectorPtr& newThermals); 
+  void handleObjects(const FacePtrVectorPtr& newFaces);
+  void handleObjects(const MotionPtrVectorPtr& newMotions); 
+  void handleObjects(const SoundPtrVectorPtr& newSounds); 
+  void handleObjects(const Co2PtrVectorPtr& newCo2s); 
 
-  void updateParams(float sensor_range);
+  void updateParams(float sensor_range, float victim_cluster_radius);
 
  private:
 
   void keepValidHoles(const HolePtrVectorPtr& holesPtr,
      const tf::Transform& cameraTransform);
+  template <class ObjectType>
+  void keepValidVerificationObjects(
+      const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr);
 
  private:
 
@@ -73,8 +69,85 @@ class ObjectHandler : private boost::noncopyable
   int roboCupScore_;
   
   float SENSOR_RANGE;
+  float VICTIM_CLUSTER_RADIUS;
 
 };
+
+template <class ObjectType>
+void ObjectHandler::keepValidVerificationObjects(
+    const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr)
+{
+  typename TypeDef<ObjectType>::PtrVector::iterator iter = objectsPtr->begin();
+
+  while(iter != objectsPtr->end())
+  {
+    bool invalid = false;
+    for(VictimList::const_iterator it = victimsToGoList_->begin();
+        it != victimsToGoList_->end(); it++)
+    {
+      invalid = Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
+          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+      if(invalid)
+        break;
+    }
+    for(VictimList::const_iterator it = victimsVisitedList_->begin();
+        it != victimsVisitedList_->end(); it++)
+    {
+      invalid = invalid || Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
+          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+      if(invalid)
+        break;
+    }
+    if(invalid)
+    {
+      ROS_DEBUG_NAMED("object_handler",
+        "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
+      iter = objectsPtr->erase(iter);
+    }
+    else
+    {
+      ++iter;
+    }
+  }
+}
+
+template<>
+void ObjectHandler::keepValidVerificationObjects<Sound>(
+    const typename TypeDef<Sound>::PtrVectorPtr& objectsPtr)
+{
+  SoundPtrVector::iterator iter = objectsPtr->begin();
+
+  while(iter != objectsPtr->end())
+  {
+    bool invalid = false;
+    for(VictimList::const_iterator it = victimsToGoList_->begin();
+        it != victimsToGoList_->end(); it++)
+    {
+      invalid = Utils::distanceBetweenPoints2D((*iter)->getPose().position, 
+          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+      if(invalid)
+        break;
+    }
+    for(VictimList::const_iterator it = victimsVisitedList_->begin();
+        it != victimsVisitedList_->end(); it++)
+    {
+      invalid = invalid || Utils::distanceBetweenPoints2D((*iter)->getPose().position, 
+          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+      if(invalid)
+        break;
+    }
+    if(invalid)
+    {
+      ROS_DEBUG_NAMED("object_handler",
+        "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
+      iter = objectsPtr->erase(iter);
+    }
+    else
+    {
+      ++iter;
+    }
+  }
+}
 
 typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
 

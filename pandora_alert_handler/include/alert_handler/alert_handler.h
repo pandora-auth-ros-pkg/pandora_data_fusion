@@ -220,7 +220,7 @@ void AlertHandler::objectDirectionAlertCallback(
   typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr;
   try
   {
-    objectsVectorPtr = objectFactory_->makeObjects< ObjectType >(msg);
+    objectsVectorPtr = objectFactory_->makeObjects<ObjectType>(msg);
   }
   catch (AlertException ex)
   {
@@ -228,7 +228,7 @@ void AlertHandler::objectDirectionAlertCallback(
     return;
   }
 
-  objectHandler_->handleObjects(objectsVectorPtr, objectFactory_->getTransform());
+  objectHandler_->handleObjects(objectsVectorPtr);
 
   victimHandler_->inspect();
 

@@ -302,8 +302,7 @@ void AlertHandler::hazmatAlertCallback(
     return;
   }
 
-  objectHandler_->handleHazmats(
-      hazmatsVectorPtr, objectFactory_->getTransform());
+  objectHandler_->handleHazmats(hazmatsVectorPtr);
 
 }
 
@@ -323,7 +322,7 @@ void AlertHandler::qrAlertCallback(
     return;
   }
 
-  objectHandler_->handleQrs(qrsVectorPtr, objectFactory_->getTransform());
+  objectHandler_->handleQrs(qrsVectorPtr);
 
 }
 
@@ -412,7 +411,7 @@ void AlertHandler::dynamicReconfigCallback(
       config.thermalPriorXSD, config.thermalPriorYSD, config.thermalPriorZSD,
       config.thermalSystemNoiseSD, config.thermalMeasNoiseSD);
 
-  objectHandler_->updateParams(config.sensorRange);
+  objectHandler_->updateParams(config.sensorRange, config.clusterRadius);
 
   victimHandler_->updateParams(
     config.clusterRadius , config.sameVictimRadius,

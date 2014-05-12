@@ -56,19 +56,18 @@ void ObjectHandler::handleHoles(const HolePtrVectorPtr& newHoles,
 {
   keepValidHoles(newHoles, transform);
 
-  for (int ii = 0; ii < newHoles->size(); ++ii)
+  for(int ii = 0; ii < newHoles->size(); ++ii)
   {
     holeListPtr_->add( newHoles->at(ii) );
   }
 }
 
-void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs, 
-  const tf::Transform& transform)
+void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs) 
 {
-  for (int ii = 0; ii < newQrs->size(); ++ii)
+  for(int ii = 0; ii < newQrs->size(); ++ii)
   {
     int qrScore = qrListPtr_->add( newQrs->at(ii) );
-    if (qrScore)
+    if(qrScore)
     {
       data_fusion_communications::QrNotificationMsg newQrNofifyMsg;
       newQrNofifyMsg.header.stamp = ros::Time::now();
@@ -84,13 +83,12 @@ void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs,
   }
 }
 
-void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
-  const tf::Transform& transform)
+void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats)
 {
-  for (int ii = 0; ii < newHazmats->size(); ++ii)
+  for(int ii = 0; ii < newHazmats->size(); ++ii)
   {
     int hazmatScore = hazmatListPtr_->add( newHazmats->at(ii) );
-    if (hazmatScore)
+    if(hazmatScore)
     {
       std_msgs::Int32 updateScoreMsg;
       roboCupScore_ += hazmatScore;
@@ -100,13 +98,12 @@ void ObjectHandler::handleHazmats(const HazmatPtrVectorPtr& newHazmats,
   }
 }
 
-void ObjectHandler::handleObjects(const ThermalPtrVectorPtr& newThermals,
-  const tf::Transform& transform)
+void ObjectHandler::handleObjects(const ThermalPtrVectorPtr& newThermals)
 {
-  for (int ii = 0; ii < newThermals->size(); ++ii)
+  for(int ii = 0; ii < newThermals->size(); ++ii)
   {
     int thermalScore = thermalListPtr_->add( newThermals->at(ii) );
-    if (thermalScore)
+    if(thermalScore)
     {
       std_msgs::Int32 updateScoreMsg;
       roboCupScore_ += thermalScore;
@@ -116,13 +113,13 @@ void ObjectHandler::handleObjects(const ThermalPtrVectorPtr& newThermals,
   }
 }
 
-void ObjectHandler::handleObjects(const FacePtrVectorPtr& newFaces,
-  const tf::Transform& transform)
+void ObjectHandler::handleObjects(const FacePtrVectorPtr& newFaces)
 {
-  for (int ii = 0; ii < newFaces->size(); ++ii)
+  keepValidVerificationObjects<Face>(newFaces);
+  for(int ii = 0; ii < newFaces->size(); ++ii)
   {
     int faceScore = faceListPtr_->add( newFaces->at(ii) );
-    if (faceScore)
+    if(faceScore)
     {
       std_msgs::Int32 updateScoreMsg;
       roboCupScore_ += faceScore;
@@ -132,13 +129,13 @@ void ObjectHandler::handleObjects(const FacePtrVectorPtr& newFaces,
   }
 }
 
-void ObjectHandler::handleObjects(const MotionPtrVectorPtr& newMotions,
-  const tf::Transform& transform)
+void ObjectHandler::handleObjects(const MotionPtrVectorPtr& newMotions)
 {
-  for (int ii = 0; ii < newMotions->size(); ++ii)
+  keepValidVerificationObjects<Motion>(newMotions);
+  for(int ii = 0; ii < newMotions->size(); ++ii)
   {
     int motionScore = motionListPtr_->add( newMotions->at(ii) );
-    if (motionScore)
+    if(motionScore)
     {
       std_msgs::Int32 updateScoreMsg;
       roboCupScore_ += motionScore;
@@ -148,13 +145,13 @@ void ObjectHandler::handleObjects(const MotionPtrVectorPtr& newMotions,
   }
 }
 
-void ObjectHandler::handleObjects(const SoundPtrVectorPtr& newSounds,
-  const tf::Transform& transform)
+void ObjectHandler::handleObjects(const SoundPtrVectorPtr& newSounds)
 {
-  for (int ii = 0; ii < newSounds->size(); ++ii)
+  keepValidVerificationObjects<Sound>(newSounds);
+  for(int ii = 0; ii < newSounds->size(); ++ii)
   {
     int soundScore = soundListPtr_->add( newSounds->at(ii) );
-    if (soundScore)
+    if(soundScore)
     {
       std_msgs::Int32 updateScoreMsg;
       roboCupScore_ += soundScore;
@@ -164,13 +161,13 @@ void ObjectHandler::handleObjects(const SoundPtrVectorPtr& newSounds,
   }
 }
 
-void ObjectHandler::handleObjects(const Co2PtrVectorPtr& newCo2s,
-  const tf::Transform& transform)
+void ObjectHandler::handleObjects(const Co2PtrVectorPtr& newCo2s)
 {
-  for (int ii = 0; ii < newCo2s->size(); ++ii)
+  keepValidVerificationObjects<Co2>(newCo2s);
+  for(int ii = 0; ii < newCo2s->size(); ++ii)
   {
     int co2Score = co2ListPtr_->add( newCo2s->at(ii) );
-    if (co2Score)
+    if(co2Score)
     {
       std_msgs::Int32 updateScoreMsg;
       roboCupScore_ += co2Score;
@@ -186,17 +183,14 @@ void ObjectHandler::keepValidHoles(const HolePtrVectorPtr& holesPtr,
   tf::Vector3 origin = transform.getOrigin();
   geometry_msgs::Point framePosition = Utils::vector3ToPoint(origin);
 
-  HolePtrVector::iterator iter;
-  iter = holesPtr->begin();
+  HolePtrVector::iterator iter = holesPtr->begin();
 
-  while (iter != holesPtr->end() )
+  while(iter != holesPtr->end())
   {
-    bool isInRange = !Utils::arePointsInRange((*iter)->getPose().position,
+    bool invalid = !Utils::arePointsInRange((*iter)->getPose().position,
       framePosition, SENSOR_RANGE );
 
-    bool inValid = isInRange;
-
-    if ( inValid )
+    if(invalid)
     {
       ROS_DEBUG_NAMED("object_handler",
         "[OBJECT_HANDLER %d] Deleting not valid hole...", __LINE__);
@@ -209,9 +203,10 @@ void ObjectHandler::keepValidHoles(const HolePtrVectorPtr& holesPtr,
   }
 }
 
-void ObjectHandler::updateParams(float sensorRange)
+void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius)
 {
-  SENSOR_RANGE = sensorRange;
+  SENSOR_RANGE = sensor_range;
+  VICTIM_CLUSTER_RADIUS = victim_cluster_radius;
 }
 
 }  // namespace pandora_alert_handler
