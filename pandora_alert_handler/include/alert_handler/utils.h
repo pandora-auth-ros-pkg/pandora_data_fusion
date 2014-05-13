@@ -4,6 +4,7 @@
 #define ALERT_HANDLER_UTILS_H
 
 #include <utility>
+#include <cmath>
 #include <boost/utility.hpp>
 
 #include <ros/ros.h>
@@ -31,6 +32,10 @@ class Utils : private boost::noncopyable
   static geometry_msgs::Quaternion calculateQuaternion(Point a,
     Point b);
   static Point vector3ToPoint(tf::Vector3 vector);
+  static float probabilityFromStdDev(float boundingRadius, float deviation);
+  static float stdDevFromProbability(float boundingRadius, float probability);
+  static float standardNormal(float x);
+  static float standardNormalIntegral(float x);
 
 };
 

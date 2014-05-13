@@ -60,6 +60,44 @@ bool Utils::arePointsInRange(Point pointA, Point pointB, float sensor_range )
     return true;
 }
 
+float Utils::probabilityFromStdDev(float boundingRadius, float deviation)
+{
+  if(deviation <= 0)
+  {
+    throw std::range_error("Standard deviation is a positive value.");
+  }
+  float x = boundingRadius / deviation;
+  return 2 * (standardNormalIntegral(x) - x * standardNormal(x) - 0.5);
+}
+
+float Utils::stdDevFromProbability(float boundingRadius, float probability)
+{
+  if(probability > 1 || probability < 0)
+  {
+    throw std::range_error("Probability value is between 0 and 1.");
+  }
+  float x = 0.60, y = 0.60, epsilon = 0.0001, der = 0;
+  do
+  {
+    x = y;
+    der = -(pow(boundingRadius, 2) / pow(x, 4)) * 
+      standardNormal(boundingRadius / x);
+    y = x - (probabilityFromStdDev(boundingRadius, x) - probability) / der;
+  }
+  while(abs(y-x) >= epsilon);
+  return y;
+}
+
+float Utils::standardNormal(float x)
+{
+  return (1/sqrt(2*PI)) * exp(-pow(x,2)/2);
+}
+
+float Utils::standardNormalIntegral(float x)
+{
+  return 0.5 * (1 + erf(x/sqrt(2)));
+}
+
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
