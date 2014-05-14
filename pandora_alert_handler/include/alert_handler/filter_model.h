@@ -41,7 +41,7 @@ class FilterModel
   /**
    * @brief Default constructor.
    */
-  FilterModel(float system_noise_sd = 0.05, float measurement_noise_sd = 0.5);
+  FilterModel(float system_noise_sd = 0.05);
 
   /**
    * @brief Getter for linear analytic system's model.
@@ -58,18 +58,26 @@ class FilterModel
   MeasurementModelPtrVector getMeasurementModels() const;
 
   /**
-   * @brief Initializes the FilterModel according to given parameters.
+   * @brief Initializes SystemModel according to given parameters.
    * @return void
    */
-  void initializeFilterModel();
+  void initializeSystemModel();
 
   /**
-   * @brief Sets standar deviation parameters.
-   * @param system_noise_sd [float] system model's standar deviation
-   * @param measurement_noise_sd [float] measurement model's standar deviation
+   * @brief Initializes MeasurementModel according to given parameters.
    * @return void
    */
-  void setParams(float system_noise_sd, float measurement_noise_sd);
+  void initializeMeasurementModel(float measurementStdDev);
+
+  void setSystemSD(float system_noise_sd)
+  {
+    SYSTEM_NOISE_SD = system_noise_sd;
+  }
+
+  float getSystemSD() const
+  {
+    return SYSTEM_NOISE_SD;
+  }
 
  private:
  
@@ -92,10 +100,8 @@ class FilterModel
   MeasurementModelPtr measurementModelZ_;
 
   //!< params
-  //!< System's noise standar deviation
+  //!< System's noise standard deviation
   float SYSTEM_NOISE_SD;
-  //!< Measurement's noise standar deviation
-  float MEASUREMENT_NOISE_SD;
 
 };
 

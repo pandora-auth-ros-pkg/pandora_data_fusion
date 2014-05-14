@@ -87,8 +87,7 @@ class Object
    * @brief Initialize filter's pdf for the current object
    * @return void
    */
-  void initializeObjectFilter(float prior_x_sd, float prior_y_sd, 
-      float prior_z_sd);
+  void initializeObjectFilter();
 
   /**
    * @brief Returns if this Object is the same with the given one
@@ -107,7 +106,7 @@ class Object
    * will be based upon.
    * @return void
    */
-  void update(const ConstPtr& measurement, const FilterModelConstPtr& model);
+  void update(const ConstPtr& measurement);
 
   /**
    * @brief Returns the object's pose
@@ -192,27 +191,27 @@ class Object
    * @brief Getter for variance in x dimension.
    * @return float variance
    */
-  float getVarianceX() const
+  float getStdDevX() const
   {
-    return filterX_->PostGet()->CovarianceGet()(1, 1);
+    return sqrt(filterX_->PostGet()->CovarianceGet()(1, 1));
   }
   
   /**
    * @brief Getter for variance in z dimension.
    * @return float variance
    */
-  float getVarianceY() const
+  float getStdDevY() const
   {
-    return filterY_->PostGet()->CovarianceGet()(1, 1);
+    return sqrt(filterY_->PostGet()->CovarianceGet()(1, 1));
   }
   
   /**
    * @brief Getter for variance in y dimension.
    * @return float variance
    */
-  float getVarianceZ() const
+  float getStdDevZ() const
   {
-    return filterZ_->PostGet()->CovarianceGet()(1, 1);
+    return sqrt(filterZ_->PostGet()->CovarianceGet()(1, 1));
   }
 
   /**
@@ -265,7 +264,27 @@ class Object
   {
     pose_ = pose;
   }
-  
+    
+  /**
+   * @brief Setter for static distance threshold.
+   * @param distanceThres [float] distance
+   * @return void
+   */
+  static void setDistanceThres(float distanceThres)
+  {
+    distanceThres_ = distanceThres;
+  }
+
+  /**
+   * @brief Setter for the reference of filter model.
+   * @param modelPtr [FilterModelPtr const&] 
+   * Reference to filter model.
+   * @return void
+   */
+  static void setFilterModel(const FilterModelPtr& modelPtr)
+  {
+    modelPtr_ = modelPtr;
+  }
   
  protected:
  
@@ -298,6 +317,11 @@ class Object
   FilterPtr filterY_;
   //!< Kalman filter for dimension z
   FilterPtr filterZ_;
+
+  //!< Variable with objects' min distance.
+  static float distanceThres_;
+  //!< Pointer to filter's model.
+  static FilterModelPtr modelPtr_;
    
  private:
   

@@ -55,7 +55,7 @@ bool VictimList::contains(const VictimConstPtr& victim) const
 {
   for (const_iterator it = this->begin(); it != this->end(); ++it)
   {
-    if ((*it)->isSameObject(victim, DIST_THRESHOLD))
+    if ((*it)->isSameObject(victim, DISTANCE_THRES))
     {
       return true;
     }
@@ -108,7 +108,7 @@ void VictimList::updateObjects(const VictimConstPtr& victim,
 void VictimList::setParams(float distanceThreshold, 
     float approachDistance, float victimUpdate)
 {    
-  ObjectList<Victim>::setParams(0, distanceThreshold);
+  DISTANCE_THRES = distanceThreshold;
   APPROACH_DIST = approachDistance;
   VICTIM_UPDATE = victimUpdate;  
 }

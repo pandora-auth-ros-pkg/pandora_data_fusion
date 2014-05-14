@@ -64,9 +64,6 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
   victimsToGoList_(victimsToGoList),
   victimsVisitedList_(victimsVisitedList)
 {
-  Victim::setHoleModel(holePtrListPtr_->getFilterModel());
-  Victim::setThermalModel(thermalPtrListPtr_->getFilterModel());
-
   clusterer_.reset( new VictimClusterer(0.2, 0.5) );
 
   validVictimsCounter_ = 0;

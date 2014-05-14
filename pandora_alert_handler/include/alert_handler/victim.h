@@ -178,28 +178,6 @@ class Victim : public Object
   {
     visited_ = visited;
   }
-    
-  /**
-   * @brief Setter for the reference of hole filter model.
-   * @param holeModelPtr [FilterModelConstPtr const&] 
-   * Reference to hole filter model.
-   * @return void
-   */
-  static void setHoleModel(const FilterModelPtr& holeModelPtr)
-  {
-    holeModelPtr_ = holeModelPtr;
-  }
-    
-  /**
-   * @brief Setter for the reference of thermal filter model.
-   * @param thermalModelPtr [FilterModelConstPtr const&] 
-   * Reference to thermal filter model.
-   * @return void
-   */
-  static void setThermalModel(const FilterModelPtr& thermalModelPtr)
-  {
-    thermalModelPtr_ = thermalModelPtr;
-  }
 
  private:
   
@@ -269,11 +247,6 @@ class Victim : public Object
   
   static int lastVictimId_;  //!< The last in line victim ID
   
-  //!< Pointer to filter's model used in HoleList.
-  static FilterModelPtr holeModelPtr_;
-  //!< Pointer to filter's model used in ThermalList.
-  static FilterModelPtr thermalModelPtr_;
-
 };
 
 typedef Victim::Ptr VictimPtr;

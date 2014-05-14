@@ -19,8 +19,6 @@ namespace pandora_data_fusion
     }
 
     int Victim::lastVictimId_ = 0;
-    FilterModelPtr Victim::holeModelPtr_ = FilterModelPtr();
-    FilterModelPtr Victim::thermalModelPtr_ = FilterModelPtr();
 
     bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
     {  
@@ -148,15 +146,15 @@ namespace pandora_data_fusion
       if(!holeDeleted_)
       {
         ObjectConstPtrVector::const_iterator holeIt = objects.end();
-        float minHoleVariance = 1;
+        float maxHoleProbability = 0;
 
         for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
             it != objects.end(); it++)
         {
           if (!(*it)->getType().compare(std::string("hole")) && 
-              (*it)->getVarianceX() < minHoleVariance)
+              (*it)->getProbability() > maxHoleProbability)
           {
-            minHoleVariance = (*it)->getVarianceX();
+            maxHoleProbability = (*it)->getProbability();
             holeIt = it;
           }
         }
@@ -171,7 +169,7 @@ namespace pandora_data_fusion
         {
           if (!(*it)->getType().compare(std::string("hole")) && it != holeIt)
           {
-            representativeHole->update((*it), holeModelPtr_);
+            representativeHole->update((*it));
           }
         }
 
@@ -182,15 +180,15 @@ namespace pandora_data_fusion
       if(!thermalDeleted_)
       {
         ObjectConstPtrVector::const_iterator thermalIt = objects.end();
-        float minThermalVariance = 1;
+        float maxThermalProbability = 0;
 
         for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
             it != objects.end(); it++)
         {
           if (!(*it)->getType().compare(std::string("thermal")) && 
-              (*it)->getVarianceX() < minThermalVariance)
+              (*it)->getProbability() > maxThermalProbability)
           {
-            minThermalVariance = (*it)->getVarianceX();
+            maxThermalProbability = (*it)->getProbability();
             thermalIt = it;
           }
         }
@@ -205,7 +203,7 @@ namespace pandora_data_fusion
         {
           if (!(*it)->getType().compare(std::string("thermal")) && it != thermalIt)
           {
-            representativeThermal->update((*it), thermalModelPtr_);
+            representativeThermal->update((*it));
           }
         }
 

@@ -13,6 +13,9 @@ Object::Object()
   frame_id_ = "/world";
 }
 
+float Object::distanceThres_ = 0;
+FilterModelPtr Object::modelPtr_ = FilterModelPtr();
+
 PoseStamped Object::getPoseStamped() const
 {
   PoseStamped objPoseStamped;
@@ -27,28 +30,28 @@ bool Object::isSameObject(const ConstPtr& object, float distance) const
       < distance;
 }
 
-void Object::initializeObjectFilter(float prior_x_sd, float prior_y_sd,
-    float prior_z_sd)
+void Object::initializeObjectFilter()
 {
   //!< Priors  
   //!< Filter's prior mean
-  MatrixWrapper::ColumnVector priorMu_(1);
+  MatrixWrapper::ColumnVector priorMean(1);
   //!< Filter's prior covariance
-  MatrixWrapper::SymmetricMatrix priorVar_(1, 1);
+  MatrixWrapper::SymmetricMatrix priorVariance(1, 1);
 
-  priorMu_(1) = pose_.position.x;
-  priorVar_(1, 1) = pow(prior_x_sd, 2);
-  priorX_.reset( new BFL::Gaussian(priorMu_, priorVar_) );
+  float stdDeviation = Utils::stdDevFromProbability(
+      distanceThres_, probability_);
+  priorVariance(1, 1) = pow(stdDeviation, 2);
+
+  priorMean(1) = pose_.position.x;
+  priorX_.reset( new BFL::Gaussian(priorMean, priorVariance) );
   filterX_.reset( new Filter(priorX_.get()) );
   
-  priorMu_(1) = pose_.position.y;
-  priorVar_(1, 1) = pow(prior_y_sd, 2);
-  priorY_.reset( new BFL::Gaussian(priorMu_, priorVar_) );
+  priorMean(1) = pose_.position.y;
+  priorY_.reset( new BFL::Gaussian(priorMean, priorVariance) );
   filterY_.reset( new Filter(priorY_.get()) );
   
-  priorMu_(1) = pose_.position.z;
-  priorVar_(1, 1) = pow(prior_z_sd, 2);
-  priorZ_.reset( new BFL::Gaussian(priorMu_, priorVar_) );
+  priorMean(1) = pose_.position.z;
+  priorZ_.reset( new BFL::Gaussian(priorMean, priorVariance) );
   filterZ_.reset( new Filter(priorZ_.get()) );
 }
 
@@ -59,8 +62,7 @@ void Object::initializeObjectFilter(float prior_x_sd, float prior_y_sd,
  * and the current measurement. The filter is an implementation of
  * Kalman Filter.
  */
-void Object::update(const ConstPtr& measurement, 
-    const FilterModelConstPtr& model)
+void Object::update(const ConstPtr& measurement)
 {
   Point measurementPosition = measurement->getPose().position;
   MatrixWrapper::ColumnVector newPosition(1);
@@ -70,8 +72,10 @@ void Object::update(const ConstPtr& measurement,
   input(1) = 0.0;
  
   //!< Updating existing object's filter pdfs.
-  SystemModelPtrVector systemModels = model->getSystemModels();
-  MeasurementModelPtrVector measurementModels = model->getMeasurementModels();
+  SystemModelPtrVector systemModels;
+  systemModels = modelPtr_->getSystemModels();
+  MeasurementModelPtrVector measurementModels;
+  measurementModels = modelPtr_->getMeasurementModels();
   
   newPosition(1) = measurementPosition.x;
   filterX_->Update(systemModels[0].get(), 
@@ -98,6 +102,12 @@ void Object::update(const ConstPtr& measurement,
   newObjectPose.orientation = pose_.orientation;
 
   pose_ = newObjectPose;
+  
+  //!< Updating object's probability.
+  probability_ = (Utils::probabilityFromStdDev(distanceThres_, getStdDevX()) + 
+      Utils::probabilityFromStdDev(distanceThres_, getStdDevY()) +
+      Utils::probabilityFromStdDev(distanceThres_, getStdDevZ())) / 3;
+
 }
 
 }  // namespace pandora_alert_handler

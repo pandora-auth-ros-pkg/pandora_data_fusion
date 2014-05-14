@@ -42,8 +42,7 @@ class ObjectList
   const_iterator begin() const;
   const_iterator end() const;
   int size() const;
-  bool isObjectPoseInList(const ObjectConstPtr& object,
-      float closestAlert) const;
+  bool isObjectPoseInList(const ObjectConstPtr& object) const;
 
   int add(const Ptr& object);
   void pop_back();
@@ -58,10 +57,8 @@ class ObjectList
 
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
-  void setParams(int objectScore, float distanceThreshold, float x_var_thres = 0.0009, 
-      float y_var_thres = 0.0009, float z_var_thres = 0.0009,
-      float prior_x_sd = 0.05, float prior_y_sd = 0.05, float prior_z_sd = 0.05,
-      float system_noise_sd = 0.003, float measurement_noise_sd = 0.05);
+  void setParams(int objectScore, float distanceThreshold, 
+      float probabilityThreshold, float system_noise_sd = 0.003);
 
   FilterModelPtr getFilterModel() const;
 
@@ -84,7 +81,7 @@ class ObjectList
   FilterModelPtr filterModelPtr_;
 
   //!< params
-  float DIST_THRESHOLD;
+  float DISTANCE_THRES;
 
  private:
 
@@ -97,13 +94,7 @@ class ObjectList
   //!< params
   int OBJECT_SCORE;
 
-  float X_VAR_THRES;
-  float Y_VAR_THRES;
-  float Z_VAR_THRES;
-
-  float PRIOR_X_SD;
-  float PRIOR_Y_SD;
-  float PRIOR_Z_SD;
+  float PROBABILITY_THRES;
 
 };
 
@@ -158,9 +149,8 @@ int ObjectList<ObjectType>::add(const Ptr& object)
     updateObjects(object, iteratorList);
     return 0;
   }
-
-  object->initializeObjectFilter(PRIOR_X_SD, PRIOR_Y_SD, PRIOR_Z_SD);
-  
+ 
+  object->initializeObjectFilter();
   object->setId(id_++);
   objects_.push_back(object);
   return OBJECT_SCORE;
@@ -175,21 +165,16 @@ void ObjectList<ObjectType>::removeElementAt(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::setParams(int objectScore, 
-    float distanceThreshold, float x_var_thres, 
-    float y_var_thres, float z_var_thres,
-    float prior_x_sd, float prior_y_sd, float prior_z_sd,
-    float system_noise_sd, float measurement_noise_sd)
+    float distanceThreshold, float probabilityThreshold,
+    float system_noise_sd)
 {
   OBJECT_SCORE = objectScore;
-  DIST_THRESHOLD = distanceThreshold;
-  X_VAR_THRES = x_var_thres;
-  Y_VAR_THRES = y_var_thres;
-  Z_VAR_THRES = z_var_thres;
-  PRIOR_X_SD = prior_x_sd;
-  PRIOR_Y_SD = prior_y_sd;
-  PRIOR_Z_SD = prior_z_sd;
-  filterModelPtr_->setParams(system_noise_sd, measurement_noise_sd);
-  filterModelPtr_->initializeFilterModel();
+  DISTANCE_THRES = distanceThreshold;
+  PROBABILITY_THRES = probabilityThreshold;
+  filterModelPtr_->setSystemSD(system_noise_sd);
+  filterModelPtr_->initializeSystemModel();
+  ObjectType::setDistanceThres(DISTANCE_THRES);
+  ObjectType::setFilterModel(filterModelPtr_);
 }
 
 template <class ObjectType>
@@ -219,15 +204,15 @@ FilterModelPtr ObjectList<ObjectType>::getFilterModel() const
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isObjectPoseInList(
-    const ObjectConstPtr& object, float range) const
+    const ObjectConstPtr& object) const
 {
-  for (const_iterator it = this->begin(); it != this->end(); ++it)
+  for(const_iterator it = this->begin(); it != this->end(); ++it)
   {
     float distance =
-      Utils::distanceBetweenPoints3D(object->getPose().position,
-                                      (*it)->getPose().position);
+      Utils::distanceBetweenPoints3D(object->getPose().position, 
+          (*it)->getPose().position);
          
-    if (distance < range)
+    if(distance < DISTANCE_THRES)
     {
       return true;
     }
@@ -297,7 +282,7 @@ bool ObjectList<ObjectType>::isAnExistingObject(
 {
   for (iterator it = objects_.begin(); it != objects_.end(); ++it)
   {
-    if ((*it)->isSameObject(object, DIST_THRESHOLD))
+    if ((*it)->isSameObject(object, DISTANCE_THRES))
     {
       iteratorListPtr->push_back(it);
     }
@@ -313,10 +298,12 @@ template <class ObjectType>
 void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
     const IteratorList& iteratorList)
 {
+  filterModelPtr_->initializeMeasurementModel(
+      Utils::stdDevFromProbability(DISTANCE_THRES, object->getProbability() ));
   for ( typename IteratorList::const_iterator it = iteratorList.begin(); 
       it != iteratorList.end(); ++it)
   {
-    (*(*it))->update(object, filterModelPtr_);
+    (*(*it))->update(object);
     checkLegit((*(*it)));
   }
 }
@@ -324,10 +311,7 @@ void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
 template <class ObjectType>
 void ObjectList<ObjectType>::checkLegit(const Ptr& object)
 {
-  bool objectIsLegit = object->getVarianceX() < X_VAR_THRES && 
-                       object->getVarianceY() < Y_VAR_THRES &&
-                       object->getVarianceZ() < Z_VAR_THRES;
-  if (objectIsLegit)
+  if (object->getProbability() >= PROBABILITY_THRES)
   {
     object->setLegit(true);
   }
