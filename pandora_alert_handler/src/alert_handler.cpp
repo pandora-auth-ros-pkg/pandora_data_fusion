@@ -394,22 +394,22 @@ void AlertHandler::dynamicReconfigCallback(
     config.highThres, config.lowThres, config.approachDist,
     config.orientationCircle, config.orientationDist); 
 
-  holes_->setParams(-1, config.holeMinimumDist,
-      config.holeXVarThres, config.holeYVarThres, config.holeZVarThres,
-      config.holePriorXSD, config.holePriorYSD, config.holePriorZSD,
-      config.holeSystemNoiseSD, config.holeMeasNoiseSD);
-  qrs_->setParams(config.qrScore, config.qrMinimumDist,
-      config.qrXVarThres, config.qrYVarThres, config.qrZVarThres,
-      config.qrPriorXSD, config.qrPriorYSD, config.qrPriorZSD,
-      config.qrSystemNoiseSD, config.qrMeasNoiseSD);
-  hazmats_->setParams(config.hazmatScore, config.hazmatMinimumDist,
-      config.hazmatXVarThres, config.hazmatYVarThres, config.hazmatZVarThres,
-      config.hazmatPriorXSD, config.hazmatPriorYSD, config.hazmatPriorZSD,
-      config.hazmatSystemNoiseSD, config.hazmatMeasNoiseSD);
-  thermals_->setParams(config.thermalScore, config.thermalMinimumDist,
-      config.thermalXVarThres, config.thermalYVarThres, config.thermalZVarThres,
-      config.thermalPriorXSD, config.thermalPriorYSD, config.thermalPriorZSD,
-      config.thermalSystemNoiseSD, config.thermalMeasNoiseSD);
+  holes_->setParams(-1, config.holeMinDistance, config.holeMinProbability,
+      config.holeSystemNoiseSD);
+  qrs_->setParams(config.qrScore, config.qrMinDistance, config.qrMinProbability,
+      config.qrSystemNoiseSD);
+  hazmats_->setParams(config.hazmatScore, config.hazmatMinDistance, 
+      config.hazmatMinProbability, config.hazmatSystemNoiseSD);
+  thermals_->setParams(config.thermalScore, config.thermalMinDistance, 
+      config.thermalMinProbability, config.thermalSystemNoiseSD);
+  faces_->setParams(config.faceScore, config.faceMinDistance, 
+      config.faceMinProbability, config.faceSystemNoiseSD);
+  motions_->setParams(config.motionScore, config.motionMinDistance, 
+      config.motionMinProbability, config.motionSystemNoiseSD);
+  sounds_->setParams(config.soundScore, config.soundMinDistance, 
+      config.soundMinProbability, config.soundSystemNoiseSD);
+  co2s_->setParams(config.co2Score, config.co2MinDistance, 
+      config.co2MinProbability, config.co2SystemNoiseSD);
 
   objectHandler_->updateParams(config.sensorRange, config.clusterRadius);
 
@@ -428,6 +428,10 @@ bool AlertHandler::getObjectsServiceCb(
   qrs_->getObjectsPosesStamped(&rs.qrs);
   hazmats_->getObjectsPosesStamped(&rs.hazmats);
   thermals_->getObjectsPosesStamped(&rs.thermals);
+  faces_->getObjectsPosesStamped(&rs.faces);
+  motions_->getObjectsPosesStamped(&rs.motions);
+  sounds_->getObjectsPosesStamped(&rs.sounds);
+  co2s_->getObjectsPosesStamped(&rs.co2s);
 
   victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited, 
       &rs.approachPoints);
@@ -443,6 +447,10 @@ bool AlertHandler::getMarkersServiceCb(
   qrs_->getVisualization(&rs.hazmats);
   hazmats_->getVisualization(&rs.qrs);
   thermals_->getVisualization(&rs.thermals);
+  faces_->getVisualization(&rs.faces);
+  motions_->getVisualization(&rs.motions);
+  sounds_->getVisualization(&rs.sounds);
+  co2s_->getVisualization(&rs.co2s);
 
   victimHandler_->getVisualization(&rs.victimsVisited, &rs.victimsToGo);
 
@@ -487,6 +495,10 @@ bool AlertHandler::flushQueues(
   qrs_->clear();
   hazmats_->clear();
   thermals_->clear();
+  faces_->clear();
+  motions_->clear();
+  sounds_->clear();
+  co2s_->clear();
   victimHandler_->flush();
   return true;
 }
