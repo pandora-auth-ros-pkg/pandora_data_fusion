@@ -18,6 +18,8 @@ namespace pandora_data_fusion
 
         typedef boost::shared_ptr<Thermal> Ptr;
         typedef boost::shared_ptr<Thermal const> ConstPtr;
+        typedef std::vector<Ptr> PtrVector;
+        typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
 
         /**
          * @brief Constructor

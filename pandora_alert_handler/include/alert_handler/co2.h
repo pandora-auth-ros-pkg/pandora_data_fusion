@@ -19,6 +19,8 @@ namespace pandora_data_fusion
         //!< Type Definitions
         typedef boost::shared_ptr<Co2> Ptr;
         typedef boost::shared_ptr<Co2 const> ConstPtr;
+        typedef std::vector<Ptr> PtrVector;
+        typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
 
       public:
 

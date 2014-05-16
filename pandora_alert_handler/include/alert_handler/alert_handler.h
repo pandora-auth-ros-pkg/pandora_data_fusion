@@ -217,7 +217,7 @@ void AlertHandler::objectDirectionAlertCallback(
   ROS_DEBUG_STREAM_NAMED("ALERT_HANDLER_ALERT_CALLBACK",  
       ObjectType::getObjectType() << " ALERT ARRIVED!");
 
-  typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr;
+  typename ObjectType::PtrVectorPtr objectsVectorPtr;
   try
   {
     objectsVectorPtr = objectFactory_->makeObjects<ObjectType>(msg);

@@ -40,7 +40,7 @@ namespace pandora_data_fusion
         QrPtrVectorPtr makeQrs(
             const vision_communications::QRAlertsVectorMsg& msg);
         template <class ObjectType>
-          typename TypeDef< ObjectType >::PtrVectorPtr makeObjects(
+          typename ObjectType::PtrVectorPtr makeObjects(
               const pandora_common_msgs::GeneralAlertMsg& msg);
 
         const tf::Transform& getTransform() const
@@ -70,7 +70,7 @@ namespace pandora_data_fusion
             const vision_communications::QRAlertMsg& msg);
         template <class ObjectType>
           void setUpObject(
-              const typename TypeDef<ObjectType>::Ptr& objectPtr, 
+              const typename ObjectType::Ptr& objectPtr, 
               const pandora_common_msgs::GeneralAlertMsg& msg);
 
       private:
@@ -82,16 +82,16 @@ namespace pandora_data_fusion
     };
 
     template <class ObjectType>
-      typename TypeDef< ObjectType >::PtrVectorPtr ObjectFactory::makeObjects(
+      typename ObjectType::PtrVectorPtr ObjectFactory::makeObjects(
           const pandora_common_msgs::GeneralAlertMsg& msg)
       {
         currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
 
-        typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr(
-            new typename TypeDef< ObjectType >::PtrVector);
+        typename ObjectType::PtrVectorPtr objectsVectorPtr(
+            new typename ObjectType::PtrVector);
         try
         {
-          typename TypeDef< ObjectType >::Ptr newObject( new ObjectType );
+          typename ObjectType::Ptr newObject( new ObjectType );
           setUpObject<ObjectType>( newObject, msg );
           objectsVectorPtr->push_back( newObject );
         }
@@ -106,7 +106,7 @@ namespace pandora_data_fusion
 
     template <class ObjectType>
       void ObjectFactory::setUpObject(
-          const typename TypeDef<ObjectType>::Ptr& objectPtr, 
+          const typename ObjectType::Ptr& objectPtr, 
           const pandora_common_msgs::GeneralAlertMsg& msg)
     {
       objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 

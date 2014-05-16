@@ -35,7 +35,7 @@ namespace pandora_data_fusion
         void handleQrs(const QrPtrVectorPtr& newQrs); 
         template <class ObjectType> 
           void handleObjects( 
-              const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr);
+              const typename ObjectType::PtrVectorPtr& objectsPtr);
 
         void updateParams(float sensor_range, float victim_cluster_radius);
 
@@ -46,7 +46,7 @@ namespace pandora_data_fusion
             const tf::Transform& cameraTransform);
         template <class ObjectType>
           void keepValidVerificationObjects(
-              const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr);
+              const typename ObjectType::PtrVectorPtr& objectsPtr);
 
       private:
 
@@ -73,7 +73,7 @@ namespace pandora_data_fusion
 
     template <class ObjectType>
       void ObjectHandler::handleObjects(
-          const typename TypeDef<ObjectType>::PtrVectorPtr& newObjects)
+          const typename ObjectType::PtrVectorPtr& newObjects)
       {
         if(ObjectType::getObjectType() != "thermal" && 
             ObjectType::getObjectType() != "hazmat")
@@ -95,9 +95,9 @@ namespace pandora_data_fusion
 
     template <class ObjectType>
       void ObjectHandler::keepValidVerificationObjects(
-          const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr)
+          const typename ObjectType::PtrVectorPtr& objectsPtr)
       {
-        typename TypeDef<ObjectType>::PtrVector::iterator iter = objectsPtr->begin();
+        typename ObjectType::PtrVector::iterator iter = objectsPtr->begin();
 
         while(iter != objectsPtr->end())
         {
@@ -133,7 +133,7 @@ namespace pandora_data_fusion
 
     template<>
       void ObjectHandler::keepValidVerificationObjects<Sound>(
-          const typename TypeDef<Sound>::PtrVectorPtr& objectsPtr)
+          const Sound::PtrVectorPtr& objectsPtr)
       {
         SoundPtrVector::iterator iter = objectsPtr->begin();
 

@@ -24,17 +24,6 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-//!< Templated Type Defintions
-template <class ObjectType>
-  class TypeDef
-  {
-   public:
-    typedef boost::shared_ptr< ObjectType > Ptr;
-    typedef boost::shared_ptr< const ObjectType > ConstPtr;
-    typedef std::vector< Ptr > PtrVector;
-    typedef boost::shared_ptr< PtrVector > PtrVectorPtr;
-  };
-
 using geometry_msgs::Point;
 using geometry_msgs::Pose;
 using geometry_msgs::PoseStamped;
