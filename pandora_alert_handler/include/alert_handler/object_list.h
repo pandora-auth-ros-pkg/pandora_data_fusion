@@ -24,7 +24,7 @@ class ObjectList
 {
  public:
 
-  //!< Type definitions
+  //!< Type Definitions
   typedef boost::shared_ptr< ObjectType > Ptr;
   typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
@@ -42,7 +42,7 @@ class ObjectList
   const_iterator begin() const;
   const_iterator end() const;
   int size() const;
-  bool isObjectPoseInList(const ObjectConstPtr& object) const;
+  bool isObjectPoseInList(const ObjectConstPtr& object, float radius) const;
 
   int add(const Ptr& object);
   void pop_back();
@@ -186,7 +186,7 @@ void ObjectList<ObjectType>::clear()
 
 template <class ObjectType>
 bool ObjectList<ObjectType>::isObjectPoseInList(
-    const ObjectConstPtr& object) const
+    const ObjectConstPtr& object, float radius) const
 {
   for(const_iterator it = this->begin(); it != this->end(); ++it)
   {
@@ -194,7 +194,7 @@ bool ObjectList<ObjectType>::isObjectPoseInList(
       Utils::distanceBetweenPoints3D(object->getPose().position, 
           (*it)->getPose().position);
          
-    if(distance < DISTANCE_THRES)
+    if(distance < radius)
     {
       return true;
     }

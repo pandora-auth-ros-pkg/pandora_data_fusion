@@ -101,24 +101,11 @@ namespace pandora_data_fusion
 
         while(iter != objectsPtr->end())
         {
-          bool invalid = false;
-          for(VictimList::const_iterator it = victimsToGoList_->begin();
-              it != victimsToGoList_->end(); it++)
-          {
-            invalid = Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
-                (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
-            if(invalid)
-              break;
-          }
-          for(VictimList::const_iterator it = victimsVisitedList_->begin();
-              it != victimsVisitedList_->end(); it++)
-          {
-            invalid = invalid || Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
-                (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
-            if(invalid)
-              break;
-          }
-          if(invalid)
+          bool valid = false;
+          valid = victimsToGoList_->isObjectPoseInList((*iter), VICTIM_CLUSTER_RADIUS);
+          // valid = valid || 
+          //   victimsVisitedList_->isObjectPoseInList((*iter), VICTIM_CLUSTER_RADIUS);
+          if(!valid)
           {
             ROS_DEBUG_NAMED("object_handler",
                 "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
