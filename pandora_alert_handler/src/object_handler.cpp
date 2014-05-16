@@ -33,8 +33,6 @@ namespace pandora_data_fusion
       Sound::setType("sound");
       Co2::setType("co2");
 
-      Victim::setType("victim");
-
       roboCupScore_ = 0;
 
       std::string param;
@@ -96,22 +94,22 @@ namespace pandora_data_fusion
 
     int ObjectHandler::addToList(const ObjectPtr& newObject)
     {
-      if(newObject->getType() == "thermal")
+      if(newObject->getType() == Thermal::getObjectType())
         return thermalListPtr_->add(
             boost::dynamic_pointer_cast<Thermal>(newObject));
-      if(newObject->getType() == "hazmat")
+      if(newObject->getType() == Hazmat::getObjectType())
         return hazmatListPtr_->add(
             boost::dynamic_pointer_cast<Hazmat>(newObject));
-      if(newObject->getType() == "face")
+      if(newObject->getType() == Face::getObjectType())
         return faceListPtr_->add(
             boost::dynamic_pointer_cast<Face>(newObject));
-      if(newObject->getType() == "motion")
+      if(newObject->getType() == Motion::getObjectType())
         return motionListPtr_->add(
             boost::dynamic_pointer_cast<Motion>(newObject));
-      if(newObject->getType() == "sound")
+      if(newObject->getType() == Sound::getObjectType())
         return soundListPtr_->add(
             boost::dynamic_pointer_cast<Sound>(newObject));
-      if(newObject->getType() == "co2")
+      if(newObject->getType() == Co2::getObjectType())
         return co2ListPtr_->add(
             boost::dynamic_pointer_cast<Co2>(newObject));
     }

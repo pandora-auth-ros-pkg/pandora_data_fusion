@@ -64,6 +64,8 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
   victimsToGoList_(victimsToGoList),
   victimsVisitedList_(victimsVisitedList)
 {
+  Victim::setType("victim");
+
   clusterer_.reset( new VictimClusterer(0.2, 0.5) );
 
   validVictimsCounter_ = 0;
@@ -340,7 +342,7 @@ void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
   for (ObjectConstPtrVector::const_iterator it = victim->getObjects().begin();
        it != victim->getObjects().end(); ++it)
   {
-    if((*it)->getType() != "hole")
+    if((*it)->getType() != Hole::getObjectType())
     {
       msg.sensors.push_back((*it)->getType());
     }

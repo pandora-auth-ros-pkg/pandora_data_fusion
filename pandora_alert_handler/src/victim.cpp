@@ -136,7 +136,7 @@ namespace pandora_data_fusion
           victimVisionFound = true;
           break;
         }
-        else if(objects_[ii]->getType() != "hole")
+        else if(objects_[ii]->getType() != Hole::getObjectType())
         {
           probability += objects_[ii]->getProbability();
         }
@@ -193,11 +193,11 @@ namespace pandora_data_fusion
       int tpaIndex = -1;
       for(int ii = 0; ii < objects_.size(); ++ii)
       {
-        if(objects_[ii]->getType() == "hole")
+        if(objects_[ii]->getType() == Hole::getObjectType())
         {
           selectedObjectIndex_ = ii;
         }
-        else if(objects_[ii]->getType() == "tpa")
+        else if(objects_[ii]->getType() == Thermal::getObjectType())
         {
           tpaIndex = ii;
         }
@@ -230,11 +230,11 @@ namespace pandora_data_fusion
     void Victim::eraseObjectAt(int index,
         float approachDistance)
     {
-      if(objects_[index]->getType() == "hole")
+      if(objects_[index]->getType() == Hole::getObjectType())
       {
         holeDeleted_ = true;
       }
-      else if(objects_[index]->getType() == "thermal")
+      else if(objects_[index]->getType() == Thermal::getObjectType())
       {
         thermalDeleted_ = true;
       }
@@ -263,9 +263,9 @@ namespace pandora_data_fusion
         float approachDistance) const
       {
         int choice = 0;
-        if(objectType == "hole")
+        if(objectType == Hole::getObjectType())
           choice = 0;
-        else if(objectType == "tpa")
+        else if(objectType == Thermal::getObjectType())
           choice = 1;
 
         tf::Transform transformation = getTransform();

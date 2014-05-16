@@ -75,8 +75,8 @@ namespace pandora_data_fusion
       void ObjectHandler::handleObjects(
           const typename ObjectType::PtrVectorPtr& newObjects)
       {
-        if(ObjectType::getObjectType() != "thermal" && 
-            ObjectType::getObjectType() != "hazmat")
+        if(ObjectType::getObjectType() != Thermal::getObjectType() && 
+            ObjectType::getObjectType() != Hazmat::getObjectType())
         {
           keepValidVerificationObjects<ObjectType>(newObjects);
         }
