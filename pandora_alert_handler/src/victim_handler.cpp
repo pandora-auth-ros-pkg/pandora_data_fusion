@@ -357,8 +357,9 @@ void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
 {
   VICTIM_VERIFICATION_PROB = verificationProbability;
   clusterer_->updateParams(clusterRadius, approachDist);
-  victimsToGoList_->setParams(sameVictimRadius, approachDist, victimUpdate);
-  victimsVisitedList_->setParams(sameVictimRadius, approachDist, victimUpdate);
+  victimsToGoList_->setParams(approachDist, victimUpdate);
+  Victim::setDistanceThres(sameVictimRadius);
+  victimsVisitedList_->setParams(approachDist, victimUpdate);
 }
 
 /**

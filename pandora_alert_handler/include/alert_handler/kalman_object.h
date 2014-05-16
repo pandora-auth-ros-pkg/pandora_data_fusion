@@ -209,6 +209,9 @@ namespace pandora_data_fusion
             Utils::probabilityFromStdDev(this->distanceThres_, getStdDevX()) + 
             Utils::probabilityFromStdDev(this->distanceThres_, getStdDevY()) +
             Utils::probabilityFromStdDev(this->distanceThres_, getStdDevZ())) / 3;
+
+        //!< Check if object has become a legitimate one.
+        this->checkLegit();
       }
 
   }  // namespace pandora_alert_handler

@@ -147,8 +147,7 @@ class VictimList : public ObjectList<Victim>
   /**
    * @overload
    */
-  void setParams(float distanceThreshold, 
-    float approachDistance, float victimUpdate);
+  void setParams(float approachDistance, float victimUpdate);
 
  protected:
 

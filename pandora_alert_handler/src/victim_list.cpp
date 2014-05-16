@@ -105,10 +105,8 @@ void VictimList::updateObjects(const ConstPtr& victim,
 /**
  * @details Sets various thresholds and params for VictimList
  */
-void VictimList::setParams(float distanceThreshold, 
-    float approachDistance, float victimUpdate)
+void VictimList::setParams(float approachDistance, float victimUpdate)
 {    
-  DISTANCE_THRES = distanceThreshold;
   APPROACH_DIST = approachDistance;
   VICTIM_UPDATE = victimUpdate;  
 }

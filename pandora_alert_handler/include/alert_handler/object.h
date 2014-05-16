@@ -83,6 +83,12 @@ namespace pandora_data_fusion
         virtual PoseStamped getPoseStamped() const;
 
         /**
+         * @brief Check if this object with its current probability is legit.
+         * @return void
+         */
+        void checkLegit();
+
+        /**
          * @brief Getter for member id_
          * @return int id
          */
@@ -139,6 +145,24 @@ namespace pandora_data_fusion
         std::string getFrameId() const
         {
           return frame_id_;
+        }
+
+        /**
+         * @brief Getter for static object type's score.
+         * @return float score
+         */
+        static float getObjectScore()
+        {
+          return objectScore_;
+        }
+
+        /**
+         * @brief Getter for static object type's probability threshold.
+         * @return float probability
+         */
+        static float getProbabilityThres()
+        {
+          return probabilityThres_;
         }
 
         /**
@@ -211,6 +235,26 @@ namespace pandora_data_fusion
           distanceThres_ = distanceThres;
         }
 
+        /**
+         * @brief Setter for static object type's score.
+         * @param objectScore [float] score
+         * @return void
+         */
+        static void setObjectScore(float objectScore)
+        {
+          objectScore_ = objectScore;
+        }
+
+        /**
+         * @brief Setter for static object type's probability threshold.
+         * @param probabilityThres [float] probability
+         * @return void
+         */
+        static void setProbabilityThres(float probabilityThres)
+        {
+          probabilityThres_ = probabilityThres;
+        }
+
       protected:
 
         //!< The object's id
@@ -225,6 +269,11 @@ namespace pandora_data_fusion
 
         //!< Variable with objects' min distance.
         static float distanceThres_;
+        //!< Variable containing object type's score.
+        static float objectScore_;
+        //!< Variable containing object type's probability threshold for an
+        //!< object to become legitimate.
+        static float probabilityThres_;
         //!< A string indicating the type of object
         static std::string type_;
 
@@ -241,6 +290,10 @@ namespace pandora_data_fusion
 
     template <class DerivedObject>
       float Object<DerivedObject>::distanceThres_ = 0;
+    template <class DerivedObject>
+      float Object<DerivedObject>::probabilityThres_ = 0;
+    template <class DerivedObject>
+      float Object<DerivedObject>::objectScore_ = 0;
     template <class DerivedObject>
       std::string Object<DerivedObject>::type_ = "object";
 
@@ -261,6 +314,15 @@ namespace pandora_data_fusion
         return Utils::distanceBetweenPoints3D(
             pose_.position, object->getPose().position)
           < distanceThres_;
+      }
+
+    template <class DerivedObject>
+      void Object<DerivedObject>::checkLegit()
+      {
+        if(probability_ >= probabilityThres_)
+        {
+          legit_ = true;
+        }
       }
 
   }  // namespace pandora_alert_handler

@@ -57,9 +57,6 @@ class ObjectList
 
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
-  void setParams(int objectScore, float distanceThreshold, 
-      float probabilityThreshold);
-
  protected:
 
   bool isAnExistingObject(
@@ -68,25 +65,15 @@ class ObjectList
   virtual void updateObjects(const ConstPtr& object,
     const IteratorList& iteratorList);
 
-  void checkLegit(const Ptr& object);
-
   void removeElementAt(iterator it);
 
  protected:
 
   List objects_;
 
-  //!< params
-  float DISTANCE_THRES;
-
  private:
 
   int id_;
-
-  //!< params
-  int OBJECT_SCORE;
-
-  float PROBABILITY_THRES;
 
  private:
 
@@ -146,7 +133,7 @@ int ObjectList<ObjectType>::add(const Ptr& object)
  
   object->setId(id_++);
   objects_.push_back(object);
-  return OBJECT_SCORE;
+  return ObjectType::getObjectScore();
 }
 
 template <class ObjectType>
@@ -154,15 +141,6 @@ void ObjectList<ObjectType>::removeElementAt(
   ObjectList<ObjectType>::iterator it)
 {
     objects_.erase(it);
-}
-
-template <class ObjectType>
-void ObjectList<ObjectType>::setParams(int objectScore, 
-    float distanceThreshold, float probabilityThreshold)
-{
-  OBJECT_SCORE = objectScore;
-  DISTANCE_THRES = distanceThreshold;
-  PROBABILITY_THRES = probabilityThreshold;
 }
 
 template <class ObjectType>
@@ -284,16 +262,6 @@ void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
       it != iteratorList.end(); ++it)
   {
     (*(*it))->update(object);
-    checkLegit((*(*it)));
-  }
-}
-
-template <class ObjectType>
-void ObjectList<ObjectType>::checkLegit(const Ptr& object)
-{
-  if (object->getProbability() >= PROBABILITY_THRES)
-  {
-    object->setLegit(true);
   }
 }
 

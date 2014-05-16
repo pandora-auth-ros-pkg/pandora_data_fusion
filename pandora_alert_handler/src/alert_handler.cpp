@@ -394,42 +394,50 @@ void AlertHandler::dynamicReconfigCallback(
     config.highThres, config.lowThres, config.approachDist,
     config.orientationCircle, config.orientationDist); 
 
-  holes_->setParams(-1, config.holeMinDistance, config.holeMinProbability);
+  Hole::setObjectScore(-1);
+  Hole::setProbabilityThres(config.holeMinProbability);
   Hole::setDistanceThres(config.holeMinDistance);
   Hole::getFilterModel()->setSystemSD(config.holeSystemNoiseSD);
   Hole::getFilterModel()->initializeSystemModel();
-  qrs_->setParams(config.qrScore, config.qrMinDistance, 
-      config.qrMinProbability);
-  Qr::setDistanceThres(config.qrMinDistance);
-  Qr::getFilterModel()->setSystemSD(config.qrSystemNoiseSD);
-  Qr::getFilterModel()->initializeSystemModel();
-  hazmats_->setParams(config.hazmatScore, config.hazmatMinDistance, 
-      config.hazmatMinProbability);
+
+  Hazmat::setObjectScore(config.hazmatScore);
+  Hazmat::setProbabilityThres(config.hazmatMinProbability);
   Hazmat::setDistanceThres(config.hazmatMinDistance);
   Hazmat::getFilterModel()->setSystemSD(config.hazmatSystemNoiseSD);
   Hazmat::getFilterModel()->initializeSystemModel();
-  thermals_->setParams(config.thermalScore, config.thermalMinDistance, 
-      config.thermalMinProbability);
+
+  Qr::setObjectScore(config.qrScore);
+  Qr::setProbabilityThres(config.qrMinProbability);
+  Qr::setDistanceThres(config.qrMinDistance);
+  Qr::getFilterModel()->setSystemSD(config.qrSystemNoiseSD);
+  Qr::getFilterModel()->initializeSystemModel();
+
+  Thermal::setObjectScore(config.thermalScore);
+  Thermal::setProbabilityThres(config.thermalMinProbability);
   Thermal::setDistanceThres(config.thermalMinDistance);
   Thermal::getFilterModel()->setSystemSD(config.thermalSystemNoiseSD);
   Thermal::getFilterModel()->initializeSystemModel();
-  faces_->setParams(config.faceScore, config.faceMinDistance, 
-      config.faceMinProbability);
+
+  Face::setObjectScore(config.faceScore);
+  Face::setProbabilityThres(config.faceMinProbability);
   Face::setDistanceThres(config.faceMinDistance);
   Face::getFilterModel()->setSystemSD(config.faceSystemNoiseSD);
   Face::getFilterModel()->initializeSystemModel();
-  motions_->setParams(config.motionScore, config.motionMinDistance, 
-      config.motionMinProbability);
+
+  Motion::setObjectScore(config.motionScore);
+  Motion::setProbabilityThres(config.motionMinProbability);
   Motion::setDistanceThres(config.motionMinDistance);
   Motion::getFilterModel()->setSystemSD(config.motionSystemNoiseSD);
   Motion::getFilterModel()->initializeSystemModel();
-  sounds_->setParams(config.soundScore, config.soundMinDistance, 
-      config.soundMinProbability);
+
+  Sound::setObjectScore(config.soundScore);
+  Sound::setProbabilityThres(config.soundMinProbability);
   Sound::setDistanceThres(config.soundMinDistance);
   Sound::getFilterModel()->setSystemSD(config.soundSystemNoiseSD);
   Sound::getFilterModel()->initializeSystemModel();
-  co2s_->setParams(config.co2Score, config.co2MinDistance, 
-      config.co2MinProbability);
+
+  Co2::setObjectScore(config.co2Score);
+  Co2::setProbabilityThres(config.co2MinProbability);
   Co2::setDistanceThres(config.co2MinDistance);
   Co2::getFilterModel()->setSystemSD(config.co2SystemNoiseSD);
   Co2::getFilterModel()->initializeSystemModel();
