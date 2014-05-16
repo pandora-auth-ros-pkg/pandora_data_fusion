@@ -47,7 +47,6 @@
 #include "data_fusion_communications/VictimInfoMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
 
-#include "alert_handler/objects.h"
 #include "alert_handler/object_list.h"
 #include "alert_handler/utils.h"
 #include "alert_handler/victim.h"
@@ -151,12 +150,12 @@ class VictimList : public ObjectList<Victim>
   void setParams(float distanceThreshold, 
     float approachDistance, float victimUpdate);
 
- protected: 
-  
+ protected:
+
   /**
    * @override
    */
-  virtual void updateObjects(const VictimConstPtr& object,
+  void updateObjects(const ConstPtr& victim,
     const IteratorList& iteratorList);
   
  protected:

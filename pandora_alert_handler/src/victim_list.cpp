@@ -55,7 +55,7 @@ bool VictimList::contains(const VictimConstPtr& victim) const
 {
   for (const_iterator it = this->begin(); it != this->end(); ++it)
   {
-    if ((*it)->isSameObject(victim, DISTANCE_THRES))
+    if ((*it)->isSameObject(victim))
     {
       return true;
     }
@@ -69,9 +69,9 @@ bool VictimList::contains(const VictimConstPtr& victim) const
  * victim's objects and the rest victims that are thought to be the same are 
  * deleted from victim list. The fsm is informed if necessary.
  */
-void VictimList::updateObjects(const VictimConstPtr& victim, 
+void VictimList::updateObjects(const ConstPtr& victim,
     const IteratorList& iteratorList)
-{                                   
+{
   ROS_ASSERT(iteratorList.size() > 0);
 
   const_iterator_vers_ref victimToUpdate = *(iteratorList.begin());

@@ -10,7 +10,7 @@
 #include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/objects.h"
-#include "alert_handler/filter_model.h"
+#include "alert_handler/victim.h"
 // #include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
 
@@ -58,9 +58,7 @@ class ObjectList
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
   void setParams(int objectScore, float distanceThreshold, 
-      float probabilityThreshold, float system_noise_sd = 0.003);
-
-  FilterModelPtr getFilterModel() const;
+      float probabilityThreshold);
 
  protected:
 
@@ -78,14 +76,8 @@ class ObjectList
 
   List objects_;
 
-  FilterModelPtr filterModelPtr_;
-
   //!< params
   float DISTANCE_THRES;
-
- private:
-
-  friend class ObjectListTest;
 
  private:
 
@@ -96,9 +88,12 @@ class ObjectList
 
   float PROBABILITY_THRES;
 
+ private:
+
+  friend class ObjectListTest;
 };
 
-typedef boost::shared_ptr< ObjectList<Object> > ObjectListPtr;
+typedef boost::shared_ptr< ObjectList<BaseObject> > ObjectListPtr;
 typedef boost::shared_ptr< ObjectList<Hole> >  HoleListPtr;
 typedef boost::shared_ptr< ObjectList<Qr> >  QrListPtr;
 typedef boost::shared_ptr< ObjectList<Hazmat> > HazmatListPtr;
@@ -108,7 +103,7 @@ typedef boost::shared_ptr< ObjectList<Motion> >  MotionListPtr;
 typedef boost::shared_ptr< ObjectList<Sound> >  SoundListPtr;
 typedef boost::shared_ptr< ObjectList<Co2> >  Co2ListPtr;
 
-typedef boost::shared_ptr< const ObjectList<Object> > ObjectListConstPtr;
+typedef boost::shared_ptr< const ObjectList<BaseObject> > ObjectListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Hole> >  HoleListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Qr> >  QrListConstPtr;
 typedef boost::shared_ptr< const ObjectList<Hazmat> > HazmatListConstPtr;
@@ -121,7 +116,6 @@ typedef boost::shared_ptr< const ObjectList<Co2> >  Co2ListConstPtr;
 template <class ObjectType>
 ObjectList<ObjectType>::ObjectList() 
 {
-  filterModelPtr_.reset( new FilterModel );
   id_ = 0;
 }
 
@@ -150,7 +144,6 @@ int ObjectList<ObjectType>::add(const Ptr& object)
     return 0;
   }
  
-  object->initializeObjectFilter();
   object->setId(id_++);
   objects_.push_back(object);
   return OBJECT_SCORE;
@@ -165,16 +158,11 @@ void ObjectList<ObjectType>::removeElementAt(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::setParams(int objectScore, 
-    float distanceThreshold, float probabilityThreshold,
-    float system_noise_sd)
+    float distanceThreshold, float probabilityThreshold)
 {
   OBJECT_SCORE = objectScore;
   DISTANCE_THRES = distanceThreshold;
   PROBABILITY_THRES = probabilityThreshold;
-  filterModelPtr_->setSystemSD(system_noise_sd);
-  filterModelPtr_->initializeSystemModel();
-  ObjectType::setDistanceThres(DISTANCE_THRES);
-  ObjectType::setFilterModel(filterModelPtr_);
 }
 
 template <class ObjectType>
@@ -194,12 +182,6 @@ void ObjectList<ObjectType>::clear()
 {
   objects_.clear();
   id_ = 0;
-}
-
-template <class ObjectType>
-FilterModelPtr ObjectList<ObjectType>::getFilterModel() const
-{
-  return filterModelPtr_;
 }
 
 template <class ObjectType>
@@ -282,7 +264,7 @@ bool ObjectList<ObjectType>::isAnExistingObject(
 {
   for (iterator it = objects_.begin(); it != objects_.end(); ++it)
   {
-    if ((*it)->isSameObject(object, DISTANCE_THRES))
+    if ((*it)->isSameObject(object))
     {
       iteratorListPtr->push_back(it);
     }
@@ -298,8 +280,6 @@ template <class ObjectType>
 void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
     const IteratorList& iteratorList)
 {
-  filterModelPtr_->initializeMeasurementModel(
-      Utils::stdDevFromProbability(DISTANCE_THRES, object->getProbability() ));
   for ( typename IteratorList::const_iterator it = iteratorList.begin(); 
       it != iteratorList.end(); ++it)
   {

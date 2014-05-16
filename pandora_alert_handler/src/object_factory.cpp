@@ -36,26 +36,6 @@ HolePtrVectorPtr ObjectFactory::makeHoles(
   return holesVectorPtr;
 }
 
-ThermalPtrVectorPtr ObjectFactory::makeThermals(
-    const pandora_common_msgs::GeneralAlertMsg& msg)
-{
-  currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
-
-  ThermalPtrVectorPtr thermalsVectorPtr( new ThermalPtrVector );
-  try
-  {
-    ThermalPtr newThermal( new Thermal );
-    setUpThermal( newThermal, msg );
-    thermalsVectorPtr->push_back( newThermal );
-  }
-  catch (AlertException ex)
-  {
-    ROS_WARN_NAMED("ALERT_HANDLER", "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
-  }
-
-  return thermalsVectorPtr;
-}
-
 HazmatPtrVectorPtr ObjectFactory::makeHazmats(
     const vision_communications::HazmatAlertsVectorMsg& msg)
 {
@@ -121,14 +101,7 @@ void ObjectFactory::setUpHole(const HolePtr& holePtr,
         msg.pitch, currentTransform_) );
   holePtr->setProbability( msg.probability );
   holePtr->setHoleId( msg.holeId );
-}
-
-void ObjectFactory::setUpThermal(const ThermalPtr& thermalPtr, 
-    const pandora_common_msgs::GeneralAlertMsg& msg)
-{
-  thermalPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
-        msg.pitch, currentTransform_) );
-  thermalPtr->setProbability( msg.probability );
+  holePtr->initializeObjectFilter();
 }
 
 void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr, 
@@ -137,6 +110,7 @@ void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr,
   hazmatPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
   hazmatPtr->setPattern( msg.patternType );
+  hazmatPtr->initializeObjectFilter();
 }
 
 void ObjectFactory::setUpQr(const QrPtr& qrPtr, 
@@ -145,14 +119,7 @@ void ObjectFactory::setUpQr(const QrPtr& qrPtr,
   qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
   qrPtr->setContent( msg.QRcontent );
-}
-
-void ObjectFactory::setUpObject(const ObjectPtr& objectPtr, 
-    const pandora_common_msgs::GeneralAlertMsg& msg)
-{
-  objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
-        msg.pitch, currentTransform_) );
-  objectPtr->setProbability( msg.probability );
+  qrPtr->initializeObjectFilter();
 }
 
 }  // namespace pandora_alert_handler

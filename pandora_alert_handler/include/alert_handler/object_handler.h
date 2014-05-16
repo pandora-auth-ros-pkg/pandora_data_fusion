@@ -10,148 +10,168 @@
 
 #include "data_fusion_communications/QrNotificationMsg.h"
 
+#include "alert_handler/objects.h"
 #include "alert_handler/object_list.h"
 #include "alert_handler/victim_list.h"
 
 namespace pandora_data_fusion
 {
-namespace pandora_alert_handler
-{
-
-class ObjectHandler : private boost::noncopyable
-{
- public:
-
-  ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-                HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr,
-                FaceListPtr faceListPtr, MotionListPtr motionListPtr,
-                SoundListPtr soundListPtr, Co2ListPtr co2ListPtr,
-                const VictimListConstPtr& victimsToGoList,
-                const VictimListConstPtr& victimsVisited);
-
-  void handleHoles(const HolePtrVectorPtr& newHoles, 
-      const tf::Transform& transform);
-  void handleQrs(const QrPtrVectorPtr& newQrs); 
-  void handleHazmats(const HazmatPtrVectorPtr& newHazmats); 
-  void handleObjects(const ThermalPtrVectorPtr& newThermals); 
-  void handleObjects(const FacePtrVectorPtr& newFaces);
-  void handleObjects(const MotionPtrVectorPtr& newMotions); 
-  void handleObjects(const SoundPtrVectorPtr& newSounds); 
-  void handleObjects(const Co2PtrVectorPtr& newCo2s); 
-
-  void updateParams(float sensor_range, float victim_cluster_radius);
-
- private:
-
-  void keepValidHoles(const HolePtrVectorPtr& holesPtr,
-     const tf::Transform& cameraTransform);
-  template <class ObjectType>
-  void keepValidVerificationObjects(
-      const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr);
-
- private:
-
-  ros::Publisher qrPublisher_;
-  ros::Publisher scorePublisher_;
-
-  QrListPtr qrListPtr_;
-  HazmatListPtr hazmatListPtr_;
-  HoleListPtr holeListPtr_;
-  ThermalListPtr thermalListPtr_;
-  FaceListPtr faceListPtr_;
-  MotionListPtr motionListPtr_;
-  SoundListPtr soundListPtr_;
-  Co2ListPtr co2ListPtr_;
-
-  VictimListConstPtr victimsToGoList_;
-  VictimListConstPtr victimsVisitedList_;
-
-  int roboCupScore_;
-  
-  float SENSOR_RANGE;
-  float VICTIM_CLUSTER_RADIUS;
-
-};
-
-template <class ObjectType>
-void ObjectHandler::keepValidVerificationObjects(
-    const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr)
-{
-  typename TypeDef<ObjectType>::PtrVector::iterator iter = objectsPtr->begin();
-
-  while(iter != objectsPtr->end())
+  namespace pandora_alert_handler
   {
-    bool invalid = false;
-    for(VictimList::const_iterator it = victimsToGoList_->begin();
-        it != victimsToGoList_->end(); it++)
-    {
-      invalid = Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
-          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
-      if(invalid)
-        break;
-    }
-    for(VictimList::const_iterator it = victimsVisitedList_->begin();
-        it != victimsVisitedList_->end(); it++)
-    {
-      invalid = invalid || Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
-          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
-      if(invalid)
-        break;
-    }
-    if(invalid)
-    {
-      ROS_DEBUG_NAMED("object_handler",
-        "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
-      iter = objectsPtr->erase(iter);
-    }
-    else
-    {
-      ++iter;
-    }
-  }
-}
 
-template<>
-void ObjectHandler::keepValidVerificationObjects<Sound>(
-    const typename TypeDef<Sound>::PtrVectorPtr& objectsPtr)
-{
-  SoundPtrVector::iterator iter = objectsPtr->begin();
+    class ObjectHandler : private boost::noncopyable
+    {
+      public:
 
-  while(iter != objectsPtr->end())
-  {
-    bool invalid = false;
-    for(VictimList::const_iterator it = victimsToGoList_->begin();
-        it != victimsToGoList_->end(); it++)
-    {
-      invalid = Utils::distanceBetweenPoints2D((*iter)->getPose().position, 
-          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
-      if(invalid)
-        break;
-    }
-    for(VictimList::const_iterator it = victimsVisitedList_->begin();
-        it != victimsVisitedList_->end(); it++)
-    {
-      invalid = invalid || Utils::distanceBetweenPoints2D((*iter)->getPose().position, 
-          (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
-      if(invalid)
-        break;
-    }
-    if(invalid)
-    {
-      ROS_DEBUG_NAMED("object_handler",
-        "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
-      iter = objectsPtr->erase(iter);
-    }
-    else
-    {
-      ++iter;
-    }
-  }
-}
+        ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
+            HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr,
+            FaceListPtr faceListPtr, MotionListPtr motionListPtr,
+            SoundListPtr soundListPtr, Co2ListPtr co2ListPtr,
+            const VictimListConstPtr& victimsToGoList,
+            const VictimListConstPtr& victimsVisited);
 
-typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
+        void handleHoles(const HolePtrVectorPtr& newHoles, 
+            const tf::Transform& transform);
+        void handleQrs(const QrPtrVectorPtr& newQrs); 
+        template <class ObjectType> 
+          void handleObjects( 
+              const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr);
 
-}  // namespace pandora_alert_handler
+        void updateParams(float sensor_range, float victim_cluster_radius);
+
+      private:
+
+        int addToList(const ObjectPtr& newObject);
+        void keepValidHoles(const HolePtrVectorPtr& holesPtr,
+            const tf::Transform& cameraTransform);
+        template <class ObjectType>
+          void keepValidVerificationObjects(
+              const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr);
+
+      private:
+
+        ros::Publisher qrPublisher_;
+        ros::Publisher scorePublisher_;
+
+        HoleListPtr holeListPtr_;
+        QrListPtr qrListPtr_;
+        HazmatListPtr hazmatListPtr_;
+        ThermalListPtr thermalListPtr_;
+        FaceListPtr faceListPtr_;
+        MotionListPtr motionListPtr_;
+        SoundListPtr soundListPtr_;
+        Co2ListPtr co2ListPtr_;
+
+        VictimListConstPtr victimsToGoList_;
+        VictimListConstPtr victimsVisitedList_;
+
+        int roboCupScore_;
+
+        float SENSOR_RANGE;
+        float VICTIM_CLUSTER_RADIUS;
+    };
+
+    template <class ObjectType>
+      void ObjectHandler::handleObjects(
+          const typename TypeDef<ObjectType>::PtrVectorPtr& newObjects)
+      {
+        if(ObjectType::getObjectType() != "thermal" && 
+            ObjectType::getObjectType() != "hazmat")
+        {
+          keepValidVerificationObjects<ObjectType>(newObjects);
+        }
+        for(int ii = 0; ii < newObjects->size(); ++ii)
+        {
+          int objectScore = addToList(newObjects->at(ii));
+          if(objectScore)
+          {
+            std_msgs::Int32 updateScoreMsg;
+            roboCupScore_ += objectScore;
+            updateScoreMsg.data = roboCupScore_;
+            scorePublisher_.publish(updateScoreMsg);
+          }
+        }
+      }
+
+    template <class ObjectType>
+      void ObjectHandler::keepValidVerificationObjects(
+          const typename TypeDef<ObjectType>::PtrVectorPtr& objectsPtr)
+      {
+        typename TypeDef<ObjectType>::PtrVector::iterator iter = objectsPtr->begin();
+
+        while(iter != objectsPtr->end())
+        {
+          bool invalid = false;
+          for(VictimList::const_iterator it = victimsToGoList_->begin();
+              it != victimsToGoList_->end(); it++)
+          {
+            invalid = Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
+                (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+            if(invalid)
+              break;
+          }
+          for(VictimList::const_iterator it = victimsVisitedList_->begin();
+              it != victimsVisitedList_->end(); it++)
+          {
+            invalid = invalid || Utils::distanceBetweenPoints3D((*iter)->getPose().position, 
+                (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+            if(invalid)
+              break;
+          }
+          if(invalid)
+          {
+            ROS_DEBUG_NAMED("object_handler",
+                "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
+            iter = objectsPtr->erase(iter);
+          }
+          else
+          {
+            ++iter;
+          }
+        }
+      }
+
+    template<>
+      void ObjectHandler::keepValidVerificationObjects<Sound>(
+          const typename TypeDef<Sound>::PtrVectorPtr& objectsPtr)
+      {
+        SoundPtrVector::iterator iter = objectsPtr->begin();
+
+        while(iter != objectsPtr->end())
+        {
+          bool invalid = false;
+          for(VictimList::const_iterator it = victimsToGoList_->begin();
+              it != victimsToGoList_->end(); it++)
+          {
+            invalid = Utils::distanceBetweenPoints2D((*iter)->getPose().position, 
+                (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+            if(invalid)
+              break;
+          }
+          for(VictimList::const_iterator it = victimsVisitedList_->begin();
+              it != victimsVisitedList_->end(); it++)
+          {
+            invalid = invalid || Utils::distanceBetweenPoints2D((*iter)->getPose().position, 
+                (*it)->getPose().position) >= VICTIM_CLUSTER_RADIUS;
+            if(invalid)
+              break;
+          }
+          if(invalid)
+          {
+            ROS_DEBUG_NAMED("object_handler",
+                "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
+            iter = objectsPtr->erase(iter);
+          }
+          else
+          {
+            ++iter;
+          }
+        }
+      }
+
+    typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
+
+  }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_HANDLER_H

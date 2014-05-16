@@ -208,14 +208,14 @@ class AlertHandler : public StateClient, private boost::noncopyable
   VictimHandlerPtr victimHandler_;
 
   int currentVictimId;
-
 };
 
 template <class ObjectType> 
 void AlertHandler::objectDirectionAlertCallback(
     const pandora_common_msgs::GeneralAlertMsg& msg)
 {    
-  // ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "FACE ALERT ARRIVED!");
+  ROS_DEBUG_STREAM_NAMED("ALERT_HANDLER_ALERT_CALLBACK",  
+      ObjectType::getObjectType() << " ALERT ARRIVED!");
 
   typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr;
   try
@@ -228,10 +228,9 @@ void AlertHandler::objectDirectionAlertCallback(
     return;
   }
 
-  objectHandler_->handleObjects(objectsVectorPtr);
+  objectHandler_->handleObjects<ObjectType>(objectsVectorPtr);
 
   victimHandler_->inspect();
-
 }
 
 }  // namespace pandora_alert_handler

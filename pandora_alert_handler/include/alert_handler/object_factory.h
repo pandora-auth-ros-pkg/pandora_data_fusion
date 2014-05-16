@@ -24,91 +24,100 @@
 
 namespace pandora_data_fusion
 {
-namespace pandora_alert_handler
-{
-
-class ObjectFactory : private boost::noncopyable
-{ 
- public:
-
-  ObjectFactory(const MapPtr& map, const std::string& mapType);
-
-  HolePtrVectorPtr makeHoles(
-      const vision_communications::HolesDirectionsVectorMsg& msg);
-  ThermalPtrVectorPtr makeThermals(
-      const pandora_common_msgs::GeneralAlertMsg& msg);
-  HazmatPtrVectorPtr makeHazmats(
-      const vision_communications::HazmatAlertsVectorMsg& msg);
-  QrPtrVectorPtr makeQrs(
-      const vision_communications::QRAlertsVectorMsg& msg);
-  template <class ObjectType>
-    typename TypeDef< ObjectType >::PtrVectorPtr makeObjects(
-        const pandora_common_msgs::GeneralAlertMsg& msg);
-
-  const tf::Transform& getTransform() const
+  namespace pandora_alert_handler
   {
-    return currentTransform_;
-  }
 
-  void dynamicReconfigForward(float occupiedCellThres, 
-      float highThres, float lowThres, float approachDist, 
-      float orientationCircle, float orientationDist);
+    class ObjectFactory : private boost::noncopyable
+    { 
+      public:
 
- private:
+        ObjectFactory(const MapPtr& map, const std::string& mapType);
 
-  /**
-   * @brief Sets this Object up according to the info from the Alert.
-   * @param objectPtr [const ObjectPtr&] Pointer to Object 
-   * variable to be filled.
-   * @param msg [const ..._communications::...Msg&] 
-   * Incoming ros message containing info.
-   * @return void
-   */
-  void setUpHole(const HolePtr& holePtr, 
-      const vision_communications::HoleDirectionMsg& msg);
-  void setUpThermal(const ThermalPtr& thermalPtr, 
-      const pandora_common_msgs::GeneralAlertMsg& msg);
-  void setUpHazmat(const HazmatPtr& hazmatPtr, 
-      const vision_communications::HazmatAlertMsg& msg);
-  void setUpQr(const QrPtr& qrPtr, 
-      const vision_communications::QRAlertMsg& msg);
-  void setUpObject(const ObjectPtr& objectPtr, 
-      const pandora_common_msgs::GeneralAlertMsg& msg);
+        HolePtrVectorPtr makeHoles(
+            const vision_communications::HolesDirectionsVectorMsg& msg);
+        HazmatPtrVectorPtr makeHazmats(
+            const vision_communications::HazmatAlertsVectorMsg& msg);
+        QrPtrVectorPtr makeQrs(
+            const vision_communications::QRAlertsVectorMsg& msg);
+        template <class ObjectType>
+          typename TypeDef< ObjectType >::PtrVectorPtr makeObjects(
+              const pandora_common_msgs::GeneralAlertMsg& msg);
 
- private:
+        const tf::Transform& getTransform() const
+        {
+          return currentTransform_;
+        }
 
-  tf::Transform currentTransform_;
-  
-  PoseFinderPtr poseFinder_;
+        void dynamicReconfigForward(float occupiedCellThres, 
+            float highThres, float lowThres, float approachDist, 
+            float orientationCircle, float orientationDist);
 
-};
+      private:
 
-template <class ObjectType>
-  typename TypeDef< ObjectType >::PtrVectorPtr ObjectFactory::makeObjects(
-      const pandora_common_msgs::GeneralAlertMsg& msg)
-{
-  currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
+        /**
+         * @brief Sets this Object up according to the info from the Alert.
+         * @param objectPtr [const ObjectPtr&] Pointer to Object 
+         * variable to be filled.
+         * @param msg [const ..._communications::...Msg&] 
+         * Incoming ros message containing info.
+         * @return void
+         */
+        void setUpHole(const HolePtr& holePtr, 
+            const vision_communications::HoleDirectionMsg& msg);
+        void setUpHazmat(const HazmatPtr& hazmatPtr, 
+            const vision_communications::HazmatAlertMsg& msg);
+        void setUpQr(const QrPtr& qrPtr, 
+            const vision_communications::QRAlertMsg& msg);
+        template <class ObjectType>
+          void setUpObject(
+              const typename TypeDef<ObjectType>::Ptr& objectPtr, 
+              const pandora_common_msgs::GeneralAlertMsg& msg);
 
-  typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr(
-      new typename TypeDef< ObjectType >::PtrVector);
-  try
-  {
-    typename TypeDef< ObjectType >::Ptr newObject( new ObjectType );
-    setUpObject( newObject, msg );
-    objectsVectorPtr->push_back( newObject );
-  }
-  catch (AlertException ex)
-  {
-    ROS_WARN_NAMED("ALERT_HANDLER",
-      "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
-  }
+      private:
 
-  return objectsVectorPtr;
-}
+        tf::Transform currentTransform_;
 
-typedef boost::scoped_ptr< ObjectFactory > ObjectFactoryPtr;
+        PoseFinderPtr poseFinder_;
 
-}  // namespace pandora_alert_handler
+    };
+
+    template <class ObjectType>
+      typename TypeDef< ObjectType >::PtrVectorPtr ObjectFactory::makeObjects(
+          const pandora_common_msgs::GeneralAlertMsg& msg)
+      {
+        currentTransform_ = poseFinder_->lookupTransformFromWorld( msg.header );
+
+        typename TypeDef< ObjectType >::PtrVectorPtr objectsVectorPtr(
+            new typename TypeDef< ObjectType >::PtrVector);
+        try
+        {
+          typename TypeDef< ObjectType >::Ptr newObject( new ObjectType );
+          setUpObject<ObjectType>( newObject, msg );
+          objectsVectorPtr->push_back( newObject );
+        }
+        catch (AlertException ex)
+        {
+          ROS_WARN_NAMED("ALERT_HANDLER",
+              "[ALERT_HANDLER %d] %s", __LINE__, ex.what());
+        }
+
+        return objectsVectorPtr;
+      }
+
+    template <class ObjectType>
+      void ObjectFactory::setUpObject(
+          const typename TypeDef<ObjectType>::Ptr& objectPtr, 
+          const pandora_common_msgs::GeneralAlertMsg& msg)
+    {
+      objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
+            msg.pitch, currentTransform_) );
+      objectPtr->setProbability( msg.probability );
+      objectPtr->initializeObjectFilter();
+    }
+
+    typedef boost::scoped_ptr< ObjectFactory > ObjectFactoryPtr;
+
+  }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_FACTORY_H

@@ -14,7 +14,6 @@
 #include "alert_handler/defines.h"
 #include "alert_handler/tf_finder.h"
 #include "alert_handler/tf_listener.h"
-#include "alert_handler/objects.h"
 #include "alert_handler/utils.h"
 
 namespace pandora_data_fusion

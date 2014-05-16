@@ -20,13 +20,6 @@ namespace pandora_data_fusion
 
     int Victim::lastVictimId_ = 0;
 
-    bool Victim::isSameObject(const ObjectConstPtr& object, float distance) const
-    {  
-      ROS_ASSERT(object->getType().compare(type_) == 0);
-
-      return Object::isSameObject(object, distance);
-    }
-
     PoseStamped Victim::getPoseStamped() const
     {
       PoseStamped victimPose;
@@ -67,7 +60,7 @@ namespace pandora_data_fusion
       //!< fill victim pose
       visualization_msgs::Marker victimMarker;
 
-      victimMarker.header.frame_id = "/world";
+      victimMarker.header.frame_id = getFrameId();
       victimMarker.header.stamp = ros::Time::now();
       victimMarker.ns = "Victim";
       victimMarker.id = id_;
@@ -83,7 +76,7 @@ namespace pandora_data_fusion
       //!< fill victim approach pose
       visualization_msgs::Marker approachPointMarker;
 
-      approachPointMarker.header.frame_id = "/world";
+      approachPointMarker.header.frame_id = getFrameId();
       approachPointMarker.header.stamp = ros::Time::now();
       approachPointMarker.ns = "ApproachPoint";
       approachPointMarker.id = id_;
@@ -121,13 +114,37 @@ namespace pandora_data_fusion
       markers->markers.push_back(victimMarker);
     }
 
-    void Victim::fillGeotiff(
-        data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
+    void Victim::fillGeotiff(data_fusion_communications::
+        DatafusionGeotiffSrv::Response* res) const
     {
       if (valid_)
       {
         res->victimsx.push_back( pose_.position.x );
         res->victimsy.push_back( pose_.position.y );
+      }
+    }
+
+    void Victim::inspect()
+    {
+      float probability = 0;
+      bool victimVisionFound = false;
+      for (int ii = 0; ii < objects_.size(); ++ii)
+      {
+        if(objects_[ii]->getType() == "face")
+        {
+          setProbability(objects_[ii]->getProbability());
+          victimVisionFound = true;
+          break;
+        }
+        else if(objects_[ii]->getType() != "hole")
+        {
+          probability += objects_[ii]->getProbability();
+        }
+      }
+      if(!victimVisionFound)
+      {
+        probability /= objects_.size();
+        setProbability(probability);
       }
     }
 
@@ -145,109 +162,18 @@ namespace pandora_data_fusion
 
       if(!holeDeleted_)
       {
-        ObjectConstPtrVector::const_iterator holeIt = objects.end();
-        float maxHoleProbability = 0;
-
-        for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
-            it != objects.end(); it++)
-        {
-          if (!(*it)->getType().compare(std::string("hole")) && 
-              (*it)->getProbability() > maxHoleProbability)
-          {
-            maxHoleProbability = (*it)->getProbability();
-            holeIt = it;
-          }
-        }
-
-        ObjectPtr representativeHole( new Hole );
-
-        if (holeIt != objects.end())
-          *representativeHole = *(*holeIt);
-
-        for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
-            it != objects.end(); it++)
-        {
-          if (!(*it)->getType().compare(std::string("hole")) && it != holeIt)
-          {
-            representativeHole->update((*it));
-          }
-        }
-
-        if (holeIt != objects.end())
-          objects_.push_back(representativeHole);
+        findRepresentativeObject<Hole>(objects);
       }
-
       if(!thermalDeleted_)
       {
-        ObjectConstPtrVector::const_iterator thermalIt = objects.end();
-        float maxThermalProbability = 0;
-
-        for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
-            it != objects.end(); it++)
-        {
-          if (!(*it)->getType().compare(std::string("thermal")) && 
-              (*it)->getProbability() > maxThermalProbability)
-          {
-            maxThermalProbability = (*it)->getProbability();
-            thermalIt = it;
-          }
-        }
-
-        ObjectPtr representativeThermal( new Thermal );
-
-        if (thermalIt != objects.end())
-          *representativeThermal = *(*thermalIt);
-
-        for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
-            it != objects.end(); it++)
-        {
-          if (!(*it)->getType().compare(std::string("thermal")) && it != thermalIt)
-          {
-            representativeThermal->update((*it));
-          }
-        }
-
-        if (thermalIt != objects.end())
-          objects_.push_back(representativeThermal);
+        findRepresentativeObject<Thermal>(objects);
       }
+      findRepresentativeObject<Face>(objects);
+      findRepresentativeObject<Motion>(objects);
+      findRepresentativeObject<Sound>(objects);
+      findRepresentativeObject<Co2>(objects);
 
       updateRepresentativeObject(approachDistance);
-    }
-
-    void Victim::inspect()
-    {
-      float probability = 0;
-      bool victimVisionFound = false;
-      for (int ii = 0; ii < objects_.size(); ++ii)
-      {
-        if(objects_[ii]->getType() == "face")
-        {
-          setProbability(objects_[ii]->getProbability());
-          victimVisionFound = true;
-          break;
-        }
-        else if(objects_[ii]->getType() != "hole")
-        {
-          probability += objects_[ii]->getProbability() / 4;
-        }
-      }
-      if(!victimVisionFound)
-      {
-        setProbability(probability);
-      }
-    }
-
-    /**
-     * @details Should always be called after any change on the objects_.
-     */
-    void Victim::updateRepresentativeObject(float approachDistance)
-    {  
-      selectedObjectIndex_ = findRepresentativeObject();
-
-      if (selectedObjectIndex_> -1)
-      {
-        updatePose(objects_[selectedObjectIndex_]->getPose(), approachDistance);
-      }
     }
 
     /**
@@ -257,29 +183,43 @@ namespace pandora_data_fusion
      * where the thermal sensor would be more informative and trustworthy this
      * method would have been changed.
      */
-    int Victim::findRepresentativeObject() const
-    {
-      if (objects_.size() == 0)
+    void Victim::updateRepresentativeObject(float approachDistance)
+    {  
+      if(objects_.size() == 0)
       {
-        return -1;
+        selectedObjectIndex_ = -1;
       }
 
-      for ( int ii = 0 ; ii < objects_.size() ; ++ii)
+      int tpaIndex = -1;
+      for(int ii = 0; ii < objects_.size(); ++ii)
       {
-        if (!objects_[ii]->getType().compare(std::string("hole")))
+        if(objects_[ii]->getType() == "hole")
         {
-          return ii;
+          selectedObjectIndex_ = ii;
+        }
+        else if(objects_[ii]->getType() == "tpa")
+        {
+          tpaIndex = ii;
         }
       }
 
-      return 0;
+      if(selectedObjectIndex_ == -1)
+      {
+        selectedObjectIndex_ = tpaIndex;
+      }
+
+      if(selectedObjectIndex_ > -1)
+      {
+        updatePose(objects_[selectedObjectIndex_], approachDistance);
+      }
     }
 
-    void Victim::updatePose(const Pose& newPose,
+    void Victim::updatePose(const ObjectConstPtr& object,
         float approachDistance) 
     {
-      setPose(newPose);
-      approachPose_ = calculateApproachPose(approachDistance);
+      setPose(object->getPose());
+      approachPose_ = calculateApproachPose(object->getType(), 
+          approachDistance);
     }
 
     /**
@@ -319,17 +259,25 @@ namespace pandora_data_fusion
      * its orientation to be the yaw-reversed of the victim's (as it's if we look
      * to the victim).
      */
-    Pose Victim::calculateApproachPose(float approachDistance) 
-      const
+    Pose Victim::calculateApproachPose(std::string objectType,
+        float approachDistance) const
       {
+        int choice = 0;
+        if(objectType == "hole")
+          choice = 0;
+        else if(objectType == "tpa")
+          choice = 1;
+
         tf::Transform transformation = getTransform();
 
         tf::Vector3 column = transformation.getBasis().getColumn(0);
 
         Pose approachPose;
 
-        approachPose.position.x = pose_.position.x + approachDistance * column[0];
-        approachPose.position.y = pose_.position.y + approachDistance * column[1];
+        approachPose.position.x = pose_.position.x + pow(-1, choice) *  
+          approachDistance * column[0];
+        approachPose.position.y = pose_.position.y + pow(-1, choice) *
+          approachDistance * column[1];
         approachPose.position.z = 0;
 
         tfScalar roll, pitch, yaw;

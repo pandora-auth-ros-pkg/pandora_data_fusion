@@ -54,100 +54,33 @@ target_link_libraries(filter_model
           ${catkin_LIBRARIES}
           ${BFL_LIBRARIES}
           )
-add_dependencies(filter_model 
-  data_fusion_communications_gencpp
-  )
 
 ###################### objects #########################################
 
-add_library(objects 
-        src/objects.cpp)
+add_library(base_object
+        src/base_object.cpp)
+target_link_libraries(base_object
+          ${catkin_LIBRARIES}
+          )
+
+add_library(objects
+        src/hole.cpp
+        src/hazmat.cpp
+        src/qr.cpp
+        src/thermal.cpp
+        src/face.cpp
+        src/motion.cpp
+        src/sound.cpp
+        src/co2.cpp
+        )
 target_link_libraries(objects
           ${catkin_LIBRARIES}
+          ${BFL_LIBRARIES}
           utils
+          base_object
           filter_model
           )
-add_dependencies(objects 
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(hazmat 
-        src/hazmat.cpp)
-target_link_libraries(hazmat
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(hazmat
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(hole
-        src/hole.cpp)
-target_link_libraries(hole
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(hole
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(qr 
-        src/qr.cpp)
-target_link_libraries(qr 
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(qr 
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(thermal 
-        src/thermal.cpp)
-target_link_libraries(thermal 
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(thermal
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(face
-        src/face.cpp)
-target_link_libraries(face
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(face
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(motion
-        src/motion.cpp)
-target_link_libraries(motion
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(motion
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(sound
-        src/sound.cpp)
-target_link_libraries(sound
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(sound
-  data_fusion_communications_gencpp
-  ) 
-
-add_library(co2
-        src/co2.cpp)
-target_link_libraries(co2
-          ${catkin_LIBRARIES}
-          objects
-          )
-add_dependencies(co2
+add_dependencies(objects
   data_fusion_communications_gencpp
   ) 
 
@@ -155,7 +88,9 @@ add_library(victim
         src/victim.cpp)
 target_link_libraries(victim
           ${catkin_LIBRARIES}
-          objects 
+          utils
+          base_object
+          objects
           )
 add_dependencies(victim 
   data_fusion_communications_gencpp
@@ -167,8 +102,6 @@ add_library(victim_list
         src/victim_list.cpp)
 target_link_libraries(victim_list
           ${catkin_LIBRARIES}
-          utils
-          filter_model
           victim
           )
 add_dependencies(victim_list 
@@ -192,9 +125,8 @@ add_library(pose_finder
         src/pose_finder.cpp)
 target_link_libraries(pose_finder
           ${catkin_LIBRARIES}
-          ros_tf_listener
-          objects
           utils
+          ros_tf_listener
           )
 add_dependencies(pose_finder 
   data_fusion_communications_gencpp
@@ -207,15 +139,7 @@ add_library(object_factory
 target_link_libraries(object_factory
           ${catkin_LIBRARIES}
           pose_finder
-          hazmat
-          hole
-          qr
-          thermal
-          face
-          motion
-          sound
-          co2
-          utils
+          objects
           )
 add_dependencies(object_factory 
   data_fusion_communications_gencpp
@@ -229,6 +153,7 @@ add_library(victim_clusterer
         src/victim_clusterer.cpp)
 target_link_libraries(victim_clusterer 
           ${catkin_LIBRARIES}
+          utils
           victim
           )
 add_dependencies(victim_clusterer 
@@ -241,9 +166,10 @@ add_library(victim_handler
         src/victim_handler.cpp)
 target_link_libraries(victim_handler
           ${catkin_LIBRARIES}
+          utils
           victim
-          victim_clusterer
           victim_list
+          victim_clusterer
           )
 add_dependencies(victim_handler 
   data_fusion_communications_gencpp
@@ -255,6 +181,9 @@ add_library(object_handler
         src/object_handler.cpp)
 target_link_libraries(object_handler 
           ${catkin_LIBRARIES}
+          utils
+          objects
+          victim_list
           )
 add_dependencies(object_handler 
   data_fusion_communications_gencpp
@@ -266,6 +195,10 @@ add_library(alert_handler
         src/alert_handler.cpp)
 target_link_libraries(alert_handler 
           ${catkin_LIBRARIES}
+          object_factory
+          object_handler
+          victim_handler
+          victim_list
           )
 add_dependencies(alert_handler 
   pandora_alert_handler_gencfg 
@@ -282,25 +215,6 @@ add_executable(alert_handler_node
 target_link_libraries(alert_handler_node 
           ${catkin_LIBRARIES}
           alert_handler
-          object_factory
-          object_handler
-          pose_finder
-          ros_tf_listener
-          victim_handler
-          victim_clusterer
-          victim_list
-          utils
-          filter_model
-          objects
-          hazmat
-          hole
-          qr
-          thermal
-          face
-          motion
-          sound
-          co2
-          victim
           )
 add_dependencies(alert_handler_node 
   pandora_alert_handler_gencfg 
