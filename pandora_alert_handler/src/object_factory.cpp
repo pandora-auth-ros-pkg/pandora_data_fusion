@@ -109,6 +109,7 @@ void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr,
 {
   hazmatPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
+  hazmatPtr->setProbability( 0.5 );
   hazmatPtr->setPattern( msg.patternType );
   hazmatPtr->initializeObjectFilter();
 }
@@ -118,6 +119,7 @@ void ObjectFactory::setUpQr(const QrPtr& qrPtr,
 {
   qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
         msg.pitch, currentTransform_) );
+  qrPtr->setProbability( 0.5 );
   qrPtr->setContent( msg.QRcontent );
   qrPtr->initializeObjectFilter();
 }

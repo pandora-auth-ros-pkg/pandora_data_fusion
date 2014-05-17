@@ -130,7 +130,7 @@ namespace pandora_data_fusion
       bool victimVisionFound = false;
       for (int ii = 0; ii < objects_.size(); ++ii)
       {
-        if(objects_[ii]->getType() == "face")
+        if(objects_[ii]->getType() == Face::getObjectType())
         {
           setProbability(objects_[ii]->getProbability());
           victimVisionFound = true;
@@ -143,7 +143,8 @@ namespace pandora_data_fusion
       }
       if(!victimVisionFound)
       {
-        probability /= objects_.size();
+        int numberOfObjects = 2 > objects_.size() - 1 ? 2 : objects_.size() - 1;
+        probability /= numberOfObjects;
         setProbability(probability);
       }
     }
