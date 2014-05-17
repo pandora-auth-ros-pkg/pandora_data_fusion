@@ -250,7 +250,7 @@ bool VictimHandler::deleteVictim(int victimId)
 /**
  * @details Delegate to victimList
  */
-void VictimHandler::validateVictim(int victimId, bool victimValid)
+bool VictimHandler::validateVictim(int victimId, bool victimValid)
 {
   VictimPtr currentVictim = victimsToGoList_->validateVictim(victimId, victimValid);
   
@@ -263,7 +263,9 @@ void VictimHandler::validateVictim(int victimId, bool victimValid)
       validVictimsPublisher_.publish(updateValidVictims);
     }
     victimsVisitedList_->addUnchanged(currentVictim);
+    return true;
   }
+  return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

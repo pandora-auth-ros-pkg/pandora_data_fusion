@@ -141,9 +141,9 @@ class VictimHandler : private boost::noncopyable
    * @param victimId [int] Id of victim to be validated.
    * @param victimValid [bool] True for positive and false for 
    * negative validation
-   * @return void
+   * @return bool true, if succeded, false, if not found
    */
-  void validateVictim(int victimId, bool victimValid);
+  bool validateVictim(int victimId, bool victimValid);
 
   /**
    * @brief Fills victimsMsg with information about victims to go.

@@ -353,7 +353,9 @@ void AlertHandler::deleteVictimCallback()
 void AlertHandler::validateVictimCallback()
 {
   GoalConstPtr goal = validateVictimServer_->acceptNewGoal();
-  victimHandler_->validateVictim(goal->victimId, goal->victimValid);
+  bool validated = victimHandler_->validateVictim(goal->victimId, goal->victimValid);
+  if(!validated)
+    validateVictimServer_->setAborted();
   validateVictimServer_->setSucceeded();
 }
 
