@@ -38,7 +38,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined messages
 add_message_files(
 	FILES
-	ThermalDirectionAlertMsg.msg
+        VictimsMsg.msg
 	VictimVerificationMsg.msg
 	VictimFoundMsg.msg
 	VictimInfoMsg.msg
@@ -46,7 +46,6 @@ add_message_files(
 	QrNotificationMsg.msg
 	VictimToFsmMsg.msg
 	)
-	
 
 add_service_files(
 	FILES
@@ -61,8 +60,6 @@ add_action_files(
 	DeleteCurrentVictim.action
 	ValidateCurrentHole.action
 	)
-
-
 
 #common commands for building c++ executables and libraries
 #add_library(${PROJECT_NAME} src/example.cpp)

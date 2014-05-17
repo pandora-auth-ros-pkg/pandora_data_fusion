@@ -17,6 +17,7 @@
 #include <std_srvs/Empty.h>
 #include <std_msgs/Int16.h>
 
+#include "data_fusion_communications/VictimsMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
 #include "data_fusion_communications/GetVictimsAction.h"
 #include "data_fusion_communications/VictimInfoMsg.h"
@@ -161,6 +162,8 @@ class AlertHandler : private boost::noncopyable
   ros::ServiceServer getObjectsService_;
   ros::ServiceServer geotiffService_;
   ros::ServiceServer getMarkersService_;
+
+  ros::Publisher victimsPublisher_;
 
   tf::TransformBroadcaster currentVictimBroadcaster_;
 

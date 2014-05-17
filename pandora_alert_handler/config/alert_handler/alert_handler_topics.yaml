@@ -10,6 +10,7 @@ subscribed_topic_names:
   currentVictim: /data_fusion/victim_fusion/selected_victim
   map: /slam/map
 published_topic_names:  
+  victims : victims
   victim_found : victim_found
   victim_update : victim_update
   victim_verified : victim_verified

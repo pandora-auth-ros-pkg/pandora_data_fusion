@@ -1,2 +1,3 @@
 geometry_msgs/PoseStamped victimPose
 float32 probability
+string[] sensors

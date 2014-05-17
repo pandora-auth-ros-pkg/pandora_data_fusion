@@ -150,6 +150,19 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
 
+  //!< publishers
+  
+      if (nh_.getParam("published_topic_names/victims", param))
+      {
+        victimsPublisher_ = nh_.
+          advertise<data_fusion_communications::VictimsMsg>(param, 10);
+      }
+      else
+      {
+        ROS_FATAL("victims topic name param not found");
+        ROS_BREAK();
+      }
+
   //!< action servers
 
   if (nh_.getParam("action_server_names/get_victims", param))
