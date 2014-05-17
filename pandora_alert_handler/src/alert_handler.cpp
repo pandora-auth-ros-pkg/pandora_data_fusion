@@ -32,8 +32,6 @@ AlertHandler::AlertHandler(const std::string& ns): nh_(ns)
         faces_, motions_, sounds_, co2s_, victimsToGo_, victimsVisited_) );
 
   initRosInterfaces();
-
-  clientInitialize();
 }
 
 void AlertHandler::initRosInterfaces()

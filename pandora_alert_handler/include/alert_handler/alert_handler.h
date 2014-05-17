@@ -34,8 +34,6 @@
 #include "data_fusion_communications/ThermalDirectionAlertMsg.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 
-#include "state_manager/state_client.h"
-
 #include "pandora_alert_handler/AlertHandlerConfig.h"
 #include "alert_handler/defines.h"
 #include "alert_handler/object_list.h"
@@ -57,7 +55,7 @@ typedef actionlib::SimpleActionServer
   <data_fusion_communications::ValidateCurrentHoleAction> 
     ValidateCurrentHoleServer;
 
-class AlertHandler : public StateClient, private boost::noncopyable
+class AlertHandler : private boost::noncopyable
 {
  public:
 
@@ -145,6 +143,7 @@ class AlertHandler : public StateClient, private boost::noncopyable
  private:
 
   ros::NodeHandle nh_;
+
   ros::Subscriber holeDirectionSubscriber_;
   ros::Subscriber faceDirectionSubscriber_;
   ros::Subscriber co2DirectionSubscriber_;
