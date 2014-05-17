@@ -56,7 +56,7 @@ add_service_files(
 	
 add_action_files(
 	FILES
-	DeleteCurrentVictim.action
+	DeleteVictim.action
 	ValidateVictim.action
 	)
 

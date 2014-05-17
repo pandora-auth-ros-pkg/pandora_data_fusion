@@ -130,10 +130,11 @@ class VictimHandler : private boost::noncopyable
   void setCurrentVictimIndex(int index);
   
   /**
-   * @brief Deletes the current VictimPtr  
-   * @return void
+   * @brief Deletes VictimPtr from VictimsToGo list with victimId.
+   * @param victimId [int] victim's id
+   * @return bool true if deleted successfully, false if not found
    */
-  void deleteCurrentVictim();
+  bool deleteVictim(int victimId);
   
   /**
    * @brief Validates current victim.

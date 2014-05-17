@@ -174,13 +174,13 @@ void AlertHandler::initRosInterfaces()
 
   //!< action servers
 
-  if (nh_.getParam("action_server_names/delete_current_victim", param))
+  if (nh_.getParam("action_server_names/delete_victim", param))
   {
     deleteVictimServer_.reset(new DeleteVictimServer(nh_, param,  false));
   } 
   else
   {
-    ROS_FATAL("delete_current_victim action name param not found");
+    ROS_FATAL("delete_victim action name param not found");
     ROS_BREAK();
   }
   deleteVictimServer_->registerGoalCallback(
@@ -343,19 +343,17 @@ void AlertHandler::selectedVictimCallback(const std_msgs::Int16& msg)
 
 void AlertHandler::deleteVictimCallback()
 {
-  deleteVictimServer_->acceptNewGoal();
-
-  victimHandler_->deleteCurrentVictim();
-
+  int victimId = deleteVictimServer_->acceptNewGoal()->victimId;
+  bool deleted = victimHandler_->deleteVictim(victimId);
+  if(!deleted)
+    deleteVictimServer_->setAborted();
   deleteVictimServer_->setSucceeded();
 }
 
 void AlertHandler::validateVictimCallback()
 {
   GoalConstPtr goal = validateVictimServer_->acceptNewGoal();
-
   victimHandler_->validateVictim(goal->victimId, goal->victimValid);
-
   validateVictimServer_->setSucceeded();
 }
 

@@ -242,15 +242,9 @@ bool VictimHandler::getCurrentVictimTransform(
 /**
  * @details Delegate to victimList
  */
-void VictimHandler::deleteCurrentVictim()
+bool VictimHandler::deleteVictim(int victimId)
 {
-  bool victimTracked = victimsToGoList_->deleteCurrentVictim();
-
-  if(!victimTracked)
-  {
-    ROS_ERROR("[VICTIM_HANDLER %d] deleteCurrentVictim was"
-              "called when no victim is tracked ", __LINE__);
-  }
+  return victimsToGoList_->deleteVictim(victimId);
 }
 
 /**

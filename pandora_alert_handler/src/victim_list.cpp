@@ -209,16 +209,24 @@ namespace pandora_data_fusion
     }
 
     /**
-     * @details Assuming that a victim is being tracked, that victim is erased
+     * @details By Agent's order that victim is erased
      * from victim list. Next currentVictim iterator points to the end of the
      * list.
      */
-    bool VictimList::deleteCurrentVictim()
+    bool VictimList::deleteVictim(int victimId)
     {
-      ROS_ASSERT(currentVictimIt_ != objects_.end());
-      objects_.erase(currentVictimIt_);
-      currentVictimIt_ = objects_.end();
-      return true;
+      for(VictimList::iterator it = objects_.begin();
+          it != objects_.end(); ++it)
+      {
+        if((*it)->getId() == victimId)
+        {
+          if(it == currentVictimIt_)
+            currentVictimIt_ = objects_.end();
+          objects_.erase(it);
+          return true;
+        }
+      }
+      return false;
     }
 
     /**

@@ -113,9 +113,11 @@ class VictimList : public ObjectList<Victim>
   bool getCurrentVictimTransform(tf::Transform* Transform) const;
 
   /**
-   * @brief Deletes the current VictimPtr  
+   * @brief Deletes VictimPtr with the corresponding victimId
+   * @param victimId [int] id that will be used to search for the victim
+   * @return bool true, if deleted, false, if not found.
    */
-  bool deleteCurrentVictim();
+  bool deleteVictim(int victimId);
 
   /**
    * @brief Validates victim with victimId.

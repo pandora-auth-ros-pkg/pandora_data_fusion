@@ -19,7 +19,7 @@
 
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
-#include "pandora_data_fusion_msgs/DeleteCurrentVictimAction.h"
+#include "pandora_data_fusion_msgs/DeleteVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"
 #include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
@@ -46,7 +46,7 @@ namespace pandora_alert_handler
 {
 
 typedef actionlib::SimpleActionServer
-  <pandora_data_fusion_msgs::DeleteCurrentVictimAction> DeleteVictimServer;
+  <pandora_data_fusion_msgs::DeleteVictimAction> DeleteVictimServer;
 typedef actionlib::SimpleActionServer 
   <pandora_data_fusion_msgs::ValidateVictimAction> 
     ValidateVictimServer;
@@ -75,6 +75,7 @@ class AlertHandler : private boost::noncopyable
         const pandora_common_msgs::GeneralAlertMsg& msg);
 
   /* Victim-concerned Subscribers */
+  
   /**
    * @brief Communication with Navigation (possibly needs to change).
    * @param msg [const std_msgs::Int16&] Msg
@@ -83,6 +84,7 @@ class AlertHandler : private boost::noncopyable
   void selectedVictimCallback(const std_msgs::Int16& msg);
 
   /* MapSubsriber Callback - Communication with SLAM */
+  
   /**
    * @brief Communication with SLAM. Gets current global map.
    * @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
@@ -91,14 +93,15 @@ class AlertHandler : private boost::noncopyable
   void updateMap(const nav_msgs::OccupancyGridConstPtr& msg);
 
   /* Victim-concerned Goal Callbacks */
+
   /**
-   * @brief Client is FSM. Order to delete Victim.
+   * @brief Client is Agent. Order to delete Victim.
    * @return void
    */
   void deleteVictimCallback();
+
   /**
-   * @brief Client is FSM. Orded to validate current hole (identification mode).
-   * @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
+   * @brief Client is Agent. Order to validate current victim (identification mode).
    * @return void
    */
   void validateVictimCallback();
@@ -196,8 +199,6 @@ class AlertHandler : private boost::noncopyable
   ObjectFactoryPtr objectFactory_;
   ObjectHandlerPtr objectHandler_;
   VictimHandlerPtr victimHandler_;
-
-  int currentVictimId;
 };
 
 template <class ObjectType> 
