@@ -256,9 +256,9 @@ void VictimHandler::deleteCurrentVictim()
 /**
  * @details Delegate to victimList
  */
-void VictimHandler::validateCurrentHole(bool objectValid)
+void VictimHandler::validateVictim(int victimId, bool victimValid)
 {
-  VictimPtr currentVictim = victimsToGoList_->validateCurrentObject(objectValid);
+  VictimPtr currentVictim = victimsToGoList_->validateVictim(victimId, victimValid);
   
   if(currentVictim.get())
   {

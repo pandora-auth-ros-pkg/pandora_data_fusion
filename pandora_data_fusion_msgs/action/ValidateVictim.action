@@ -1,5 +1,6 @@
 #goal
-bool valid
+int32 victimId
+bool victimValid
 ---
 #result
 ---

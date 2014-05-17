@@ -189,17 +189,17 @@ void AlertHandler::initRosInterfaces()
 
   if (nh_.getParam("action_server_names/validate_victim", param))
   {
-    validateCurrentHoleServer_.reset(
-    new ValidateCurrentHoleServer(nh_, param,  false));
+    validateVictimServer_.reset(
+    new ValidateVictimServer(nh_, param,  false));
   }
   else
   {
-    ROS_FATAL("validate_current_hole action name param not found");
+    ROS_FATAL("validate_victim action name param not found");
     ROS_BREAK();
   }
-  validateCurrentHoleServer_->registerGoalCallback(
-    boost::bind( &AlertHandler::validateCurrentHoleCallback, this) );
-  validateCurrentHoleServer_->start();
+  validateVictimServer_->registerGoalCallback(
+    boost::bind( &AlertHandler::validateVictimCallback, this) );
+  validateVictimServer_->start();
 
   //!< service servers
 
@@ -350,13 +350,13 @@ void AlertHandler::deleteVictimCallback()
   deleteVictimServer_->setSucceeded();
 }
 
-void AlertHandler::validateCurrentHoleCallback()
+void AlertHandler::validateVictimCallback()
 {
-  bool victimValid = validateCurrentHoleServer_->acceptNewGoal()->valid;
+  GoalConstPtr goal = validateVictimServer_->acceptNewGoal();
 
-  victimHandler_->validateCurrentHole(victimValid);
+  victimHandler_->validateVictim(goal->victimId, goal->victimValid);
 
-  validateCurrentHoleServer_->setSucceeded();
+  validateVictimServer_->setSucceeded();
 }
 
 void AlertHandler::updateMap(const nav_msgs::OccupancyGridConstPtr& msg)

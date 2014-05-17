@@ -227,33 +227,22 @@ namespace pandora_data_fusion
      * objects. If after this erasal the victim is empty, then it is erased and 
      * returned.
      */
-    VictimPtr VictimList::validateCurrentObject(bool objectValid)
+    VictimPtr VictimList::validateVictim(int victimId, bool victimValid)
     {
-      ROS_ASSERT(currentVictimIt_ != objects_.end());
-
       VictimPtr currentVictim;
 
-      if (objectValid)
+      for(VictimList::iterator it = objects_.begin();
+          it != objects_.end(); ++it)
       {
-        currentVictim = *currentVictimIt_;
-        currentVictim->setValid(true);
-        currentVictim->setVisited(true);
-        objects_.erase(currentVictimIt_);
-        currentVictimIt_ = objects_.end();
-      }
-      else
-      {
-        (*currentVictimIt_)->eraseObjectAt(
-            (*currentVictimIt_)->getSelectedObjectIndex(), APPROACH_DIST);
-        if ((*currentVictimIt_)->getObjects().empty() || 
-            (*currentVictimIt_)->getObjects().at(0)->getType() == Thermal::getObjectType())  // to be removed
+        if((*it)->getId() == victimId)
         {
-          currentVictim = *currentVictimIt_;
-          currentVictim->setValid(false);
-          currentVictim->setVisited(true);
-          objects_.erase(currentVictimIt_);
-          currentVictimIt_ = objects_.end();
-        } 
+        currentVictim = *it;
+        currentVictim->setValid(victimValid);
+        currentVictim->setVisited(true);
+        objects_.erase(it);
+        currentVictimIt_ = objects_.end();
+        break;
+        }
       }
 
       return currentVictim;

@@ -18,10 +18,9 @@
 #include <std_msgs/Int16.h>
 
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
-#include "pandora_data_fusion_msgs/VictimVerificationMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
 #include "pandora_data_fusion_msgs/DeleteCurrentVictimAction.h"
-#include "pandora_data_fusion_msgs/ValidateCurrentHoleAction.h"
+#include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"
 #include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
 #include "pandora_data_fusion_msgs/GetMarkersSrv.h"
@@ -49,8 +48,9 @@ namespace pandora_alert_handler
 typedef actionlib::SimpleActionServer
   <pandora_data_fusion_msgs::DeleteCurrentVictimAction> DeleteVictimServer;
 typedef actionlib::SimpleActionServer 
-  <pandora_data_fusion_msgs::ValidateCurrentHoleAction> 
-    ValidateCurrentHoleServer;
+  <pandora_data_fusion_msgs::ValidateVictimAction> 
+    ValidateVictimServer;
+typedef boost::shared_ptr<const ValidateVictimServer::Goal> GoalConstPtr;
 
 class AlertHandler : private boost::noncopyable
 {
@@ -101,7 +101,7 @@ class AlertHandler : private boost::noncopyable
    * @param msg [const nav_msgs::OccupancyGridConstPtr&] Contains map info.
    * @return void
    */
-  void validateCurrentHoleCallback();
+  void validateVictimCallback();
 
   /* Dynamic Reconfiguration Callback */
   void dynamicReconfigCallback(
@@ -167,7 +167,7 @@ class AlertHandler : private boost::noncopyable
   ros::Timer currentVictimTimer_;
 
   boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
-  boost::shared_ptr<ValidateCurrentHoleServer> validateCurrentHoleServer_;
+  boost::shared_ptr<ValidateVictimServer> validateVictimServer_;
 
   dynamic_reconfigure::Server< ::pandora_alert_handler::AlertHandlerConfig >
     dynReconfserver_;

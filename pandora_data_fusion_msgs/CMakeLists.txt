@@ -57,7 +57,7 @@ add_service_files(
 add_action_files(
 	FILES
 	DeleteCurrentVictim.action
-	ValidateCurrentHole.action
+	ValidateVictim.action
 	)
 
 #common commands for building c++ executables and libraries

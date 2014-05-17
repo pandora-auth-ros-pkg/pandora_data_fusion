@@ -118,12 +118,12 @@ class VictimList : public ObjectList<Victim>
   bool deleteCurrentVictim();
 
   /**
-   * @brief Validates or not currentObject. If object is erased then 
-   * currentVictim is returned
-   * @param objectValid [bool] If current object is valid or not
-   * @return The current object pointer 
+   * @brief Validates victim with victimId.
+   * @param victimId [int] current victim's unique id
+   * @param victimValid [bool] If current victim is valid or not
+   * @return VictimPtr pointer to current victim
    */
-  VictimPtr validateCurrentObject(bool objectValid);
+  VictimPtr validateVictim(int victimId, bool objectValid);
 
   /**
    * @brief Adds the given victim to the list as is, no checks and updates

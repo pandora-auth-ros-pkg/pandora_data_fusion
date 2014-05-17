@@ -136,12 +136,13 @@ class VictimHandler : private boost::noncopyable
   void deleteCurrentVictim();
   
   /**
-   * @brief Validates the selected object of the current victim 
-   * @param holeValid [bool] True for positive and false for 
+   * @brief Validates current victim.
+   * @param victimId [int] Id of victim to be validated.
+   * @param victimValid [bool] True for positive and false for 
    * negative validation
    * @return void
    */
-  void validateCurrentHole(bool holeValid);
+  void validateVictim(int victimId, bool victimValid);
 
   /**
    * @brief Fills victimsMsg with information about victims to go.
