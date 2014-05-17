@@ -81,13 +81,6 @@ class AlertHandler : public StateClient, private boost::noncopyable
 
   /* Victim-concerned Subscribers */
   /**
-   * @brief Communication with VictimFusion (possibly needs to change).
-   * @param msg [const data_fusion_communications::VictimVerificationMsg&] Msg
-   * @return void
-   */
-  void victimVerificationCallback(
-    const data_fusion_communications::VictimVerificationMsg& msg);
-  /**
    * @brief Communication with Navigation (possibly needs to change).
    * @param msg [const std_msgs::Int16&] Msg
    * @return void
@@ -161,7 +154,6 @@ class AlertHandler : public StateClient, private boost::noncopyable
   ros::Subscriber qrSubscriber_;
   ros::Subscriber hazmatSubscriber_;
   
-  ros::Subscriber victimVerificationSubscriber_;
   ros::Subscriber currentVictimSubscriber_;
 
   ros::Subscriber mapSubscriber_;

@@ -131,17 +131,6 @@ void AlertHandler::initRosInterfaces()
 
   //!< subscribers
 
-  if (nh_.getParam("subscribed_topic_names/victimVerification", param))
-  {
-    victimVerificationSubscriber_ = nh_.subscribe(param,
-      1, &AlertHandler::victimVerificationCallback, this);
-  }
-  else
-  {
-    ROS_FATAL("victimVerification topic name param not found");
-    ROS_BREAK();
-  }
-
   if (nh_.getParam("subscribed_topic_names/currentVictim", param))
   {
     currentVictimSubscriber_ = nh_.subscribe(param,
@@ -191,7 +180,7 @@ void AlertHandler::initRosInterfaces()
     boost::bind( &AlertHandler::deleteVictimCallback, this) );
   deleteVictimServer_->start();
 
-  if (nh_.getParam("action_server_names/validate_current_hole", param))
+  if (nh_.getParam("action_server_names/validate_victim", param))
   {
     validateCurrentHoleServer_.reset(
     new ValidateCurrentHoleServer(nh_, param,  false));
@@ -267,7 +256,8 @@ void AlertHandler::initRosInterfaces()
 void AlertHandler::holeDirectionAlertCallback(
     const vision_communications::HolesDirectionsVectorMsg& msg)
 {    
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "HOLE ALERT ARRIVED!");
+  ROS_DEBUG_STREAM_NAMED("ALERT_HANDLER_ALERT_CALLBACK", 
+      Hole::getObjectType() << " ALERT ARRIVED!");
 
   HolePtrVectorPtr holesVectorPtr;
   try
@@ -283,13 +273,13 @@ void AlertHandler::holeDirectionAlertCallback(
   objectHandler_->handleHoles(holesVectorPtr, objectFactory_->getTransform());
 
   victimHandler_->notify();
-
 }
 
 void AlertHandler::hazmatAlertCallback(
     const vision_communications::HazmatAlertsVectorMsg& msg)
 {
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "HAZMAT ALERT ARRIVED!");
+  ROS_DEBUG_STREAM_NAMED("ALERT_HANDLER_ALERT_CALLBACK", 
+      Hazmat::getObjectType() << " ALERT ARRIVED!");
 
   HazmatPtrVectorPtr hazmatsVectorPtr;
   try
@@ -303,13 +293,13 @@ void AlertHandler::hazmatAlertCallback(
   }
 
   objectHandler_->handleObjects<Hazmat>(hazmatsVectorPtr);
-
 }
 
 void AlertHandler::qrAlertCallback(
     const vision_communications::QRAlertsVectorMsg& msg)
 {
-  ROS_DEBUG_NAMED("ALERT_HANDLER_ALERT_CALLBACK", "QR ALERT ARRIVED!");  
+  ROS_DEBUG_STREAM_NAMED("ALERT_HANDLER_ALERT_CALLBACK", 
+      Qr::getObjectType() << " ALERT ARRIVED!");  
 
   QrPtrVectorPtr qrsVectorPtr;
   try
@@ -323,7 +313,6 @@ void AlertHandler::qrAlertCallback(
   }
 
   objectHandler_->handleQrs(qrsVectorPtr);
-
 }
 
 //!< Other Callbacks
@@ -336,11 +325,6 @@ void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
   {
     currentVictimBroadcaster_.sendTransform(stampedTransform);
   }
-}
-
-void AlertHandler::victimVerificationCallback(
-    const data_fusion_communications::VictimVerificationMsg& msg)
-{
 }
 
 void AlertHandler::selectedVictimCallback(const std_msgs::Int16& msg)
