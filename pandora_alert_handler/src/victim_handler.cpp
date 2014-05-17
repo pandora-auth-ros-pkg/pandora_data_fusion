@@ -203,10 +203,10 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
 /**
  * @details Delegate to victimList
  */
-void VictimHandler::getVictimsMsg (
-  std::vector< data_fusion_communications::VictimInfoMsg>* victimMsgVector)
+void VictimHandler::getVictimsInfo(
+    data_fusion_communications::VictimsMsg* victimsMsg)
 {  
-  victimsToGoList_->getVictimsMsg(victimMsgVector); 
+  victimsToGoList_->getVictimsInfo(victimsMsg); 
 }
 
 /**
@@ -339,14 +339,6 @@ void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
   msg.x = victim->getPose().position.x;
   msg.y = victim->getPose().position.y;
   msg.probability = victim->getProbability();
-  for (ObjectConstPtrVector::const_iterator it = victim->getObjects().begin();
-       it != victim->getObjects().end(); ++it)
-  {
-    if((*it)->getType() != Hole::getObjectType())
-    {
-      msg.sensors.push_back((*it)->getType());
-    }
-  }
   victimVerifiedPublisher_.publish(msg);
 }
 

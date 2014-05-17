@@ -19,7 +19,6 @@
 
 #include "data_fusion_communications/VictimsMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
-#include "data_fusion_communications/GetVictimsAction.h"
 #include "data_fusion_communications/VictimInfoMsg.h"
 #include "data_fusion_communications/DeleteCurrentVictimAction.h"
 #include "data_fusion_communications/ValidateCurrentHoleAction.h"
@@ -48,8 +47,6 @@ namespace pandora_data_fusion
 namespace pandora_alert_handler
 {
 
-typedef actionlib::SimpleActionServer
-  <data_fusion_communications::GetVictimsAction> GetVictimsServer;
 typedef actionlib::SimpleActionServer
   <data_fusion_communications::DeleteCurrentVictimAction> DeleteVictimServer;
 typedef actionlib::SimpleActionServer 
@@ -96,11 +93,6 @@ class AlertHandler : private boost::noncopyable
 
   /* Victim-concerned Goal Callbacks */
   /**
-   * @brief Client is Navigation. Sends Victims (possibly needs to change).
-   * @return void
-   */
-  void getVictimsCallback();
-  /**
    * @brief Client is FSM. Order to delete Victim.
    * @return void
    */
@@ -139,6 +131,12 @@ class AlertHandler : private boost::noncopyable
 
  private:
 
+  /**
+   * @brief Takes info from VictimsToGo_ and publishes it to the Agent.
+   * @return void
+   */
+  void publishVictims();
+
   void initRosInterfaces();
 
  private:
@@ -169,7 +167,6 @@ class AlertHandler : private boost::noncopyable
 
   ros::Timer currentVictimTimer_;
 
-  boost::shared_ptr<GetVictimsServer> victimsServer_;
   boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
   boost::shared_ptr<ValidateCurrentHoleServer> validateCurrentHoleServer_;
 
@@ -225,6 +222,8 @@ void AlertHandler::objectDirectionAlertCallback(
   objectHandler_->handleObjects<ObjectType>(objectsVectorPtr);
 
   victimHandler_->inspect();
+
+  publishVictims();
 }
 
 }  // namespace pandora_alert_handler

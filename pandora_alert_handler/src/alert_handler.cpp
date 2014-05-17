@@ -34,6 +34,15 @@ AlertHandler::AlertHandler(const std::string& ns): nh_(ns)
   initRosInterfaces();
 }
 
+void AlertHandler::publishVictims()
+{
+  if(victimsToGo_->size() == 0)
+    return;
+  data_fusion_communications::VictimsMsg victimsMsg;
+  victimHandler_->getVictimsInfo(&victimsMsg);
+  victimsPublisher_.publish(victimsMsg);
+}
+
 void AlertHandler::initRosInterfaces()
 {
   std::string param; 
@@ -165,19 +174,6 @@ void AlertHandler::initRosInterfaces()
 
   //!< action servers
 
-  if (nh_.getParam("action_server_names/get_victims", param))
-  {
-    victimsServer_.reset(new GetVictimsServer(nh_, param,  false));
-  }
-  else
-  {
-    ROS_FATAL("get_victims action name param not found");
-    ROS_BREAK();
-  }
-  victimsServer_->registerGoalCallback(
-    boost::bind( &AlertHandler::getVictimsCallback, this) );
-  victimsServer_->start();
-
   if (nh_.getParam("action_server_names/delete_current_victim", param))
   {
     deleteVictimServer_.reset(new DeleteVictimServer(nh_, param,  false));
@@ -284,6 +280,8 @@ void AlertHandler::holeDirectionAlertCallback(
   objectHandler_->handleHoles(holesVectorPtr, objectFactory_->getTransform());
 
   victimHandler_->notify();
+
+  publishVictims();
 }
 
 void AlertHandler::hazmatAlertCallback(
@@ -341,17 +339,6 @@ void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
 void AlertHandler::selectedVictimCallback(const std_msgs::Int16& msg)
 {
   victimHandler_->setCurrentVictimIndex(msg.data);
-}
-
-void AlertHandler::getVictimsCallback()
-{
-  victimsServer_->acceptNewGoal();
-
-  data_fusion_communications::GetVictimsResult result;
-
-  victimHandler_->getVictimsMsg( &result.victimsArray );
-
-  victimsServer_->setSucceeded(result);
 }
 
 void AlertHandler::deleteVictimCallback()

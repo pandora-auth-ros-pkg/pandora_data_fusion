@@ -51,16 +51,15 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Int32.h>
 
-#include "data_fusion_communications/ThermalDirectionAlertMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
 #include "data_fusion_communications/VictimFoundMsg.h"
 #include "data_fusion_communications/VictimToFsmMsg.h"
 #include "data_fusion_communications/VictimInfoMsg.h"
+#include "data_fusion_communications/VictimsMsg.h"
 
 #include "alert_handler/victim.h"
 #include "alert_handler/victim_clusterer.h"
 #include "alert_handler/victim_list.h"
-#include "alert_handler/filter_model.h"
 #include "alert_handler/defines.h"
 
 namespace pandora_data_fusion
@@ -121,17 +120,6 @@ class VictimHandler : private boost::noncopyable
   void flush();
   
   /**
-   * @brief Returns a vector containing a VictimInfoMsg for each
-   * unvisited victim
-   * @param victimMsgVector 
-   * [std::vector< data_fusion_communications::VictimInfoMsg >*] 
-   * The output vector
-   * @return void
-   */
-  void getVictimsMsg(
-    std::vector< data_fusion_communications::VictimInfoMsg >* victimMsgVector);
-  
-  /**
    * @brief Sets the current victim index  
    * @param index [int] The index of the selected victim referring to the
    * vector
@@ -153,6 +141,14 @@ class VictimHandler : private boost::noncopyable
    * @return void
    */
   void validateCurrentHole(bool holeValid);
+
+  /**
+   * @brief Fills victimsMsg with information about victims to go.
+   * (PoseStamped, probability, sensors)
+   * @param victimsMsg [data_fusion_communications::VictimsMsg*] msg to be filled
+   * @return void
+   */
+  void getVictimsInfo(data_fusion_communications::VictimsMsg* victimsMsg);
   
   /**
    * @brief Get the current victim pose as a stamped transform

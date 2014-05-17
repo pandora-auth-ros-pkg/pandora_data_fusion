@@ -44,6 +44,7 @@
 #include <vector>
 #include <map>
 
+#include "data_fusion_communications/VictimsMsg.h"
 #include "data_fusion_communications/VictimInfoMsg.h"
 #include "data_fusion_communications/VictimVerificationMsg.h"
 
@@ -90,12 +91,11 @@ class VictimList : public ObjectList<Victim>
 
   /**
    * @brief Returns a vector containing a VictimInfoMsg for each unvisited victim
-   * @param victimMsgVector 
-   * [std::vector< data_fusion_communications::VictimInfoMsg >*] The output vector
+   * @param victimsMsg [data_fusion_communications::VictimsMsg*] The output vector
    * @return void
    */
-  void getVictimsMsg(
-    std::vector< data_fusion_communications::VictimInfoMsg >* victimMsgVector);
+  void getVictimsInfo(
+    data_fusion_communications::VictimsMsg* victimsMsg);
 
   /**
    * @brief Sets the victim index to a specific victim
@@ -163,10 +163,6 @@ class VictimList : public ObjectList<Victim>
   iterator currentVictimIt_;
   //!< The pose of the currently tracked victim when tracking was last updated.
   geometry_msgs::Pose currentApproachPose_;
-  //!< A map containing correspondence of victims returned indices with ids.
-  std::map<int, int> victimIndicesMap_;
-  //!< True if the victims were requested and given, false otherwise.
-  bool victimsRequestedAndGiven_;
   //!< True if the victims were requested and given, false otherwise.
   bool currentVictimDied_;
   
