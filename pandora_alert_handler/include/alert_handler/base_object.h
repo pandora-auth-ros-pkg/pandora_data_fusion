@@ -12,7 +12,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 
-#include "data_fusion_communications/DatafusionGeotiffSrv.h"
+#include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
 #include "visualization_msgs/MarkerArray.h"
 
 #include "alert_handler/utils.h"
@@ -39,7 +39,7 @@ namespace pandora_data_fusion
         virtual void update(const ConstPtr& measurement) {}
         virtual bool isSameObject(const ConstPtr& object) const = 0;
         virtual PoseStamped getPoseStamped() const = 0;
-        virtual void fillGeotiff(data_fusion_communications::
+        virtual void fillGeotiff(pandora_data_fusion_msgs::
             DatafusionGeotiffSrv::Response* res) const {}
         virtual void getVisualization(visualization_msgs::
             MarkerArray* markers) const = 0;

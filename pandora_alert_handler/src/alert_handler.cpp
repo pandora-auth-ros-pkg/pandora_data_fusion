@@ -38,7 +38,7 @@ void AlertHandler::publishVictims()
 {
   if(victimsToGo_->size() == 0)
     return;
-  data_fusion_communications::VictimsMsg victimsMsg;
+  pandora_data_fusion_msgs::VictimsMsg victimsMsg;
   victimHandler_->getVictimsInfo(&victimsMsg);
   victimsPublisher_.publish(victimsMsg);
 }
@@ -164,7 +164,7 @@ void AlertHandler::initRosInterfaces()
       if (nh_.getParam("published_topic_names/victims", param))
       {
         victimsPublisher_ = nh_.
-          advertise<data_fusion_communications::VictimsMsg>(param, 10);
+          advertise<pandora_data_fusion_msgs::VictimsMsg>(param, 10);
       }
       else
       {
@@ -434,8 +434,8 @@ void AlertHandler::dynamicReconfigCallback(
 ///////////////////////////////////////////////////////
 
 bool AlertHandler::getObjectsServiceCb(
-    data_fusion_communications::GetObjectsSrv::Request& rq,
-      data_fusion_communications::GetObjectsSrv::Response &rs)
+    pandora_data_fusion_msgs::GetObjectsSrv::Request& rq,
+      pandora_data_fusion_msgs::GetObjectsSrv::Response &rs)
 {
   holes_->getObjectsPosesStamped(&rs.holes);
   qrs_->getObjectsPosesStamped(&rs.qrs);
@@ -453,8 +453,8 @@ bool AlertHandler::getObjectsServiceCb(
 }
 
 bool AlertHandler::getMarkersServiceCb(
-    data_fusion_communications::GetMarkersSrv::Request& rq,
-      data_fusion_communications::GetMarkersSrv::Response &rs)
+    pandora_data_fusion_msgs::GetMarkersSrv::Request& rq,
+      pandora_data_fusion_msgs::GetMarkersSrv::Response &rs)
 {
   holes_->getVisualization(&rs.holes);
   qrs_->getVisualization(&rs.hazmats);
@@ -471,8 +471,8 @@ bool AlertHandler::getMarkersServiceCb(
 }
 
 bool AlertHandler::geotiffServiceCb(
-    data_fusion_communications::DatafusionGeotiffSrv::Request &req,
-      data_fusion_communications::DatafusionGeotiffSrv::Response &res)
+    pandora_data_fusion_msgs::DatafusionGeotiffSrv::Request &req,
+      pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response &res)
 {
   qrs_->fillGeotiff(&res);
   hazmats_->fillGeotiff(&res);

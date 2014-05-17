@@ -26,7 +26,7 @@ namespace pandora_data_fusion
       return cond;
     }
 
-    void Hazmat::fillGeotiff(data_fusion_communications::
+    void Hazmat::fillGeotiff(pandora_data_fusion_msgs::
         DatafusionGeotiffSrv::Response* res) const
     {
       res->hazmatx.push_back( pose_.position.x );

@@ -28,7 +28,7 @@ namespace pandora_data_fusion
       return cond;
     }
 
-    void Qr::fillGeotiff(data_fusion_communications::
+    void Qr::fillGeotiff(pandora_data_fusion_msgs::
         DatafusionGeotiffSrv::Response* res) const
     {
       res->qrx.push_back( pose_.position.x );

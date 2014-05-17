@@ -8,7 +8,7 @@
 
 #include <std_msgs/Int32.h>
 
-#include "data_fusion_communications/QrNotificationMsg.h"
+#include "pandora_data_fusion_msgs/QrNotificationMsg.h"
 
 #include "alert_handler/objects.h"
 #include "alert_handler/object_list.h"

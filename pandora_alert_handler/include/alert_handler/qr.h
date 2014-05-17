@@ -33,7 +33,7 @@ namespace pandora_data_fusion
 
         virtual PoseStamped getPoseStamped() const;
 
-        virtual void fillGeotiff(data_fusion_communications::
+        virtual void fillGeotiff(pandora_data_fusion_msgs::
             DatafusionGeotiffSrv::Response* res) const;
 
         virtual void getVisualization(visualization_msgs::

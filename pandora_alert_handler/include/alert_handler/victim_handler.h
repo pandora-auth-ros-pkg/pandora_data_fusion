@@ -51,11 +51,12 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Int32.h>
 
-#include "data_fusion_communications/VictimVerificationMsg.h"
-#include "data_fusion_communications/VictimFoundMsg.h"
-#include "data_fusion_communications/VictimToFsmMsg.h"
-#include "data_fusion_communications/VictimInfoMsg.h"
-#include "data_fusion_communications/VictimsMsg.h"
+#include "pandora_data_fusion_msgs/VictimVerificationMsg.h"
+#include "pandora_data_fusion_msgs/VictimFoundMsg.h"
+#include "pandora_data_fusion_msgs/VictimToFsmMsg.h"
+#include "pandora_data_fusion_msgs/VictimInfoMsg.h"
+#include "pandora_data_fusion_msgs/VictimsMsg.h"
+#include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
 
 #include "alert_handler/victim.h"
 #include "alert_handler/victim_clusterer.h"
@@ -145,10 +146,10 @@ class VictimHandler : private boost::noncopyable
   /**
    * @brief Fills victimsMsg with information about victims to go.
    * (PoseStamped, probability, sensors)
-   * @param victimsMsg [data_fusion_communications::VictimsMsg*] msg to be filled
+   * @param victimsMsg [pandora_data_fusion_msgs::VictimsMsg*] msg to be filled
    * @return void
    */
-  void getVictimsInfo(data_fusion_communications::VictimsMsg* victimsMsg);
+  void getVictimsInfo(pandora_data_fusion_msgs::VictimsMsg* victimsMsg);
   
   /**
    * @brief Get the current victim pose as a stamped transform
@@ -171,12 +172,12 @@ class VictimHandler : private boost::noncopyable
   /**
    * @brief Fill in the geotiff info with the victims details 
    * @param res 
-   * [data_fusion_communications::DatafusionGeotiffSrv::Response*] 
+   * [pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response*] 
    * The output service response param
    * @return void
    */
   void fillGeotiff(
-      data_fusion_communications::DatafusionGeotiffSrv::Response* res);
+      pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res);
     
   /**
    * @brief Get the victims visualization

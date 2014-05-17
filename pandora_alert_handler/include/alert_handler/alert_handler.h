@@ -17,21 +17,20 @@
 #include <std_srvs/Empty.h>
 #include <std_msgs/Int16.h>
 
-#include "data_fusion_communications/VictimsMsg.h"
-#include "data_fusion_communications/VictimVerificationMsg.h"
-#include "data_fusion_communications/VictimInfoMsg.h"
-#include "data_fusion_communications/DeleteCurrentVictimAction.h"
-#include "data_fusion_communications/ValidateCurrentHoleAction.h"
-#include "data_fusion_communications/GetObjectsSrv.h"
-#include "data_fusion_communications/DatafusionGeotiffSrv.h"
-#include "data_fusion_communications/GetMarkersSrv.h"
+#include "pandora_data_fusion_msgs/VictimsMsg.h"
+#include "pandora_data_fusion_msgs/VictimVerificationMsg.h"
+#include "pandora_data_fusion_msgs/VictimInfoMsg.h"
+#include "pandora_data_fusion_msgs/DeleteCurrentVictimAction.h"
+#include "pandora_data_fusion_msgs/ValidateCurrentHoleAction.h"
+#include "pandora_data_fusion_msgs/GetObjectsSrv.h"
+#include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
+#include "pandora_data_fusion_msgs/GetMarkersSrv.h"
 
 #include "vision_communications/HolesDirectionsVectorMsg.h"
 #include "vision_communications/FaceDirectionMsg.h"
 #include "vision_communications/QRAlertsVectorMsg.h"
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
-#include "data_fusion_communications/ThermalDirectionAlertMsg.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 
 #include "pandora_alert_handler/AlertHandlerConfig.h"
@@ -48,9 +47,9 @@ namespace pandora_alert_handler
 {
 
 typedef actionlib::SimpleActionServer
-  <data_fusion_communications::DeleteCurrentVictimAction> DeleteVictimServer;
+  <pandora_data_fusion_msgs::DeleteCurrentVictimAction> DeleteVictimServer;
 typedef actionlib::SimpleActionServer 
-  <data_fusion_communications::ValidateCurrentHoleAction> 
+  <pandora_data_fusion_msgs::ValidateCurrentHoleAction> 
     ValidateCurrentHoleServer;
 
 class AlertHandler : private boost::noncopyable
@@ -115,16 +114,16 @@ class AlertHandler : private boost::noncopyable
       std_srvs::Empty::Response &rs);
   //!< Map Visualization Callbacks
   bool getObjectsServiceCb(
-    data_fusion_communications::GetObjectsSrv::Request& rq,
-      data_fusion_communications::GetObjectsSrv::Response &rs);
+    pandora_data_fusion_msgs::GetObjectsSrv::Request& rq,
+      pandora_data_fusion_msgs::GetObjectsSrv::Response &rs);
 
   bool geotiffServiceCb(
-    data_fusion_communications::DatafusionGeotiffSrv::Request &req,
-      data_fusion_communications::DatafusionGeotiffSrv::Response &res);
+    pandora_data_fusion_msgs::DatafusionGeotiffSrv::Request &req,
+      pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response &res);
 
   bool getMarkersServiceCb(
-    data_fusion_communications::GetMarkersSrv::Request& rq,
-      data_fusion_communications::GetMarkersSrv::Response &rs);
+    pandora_data_fusion_msgs::GetMarkersSrv::Request& rq,
+      pandora_data_fusion_msgs::GetMarkersSrv::Response &rs);
 
   /* Current Victim Timer Callback */
   void currentVictimTimerCb(const ros::TimerEvent& event);

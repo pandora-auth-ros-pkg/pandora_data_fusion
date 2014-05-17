@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
           state_manager
           dynamic_reconfigure
           roslint
-          data_fusion_communications 
+          pandora_data_fusion_msgs 
           pandora_common_msgs
           vision_communications
           )
@@ -43,7 +43,7 @@ target_link_libraries(utils
           ${catkin_LIBRARIES}
           )
 add_dependencies(utils 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   )
 
 ##################### filter_model ############################################
@@ -81,7 +81,7 @@ target_link_libraries(objects
           filter_model
           )
 add_dependencies(objects
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   ) 
 
 add_library(victim 
@@ -93,7 +93,7 @@ target_link_libraries(victim
           objects
           )
 add_dependencies(victim 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   ) 
 
 ###################### victim_list #####################################
@@ -105,7 +105,7 @@ target_link_libraries(victim_list
           victim
           )
 add_dependencies(victim_list 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   )           
 
 #################### ros_tf_listener ####################################
@@ -116,7 +116,7 @@ target_link_libraries(ros_tf_listener
           ${catkin_LIBRARIES}
           )
 add_dependencies(ros_tf_listener
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   ) 
 
 #################### pose_finder ########################################
@@ -129,7 +129,7 @@ target_link_libraries(pose_finder
           ros_tf_listener
           )
 add_dependencies(pose_finder 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   ) 
 
 #################### object_factory ###################################
@@ -142,7 +142,7 @@ target_link_libraries(object_factory
           objects
           )
 add_dependencies(object_factory 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   vision_communications_gencpp
   pandora_common_msgs_gencpp
   ) 
@@ -157,7 +157,7 @@ target_link_libraries(victim_clusterer
           victim
           )
 add_dependencies(victim_clusterer 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   )           
 
 #################### victim_handler #####################################
@@ -172,7 +172,7 @@ target_link_libraries(victim_handler
           victim_clusterer
           )
 add_dependencies(victim_handler 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   ) 
           
 ##################### object_handler ####################################
@@ -186,7 +186,7 @@ target_link_libraries(object_handler
           victim_list
           )
 add_dependencies(object_handler 
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   ) 
 
 ##################### alert_handler #####################################
@@ -203,7 +203,7 @@ target_link_libraries(alert_handler
 add_dependencies(alert_handler 
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   pandora_common_msgs_gencpp
   state_manager_communications_gencpp
   ) 
@@ -219,7 +219,7 @@ target_link_libraries(alert_handler_node
 add_dependencies(alert_handler_node 
   pandora_alert_handler_gencfg 
   vision_communications_gencpp
-  data_fusion_communications_gencpp
+  pandora_data_fusion_msgs_gencpp
   pandora_common_msgs_gencpp
   state_manager_communications_gencpp
   ) 

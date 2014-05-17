@@ -15,7 +15,6 @@
 #include "vision_communications/QRAlertsVectorMsg.h"
 #include "vision_communications/HazmatAlertsVectorMsg.h"
 #include "vision_communications/HolesPositionsVectorMsg.h"
-#include "data_fusion_communications/ThermalDirectionAlertMsg.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 
 #include "alert_handler/pose_finder.h"

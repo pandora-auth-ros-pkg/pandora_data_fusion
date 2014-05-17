@@ -44,9 +44,9 @@
 #include <vector>
 #include <map>
 
-#include "data_fusion_communications/VictimsMsg.h"
-#include "data_fusion_communications/VictimInfoMsg.h"
-#include "data_fusion_communications/VictimVerificationMsg.h"
+#include "pandora_data_fusion_msgs/VictimsMsg.h"
+#include "pandora_data_fusion_msgs/VictimInfoMsg.h"
+#include "pandora_data_fusion_msgs/VictimVerificationMsg.h"
 
 #include "alert_handler/object_list.h"
 #include "alert_handler/utils.h"
@@ -91,11 +91,11 @@ class VictimList : public ObjectList<Victim>
 
   /**
    * @brief Returns a vector containing a VictimInfoMsg for each unvisited victim
-   * @param victimsMsg [data_fusion_communications::VictimsMsg*] The output vector
+   * @param victimsMsg [pandora_data_fusion_msgs::VictimsMsg*] The output vector
    * @return void
    */
   void getVictimsInfo(
-    data_fusion_communications::VictimsMsg* victimsMsg);
+    pandora_data_fusion_msgs::VictimsMsg* victimsMsg);
 
   /**
    * @brief Sets the victim index to a specific victim

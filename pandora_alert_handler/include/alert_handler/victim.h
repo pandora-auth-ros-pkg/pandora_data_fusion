@@ -71,7 +71,7 @@ namespace pandora_data_fusion
          * @param res [data_fusion...::DatafusionGeotiffSrv::Response*]
          * @return void
          */
-        virtual void fillGeotiff(data_fusion_communications::
+        virtual void fillGeotiff(pandora_data_fusion_msgs::
             DatafusionGeotiffSrv::Response* res) const;
 
         /**

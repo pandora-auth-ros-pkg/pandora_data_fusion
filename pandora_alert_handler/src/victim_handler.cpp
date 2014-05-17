@@ -75,7 +75,7 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
   if (nh_.getParam("published_topic_names/victim_found", param))
   {
     victimFoundPublisher_ =  
-      nh_.advertise<data_fusion_communications::VictimFoundMsg>(param, 1);
+      nh_.advertise<pandora_data_fusion_msgs::VictimFoundMsg>(param, 1);
   }
   else
   {
@@ -96,7 +96,7 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
   if (nh_.getParam("published_topic_names/victim_verified", param))
   {
     victimVerifiedPublisher_ =
-      nh_.advertise<data_fusion_communications::VictimToFsmMsg>(param, 1);
+      nh_.advertise<pandora_data_fusion_msgs::VictimToFsmMsg>(param, 1);
   }
   else
   {
@@ -204,7 +204,7 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
  * @details Delegate to victimList
  */
 void VictimHandler::getVictimsInfo(
-    data_fusion_communications::VictimsMsg* victimsMsg)
+    pandora_data_fusion_msgs::VictimsMsg* victimsMsg)
 {  
   victimsToGoList_->getVictimsInfo(victimsMsg); 
 }
@@ -290,7 +290,7 @@ void VictimHandler::getVictimsPosesStamped(PoseStampedVector* victimsToGo,
  * @details 
  */
 void VictimHandler::fillGeotiff(
-    data_fusion_communications::DatafusionGeotiffSrv::Response* res)
+    pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res)
 {
   victimsVisitedList_->fillGeotiff(res);
 }
@@ -313,7 +313,7 @@ void  VictimHandler::publishVictimFoundMsg()
 {
   ROS_INFO_NAMED("victim_handler",
                  "[VICTIM_HANDLER %d] New victim found ", __LINE__);
-  data_fusion_communications::VictimFoundMsg victimMsg;
+  pandora_data_fusion_msgs::VictimFoundMsg victimMsg;
   victimMsg.victimNotificationType = victimMsg.TYPE_CAMERA;
   victimFoundPublisher_.publish(victimMsg);
 }
@@ -333,7 +333,7 @@ void VictimHandler::publishVictimUpdatedMsg()
  */
 void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
 {
-  data_fusion_communications::VictimToFsmMsg msg;
+  pandora_data_fusion_msgs::VictimToFsmMsg msg;
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = "/world";
   msg.x = victim->getPose().position.x;

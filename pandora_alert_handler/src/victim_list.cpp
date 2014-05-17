@@ -136,7 +136,7 @@ namespace pandora_data_fusion
      * the correct index by its victimId_.
      */
     void VictimList::getVictimsInfo(
-        data_fusion_communications::VictimsMsg* victimsMsg)
+        pandora_data_fusion_msgs::VictimsMsg* victimsMsg)
     {
       victimsMsg->victims.clear();
 
@@ -145,7 +145,7 @@ namespace pandora_data_fusion
       int ii = 0;
       for (const_iterator it = this->begin(); it != this->end(); ++it)
       {
-        data_fusion_communications::VictimInfoMsg victimInfo;
+        pandora_data_fusion_msgs::VictimInfoMsg victimInfo;
 
         victimInfo.id = (*it)->getId();
         victimInfo.victimPose.header.stamp = now;

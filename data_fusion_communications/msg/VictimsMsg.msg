@@ -1,1 +1,0 @@
-data_fusion_communications/VictimInfoMsg[] victims

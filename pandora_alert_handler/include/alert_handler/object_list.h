@@ -53,7 +53,7 @@ class ObjectList
   void getObjectsPosesStamped(PoseStampedVector* poses) const;
 
   void fillGeotiff(
-    data_fusion_communications::DatafusionGeotiffSrv::Response* res) const;
+    pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res) const;
 
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
@@ -217,7 +217,7 @@ void ObjectList<ObjectType>::getObjectsPosesStamped(
 
 template <class ObjectType>
 void ObjectList<ObjectType>::fillGeotiff(
-    data_fusion_communications::DatafusionGeotiffSrv::Response* res) const
+    pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res) const
 {
   for (const_iterator it = this->begin(); it != this->end(); ++it)
   {

@@ -114,7 +114,7 @@ namespace pandora_data_fusion
       markers->markers.push_back(victimMarker);
     }
 
-    void Victim::fillGeotiff(data_fusion_communications::
+    void Victim::fillGeotiff(pandora_data_fusion_msgs::
         DatafusionGeotiffSrv::Response* res) const
     {
       if (valid_)

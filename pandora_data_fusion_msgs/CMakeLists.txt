@@ -1,6 +1,6 @@
 # http://ros.org/doc/groovy/api/catkin/html/user_guide/supposed.html
 cmake_minimum_required(VERSION 2.8.3)
-project(data_fusion_communications)
+project(pandora_data_fusion_msgs)
 # Load catkin and all dependencies required for this package
 # TODO: remove all from COMPONENTS that are not catkin packages.
 find_package(catkin REQUIRED COMPONENTS message_generation 
@@ -38,10 +38,10 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined messages
 add_message_files(
 	FILES
-        VictimsMsg.msg
 	VictimVerificationMsg.msg
 	VictimFoundMsg.msg
 	VictimInfoMsg.msg
+        VictimsMsg.msg
 	FusionGlobalMsg.msg
 	QrNotificationMsg.msg
 	VictimToFsmMsg.msg
@@ -56,7 +56,6 @@ add_service_files(
 	
 add_action_files(
 	FILES
-	GetVictims.action
 	DeleteCurrentVictim.action
 	ValidateCurrentHole.action
 	)

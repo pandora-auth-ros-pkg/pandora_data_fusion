@@ -40,7 +40,7 @@ namespace pandora_data_fusion
       if (ros::param::get("published_topic_names/qr_notification", param))
       {
         qrPublisher_ = ros::NodeHandle().
-          advertise<data_fusion_communications::QrNotificationMsg>(param, 10);
+          advertise<pandora_data_fusion_msgs::QrNotificationMsg>(param, 10);
       }
       else
       {
@@ -78,7 +78,7 @@ namespace pandora_data_fusion
         int qrScore = qrListPtr_->add( newQrs->at(ii) );
         if(qrScore)
         {
-          data_fusion_communications::QrNotificationMsg newQrNofifyMsg;
+          pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;
           newQrNofifyMsg.header.stamp = ros::Time::now();
           newQrNofifyMsg.x = newQrs->at(ii)->getPose().position.x;
           newQrNofifyMsg.y = newQrs->at(ii)->getPose().position.y;
