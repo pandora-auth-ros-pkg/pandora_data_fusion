@@ -32,7 +32,6 @@ class PoseFinder : private boost::noncopyable
 
   void updateParams(float occupiedCellThres,
     float heightHighThres, float heightLowThres,
-    float approachDist,
     float orientationDist, float orientationCircle);
 
  private:
@@ -61,7 +60,6 @@ class PoseFinder : private boost::noncopyable
   //!< params
   float ORIENTATION_CIRCLE;
   float ORIENTATION_DIST;
-  float APPROACH_DIST;
   float HEIGHT_HIGH_THRES;
   float HEIGHT_LOW_THRES;
   float OCCUPIED_CELL_THRES;

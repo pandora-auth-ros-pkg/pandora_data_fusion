@@ -46,7 +46,6 @@
 
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
-#include "pandora_data_fusion_msgs/VictimVerificationMsg.h"
 
 #include "alert_handler/object_list.h"
 #include "alert_handler/utils.h"
@@ -78,16 +77,11 @@ class VictimList : public ObjectList<Victim>
   bool contains(const VictimConstPtr& victim) const;
 
   /**
-   * @brief Checks if a victim is currently tracked or not
-   * @return bool True if a victim is currently tracked, false otherwise
+   * @brief Inspects the objects contained in each victim and calculates 
+   * an associated probability to the victim.
+   * @return void
    */
-  bool isVictimBeingTracked() const;
-
-  /**
-   * @brief Returns the currently tracked victim
-   * @return const VictimPtr& A const& to the victim
-   */
-  const VictimPtr& getCurrentVictim() const; 
+  void inspect();
 
   /**
    * @brief Returns a vector containing a VictimInfoMsg for each unvisited victim
@@ -100,7 +94,7 @@ class VictimList : public ObjectList<Victim>
   /**
    * @brief Get the current victim pose as a stamped transform
    * @param stampedTranform [tf::StampedTransform*] The output param
-   * @return bool -1 if no victim is tracked
+   * @return bool false, if no victim is being identified
    */
   bool getCurrentVictimTransform(tf::Transform* Transform) const;
 
@@ -145,11 +139,6 @@ class VictimList : public ObjectList<Victim>
    */
   void clear();
 
-  /**
-   * @overload
-   */
-  void setParams(float approachDistance, float victimUpdate);
-
  protected:
 
   /**
@@ -162,15 +151,6 @@ class VictimList : public ObjectList<Victim>
  
   //!< An iterator pointing to the currently tracked victim.
   iterator currentVictimIt_;
-  //!< The pose of the currently tracked victim when tracking was last updated.
-  geometry_msgs::Pose currentApproachPose_;
-  //!< True if the victims were requested and given, false otherwise.
-  bool currentVictimDied_;
-  
-  //!< The distance of the approach pose from the wall.
-  float APPROACH_DIST;
-  //!< The approach pose distance threshold for informing fsm of change.
-  float VICTIM_UPDATE;
 
  private:
 

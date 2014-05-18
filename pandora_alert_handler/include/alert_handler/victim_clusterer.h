@@ -64,7 +64,7 @@ class VictimClusterer : private boost::noncopyable
   /**
    * @brief Constructor
    */
-  VictimClusterer(float clusterRadius = 0.2, float approachDist = 0.5);
+  VictimClusterer(float clusterRadius = 0.2);
 
   /**
    * @brief Creates a new victim vector from groups of Objects
@@ -80,7 +80,7 @@ class VictimClusterer : private boost::noncopyable
    * @param clusterRadius [float] The new cluster radius
    * @return void
    */
-  void updateParams(float clusterRadius, float approachDist);
+  void updateParams(float clusterRadius);
 
  private:
 
@@ -106,9 +106,6 @@ class VictimClusterer : private boost::noncopyable
 
   //!< The radius used for clustering
   float CLUSTER_RADIUS;
-  //!< The distance of the approach pose from the wall
-  float APPROACH_DIST;
-
 };
 
 typedef boost::scoped_ptr<VictimClusterer> VictimClustererPtr;

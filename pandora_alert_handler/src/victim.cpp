@@ -13,8 +13,6 @@ namespace pandora_data_fusion
       id_ = lastVictimId_;
       valid_ = false;
       visited_ = false;
-      holeDeleted_ = false;
-      thermalDeleted_ = false;
       selectedObjectIndex_ = -1;
     }
 
@@ -46,15 +44,6 @@ namespace pandora_data_fusion
       return victimPose;
     }
 
-    PoseStamped Victim::getApproachPoseStamped() const
-    {
-      PoseStamped approachPoseStamped;
-      approachPoseStamped.pose = approachPose_;
-      approachPoseStamped.header.frame_id = 
-        "app_pose_" + boost::to_string(id_);
-      return approachPoseStamped;
-    }
-
     void Victim::getVisualization(visualization_msgs::MarkerArray* markers) const
     {
       //!< fill victim pose
@@ -73,22 +62,6 @@ namespace pandora_data_fusion
       victimMarker.scale.y = 0.1;
       victimMarker.scale.z = 0.1;
 
-      //!< fill victim approach pose
-      visualization_msgs::Marker approachPointMarker;
-
-      approachPointMarker.header.frame_id = getFrameId();
-      approachPointMarker.header.stamp = ros::Time::now();
-      approachPointMarker.ns = "ApproachPoint";
-      approachPointMarker.id = id_;
-
-      approachPointMarker.pose = approachPose_;
-
-      approachPointMarker.type = visualization_msgs::Marker::ARROW;
-
-      approachPointMarker.scale.x = 0.4;
-      approachPointMarker.scale.y = 0.05;
-      approachPointMarker.scale.z = 0.05;
-
       if (visited_)
       {
         victimMarker.color.r = 1;
@@ -102,13 +75,6 @@ namespace pandora_data_fusion
         victimMarker.color.g = 0.1255;
         victimMarker.color.b = 0.788;
         victimMarker.color.a = 0.7;
-
-        approachPointMarker.color.r = 0.94;
-        approachPointMarker.color.g = 0.1255;
-        approachPointMarker.color.b = 0.788;
-        approachPointMarker.color.a = 0.8;
-
-        markers->markers.push_back(approachPointMarker);
       }
 
       markers->markers.push_back(victimMarker);
@@ -155,26 +121,19 @@ namespace pandora_data_fusion
      * updated by the rest objects in victim. Between the hole and the thermal 
      * candidate, hole will be prefered.
      */
-    void Victim::setObjects(const ObjectConstPtrVector& objects,
-        float approachDistance) 
+    void Victim::setObjects(const ObjectConstPtrVector& objects)
     {
       ROS_DEBUG_STREAM("Setting up victim with " << objects.size() << " objects.");
       objects_.clear();
 
-      if(!holeDeleted_)
-      {
         findRepresentativeObject<Hole>(objects);
-      }
-      if(!thermalDeleted_)
-      {
         findRepresentativeObject<Thermal>(objects);
-      }
       findRepresentativeObject<Face>(objects);
       findRepresentativeObject<Motion>(objects);
       findRepresentativeObject<Sound>(objects);
       findRepresentativeObject<Co2>(objects);
 
-      updateRepresentativeObject(approachDistance);
+      updateRepresentativeObject();
     }
 
     /**
@@ -184,7 +143,7 @@ namespace pandora_data_fusion
      * where the thermal sensor would be more informative and trustworthy this
      * method would have been changed.
      */
-    void Victim::updateRepresentativeObject(float approachDistance)
+    void Victim::updateRepresentativeObject()
     {  
       if(objects_.size() == 0)
       {
@@ -211,16 +170,8 @@ namespace pandora_data_fusion
 
       if(selectedObjectIndex_ > -1)
       {
-        updatePose(objects_[selectedObjectIndex_], approachDistance);
+        setPose(objects_[selectedObjectIndex_]->getPose());
       }
-    }
-
-    void Victim::updatePose(const ObjectConstPtr& object,
-        float approachDistance) 
-    {
-      setPose(object->getPose());
-      approachPose_ = calculateApproachPose(object->getType(), 
-          approachDistance);
     }
 
     /**
@@ -228,21 +179,11 @@ namespace pandora_data_fusion
      * flag set to true, so that this victim will be ignorant to that type of
      * objects.
      */
-    void Victim::eraseObjectAt(int index,
-        float approachDistance)
+    void Victim::eraseObjectAt(int index)
     {
-      if(objects_[index]->getType() == Hole::getObjectType())
-      {
-        holeDeleted_ = true;
-      }
-      else if(objects_[index]->getType() == Thermal::getObjectType())
-      {
-        thermalDeleted_ = true;
-      }
       objects_.erase(objects_.begin() + index);
-      updateRepresentativeObject(approachDistance);
+      updateRepresentativeObject();
     }
-
 
     tf::Transform Victim::getRotatedTransform() const
     {
@@ -253,43 +194,6 @@ namespace pandora_data_fusion
           tf::createQuaternionFromRPY(roll, pitch, (yaw + PI)));
       return trans;
     }
-
-    /**
-     * @details Basically returns an approach point that is some length in front of
-     * the position of the victim in the direction of its orientation. Also sets
-     * its orientation to be the yaw-reversed of the victim's (as it's if we look
-     * to the victim).
-     */
-    Pose Victim::calculateApproachPose(std::string objectType,
-        float approachDistance) const
-      {
-        int choice = 0;
-        if(objectType == Hole::getObjectType())
-          choice = 0;
-        else if(objectType == Thermal::getObjectType())
-          choice = 1;
-
-        tf::Transform transformation = getTransform();
-
-        tf::Vector3 column = transformation.getBasis().getColumn(0);
-
-        Pose approachPose;
-
-        approachPose.position.x = pose_.position.x + pow(-1, choice) *  
-          approachDistance * column[0];
-        approachPose.position.y = pose_.position.y + pow(-1, choice) *
-          approachDistance * column[1];
-        approachPose.position.z = 0;
-
-        tfScalar roll, pitch, yaw;
-
-        transformation.getBasis().getRPY(roll, pitch, yaw);
-
-        approachPose.orientation =
-          tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, (yaw + PI));
-
-        return approachPose;
-      }
 
     tf::Transform Victim::getTransform() const
     {

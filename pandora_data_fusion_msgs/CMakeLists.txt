@@ -38,13 +38,10 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined messages
 add_message_files(
 	FILES
-	VictimVerificationMsg.msg
 	VictimFoundMsg.msg
 	VictimInfoMsg.msg
         VictimsMsg.msg
-	FusionGlobalMsg.msg
 	QrNotificationMsg.msg
-	VictimToFsmMsg.msg
 	)
 
 add_service_files(

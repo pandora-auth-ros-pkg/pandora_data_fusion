@@ -331,8 +331,7 @@ void AlertHandler::qrAlertCallback(
 void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
 {
   tf::StampedTransform stampedTransform;
-
-  if( victimHandler_->getCurrentVictimTransform(&stampedTransform) )
+  if(victimHandler_->getCurrentVictimTransform(&stampedTransform))
   {
     currentVictimBroadcaster_.sendTransform(stampedTransform);
   }
@@ -379,7 +378,7 @@ void AlertHandler::dynamicReconfigCallback(
     const ::pandora_alert_handler::AlertHandlerConfig& config, uint32_t level)
 {
   objectFactory_->dynamicReconfigForward( config.occupiedCellThres,
-    config.highThres, config.lowThres, config.approachDist,
+    config.highThres, config.lowThres, 
     config.orientationCircle, config.orientationDist); 
 
   Hole::setObjectScore(-1);
@@ -432,9 +431,7 @@ void AlertHandler::dynamicReconfigCallback(
 
   objectHandler_->updateParams(config.sensorRange, config.clusterRadius);
 
-  victimHandler_->updateParams(
-    config.clusterRadius , config.sameVictimRadius,
-    config.approachDist, config.victimUpdate , config.verificationProbability);
+  victimHandler_->updateParams(config.clusterRadius , config.sameVictimRadius);
 }
 
 ///////////////////////////////////////////////////////
@@ -452,8 +449,7 @@ bool AlertHandler::getObjectsServiceCb(
   sounds_->getObjectsPosesStamped(&rs.sounds);
   co2s_->getObjectsPosesStamped(&rs.co2s);
 
-  victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited, 
-      &rs.approachPoints);
+  victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited);
 
   return true;
 }

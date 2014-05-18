@@ -51,8 +51,6 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Int32.h>
 
-#include "pandora_data_fusion_msgs/VictimToFsmMsg.h"
-#include "pandora_data_fusion_msgs/VictimFoundMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
 #include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
@@ -104,14 +102,9 @@ class VictimHandler : private boost::noncopyable
    * @brief Updates the victim handler's parameters
    * @param clusterRadius [float] The new cluster radius
    * @param sameVictimRadius [float] The new same victim radius
-   * @param approachDist [float] The new approach distance
-   * @param victimUpdate [float] The new victim update distance
-   * @param verificationProbability [float] The new verification probability
    * @return void
    */
-  void updateParams(float clusterRadius, float sameVictimRadius,
-                    float approachDist, float victimUpdate,
-                    float verificationProbability);
+  void updateParams(float clusterRadius, float sameVictimRadius);
 
   /**
    * @brief Clears unvisited victims list and selected victim index (if any)
@@ -166,7 +159,7 @@ class VictimHandler : private boost::noncopyable
    * @return void
    */
   void getVictimsPosesStamped(PoseStampedVector* victimsToGo, 
-      PoseStampedVector* victimsVisited, PoseStampedVector* approachPoses);
+      PoseStampedVector* victimsVisited);
 
   /**
    * @brief Fill in the geotiff info with the victims details 
@@ -198,42 +191,11 @@ class VictimHandler : private boost::noncopyable
    */
   ObjectConstPtrVectorPtr getAllLegitObjects();
 
-  /**
-   * @brief Publishes a message that a victim was found
-   * @return void
-   */
-  void publishVictimFoundMsg();
-
-  /**
-   * @brief Publishes a message to fsm to inform it of victim change
-   * @return void
-   */
-  void publishVictimUpdatedMsg();
-
-  /**
-   * @brief Publishes a message to fsm containing the sensor verification info
-   * for the selected victim
-   * @return void
-   */
-  void publishVictimToFsmMsg(const VictimPtr& victim);
-  
-  /**
-   * @brief Returns the string representation corresponding to a sensorId
-   * @return std::string The string representation
-   */
-  std::string sensorIdToString(int sensorId);
-
  private:
 
   //!< a nodehandle
   ros::NodeHandle nh_;
 
-  //!< publisher for victim found messages to fsm
-  ros::Publisher victimFoundPublisher_;
-  //!< publisher for victim update messages to fsm
-  ros::Publisher victimUpdatePublisher_;
-  //!< publisher for victim verification messages to fsm
-  ros::Publisher victimVerifiedPublisher_;
   //!< publisher for valid victims counter
   ros::Publisher validVictimsPublisher_;
 
@@ -258,13 +220,6 @@ class VictimHandler : private boost::noncopyable
   VictimListPtr victimsVisitedList_;
   //!< counts verified victims that were validated by user
   int validVictimsCounter_;
-
-  //!< The approach pose of the currently tracked victim  
-  geometry_msgs::Pose currentApproachPose_;
-
-  //!< The probability threshold for informing fsm of victim verification 
-  float VICTIM_VERIFICATION_PROB;
-
 };
 
 typedef boost::scoped_ptr<VictimHandler> VictimHandlerPtr;

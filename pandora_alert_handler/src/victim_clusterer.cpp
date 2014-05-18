@@ -44,10 +44,9 @@ namespace pandora_data_fusion
   namespace pandora_alert_handler
   {
 
-    VictimClusterer::VictimClusterer(float clusterRadius, float approachDist)
+    VictimClusterer::VictimClusterer(float clusterRadius)
     {
       CLUSTER_RADIUS = clusterRadius;
-      APPROACH_DIST = approachDist; 
     }
 
     /**
@@ -68,7 +67,7 @@ namespace pandora_data_fusion
       {
         VictimPtr newVictim(new Victim);
 
-        newVictim->setObjects(groupedObjects[ii], APPROACH_DIST);
+        newVictim->setObjects(groupedObjects[ii]);
 
         newVictimVector.push_back(newVictim);
       }
@@ -158,12 +157,11 @@ namespace pandora_data_fusion
 
     /**
      * @details Updates the parameters tha are used in clustering (distance
-     * threshold) and in finding approach point.
+     * threshold).
      */
-    void VictimClusterer::updateParams(float clusterRadius, float approachDist)
+    void VictimClusterer::updateParams(float clusterRadius)
     {
       CLUSTER_RADIUS = clusterRadius;
-      APPROACH_DIST = approachDist;
     }
 
   }  // namespace pandora_alert_handler

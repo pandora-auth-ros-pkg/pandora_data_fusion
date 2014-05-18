@@ -47,7 +47,6 @@ namespace pandora_data_fusion
     VictimList::VictimList()
     {
       currentVictimIt_ = objects_.end();
-      currentVictimDied_ = false;
     }
 
     bool VictimList::contains(const VictimConstPtr& victim) const
@@ -62,6 +61,13 @@ namespace pandora_data_fusion
       return false;
     }
 
+    void VictimList::inspect()
+    {
+  for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+  {
+    (*it)->inspect();
+  }
+    }
     /**
      * @details A victimToUpdate from victim list is selected (this will be the 
      * current if we are tracking one). Its info is updated by copying the given 
@@ -73,14 +79,14 @@ namespace pandora_data_fusion
     {
       ROS_ASSERT(iteratorList.size() > 0);
 
-      const_iterator_vers_ref victimToUpdate = *(iteratorList.begin());
+      iterator victimToUpdate = *(iteratorList.begin());
 
-      if (currentVictimIt_ != objects_.end() )
+      if(currentVictimIt_ != objects_.end())
       {
-        for ( IteratorList::const_iterator it = iteratorList.begin() ;
+        for(IteratorList::const_iterator it = iteratorList.begin();
             it != iteratorList.end() ; ++it)
         {
-          if ((*currentVictimIt_)->getId() == (*(*it))->getId())
+          if(currentVictimIt_ == (*it))
           {
             victimToUpdate = *it;
             break;
@@ -88,46 +94,17 @@ namespace pandora_data_fusion
         }
       }
 
-      (*victimToUpdate)->setObjects(victim->getObjects(), APPROACH_DIST);
+      (*victimToUpdate)->setObjects(victim->getObjects());
 
-      for ( IteratorList::const_iterator it = iteratorList.begin();
+      for(IteratorList::const_iterator it = iteratorList.begin();
           it != iteratorList.end(); ++it)
       {
-        if ( *(it) == victimToUpdate )
+        if(*(it) == victimToUpdate)
         {
           continue;
         }
-        objects_.erase( *(it) );
+        objects_.erase(*(it));
       }
-    }
-
-    /**
-     * @details Sets various thresholds and params for VictimList
-     */
-    void VictimList::setParams(float approachDistance, float victimUpdate)
-    {    
-      APPROACH_DIST = approachDistance;
-      VICTIM_UPDATE = victimUpdate;  
-    }
-
-    /**
-     * @details It is set that if we do not currently track a victim,
-     * the iterator is the one pointing at the end of the victim list
-     * (where there is no victim - yet)
-     */
-    bool VictimList::isVictimBeingTracked() const
-    {
-      return currentVictimIt_ != objects_.end();
-    }
-
-    /**
-     * @details Assuming that a victim is being tracked,
-     * this method returns that victim.
-     */
-    const VictimPtr& VictimList::getCurrentVictim() const
-    {
-      ROS_ASSERT(currentVictimIt_ != objects_.end());
-      return *currentVictimIt_;
     }
 
     /**
@@ -167,9 +144,8 @@ namespace pandora_data_fusion
     }
 
     /**
-     * @details This method should always be called after getVictimsMsg() so if 
-     * that is not the case the assertion should fire. Also, index = -1 means 
-     * that no victim was chosen from victimMsgVector.
+     * @details victimId = -1 means that currentVictim is to be set to
+     * nothing.
      */
     bool VictimList::setCurrentVictim(int victimId)
     {
@@ -183,8 +159,6 @@ namespace pandora_data_fusion
         if((*it)->getId() == victimId)
         {
           currentVictimIt_ = it;
-          currentApproachPose_ = (*currentVictimIt_)->getApproachPose();
-          currentVictimDied_ = false;
           return true;
         }
       }
@@ -197,7 +171,7 @@ namespace pandora_data_fusion
      */
     bool VictimList::getCurrentVictimTransform(tf::Transform* Transform) const
     {
-      if (currentVictimIt_ == objects_.end())
+      if(currentVictimIt_ == objects_.end())
       {
         return false;
       }
@@ -266,33 +240,6 @@ namespace pandora_data_fusion
     {
       objects_.clear();
       currentVictimIt_ = objects_.end();  
-    }
-
-    /**
-     * @details Has the victim being tracked changed state?
-     * If it has died or its approach point has changed much,
-     * it is necessary to inform.
-     */
-    bool VictimList::currentVictimUpdated()
-    {
-      if (currentVictimIt_ == objects_.end())
-      {
-        if (currentVictimDied_)
-        {
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      if (Utils::distanceBetweenPoints2D(
-            (*currentVictimIt_)->getApproachPose().position,
-            currentApproachPose_.position) > VICTIM_UPDATE)
-      {
-        return true;
-      }
-      return false;
     }
 
   }  // namespace pandora_alert_handler

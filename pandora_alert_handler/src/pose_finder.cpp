@@ -15,14 +15,13 @@ PoseFinder::PoseFinder(const MapPtr& map, const std::string& mapType)
 
 void PoseFinder::updateParams(float occupiedCellThres,
       float heightHighThres, float heightLowThres,
-      float approachDist, float orientationDist, float orientationCircle)
+      float orientationDist, float orientationCircle)
 {
   OCCUPIED_CELL_THRES = occupiedCellThres;
   HEIGHT_HIGH_THRES = heightHighThres;
   HEIGHT_LOW_THRES = heightLowThres;
   ORIENTATION_CIRCLE = orientationCircle;
   ORIENTATION_DIST = orientationDist;
-  APPROACH_DIST = approachDist;
 }
 
 void PoseFinder::publishVisionTransform(float alertYaw, float alertPitch, 

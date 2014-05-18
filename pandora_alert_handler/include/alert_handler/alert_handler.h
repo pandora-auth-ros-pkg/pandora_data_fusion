@@ -35,8 +35,8 @@
 #include "pandora_alert_handler/AlertHandlerConfig.h"
 #include "alert_handler/defines.h"
 #include "alert_handler/object_list.h"
+#include "alert_handler/victim_list.h"
 #include "alert_handler/object_factory.h"
-#include "alert_handler/pose_finder.h"
 #include "alert_handler/object_handler.h"
 #include "alert_handler/victim_handler.h"
 

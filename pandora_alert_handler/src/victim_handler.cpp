@@ -66,45 +66,12 @@ VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
 {
   Victim::setType("victim");
 
-  clusterer_.reset( new VictimClusterer(0.2, 0.5) );
+  clusterer_.reset( new VictimClusterer(0.2) );
 
   validVictimsCounter_ = 0;
 
   std::string param; 
-  
-  if (nh_.getParam("published_topic_names/victim_found", param))
-  {
-    victimFoundPublisher_ =  
-      nh_.advertise<pandora_data_fusion_msgs::VictimFoundMsg>(param, 1);
-  }
-  else
-  {
-    ROS_FATAL("victim_found topic name param not found");
-    ROS_BREAK();
-  }
-  
-  if (nh_.getParam("published_topic_names/victim_update", param))
-  {
-    victimUpdatePublisher_ = nh_.advertise<std_msgs::Empty>(param, 1);
-  }
-  else
-  {
-    ROS_FATAL("victim_update topic name param not found");
-    ROS_BREAK();
-  }
-  
-  if (nh_.getParam("published_topic_names/victim_verified", param))
-  {
-    victimVerifiedPublisher_ =
-      nh_.advertise<pandora_data_fusion_msgs::VictimToFsmMsg>(param, 1);
-  }
-  else
-  {
-    ROS_FATAL("victim_verified topic name param not found");
-    ROS_BREAK();
-  }
-
-  if (nh_.getParam("published_topic_names/valid_victims_counter", param))
+  if (ros::param::get("published_topic_names/valid_victims_counter", param))
   {
     validVictimsPublisher_ =  
       nh_.advertise<std_msgs::Int32>(param, 1);
@@ -132,38 +99,23 @@ void VictimHandler::notify()
     {
       continue;
     }
-
     bool victimIsNew = victimsToGoList_->add(newVictimVector[ii]);
-
     if(victimIsNew)
     {
-      publishVictimFoundMsg();
-    }
-    else if(victimsToGoList_->currentVictimUpdated())
-    {
-      publishVictimUpdatedMsg();
+  ROS_INFO_NAMED("victim_handler",
+                 "[VICTIM_HANDLER %d] New victim found ", __LINE__);
     }
   }
 }
 
+/**
+ * @details Use notify() to create victims, then delegate inspection of
+ * victims to VictimList.
+ */
 void VictimHandler::inspect()
 {
   notify();
-
-  for (VictimList::const_iterator it = victimsToGoList_->begin();
-      it != victimsToGoList_->end(); it++)
-  {
-    (*it)->inspect();
-  }
-
-  if(victimsToGoList_->isVictimBeingTracked())
-  {
-    if(victimsToGoList_->getCurrentVictim()->getProbability() 
-        > VICTIM_VERIFICATION_PROB)
-    {
-      publishVictimToFsmMsg(victimsToGoList_->getCurrentVictim());
-    }
-  }
+  victimsToGoList_->inspect();
 }
 
 /**
@@ -220,7 +172,7 @@ bool VictimHandler::getCurrentVictimTransform(
   if (victimTracked)
   {
     *stampedTranform =  tf::StampedTransform(
-        trans, ros::Time::now(), "world", "current_victim" );
+        trans, ros::Time::now(), "/world", "current_victim" );
     return true;
   } 
   return false;
@@ -266,15 +218,10 @@ bool VictimHandler::validateVictim(int victimId, bool victimValid)
 ////////////////////////////////////////////////////////////////////////////////
 
 void VictimHandler::getVictimsPosesStamped(PoseStampedVector* victimsToGo, 
-    PoseStampedVector* victimsVisited, PoseStampedVector* approachPoses)
+    PoseStampedVector* victimsVisited)
 {
   victimsToGoList_->getObjectsPosesStamped(victimsToGo);
   victimsVisitedList_->getObjectsPosesStamped(victimsVisited);
-  for(VictimList::const_iterator it = victimsToGoList_->begin();
-      it != victimsToGoList_->end(); ++it)
-  {
-    approachPoses->push_back((*it)->getApproachPoseStamped());
-  }
 }
 
 /**
@@ -300,51 +247,10 @@ void VictimHandler::getVisualization(
 /**
  * @details 
  */
-void  VictimHandler::publishVictimFoundMsg()
+void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius)
 {
-  ROS_INFO_NAMED("victim_handler",
-                 "[VICTIM_HANDLER %d] New victim found ", __LINE__);
-  pandora_data_fusion_msgs::VictimFoundMsg victimMsg;
-  victimMsg.victimNotificationType = victimMsg.TYPE_CAMERA;
-  victimFoundPublisher_.publish(victimMsg);
-}
-
-/**
- * @details 
- */
-void VictimHandler::publishVictimUpdatedMsg() 
-{
-  std_msgs::Empty msg;
-
-  victimUpdatePublisher_.publish(msg);
-}
-
-/**
- * @details 
- */
-void VictimHandler::publishVictimToFsmMsg(const VictimPtr& victim)
-{
-  pandora_data_fusion_msgs::VictimToFsmMsg msg;
-  msg.header.stamp = ros::Time::now();
-  msg.header.frame_id = "/world";
-  msg.x = victim->getPose().position.x;
-  msg.y = victim->getPose().position.y;
-  msg.probability = victim->getProbability();
-  victimVerifiedPublisher_.publish(msg);
-}
-
-/**
- * @details 
- */
-void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius,
-                                 float approachDist, float victimUpdate,
-                                 float verificationProbability)
-{
-  VICTIM_VERIFICATION_PROB = verificationProbability;
-  clusterer_->updateParams(clusterRadius, approachDist);
-  victimsToGoList_->setParams(approachDist, victimUpdate);
+  clusterer_->updateParams(clusterRadius);
   Victim::setDistanceThres(sameVictimRadius);
-  victimsVisitedList_->setParams(approachDist, victimUpdate);
 }
 
 /**

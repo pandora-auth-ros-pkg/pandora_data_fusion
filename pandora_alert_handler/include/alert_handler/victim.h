@@ -39,8 +39,7 @@ namespace pandora_data_fusion
          * Approach point's desired distance away from victim
          * @return void
          */
-        void setObjects(const ObjectConstPtrVector& objects, 
-            float approachDistance);
+        void setObjects(const ObjectConstPtrVector& objects);
 
         /**
          * @brief Inspects this victim's objects in order to verify it. 
@@ -56,7 +55,7 @@ namespace pandora_data_fusion
          * Approach point's desired distance away from victim
          * @return void
          */
-        void eraseObjectAt(int index, float approachDistance);
+        void eraseObjectAt(int index);
 
         /**
          * @override
@@ -110,21 +109,6 @@ namespace pandora_data_fusion
         }
 
         /**
-         * @brief Getter for member approachPose_
-         * @return const Pose& approachPose_
-         */
-        const Pose& getApproachPose() const
-        {
-          return approachPose_;
-        }
-
-        /**
-         * @brief Getter for member approachPose_ (stamped)
-         * @return PoseStamped approachPose_ (stamped)
-         */
-        PoseStamped getApproachPoseStamped() const;
-
-        /**
          * @brief Getter for member objects_
          * @return std::set<int>& objects_
          */
@@ -162,29 +146,12 @@ namespace pandora_data_fusion
       private:
 
         /**
-         * @brief Updates position, orientation and approach pose
-         * @param object [ObjectConstPtr const&] object containing new pose
-         * @param approachDistance [float] distance of approch position from victim
-         * @return void
-         */
-        void updatePose(const ObjectConstPtr& object, float approachDistance);
-
-        /**
-         * @brief Calculates the approach pose of the victim for it's current pose
-         * @param objectType [std::string] representative object's type (hole or tpa)
-         * @param approachDistance [float] The desired distance from the wall
-         * @return Pose The approach pose
-         */
-        Pose calculateApproachPose(std::string objectType, 
-            float approachDistance) const;
-
-        /**
          * @brief Updates the representative object and consequently the pose 
          * @param approachDistance [float] The disired distance from the wall
          * @details Should be always called after any change on the objects_
          * @return void
          */
-        void updateRepresentativeObject(float approachDistance);
+        void updateRepresentativeObject();
 
         /**
          * @brief Selects the object to represent victim's pose out of victim's
@@ -207,16 +174,9 @@ namespace pandora_data_fusion
         bool valid_;
         //!< True if the victim was visited false otherwise     
         bool visited_;
-        //!< True if hole failed to pass validation and thus deleted
-        bool holeDeleted_;
-        //!< True if thermal failed to pass validation and thus deleted
-        bool thermalDeleted_;
 
         //!< Index pointing to representative object
         int selectedObjectIndex_;
-
-        //!< Pose with the approch point to the victim and its orientation
-        geometry_msgs::Pose approachPose_;    
 
         //!< Victim's characteristic group of objects (Hole or Thermal)
         ObjectConstPtrVector objects_;

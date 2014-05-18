@@ -85,11 +85,11 @@ QrPtrVectorPtr ObjectFactory::makeQrs(
 }
 
 void ObjectFactory::dynamicReconfigForward(float occupiedCellThres,
-    float highThres, float lowThres, float approachDist,
+    float highThres, float lowThres,
     float orientationCircle, float orientationDist)
 {
   poseFinder_->updateParams( occupiedCellThres, 
-    highThres, lowThres, approachDist,
+    highThres, lowThres,
     orientationDist, orientationCircle
   );
 }
