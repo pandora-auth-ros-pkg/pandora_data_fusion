@@ -76,12 +76,12 @@ class VictimHandler : private boost::noncopyable
   /**
    * @brief Constructor
    */
-  VictimHandler(const HoleListConstPtr& holeListPtr, 
-                const ThermalListConstPtr& thermalListPtr,
-                const FaceListConstPtr& faceListPtr,
-                const MotionListConstPtr& motionListPtr,
-                const SoundListConstPtr& soundListPtr,
-                const Co2ListConstPtr& co2ListPtr,
+  VictimHandler(HoleListPtr holeListPtr, 
+                ThermalListPtr thermalListPtr,
+                FaceListPtr faceListPtr,
+                MotionListPtr motionListPtr,
+                SoundListPtr soundListPtr,
+                Co2ListPtr co2ListPtr,
                 VictimListPtr victimsToGoList,
                 VictimListPtr victimsVisitedList);
 
@@ -200,17 +200,17 @@ class VictimHandler : private boost::noncopyable
   ros::Publisher validVictimsPublisher_;
 
   //!< The list of Hole Objects passed on construction
-  HoleListConstPtr holePtrListPtr_;
+  HoleListPtr holePtrListPtr_;
   //!< The list of Thermal Objects passed on construction
-  ThermalListConstPtr thermalPtrListPtr_;
+  ThermalListPtr thermalPtrListPtr_;
   //!< The list of Face Objects passed on construction
-  FaceListConstPtr facePtrListPtr_;
+  FaceListPtr facePtrListPtr_;
   //!< The list of Motion Objects passed on construction
-  MotionListConstPtr motionPtrListPtr_;
+  MotionListPtr motionPtrListPtr_;
   //!< The list of Sound Objects passed on construction
-  SoundListConstPtr soundPtrListPtr_;
+  SoundListPtr soundPtrListPtr_;
   //!< The list of Co2 Objects passed on construction
-  Co2ListConstPtr co2PtrListPtr_;
+  Co2ListPtr co2PtrListPtr_;
 
   VictimClustererPtr clusterer_;
   
@@ -220,6 +220,9 @@ class VictimHandler : private boost::noncopyable
   VictimListPtr victimsVisitedList_;
   //!< counts verified victims that were validated by user
   int validVictimsCounter_;
+
+  //!< Radius within which all legit objects are associated with a victim.
+  float CLUSTER_RADIUS; 
 };
 
 typedef boost::scoped_ptr<VictimHandler> VictimHandlerPtr;

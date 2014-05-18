@@ -47,12 +47,12 @@ namespace pandora_alert_handler
 /**
  * @details 
  */
-VictimHandler::VictimHandler(const HoleListConstPtr& holeListPtr,
-                             const ThermalListConstPtr& thermalListPtr,
-                             const FaceListConstPtr& faceListPtr,
-                             const MotionListConstPtr& motionListPtr,
-                             const SoundListConstPtr& soundListPtr,
-                             const Co2ListConstPtr& co2ListPtr,
+VictimHandler::VictimHandler(HoleListPtr holeListPtr,
+                             ThermalListPtr thermalListPtr,
+                             FaceListPtr faceListPtr,
+                             MotionListPtr motionListPtr,
+                             SoundListPtr soundListPtr,
+                             Co2ListPtr co2ListPtr,
                              VictimListPtr victimsToGoList,
                              VictimListPtr victimsVisitedList) :
   holePtrListPtr_(holeListPtr),
@@ -158,9 +158,8 @@ bool VictimHandler::getCurrentVictimTransform(
   {
     *stampedTranform =  tf::StampedTransform(
         trans, ros::Time::now(), "/world", "current_victim" );
-    return true;
   } 
-  return false;
+  return victimTracked;
 }
 
 /**
@@ -176,7 +175,18 @@ bool VictimHandler::selectCurrentVictim(int victimId)
  */
 bool VictimHandler::deleteVictim(int victimId)
 {
-  return victimsToGoList_->deleteVictim(victimId);
+  VictimPtr deletedVictim;
+  bool deleted = victimsToGoList_->deleteVictim(victimId, deletedVictim);
+  if(deleted)
+  {
+  holePtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+  thermalPtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+  facePtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+  motionPtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+  soundPtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+  co2PtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+  }
+  return deleted;
 }
 
 /**
@@ -234,6 +244,7 @@ void VictimHandler::getVisualization(
  */
 void VictimHandler::updateParams(float clusterRadius, float sameVictimRadius)
 {
+  CLUSTER_RADIUS = clusterRadius;
   clusterer_->updateParams(clusterRadius);
   Victim::setDistanceThres(sameVictimRadius);
 }

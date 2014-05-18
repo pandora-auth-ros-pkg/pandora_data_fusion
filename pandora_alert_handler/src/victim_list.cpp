@@ -184,7 +184,7 @@ namespace pandora_data_fusion
      * from victim list. Next currentVictim iterator points to the end of the
      * list.
      */
-    bool VictimList::deleteVictim(int victimId)
+    bool VictimList::deleteVictim(int victimId, VictimPtr deletedVictim)
     {
       for(VictimList::iterator it = objects_.begin();
           it != objects_.end(); ++it)
@@ -193,6 +193,7 @@ namespace pandora_data_fusion
         {
           if(it == currentVictimIt_)
             currentVictimIt_ = objects_.end();
+          deletedVictim = *it;
           objects_.erase(it);
           return true;
         }

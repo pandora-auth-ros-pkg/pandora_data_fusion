@@ -110,7 +110,7 @@ class VictimList : public ObjectList<Victim>
    * @param victimId [int] id that will be used to search for the victim
    * @return bool true, if deleted, false, if not found.
    */
-  bool deleteVictim(int victimId);
+  bool deleteVictim(int victimId, VictimPtr deletedVictim);
 
   /**
    * @brief Validates victim with victimId.
