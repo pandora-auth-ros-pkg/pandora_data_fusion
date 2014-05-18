@@ -171,19 +171,16 @@ namespace pandora_data_fusion
      * that is not the case the assertion should fire. Also, index = -1 means 
      * that no victim was chosen from victimMsgVector.
      */
-    bool VictimList::setCurrentVictim(int index)
+    bool VictimList::setCurrentVictim(int victimId)
     {
-      if(index == -1)
+      if(victimId == -1)
       {
         currentVictimIt_ = objects_.end();
         return true;
       }
-
-      int victimId;
-
-      for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+      for(iterator it = objects_.begin(); it != objects_.end(); ++it)
       {
-        if  ((*it)->getId() == victimId)
+        if((*it)->getId() == victimId)
         {
           currentVictimIt_ = it;
           currentApproachPose_ = (*currentVictimIt_)->getApproachPose();
@@ -244,12 +241,13 @@ namespace pandora_data_fusion
       {
         if((*it)->getId() == victimId)
         {
-        currentVictim = *it;
-        currentVictim->setValid(victimValid);
-        currentVictim->setVisited(true);
-        objects_.erase(it);
-        currentVictimIt_ = objects_.end();
-        break;
+          currentVictim = *it;
+          currentVictim->setValid(victimValid);
+          currentVictim->setVisited(true);
+          objects_.erase(it);
+          if(it == currentVictimIt_)
+            currentVictimIt_ = objects_.end();
+          break;
         }
       }
 

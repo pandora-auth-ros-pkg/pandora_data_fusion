@@ -51,9 +51,8 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Int32.h>
 
-#include "pandora_data_fusion_msgs/VictimVerificationMsg.h"
-#include "pandora_data_fusion_msgs/VictimFoundMsg.h"
 #include "pandora_data_fusion_msgs/VictimToFsmMsg.h"
+#include "pandora_data_fusion_msgs/VictimFoundMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
 #include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
@@ -121,13 +120,11 @@ class VictimHandler : private boost::noncopyable
   void flush();
   
   /**
-   * @brief Sets the current victim index  
-   * @param index [int] The index of the selected victim referring to the
-   * vector
-   * that was last returned by getVictimsMsg()
-   * @return void
+   * @brief Sets the current victim.
+   * @param index [int] selected victim's unique id.
+   * @return bool true, if selected successfully, false, if not found.
    */
-  void setCurrentVictimIndex(int index);
+  bool selectCurrentVictim(int victimId);
   
   /**
    * @brief Deletes VictimPtr from VictimsToGo list with victimId.

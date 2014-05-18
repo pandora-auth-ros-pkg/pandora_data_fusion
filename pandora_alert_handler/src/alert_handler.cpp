@@ -136,18 +136,7 @@ void AlertHandler::initRosInterfaces()
     ROS_BREAK();
   }
 
-  //!< subscribers
-
-  if (nh_.getParam("subscribed_topic_names/currentVictim", param))
-  {
-    currentVictimSubscriber_ = nh_.subscribe(param,
-      1, &AlertHandler::selectedVictimCallback, this);
-  }
-  else
-  {
-    ROS_FATAL("currentVictim topic name param not found");
-    ROS_BREAK();
-  }
+  //!< map subscriber
 
   if (nh_.getParam("subscribed_topic_names/map", param))
   {
@@ -173,10 +162,23 @@ void AlertHandler::initRosInterfaces()
       }
 
   //!< action servers
+  
+  if (nh_.getParam("action_server_names/select_victim", param))
+  {
+    selectVictimServer_.reset(new ChooseVictimServer(nh_, param,  false));
+  } 
+  else
+  {
+    ROS_FATAL("select_victim action name param not found");
+    ROS_BREAK();
+  }
+  selectVictimServer_->registerGoalCallback(
+    boost::bind( &AlertHandler::selectVictimCallback, this) );
+  selectVictimServer_->start();
 
   if (nh_.getParam("action_server_names/delete_victim", param))
   {
-    deleteVictimServer_.reset(new DeleteVictimServer(nh_, param,  false));
+    deleteVictimServer_.reset(new ChooseVictimServer(nh_, param,  false));
   } 
   else
   {
@@ -336,9 +338,13 @@ void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
   }
 }
 
-void AlertHandler::selectedVictimCallback(const std_msgs::Int16& msg)
+void AlertHandler::selectVictimCallback()
 {
-  victimHandler_->setCurrentVictimIndex(msg.data);
+  int victimId = selectVictimServer_->acceptNewGoal()->victimId;
+  bool selected = victimHandler_->selectCurrentVictim(victimId);
+  if(!selected)
+    selectVictimServer_->setAborted();
+  selectVictimServer_->setSucceeded();
 }
 
 void AlertHandler::deleteVictimCallback()

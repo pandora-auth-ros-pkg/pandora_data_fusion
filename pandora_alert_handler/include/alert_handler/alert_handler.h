@@ -19,7 +19,7 @@
 
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
-#include "pandora_data_fusion_msgs/DeleteVictimAction.h"
+#include "pandora_data_fusion_msgs/ChooseVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"
 #include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
@@ -46,7 +46,7 @@ namespace pandora_alert_handler
 {
 
 typedef actionlib::SimpleActionServer
-  <pandora_data_fusion_msgs::DeleteVictimAction> DeleteVictimServer;
+  <pandora_data_fusion_msgs::ChooseVictimAction> ChooseVictimServer;
 typedef actionlib::SimpleActionServer 
   <pandora_data_fusion_msgs::ValidateVictimAction> 
     ValidateVictimServer;
@@ -75,13 +75,6 @@ class AlertHandler : private boost::noncopyable
         const pandora_common_msgs::GeneralAlertMsg& msg);
 
   /* Victim-concerned Subscribers */
-  
-  /**
-   * @brief Communication with Navigation (possibly needs to change).
-   * @param msg [const std_msgs::Int16&] Msg
-   * @return void
-   */
-  void selectedVictimCallback(const std_msgs::Int16& msg);
 
   /* MapSubsriber Callback - Communication with SLAM */
   
@@ -93,6 +86,12 @@ class AlertHandler : private boost::noncopyable
   void updateMap(const nav_msgs::OccupancyGridConstPtr& msg);
 
   /* Victim-concerned Goal Callbacks */
+  
+  /**
+   * @brief Communication with Agent. Chooses current victim to inspect.
+   * @return void
+   */
+  void selectVictimCallback();
 
   /**
    * @brief Client is Agent. Order to delete Victim.
@@ -154,8 +153,6 @@ class AlertHandler : private boost::noncopyable
   ros::Subscriber qrSubscriber_;
   ros::Subscriber hazmatSubscriber_;
   
-  ros::Subscriber currentVictimSubscriber_;
-
   ros::Subscriber mapSubscriber_;
 
   ros::ServiceServer flushService_;
@@ -169,7 +166,8 @@ class AlertHandler : private boost::noncopyable
 
   ros::Timer currentVictimTimer_;
 
-  boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
+  boost::shared_ptr<ChooseVictimServer> selectVictimServer_;
+  boost::shared_ptr<ChooseVictimServer> deleteVictimServer_;
   boost::shared_ptr<ValidateVictimServer> validateVictimServer_;
 
   dynamic_reconfigure::Server< ::pandora_alert_handler::AlertHandlerConfig >

@@ -210,19 +210,6 @@ void VictimHandler::getVictimsInfo(
 }
 
 /**
- * @details Delegate to victimList
- */
-void VictimHandler::setCurrentVictimIndex(int index)
-{
-    // race condition !! If victim is
-    // deleted before navigation sends back selected id.
-    // Hopefully this will be quite uncommon.
-    // should fix if ASSERTION ever fails
-    bool victimWasSet = victimsToGoList_->setCurrentVictim(index);
-    ROS_ASSERT(victimWasSet);
-}
-
-/**
  * @details Delegate to victimList and add Stamp
  */
 bool VictimHandler::getCurrentVictimTransform(
@@ -237,6 +224,14 @@ bool VictimHandler::getCurrentVictimTransform(
     return true;
   } 
   return false;
+}
+
+/**
+ * @details Delegate to victimList
+ */
+bool VictimHandler::selectCurrentVictim(int victimId)
+{
+    return victimsToGoList_->setCurrentVictim(victimId);
 }
 
 /**

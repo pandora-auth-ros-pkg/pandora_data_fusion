@@ -98,19 +98,18 @@ class VictimList : public ObjectList<Victim>
     pandora_data_fusion_msgs::VictimsMsg* victimsMsg);
 
   /**
-   * @brief Sets the victim index to a specific victim
-   * @param index [int] the index of the previeously returned victims selected 
-   * @return bool Whether the victim with the given id was found or not. 
-   * Also true for -1 
-   */
-  bool setCurrentVictim(int victimId);
-
-  /**
    * @brief Get the current victim pose as a stamped transform
    * @param stampedTranform [tf::StampedTransform*] The output param
    * @return bool -1 if no victim is tracked
    */
   bool getCurrentVictimTransform(tf::Transform* Transform) const;
+
+  /**
+   * @brief Sets the victim index to a specific victim
+   * @param victimId [int] current selected victim's unique id
+   * @return bool true, if selected successfully or -1, false, if not found.
+   */
+  bool setCurrentVictim(int victimId);
 
   /**
    * @brief Deletes VictimPtr with the corresponding victimId
