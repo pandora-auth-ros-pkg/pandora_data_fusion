@@ -119,35 +119,20 @@ void VictimHandler::inspect()
 }
 
 /**
- * @details Collects from hole and thermal list, all these objects
+ * @details Collects from object lists, all these objects
  * that are thought to be legitimate and are to be grouped to 
- * Victim objects.
+ * Victim objects. Delegates to ObjectList.
  */
 ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
 {
   ObjectConstPtrVectorPtr result(new ObjectConstPtrVector);
 
-  ObjectList<Hole>::const_iterator holeIt;
-
-  for ( holeIt = holePtrListPtr_->begin();
-        holeIt != holePtrListPtr_->end(); ++holeIt )
-  {
-    if ( (*holeIt) -> getLegit())
-    {
-      result->push_back(HoleConstPtr(*holeIt));
-    }
-  }
-
-  ObjectList<Thermal>::const_iterator thermalIt;
-
-  for ( thermalIt = thermalPtrListPtr_->begin();
-        thermalIt != thermalPtrListPtr_->end() ; ++thermalIt )
-  {
-    if ( (*thermalIt) -> getLegit())
-    {
-      result->push_back(ThermalConstPtr(*thermalIt));
-    }
-  }
+  holePtrListPtr_->getAllLegitObjects(result);
+  thermalPtrListPtr_->getAllLegitObjects(result);
+  facePtrListPtr_->getAllLegitObjects(result);
+  motionPtrListPtr_->getAllLegitObjects(result);
+  soundPtrListPtr_->getAllLegitObjects(result);
+  co2PtrListPtr_->getAllLegitObjects(result);
 
   return result;
 }

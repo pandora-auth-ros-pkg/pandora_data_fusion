@@ -29,7 +29,7 @@ class ObjectList
   typedef boost::shared_ptr< ObjectType const > ConstPtr;
   typedef std::list< Ptr > List;
   typedef typename List::iterator iterator;  
-  typedef typename List::const_iterator const_iterator_vers_ref;
+  typedef typename List::const_iterator const_iterator_vol_ref;
   typedef typename List::const_iterator const_iterator;
   // typedef const_iterator_const_ref<const_iterator_vers_ref, Ptr, 
             // ConstPtr> const_iterator;
@@ -39,22 +39,28 @@ class ObjectList
 
   ObjectList(); 
 
+  int add(const Ptr& object);
+
+  /**
+   * @brief Fills a vector with all legit ObjectTypes from list.
+   * @param vector [ObjectConstPtrVectorPtr] vector to be filled
+   * @return void
+   */
+  void getAllLegitObjects(ObjectConstPtrVectorPtr vector) const;
+
   const_iterator begin() const;
   const_iterator end() const;
-  int size() const;
-  bool isObjectPoseInList(const ObjectConstPtr& object, float radius) const;
 
-  int add(const Ptr& object);
+  int size() const;
   void pop_back();
   void clear();
 
+  bool isObjectPoseInList(const ObjectConstPtr& object, float radius) const;
   void removeInRangeOfObject(const ObjectConstPtr& object, float range);
 
   void getObjectsPosesStamped(PoseStampedVector* poses) const;
-
   void fillGeotiff(
     pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res) const;
-
   void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
  protected:
@@ -134,6 +140,21 @@ int ObjectList<ObjectType>::add(const Ptr& object)
   object->setId(id_++);
   objects_.push_back(object);
   return ObjectType::getObjectScore();
+}
+
+template <class ObjectType>
+  void ObjectList<ObjectType>::getAllLegitObjects(
+      ObjectConstPtrVectorPtr vector) const
+{
+  const_iterator objectIt;
+
+  for(objectIt = objects_.begin(); objectIt != objects_.end(); ++objectIt)
+  {
+    if((*objectIt)->getLegit())
+    {
+      vector->push_back(*objectIt);
+    }
+  }
 }
 
 template <class ObjectType>
