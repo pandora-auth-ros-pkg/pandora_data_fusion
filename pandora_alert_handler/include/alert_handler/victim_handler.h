@@ -187,9 +187,6 @@ class VictimHandler : private boost::noncopyable
 
  private:
 
-  //!< a nodehandle
-  ros::NodeHandle nh_;
-
   //!< publisher for valid victims counter
   ros::Publisher validVictimsPublisher_;
 

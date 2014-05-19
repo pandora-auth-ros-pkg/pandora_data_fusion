@@ -61,8 +61,8 @@ VictimHandler::VictimHandler(VictimListPtr victimsToGoList,
   std::string param; 
   if (ros::param::get("published_topic_names/valid_victims_counter", param))
   {
-    validVictimsPublisher_ =  
-      nh_.advertise<std_msgs::Int32>(param, 1);
+    validVictimsPublisher_ = ros::NodeHandle().
+      advertise<std_msgs::Int32>(param, 1);
   }
   else
   {

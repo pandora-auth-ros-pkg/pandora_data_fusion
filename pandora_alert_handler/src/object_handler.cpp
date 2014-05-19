@@ -63,7 +63,7 @@ namespace pandora_data_fusion
     {
       for(int ii = 0; ii < newQrs->size(); ++ii)
       {
-        int qrScore = Qr::getList()->add( newQrs->at(ii) );
+        int qrScore = Qr::getList()->add(newQrs->at(ii));
         if(qrScore)
         {
           pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;

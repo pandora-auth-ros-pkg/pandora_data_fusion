@@ -68,6 +68,7 @@ namespace pandora_data_fusion
     (*it)->inspect();
   }
     }
+
     /**
      * @details A victimToUpdate from victim list is selected (this will be the 
      * current if we are tracking one). Its info is updated by copying the given 
