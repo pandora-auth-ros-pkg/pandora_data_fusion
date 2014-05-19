@@ -21,6 +21,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Qr const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
+        typedef boost::shared_ptr< ObjectList<Qr> > ListPtr;
+        typedef boost::shared_ptr< const ObjectList<Qr> > ListConstPtr;
 
       public:
 
@@ -67,8 +69,10 @@ namespace pandora_data_fusion
 
     typedef Qr::Ptr QrPtr;
     typedef Qr::ConstPtr QrConstPtr;
-    typedef std::vector< QrPtr > QrPtrVector;
-    typedef boost::shared_ptr< QrPtrVector > QrPtrVectorPtr;
+    typedef Qr::PtrVector QrPtrVector;
+    typedef Qr::PtrVectorPtr QrPtrVectorPtr;
+    typedef Qr::ListPtr QrListPtr;
+    typedef Qr::ListConstPtr QrListConstPtr;
 
   }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

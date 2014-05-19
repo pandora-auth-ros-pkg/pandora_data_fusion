@@ -47,20 +47,8 @@ namespace pandora_alert_handler
 /**
  * @details 
  */
-VictimHandler::VictimHandler(HoleListPtr holeListPtr,
-                             ThermalListPtr thermalListPtr,
-                             FaceListPtr faceListPtr,
-                             MotionListPtr motionListPtr,
-                             SoundListPtr soundListPtr,
-                             Co2ListPtr co2ListPtr,
-                             VictimListPtr victimsToGoList,
+VictimHandler::VictimHandler(VictimListPtr victimsToGoList,
                              VictimListPtr victimsVisitedList) :
-  holePtrListPtr_(holeListPtr),
-  thermalPtrListPtr_(thermalListPtr),
-  facePtrListPtr_(faceListPtr),
-  motionPtrListPtr_(motionListPtr),
-  soundPtrListPtr_(soundListPtr),
-  co2PtrListPtr_(co2ListPtr),
   victimsToGoList_(victimsToGoList),
   victimsVisitedList_(victimsVisitedList)
 {
@@ -127,12 +115,12 @@ ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
 {
   ObjectConstPtrVectorPtr result(new ObjectConstPtrVector);
 
-  holePtrListPtr_->getAllLegitObjects(result);
-  thermalPtrListPtr_->getAllLegitObjects(result);
-  facePtrListPtr_->getAllLegitObjects(result);
-  motionPtrListPtr_->getAllLegitObjects(result);
-  soundPtrListPtr_->getAllLegitObjects(result);
-  co2PtrListPtr_->getAllLegitObjects(result);
+  Hole::getList()->getAllLegitObjects(result);
+  Thermal::getList()->getAllLegitObjects(result);
+  Face::getList()->getAllLegitObjects(result);
+  Motion::getList()->getAllLegitObjects(result);
+  Sound::getList()->getAllLegitObjects(result);
+  Co2::getList()->getAllLegitObjects(result);
 
   return result;
 }
@@ -179,12 +167,12 @@ bool VictimHandler::deleteVictim(int victimId)
   bool deleted = victimsToGoList_->deleteVictim(victimId, deletedVictim);
   if(deleted)
   {
-  holePtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
-  thermalPtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
-  facePtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
-  motionPtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
-  soundPtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
-  co2PtrListPtr_->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+    Hole::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+    Thermal::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+    Face::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+    Motion::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+    Sound::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+    Co2::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
   }
   return deleted;
 }

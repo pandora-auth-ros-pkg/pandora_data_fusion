@@ -23,11 +23,7 @@ namespace pandora_data_fusion
     {
       public:
 
-        ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr,
-            HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr,
-            FaceListPtr faceListPtr, MotionListPtr motionListPtr,
-            SoundListPtr soundListPtr, Co2ListPtr co2ListPtr,
-            const VictimListConstPtr& victimsToGoList,
+        ObjectHandler(const VictimListConstPtr& victimsToGoList,
             const VictimListConstPtr& victimsVisited);
 
         void handleHoles(const HolePtrVectorPtr& newHoles, 
@@ -41,7 +37,6 @@ namespace pandora_data_fusion
 
       private:
 
-        int addToList(const ObjectPtr& newObject);
         void keepValidHoles(const HolePtrVectorPtr& holesPtr,
             const tf::Transform& cameraTransform);
         template <class ObjectType>
@@ -52,15 +47,6 @@ namespace pandora_data_fusion
 
         ros::Publisher qrPublisher_;
         ros::Publisher scorePublisher_;
-
-        HoleListPtr holeListPtr_;
-        QrListPtr qrListPtr_;
-        HazmatListPtr hazmatListPtr_;
-        ThermalListPtr thermalListPtr_;
-        FaceListPtr faceListPtr_;
-        MotionListPtr motionListPtr_;
-        SoundListPtr soundListPtr_;
-        Co2ListPtr co2ListPtr_;
 
         VictimListConstPtr victimsToGoList_;
         VictimListConstPtr victimsVisitedList_;
@@ -82,7 +68,7 @@ namespace pandora_data_fusion
         }
         for(int ii = 0; ii < newObjects->size(); ++ii)
         {
-          int objectScore = addToList(newObjects->at(ii));
+          int objectScore = ObjectType::getList()->add(newObjects->at(ii));
           if(objectScore)
           {
             std_msgs::Int32 updateScoreMsg;

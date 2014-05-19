@@ -21,6 +21,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Co2 const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
+        typedef boost::shared_ptr< ObjectList<Co2> > ListPtr;
+        typedef boost::shared_ptr< const ObjectList<Co2> > ListConstPtr;
 
       public:
 
@@ -34,8 +36,10 @@ namespace pandora_data_fusion
 
     typedef Co2::Ptr Co2Ptr;
     typedef Co2::ConstPtr Co2ConstPtr;
-    typedef std::vector< Co2Ptr > Co2PtrVector;
-    typedef boost::shared_ptr< Co2PtrVector > Co2PtrVectorPtr;
+    typedef Co2::PtrVector Co2PtrVector;
+    typedef Co2::PtrVectorPtr Co2PtrVectorPtr;
+    typedef Co2::ListPtr Co2ListPtr;
+    typedef Co2::ListConstPtr Co2ListConstPtr;
 
   }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

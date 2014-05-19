@@ -41,6 +41,7 @@
 #define ALERT_HANDLER_OBJECT_H
 
 #include "alert_handler/base_object.h"
+#include "alert_handler/object_list.h"
 
 namespace pandora_data_fusion
 {
@@ -59,6 +60,10 @@ namespace pandora_data_fusion
         //!< Type Definitions
         typedef boost::shared_ptr<DerivedObject> Ptr;
         typedef boost::shared_ptr<DerivedObject const> ConstPtr;
+        typedef std::vector<Ptr> PtrVector;
+        typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
+        typedef boost::shared_ptr< ObjectList<DerivedObject> > ListPtr;
+        typedef boost::shared_ptr< const ObjectList<DerivedObject> > ListConstPtr;
 
       public:
 
@@ -166,13 +171,21 @@ namespace pandora_data_fusion
         }
 
         /**
-         * @brief Setter for static distance threshold.
-         * @param distanceThres [float] distance
-         * @return void
+         * @brief Getter for static distance threshold.
+         * @return float distanceThres
          */
         float getDistanceThres() const
         {
           return distanceThres_;
+        }
+
+        /**
+         * @brief Method for accessing DerivedObject's associated list.
+         * @return ListPtr the list
+         */
+        static ListPtr getList()
+        {
+          return listPtr_;
         }
 
         /**
@@ -255,6 +268,18 @@ namespace pandora_data_fusion
           probabilityThres_ = probabilityThres;
         }
 
+        /**
+         * @brief Setter for static pointer to the list that will be filled
+         * by DerivedObjects.
+         * @param listPtr [ListPtr] pointer to list
+         * @return void
+         */
+
+        static void setList(ListPtr listPtr)
+        {
+          listPtr_ = listPtr;
+        }
+
       protected:
 
         //!< The object's id
@@ -276,6 +301,8 @@ namespace pandora_data_fusion
         static float probabilityThres_;
         //!< A string indicating the type of object
         static std::string type_;
+        //!< Pointer to list that contains Objects with type DerivedObject;
+        static ListPtr listPtr_;
 
       private:
 
@@ -296,6 +323,9 @@ namespace pandora_data_fusion
       float Object<DerivedObject>::objectScore_ = 0;
     template <class DerivedObject>
       std::string Object<DerivedObject>::type_ = "object";
+    template <class DerivedObject>
+      typename Object<DerivedObject>::ListPtr Object<DerivedObject>::listPtr_ = 
+      typename Object<DerivedObject>::ListPtr();
 
     template <class DerivedObject>
       PoseStamped Object<DerivedObject>::getPoseStamped() const

@@ -7,20 +7,8 @@ namespace pandora_data_fusion
   namespace pandora_alert_handler
   {
 
-    ObjectHandler::ObjectHandler(HoleListPtr holeListPtr, QrListPtr qrListPtr, 
-        HazmatListPtr hazmatListPtr, ThermalListPtr thermalListPtr, 
-        FaceListPtr faceListPtr, MotionListPtr motionListPtr,
-        SoundListPtr soundListPtr, Co2ListPtr co2ListPtr,
-        const VictimListConstPtr& victimsToGoList,
+    ObjectHandler::ObjectHandler(const VictimListConstPtr& victimsToGoList,
         const VictimListConstPtr& victimsVisitedList) : 
-      holeListPtr_(holeListPtr),
-      qrListPtr_(qrListPtr),
-      hazmatListPtr_(hazmatListPtr),
-      thermalListPtr_(thermalListPtr),
-      faceListPtr_(faceListPtr),
-      motionListPtr_(motionListPtr),
-      soundListPtr_(soundListPtr),
-      co2ListPtr_(co2ListPtr),
       victimsToGoList_(victimsToGoList),
       victimsVisitedList_(victimsVisitedList)
     {
@@ -67,7 +55,7 @@ namespace pandora_data_fusion
 
       for(int ii = 0; ii < newHoles->size(); ++ii)
       {
-        holeListPtr_->add( newHoles->at(ii) );
+        Hole::getList()->add( newHoles->at(ii) );
       }
     }
 
@@ -75,7 +63,7 @@ namespace pandora_data_fusion
     {
       for(int ii = 0; ii < newQrs->size(); ++ii)
       {
-        int qrScore = qrListPtr_->add( newQrs->at(ii) );
+        int qrScore = Qr::getList()->add( newQrs->at(ii) );
         if(qrScore)
         {
           pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;
@@ -90,28 +78,6 @@ namespace pandora_data_fusion
           scorePublisher_.publish(updateScoreMsg);
         }
       }
-    }
-
-    int ObjectHandler::addToList(const ObjectPtr& newObject)
-    {
-      if(newObject->getType() == Thermal::getObjectType())
-        return thermalListPtr_->add(
-            boost::dynamic_pointer_cast<Thermal>(newObject));
-      if(newObject->getType() == Hazmat::getObjectType())
-        return hazmatListPtr_->add(
-            boost::dynamic_pointer_cast<Hazmat>(newObject));
-      if(newObject->getType() == Face::getObjectType())
-        return faceListPtr_->add(
-            boost::dynamic_pointer_cast<Face>(newObject));
-      if(newObject->getType() == Motion::getObjectType())
-        return motionListPtr_->add(
-            boost::dynamic_pointer_cast<Motion>(newObject));
-      if(newObject->getType() == Sound::getObjectType())
-        return soundListPtr_->add(
-            boost::dynamic_pointer_cast<Sound>(newObject));
-      if(newObject->getType() == Co2::getObjectType())
-        return co2ListPtr_->add(
-            boost::dynamic_pointer_cast<Co2>(newObject));
     }
 
     void ObjectHandler::keepValidHoles(const HolePtrVectorPtr& holesPtr,

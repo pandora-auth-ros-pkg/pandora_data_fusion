@@ -21,6 +21,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Hazmat const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
+        typedef boost::shared_ptr< ObjectList<Hazmat> > ListPtr;
+        typedef boost::shared_ptr< const ObjectList<Hazmat> > ListConstPtr;
 
       public:
 
@@ -64,8 +66,10 @@ namespace pandora_data_fusion
 
     typedef Hazmat::Ptr HazmatPtr;
     typedef Hazmat::ConstPtr HazmatConstPtr;
-    typedef std::vector< HazmatPtr > HazmatPtrVector;
-    typedef boost::shared_ptr< HazmatPtrVector > HazmatPtrVectorPtr;
+    typedef Hazmat::PtrVector HazmatPtrVector;
+    typedef Hazmat::PtrVectorPtr HazmatPtrVectorPtr;
+    typedef Hazmat::ListPtr HazmatListPtr;
+    typedef Hazmat::ListConstPtr HazmatListConstPtr;
 
   }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

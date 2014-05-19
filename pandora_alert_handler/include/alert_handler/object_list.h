@@ -9,8 +9,7 @@
 
 #include "visualization_msgs/MarkerArray.h"
 
-#include "alert_handler/objects.h"
-#include "alert_handler/victim.h"
+#include "alert_handler/base_object.h"
 // #include "alert_handler/const_iterator_const_ref.h"
 #include "alert_handler/utils.h"
 
@@ -87,24 +86,8 @@ class ObjectList
 };
 
 typedef boost::shared_ptr< ObjectList<BaseObject> > ObjectListPtr;
-typedef boost::shared_ptr< ObjectList<Hole> >  HoleListPtr;
-typedef boost::shared_ptr< ObjectList<Qr> >  QrListPtr;
-typedef boost::shared_ptr< ObjectList<Hazmat> > HazmatListPtr;
-typedef boost::shared_ptr< ObjectList<Thermal> >  ThermalListPtr;
-typedef boost::shared_ptr< ObjectList<Face> >  FaceListPtr;
-typedef boost::shared_ptr< ObjectList<Motion> >  MotionListPtr;
-typedef boost::shared_ptr< ObjectList<Sound> >  SoundListPtr;
-typedef boost::shared_ptr< ObjectList<Co2> >  Co2ListPtr;
 
 typedef boost::shared_ptr< const ObjectList<BaseObject> > ObjectListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Hole> >  HoleListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Qr> >  QrListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Hazmat> > HazmatListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Thermal> >  ThermalListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Face> >  FaceListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Motion> >  MotionListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Sound> >  SoundListConstPtr;
-typedef boost::shared_ptr< const ObjectList<Co2> >  Co2ListConstPtr;
 
 template <class ObjectType>
 ObjectList<ObjectType>::ObjectList() 

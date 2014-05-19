@@ -159,7 +159,7 @@ class VictimList : public ObjectList<Victim>
 };
 
 typedef boost::shared_ptr<VictimList> VictimListPtr;
-typedef boost::shared_ptr<VictimList const> VictimListConstPtr;
+typedef boost::shared_ptr<const VictimList> VictimListConstPtr;
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

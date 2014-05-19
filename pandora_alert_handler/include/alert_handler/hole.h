@@ -21,6 +21,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Hole const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
+        typedef boost::shared_ptr< ObjectList<Hole> > ListPtr;
+        typedef boost::shared_ptr< const ObjectList<Hole> > ListConstPtr;
 
       public:
 
@@ -58,8 +60,10 @@ namespace pandora_data_fusion
 
     typedef Hole::Ptr HolePtr;
     typedef Hole::ConstPtr HoleConstPtr;
-    typedef std::vector< HolePtr > HolePtrVector;
-    typedef boost::shared_ptr< HolePtrVector > HolePtrVectorPtr;
+    typedef Hole::PtrVector HolePtrVector;
+    typedef Hole::PtrVectorPtr HolePtrVectorPtr;
+    typedef Hole::ListPtr HoleListPtr;
+    typedef Hole::ListConstPtr HoleListConstPtr;
 
   }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

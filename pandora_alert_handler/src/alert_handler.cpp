@@ -20,16 +20,23 @@ AlertHandler::AlertHandler(const std::string& ns): nh_(ns)
   sounds_.reset( new ObjectList<Sound> );
   co2s_.reset( new ObjectList<Co2> );
 
+  Hole::setList(holes_);
+  Qr::setList(qrs_);
+  Hazmat::setList(hazmats_);
+  Thermal::setList(thermals_);
+  Face::setList(faces_);
+  Motion::setList(motions_);
+  Sound::setList(sounds_);
+  Co2::setList(co2s_);
+
   victimsToGo_.reset( new VictimList );
   victimsVisited_.reset( new VictimList );
 
   std::string mapType;
   nh_.getParam("map_type", mapType);
   objectFactory_.reset( new ObjectFactory(map_, mapType) );
-  objectHandler_.reset( new ObjectHandler(holes_, qrs_, hazmats_, thermals_,
-        faces_, motions_, sounds_, co2s_, victimsToGo_, victimsVisited_) );
-  victimHandler_.reset( new VictimHandler(holes_ , thermals_,
-        faces_, motions_, sounds_, co2s_, victimsToGo_, victimsVisited_) );
+  objectHandler_.reset( new ObjectHandler(victimsToGo_, victimsVisited_) );
+  victimHandler_.reset( new VictimHandler(victimsToGo_, victimsVisited_) );
 
   initRosInterfaces();
 }

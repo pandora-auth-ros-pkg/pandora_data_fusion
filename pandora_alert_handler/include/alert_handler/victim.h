@@ -22,6 +22,8 @@ namespace pandora_data_fusion
         //!< Type definitions
         typedef boost::shared_ptr<Victim> Ptr;
         typedef boost::shared_ptr<Victim const> ConstPtr;
+        typedef std::vector<Ptr> PtrVector;
+        typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
 
       public:
 
@@ -193,7 +195,8 @@ namespace pandora_data_fusion
 
     typedef Victim::Ptr VictimPtr;
     typedef Victim::ConstPtr VictimConstPtr;
-    typedef std::vector<VictimPtr> VictimPtrVector;
+    typedef Victim::PtrVector VictimPtrVector;
+    typedef Victim::PtrVectorPtr VictimPtrVectorPtr;
 
     template <class ObjectType>
       void Victim::findRepresentativeObject(const ObjectConstPtrVector& objects)

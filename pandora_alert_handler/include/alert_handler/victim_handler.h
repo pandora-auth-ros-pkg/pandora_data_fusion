@@ -76,13 +76,7 @@ class VictimHandler : private boost::noncopyable
   /**
    * @brief Constructor
    */
-  VictimHandler(HoleListPtr holeListPtr, 
-                ThermalListPtr thermalListPtr,
-                FaceListPtr faceListPtr,
-                MotionListPtr motionListPtr,
-                SoundListPtr soundListPtr,
-                Co2ListPtr co2ListPtr,
-                VictimListPtr victimsToGoList,
+  VictimHandler(VictimListPtr victimsToGoList,
                 VictimListPtr victimsVisitedList);
 
   /**
@@ -199,25 +193,13 @@ class VictimHandler : private boost::noncopyable
   //!< publisher for valid victims counter
   ros::Publisher validVictimsPublisher_;
 
-  //!< The list of Hole Objects passed on construction
-  HoleListPtr holePtrListPtr_;
-  //!< The list of Thermal Objects passed on construction
-  ThermalListPtr thermalPtrListPtr_;
-  //!< The list of Face Objects passed on construction
-  FaceListPtr facePtrListPtr_;
-  //!< The list of Motion Objects passed on construction
-  MotionListPtr motionPtrListPtr_;
-  //!< The list of Sound Objects passed on construction
-  SoundListPtr soundPtrListPtr_;
-  //!< The list of Co2 Objects passed on construction
-  Co2ListPtr co2PtrListPtr_;
-
   VictimClustererPtr clusterer_;
   
   //!< The unvisited victims list  
   VictimListPtr victimsToGoList_;
   //!< The visited victims list  
   VictimListPtr victimsVisitedList_;
+
   //!< counts verified victims that were validated by user
   int validVictimsCounter_;
 
