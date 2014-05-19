@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_MOTION_H
 #define ALERT_HANDLER_MOTION_H
 
@@ -41,7 +43,7 @@ namespace pandora_data_fusion
     typedef Motion::ListPtr MotionListPtr;
     typedef Motion::ListConstPtr MotionListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_MOTION_H

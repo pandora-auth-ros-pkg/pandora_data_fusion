@@ -107,16 +107,16 @@ namespace pandora_data_fusion
       void ObjectFactory::setUpObject(
           const typename ObjectType::Ptr& objectPtr, 
           const pandora_common_msgs::GeneralAlertMsg& msg)
-    {
-      objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
-            msg.pitch, currentTransform_) );
-      objectPtr->setProbability( msg.probability );
-      objectPtr->initializeObjectFilter();
-    }
+      {
+        objectPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
+              msg.pitch, currentTransform_) );
+        objectPtr->setProbability( msg.probability );
+        objectPtr->initializeObjectFilter();
+      }
 
     typedef boost::scoped_ptr< ObjectFactory > ObjectFactoryPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_FACTORY_H

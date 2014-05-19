@@ -35,6 +35,6 @@ namespace pandora_data_fusion
       markers->markers.push_back(marker);
     }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

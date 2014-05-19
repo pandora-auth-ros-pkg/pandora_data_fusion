@@ -63,10 +63,10 @@ namespace pandora_data_fusion
 
     void VictimList::inspect()
     {
-  for (iterator it = objects_.begin(); it != objects_.end(); ++it)
-  {
-    (*it)->inspect();
-  }
+      for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+      {
+        (*it)->inspect();
+      }
     }
 
     /**
@@ -244,6 +244,6 @@ namespace pandora_data_fusion
       currentVictimIt_ = objects_.end();  
     }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

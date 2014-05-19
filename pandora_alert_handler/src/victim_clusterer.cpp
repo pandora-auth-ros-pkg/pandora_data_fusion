@@ -164,6 +164,6 @@ namespace pandora_data_fusion
       CLUSTER_RADIUS = clusterRadius;
     }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

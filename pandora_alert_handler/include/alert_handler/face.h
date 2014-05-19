@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_FACE_H
 #define ALERT_HANDLER_FACE_H
 
@@ -41,7 +43,7 @@ namespace pandora_data_fusion
     typedef Face::ListPtr FaceListPtr;
     typedef Face::ListConstPtr FaceListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_FACE_H

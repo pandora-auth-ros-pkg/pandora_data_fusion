@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_HAZMAT_H
 #define ALERT_HANDLER_HAZMAT_H
 
@@ -71,7 +73,7 @@ namespace pandora_data_fusion
     typedef Hazmat::ListPtr HazmatListPtr;
     typedef Hazmat::ListConstPtr HazmatListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_HAZMAT_H

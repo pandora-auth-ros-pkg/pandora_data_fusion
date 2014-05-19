@@ -126,8 +126,8 @@ namespace pandora_data_fusion
       ROS_DEBUG_STREAM("Setting up victim with " << objects.size() << " objects.");
       objects_.clear();
 
-        findRepresentativeObject<Hole>(objects);
-        findRepresentativeObject<Thermal>(objects);
+      findRepresentativeObject<Hole>(objects);
+      findRepresentativeObject<Thermal>(objects);
       findRepresentativeObject<Face>(objects);
       findRepresentativeObject<Motion>(objects);
       findRepresentativeObject<Sound>(objects);
@@ -204,6 +204,6 @@ namespace pandora_data_fusion
       return tf::Transform(tfQuaternion, vec);
     }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

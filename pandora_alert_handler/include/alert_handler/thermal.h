@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_THERMAL_H
 #define ALERT_HANDLER_THERMAL_H
 
@@ -39,7 +41,7 @@ namespace pandora_data_fusion
     typedef Thermal::ListPtr ThermalListPtr;
     typedef Thermal::ListConstPtr ThermalListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_THERMAL_H

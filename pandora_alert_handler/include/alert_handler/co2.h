@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_CO2_H
 #define ALERT_HANDLER_CO2_H
 
@@ -41,7 +43,7 @@ namespace pandora_data_fusion
     typedef Co2::ListPtr Co2ListPtr;
     typedef Co2::ListConstPtr Co2ListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_CO2_H

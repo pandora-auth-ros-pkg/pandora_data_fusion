@@ -52,8 +52,7 @@ namespace pandora_data_fusion
      * @class Object
      * @brief Abstract class representing an Object in 3D space
      */
-    template <class DerivedObject>
-      class Object : public BaseObject
+    template <class DerivedObject> class Object : public BaseObject
     {
       public:
 
@@ -355,7 +354,7 @@ namespace pandora_data_fusion
         }
       }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_H

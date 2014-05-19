@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_HOLE_H
 #define ALERT_HANDLER_HOLE_H
 
@@ -65,7 +67,7 @@ namespace pandora_data_fusion
     typedef Hole::ListPtr HoleListPtr;
     typedef Hole::ListConstPtr HoleListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_HOLE_H

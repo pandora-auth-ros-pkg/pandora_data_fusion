@@ -1,3 +1,5 @@
+// "Copyright [year] <Copyright Owner>"
+
 #ifndef ALERT_HANDLER_KALMAN_OBJECT_H
 #define ALERT_HANDLER_KALMAN_OBJECT_H
 
@@ -14,8 +16,8 @@ namespace pandora_data_fusion
      * @brief Implementation of Object with Kalman filter.
      * Used as base class for objects that will be filtered.
      */
-    template <class DerivedObject> 
-      class KalmanObject : public Object<DerivedObject>
+    template <class DerivedObject> class KalmanObject :
+        public Object<DerivedObject>
     {
       public:
 
@@ -163,8 +165,8 @@ namespace pandora_data_fusion
       update(const ObjectConstPtr& measurement)
       {
         modelPtr_->initializeMeasurementModel(
-          Utils::stdDevFromProbability(this->distanceThres_, 
-            this->probability_ ));
+            Utils::stdDevFromProbability(this->distanceThres_, 
+              this->probability_ ));
         Point measurementPosition = measurement->getPose().position;
         MatrixWrapper::ColumnVector newPosition(1);
         //!< Filter's input vector
@@ -214,7 +216,7 @@ namespace pandora_data_fusion
         this->checkLegit();
       }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_KALMAN_OBJECT_H
