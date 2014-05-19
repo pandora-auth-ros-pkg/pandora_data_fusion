@@ -62,6 +62,10 @@ namespace pandora_data_fusion
 
     float Utils::probabilityFromStdDev(float boundingRadius, float deviation)
     {
+      if(boundingRadius <= 0)
+      {
+        throw std::range_error("Bounding radius haw always a positive value.");
+      }
       if(deviation <= 0)
       {
         throw std::range_error("Standard deviation is a positive value.");
@@ -72,6 +76,10 @@ namespace pandora_data_fusion
 
     float Utils::stdDevFromProbability(float boundingRadius, float probability)
     {
+      if(boundingRadius <= 0)
+      {
+        throw std::range_error("Bounding radius haw always a positive value.");
+      }
       if(probability > 1 || probability < 0)
       {
         throw std::range_error("Probability value is between 0 and 1.");

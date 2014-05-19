@@ -124,7 +124,7 @@ namespace pandora_data_fusion
 
     template <class DerivedObject>
       FilterModelPtr KalmanObject<DerivedObject>::
-      modelPtr_ = FilterModelPtr( new FilterModel );
+      modelPtr_ = FilterModelPtr( new FilterModel(0.05) );
 
     template <class DerivedObject>
       void KalmanObject<DerivedObject>::initializeObjectFilter()

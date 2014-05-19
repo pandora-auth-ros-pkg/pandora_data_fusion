@@ -87,6 +87,12 @@ namespace pandora_data_fusion
         virtual PoseStamped getPoseStamped() const;
 
         /**
+         * @brief Updates this object with the measurement.
+         * @return void
+         */
+        virtual void update(const ObjectConstPtr& object);
+
+        /**
          * @brief Check if this object with its current probability is legit.
          * @return void
          */
@@ -153,9 +159,9 @@ namespace pandora_data_fusion
 
         /**
          * @brief Getter for static object type's score.
-         * @return float score
+         * @return int score
          */
-        static float getObjectScore()
+        static int getObjectScore()
         {
           return objectScore_;
         }
@@ -249,10 +255,10 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter for static object type's score.
-         * @param objectScore [float] score
+         * @param objectScore [int] score
          * @return void
          */
-        static void setObjectScore(float objectScore)
+        static void setObjectScore(int objectScore)
         {
           objectScore_ = objectScore;
         }
@@ -273,7 +279,6 @@ namespace pandora_data_fusion
          * @param listPtr [ListPtr] pointer to list
          * @return void
          */
-
         static void setList(ListPtr listPtr)
         {
           listPtr_ = listPtr;
@@ -294,7 +299,7 @@ namespace pandora_data_fusion
         //!< Variable with objects' min distance.
         static float distanceThres_;
         //!< Variable containing object type's score.
-        static float objectScore_;
+        static int objectScore_;
         //!< Variable containing object type's probability threshold for an
         //!< object to become legitimate.
         static float probabilityThres_;
@@ -315,11 +320,11 @@ namespace pandora_data_fusion
       }
 
     template <class DerivedObject>
-      float Object<DerivedObject>::distanceThres_ = 0;
+      float Object<DerivedObject>::distanceThres_ = 0.5;
     template <class DerivedObject>
-      float Object<DerivedObject>::probabilityThres_ = 0;
+      float Object<DerivedObject>::probabilityThres_ = 0.7;
     template <class DerivedObject>
-      float Object<DerivedObject>::objectScore_ = 0;
+      int Object<DerivedObject>::objectScore_ = -1;
     template <class DerivedObject>
       std::string Object<DerivedObject>::type_ = "object";
     template <class DerivedObject>
@@ -344,6 +349,13 @@ namespace pandora_data_fusion
             pose_.position, object->getPose().position)
           < distanceThres_;
       }
+
+    template <class DerivedObject>
+      void Object<DerivedObject>::update(const ObjectConstPtr& measurement)
+      {
+        (*this) = *boost::dynamic_pointer_cast<const DerivedObject>(measurement);
+      }
+
 
     template <class DerivedObject>
       void Object<DerivedObject>::checkLegit()
