@@ -13,7 +13,7 @@ if(NEW_YAMLCPP_FOUND)
 endif(NEW_YAMLCPP_FOUND)
 
 link_directories(${catkin_LIBRARY_DIRS})
-include_directories( map_loader/include ${catkin_INCLUDE_DIRS})
+include_directories(map_loader/include ${catkin_INCLUDE_DIRS})
 
 add_library(map_loader map_loader/src/map_loader.cpp)
 target_link_libraries(map_loader 
@@ -23,15 +23,19 @@ target_link_libraries(map_loader
 )
 
 ################# Tests ################################################
-# add tests here so that CMakelists is not polluted
 
 ################### Unit Tests #########################
+
+########## Utils #####################
+
+catkin_add_gtest(utils_test unit/utils_test.cpp)
+target_link_libraries(utils_test ${catkin_LIBRARIES} utils gtest_main)
 
 ##########  ObjectListTest ###########  
 
 catkin_add_gtest(object_list_test unit/object_list_test.cpp)
-target_link_libraries(object_list_test ${catkin_LIBRARIES}  objects utils
-  gtest_main) 
+target_link_libraries(object_list_test ${catkin_LIBRARIES} objects utils
+  gtest_main)
 
 ##########  ObjectFactoryTest ########### 
 
@@ -77,8 +81,7 @@ target_link_libraries(victim_list_test
 catkin_add_gtest(victim_clusterer_test unit/victim_clusterer_test.cpp)
 target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   victim_clusterer 
-  hole
-  tpa
+  objects
   victim
   gtest_main
   ) 
