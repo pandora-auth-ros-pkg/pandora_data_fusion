@@ -159,14 +159,17 @@ namespace pandora_data_fusion
      * and the current measurement. The filter is an implementation of
      * Kalman Filter.
      */
-
     template <class DerivedObject>
       void KalmanObject<DerivedObject>::
       update(const ObjectConstPtr& measurement)
       {
-        modelPtr_->initializeMeasurementModel(
-            Utils::stdDevFromProbability(this->distanceThres_, 
-              this->probability_ ));
+        ROS_DEBUG_STREAM("KalmanObject::update() : before Measurement probability = " 
+            << measurement->getProbability());
+        float measurementStdDev = Utils::stdDevFromProbability(this->distanceThres_, 
+              measurement->getProbability());
+        ROS_DEBUG_STREAM("KalmanObject::update() : before Measurement std dev = " 
+            << measurementStdDev);
+        modelPtr_->initializeMeasurementModel(measurementStdDev);
         Point measurementPosition = measurement->getPose().position;
         MatrixWrapper::ColumnVector newPosition(1);
         //!< Filter's input vector
@@ -180,6 +183,7 @@ namespace pandora_data_fusion
         MeasurementModelPtrVector measurementModels;
         measurementModels = modelPtr_->getMeasurementModels();
 
+        ROS_INFO("Debugging: Yolo! updating!");
         newPosition(1) = measurementPosition.x;
         filterX_->Update(systemModels[0].get(), 
             input, measurementModels[0].get(), newPosition);
@@ -207,10 +211,16 @@ namespace pandora_data_fusion
         this->pose_ = newObjectPose;
 
         //!< Updating object's probability.
+        ROS_DEBUG_STREAM("KalmanObject::update() : after Measurement std dev = " 
+            << std::endl << "x : " << getStdDevX()
+            << std::endl << "y : " << getStdDevY()
+            << std::endl << "z : " << getStdDevZ());
         this->probability_ = (
             Utils::probabilityFromStdDev(this->distanceThres_, getStdDevX()) + 
             Utils::probabilityFromStdDev(this->distanceThres_, getStdDevY()) +
             Utils::probabilityFromStdDev(this->distanceThres_, getStdDevZ())) / 3;
+        ROS_DEBUG_STREAM("KalmanObject::update() : after Measurement probability = " 
+            << this->probability_);
 
         //!< Check if object has become a legitimate one.
         this->checkLegit();

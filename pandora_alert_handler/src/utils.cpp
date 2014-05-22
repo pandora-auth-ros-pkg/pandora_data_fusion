@@ -66,10 +66,12 @@ namespace pandora_data_fusion
       {
         throw std::range_error("Bounding radius haw always a positive value.");
       }
-      if(deviation <= 0)
+      if(deviation < 0)
       {
         throw std::range_error("Standard deviation is a positive value.");
       }
+      if(deviation == 0)
+        return 1;
       float x = boundingRadius / deviation;
       return 1 - exp(-pow(x, 2) / 2);
     }

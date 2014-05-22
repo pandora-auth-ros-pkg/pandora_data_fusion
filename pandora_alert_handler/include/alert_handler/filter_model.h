@@ -90,8 +90,12 @@ namespace pandora_data_fusion
         //!< Filter's system model for dimension z
         SystemModelPtr systemModelZ_;
 
-        //!< Filter's measurement pdf
-        AnalyticGaussianPtr measurementPdfPtr_;
+        //!< Filter's measurement pdf for x
+        AnalyticGaussianPtr measurementPdfPtrX_;
+        //!< Filter's measurement pdf for y
+        AnalyticGaussianPtr measurementPdfPtrY_;
+        //!< Filter's measurement pdf for z
+        AnalyticGaussianPtr measurementPdfPtrZ_;
         //!< Filter's measurement model for dimension x
         MeasurementModelPtr measurementModelX_;
         //!< Filter's measurement model for dimension y

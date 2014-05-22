@@ -322,7 +322,7 @@ namespace pandora_data_fusion
     template <class DerivedObject>
       float Object<DerivedObject>::distanceThres_ = 0.5;
     template <class DerivedObject>
-      float Object<DerivedObject>::probabilityThres_ = 0.7;
+      float Object<DerivedObject>::probabilityThres_ = 0;
     template <class DerivedObject>
       int Object<DerivedObject>::objectScore_ = -1;
     template <class DerivedObject>
@@ -355,7 +355,6 @@ namespace pandora_data_fusion
       {
         (*this) = *boost::dynamic_pointer_cast<const DerivedObject>(measurement);
       }
-
 
     template <class DerivedObject>
       void Object<DerivedObject>::checkLegit()

@@ -85,13 +85,13 @@ namespace pandora_data_fusion
       {
         ObjectConstPtrVectorVector groupedObjects;
 
-        for ( int objectIt = 0 ; objectIt < allObjects->size() ; ++objectIt )
+        for(int objectIt = 0 ; objectIt < allObjects->size() ; ++objectIt)
         {
           ObjectConstPtr currentObj = allObjects->at(objectIt);
 
           bool isAdded = false;
 
-          for (int ii = 0; ii < groupedObjects.size(); ++ii)
+          for(int ii = 0; ii < groupedObjects.size(); ++ii)
           {
             geometry_msgs::Point groupCenterPoint =
               findGroupCenterPoint(groupedObjects[ii]);

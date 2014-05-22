@@ -190,7 +190,6 @@ namespace pandora_data_fusion
       private:
 
         friend class VictimTest;
-        friend class VictimClustererTest;
     };
 
     typedef Victim::Ptr VictimPtr;
@@ -207,6 +206,7 @@ namespace pandora_data_fusion
         for(ObjectConstPtrVector::const_iterator it = objects.begin(); 
             it != objects.end(); it++)
         {
+          ROS_INFO_STREAM((*it)->getType());
           if((*it)->getType() == ObjectType::getObjectType() && 
               (*it)->getProbability() > maxObjectProbability)
           {
@@ -215,16 +215,17 @@ namespace pandora_data_fusion
           }
         }
 
-        ObjectPtr representativeObject( new ObjectType );
+        typename ObjectType::Ptr representativeObject( new ObjectType );
 
         if(objectIt != objects.end())
-          *representativeObject = *(*objectIt);
+          *representativeObject = *(boost::dynamic_pointer_cast<const ObjectType>(*objectIt));
 
-        for ( ObjectConstPtrVector::const_iterator it = objects.begin(); 
+        for(ObjectConstPtrVector::const_iterator it = objects.begin(); 
             it != objects.end(); it++)
         {
-          if ((*it)->getType() == ObjectType::getObjectType() && it != objectIt)
+          if((*it)->getType() == ObjectType::getObjectType() && it != objectIt)
           {
+            ROS_INFO_STREAM("I wanna update! But i am a " << (*it)->getType());
             representativeObject->update((*it));
           }
         }

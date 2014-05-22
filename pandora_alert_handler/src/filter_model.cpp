@@ -63,12 +63,16 @@ namespace pandora_data_fusion
 
       BFL::Gaussian measurementUncertainty(measurementMean, 
           measurementVariance);
-      measurementPdfPtr_.reset( new AnalyticGaussian(matrixH, 
+      measurementPdfPtrX_.reset( new AnalyticGaussian(matrixH, 
+            measurementUncertainty ));
+      measurementPdfPtrY_.reset( new AnalyticGaussian(matrixH, 
+            measurementUncertainty ));
+      measurementPdfPtrZ_.reset( new AnalyticGaussian(matrixH, 
             measurementUncertainty ));
 
-      measurementModelX_.reset( new MeasurementModel(measurementPdfPtr_.get()) );
-      measurementModelY_.reset( new MeasurementModel(measurementPdfPtr_.get()) );
-      measurementModelZ_.reset( new MeasurementModel(measurementPdfPtr_.get()) );
+      measurementModelX_.reset( new MeasurementModel(measurementPdfPtrX_.get()) );
+      measurementModelY_.reset( new MeasurementModel(measurementPdfPtrY_.get()) );
+      measurementModelZ_.reset( new MeasurementModel(measurementPdfPtrZ_.get()) );
     }
 
     SystemModelPtrVector FilterModel::getSystemModels() const
