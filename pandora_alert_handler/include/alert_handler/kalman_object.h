@@ -183,7 +183,6 @@ namespace pandora_data_fusion
         MeasurementModelPtrVector measurementModels;
         measurementModels = modelPtr_->getMeasurementModels();
 
-        ROS_INFO("Debugging: Yolo! updating!");
         newPosition(1) = measurementPosition.x;
         filterX_->Update(systemModels[0].get(), 
             input, measurementModels[0].get(), newPosition);

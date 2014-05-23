@@ -123,18 +123,15 @@ namespace pandora_data_fusion
      */
     void Victim::setObjects(const ObjectConstPtrVector& objects)
     {
-      ROS_INFO_STREAM("Setting up victim with " << objects.size() << " objects.");
+      ROS_DEBUG_STREAM("Setting up victim with " << objects.size() << " objects.");
       objects_.clear();
 
-      ROS_INFO("Debugging: Find the Hole man!");
       findRepresentativeObject<Hole>(objects);
-      ROS_INFO("Debugging: Find the Thermal man!");
       findRepresentativeObject<Thermal>(objects);
       findRepresentativeObject<Face>(objects);
       findRepresentativeObject<Motion>(objects);
       findRepresentativeObject<Sound>(objects);
       findRepresentativeObject<Co2>(objects);
-      ROS_INFO("Debugging: Set this bitch up already!");
       updateRepresentativeObject();
     }
 

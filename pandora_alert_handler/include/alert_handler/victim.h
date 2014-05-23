@@ -206,7 +206,6 @@ namespace pandora_data_fusion
         for(ObjectConstPtrVector::const_iterator it = objects.begin(); 
             it != objects.end(); it++)
         {
-          ROS_INFO_STREAM((*it)->getType());
           if((*it)->getType() == ObjectType::getObjectType() && 
               (*it)->getProbability() > maxObjectProbability)
           {
@@ -225,7 +224,6 @@ namespace pandora_data_fusion
         {
           if((*it)->getType() == ObjectType::getObjectType() && it != objectIt)
           {
-            ROS_INFO_STREAM("I wanna update! But i am a " << (*it)->getType());
             representativeObject->update((*it));
           }
         }
