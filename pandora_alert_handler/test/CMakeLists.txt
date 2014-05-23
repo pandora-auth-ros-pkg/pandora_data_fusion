@@ -31,6 +31,15 @@ target_link_libraries(map_loader
 catkin_add_gtest(utils_test unit/utils_test.cpp)
 target_link_libraries(utils_test ${catkin_LIBRARIES} utils gtest_main)
 
+##########  ObjectsTest #########
+
+catkin_add_gtest(objects_test unit/objects_test.cpp)
+target_link_libraries(objects_test ${catkin_LIBRARIES}
+  utils
+  objects
+  gtest_main
+  ) 
+
 ##########  ObjectListTest ###########  
 
 catkin_add_gtest(object_list_test unit/object_list_test.cpp)
@@ -59,8 +68,7 @@ target_link_libraries(pose_finder_test ${catkin_LIBRARIES}
 catkin_add_gtest(victim_test unit/victim_test.cpp)
 target_link_libraries(victim_test
   ${catkin_LIBRARIES}
-  hole
-  tpa
+  objects
   victim 
   gtest_main
   ) 
@@ -70,8 +78,7 @@ target_link_libraries(victim_test
 catkin_add_gtest(victim_list_test unit/victim_list_test.cpp)
 target_link_libraries(victim_list_test 
   ${catkin_LIBRARIES}
-  hole
-  tpa
+  objects
   victim_list
   gtest_main
   ) 
@@ -85,17 +92,6 @@ target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   victim
   gtest_main
   ) 
-
-##########  ObjectsTest #########
-
-catkin_add_gtest(objects_test unit/objects_test.cpp)
-target_link_libraries(objects_test 
-${catkin_LIBRARIES}
-  hazmat
-  hole
-  qr
-  tpa
-   ) 
 
 ########## Functional Tests #########
  
