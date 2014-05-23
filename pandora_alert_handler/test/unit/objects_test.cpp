@@ -226,6 +226,6 @@ namespace pandora_data_fusion
       EXPECT_LT(distance(qr1_->getPose(), poseBefore), 0.6);
     }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

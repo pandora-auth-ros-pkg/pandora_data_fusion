@@ -299,6 +299,6 @@ namespace pandora_data_fusion
       EXPECT_EQ(-1, victim2_->getSelectedObjectIndex());
     }
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 

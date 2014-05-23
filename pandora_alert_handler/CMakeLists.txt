@@ -255,7 +255,7 @@ set(ROSLINT_CPP_OPTS
     "--filter=-whitespace/end_of_line,-build/include,-whitespace/blank_line,-whitespace/parens,-whitespace/braces")
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_TEST 
     RELATIVE ${PROJECT_SOURCE_DIR} 
-    test/*
+    test/unit/*
     )
 roslint_cpp(${${PROJECT_NAME}_LINT_TEST})
 #roslint_add_test()
