@@ -1,6 +1,8 @@
 // "Copyright [2014] <Chamzas Konstantinos>"
-#include "alert_handler/victim_clusterer.h"
+
 #include "gtest/gtest.h"
+
+#include "alert_handler/victim_clusterer.h"
 
 namespace pandora_data_fusion
 {
@@ -22,7 +24,8 @@ namespace pandora_data_fusion
 
         /* Helper functions */
 
-        //!< We create manually Thermal1(0, 3.87, 4), Thermal2(1, 0, 2), Hole1(-1, 0, 2)
+        //!< We create manually Thermal1(0, 3.87, 4), 
+        //!< Thermal2(1, 0, 2), Hole1(-1, 0, 2)
         void createVariousObjects1(ObjectConstPtrVectorPtr objConstPtrVectPtr)
         {
           ThermalPtr thermalPtr1(new Thermal);

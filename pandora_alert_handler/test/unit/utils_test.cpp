@@ -31,7 +31,14 @@ namespace pandora_data_fusion
       EXPECT_THROW(Utils::probabilityFromStdDev(-1, 0.5), std::range_error);
       EXPECT_THROW(Utils::probabilityFromStdDev(0, 0.5), std::range_error);
       EXPECT_THROW(Utils::probabilityFromStdDev(1, -0.5), std::range_error);
-      EXPECT_THROW(Utils::probabilityFromStdDev(1, 0), std::range_error);
+    }
+
+    TEST(probabilityFromStdDev, returnsValueFor0)
+    {
+      EXPECT_THROW(Utils::probabilityFromStdDev(0, 0), std::range_error);
+      EXPECT_NEAR(1, Utils::probabilityFromStdDev(0.5, 0), 0.0001);
+      EXPECT_NEAR(1, Utils::probabilityFromStdDev(1, 0), 0.0001);
+      EXPECT_NEAR(1, Utils::probabilityFromStdDev(30, 0), 0.0001);
     }
 
     TEST(stdDevFromProbability, checkResultsOfLegitValues)
