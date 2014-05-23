@@ -67,7 +67,7 @@ namespace pandora_data_fusion
         if(qrScore)
         {
           pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;
-          newQrNofifyMsg.header.stamp = ros::Time::now();
+          newQrNofifyMsg.header.stamp = newQrs->at(ii)->getTimeFound();
           newQrNofifyMsg.x = newQrs->at(ii)->getPose().position.x;
           newQrNofifyMsg.y = newQrs->at(ii)->getPose().position.y;
           newQrNofifyMsg.content = newQrs->at(ii)->getContent();

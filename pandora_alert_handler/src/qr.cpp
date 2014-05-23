@@ -7,10 +7,7 @@ namespace pandora_data_fusion
   namespace pandora_alert_handler
   {
 
-    Qr::Qr()
-    {
-      timeFound_ = ros::Time::now();
-    }
+    Qr::Qr() {}
 
     PoseStamped Qr::getPoseStamped() const
     {

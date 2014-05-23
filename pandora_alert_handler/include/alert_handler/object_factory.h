@@ -66,7 +66,8 @@ namespace pandora_data_fusion
         void setUpHazmat(const HazmatPtr& hazmatPtr, 
             const vision_communications::HazmatAlertMsg& msg);
         void setUpQr(const QrPtr& qrPtr, 
-            const vision_communications::QRAlertMsg& msg);
+            const vision_communications::QRAlertMsg& msg,
+            ros::Time timeFound);
         template <class ObjectType>
           void setUpObject(
               const typename ObjectType::Ptr& objectPtr, 

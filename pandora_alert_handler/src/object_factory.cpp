@@ -71,7 +71,7 @@ namespace pandora_data_fusion
         try
         {
           QrPtr newQr( new Qr );
-          setUpQr( newQr, msg.qrAlerts[ii] );
+          setUpQr( newQr, msg.qrAlerts[ii], msg.header.stamp );
           qrsVectorPtr->push_back( newQr );
         }
         catch (AlertException ex)
@@ -115,13 +115,15 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpQr(const QrPtr& qrPtr, 
-        const vision_communications::QRAlertMsg& msg)
+        const vision_communications::QRAlertMsg& msg,
+        ros::Time timeFound)
     {
       qrPtr->setPose( poseFinder_->findAlertPose(msg.yaw, 
             msg.pitch, currentTransform_) );
       qrPtr->setProbability( 0.5 );
       qrPtr->setContent( msg.QRcontent );
       qrPtr->initializeObjectFilter();
+      qrPtr->setTimeFound(timeFound);
     }
 
 }  // namespace pandora_alert_handler
