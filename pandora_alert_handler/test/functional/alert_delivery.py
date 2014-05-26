@@ -46,8 +46,8 @@ class AlertDeliveryBoy:
         self.hole_msg = HolesDirectionsVectorMsg()
         self.hole_msg.header.frame_id = self.frame_id
 
-        self.thermal_msg = GeneralAlertMsg()
-        self.thermal_msg.header.frame_id = self.frame_id
+        self.general_msg = GeneralAlertMsg()
+        self.general_msg.header.frame_id = self.frame_id
         
         self.hazmatDeliveryAddress = '/vision/hazmat_alert'
         self.hazmat_pub = rospy.Publisher(self.hazmatDeliveryAddress, 
@@ -66,6 +66,18 @@ class AlertDeliveryBoy:
                                       DataMatrixAlertsVectorMsg)
         self.thermalDeliveryAddress = '/sensor_processors/thermal_direction_alert'
         self.thermal_pub = rospy.Publisher(self.thermalDeliveryAddress,
+                                       GeneralAlertMsg)
+        self.faceDeliveryAddress = '/sensor_processors/face_direction_alert'
+        self.face_pub = rospy.Publisher(self.faceDeliveryAddress,
+                                       GeneralAlertMsg)
+        self.soundDeliveryAddress = '/sensor_processors/sound_direction_alert'
+        self.sound_pub = rospy.Publisher(self.soundDeliveryAddress,
+                                       GeneralAlertMsg)
+        self.motionDeliveryAddress = '/sensor_processors/motion_alert'
+        self.motion_pub = rospy.Publisher(self.motionDeliveryAddress,
+                                       GeneralAlertMsg)
+        self.co2DeliveryAddress = '/sensor_processors/co2_direction_alert'
+        self.co2_pub = rospy.Publisher(self.co2DeliveryAddress,
                                        GeneralAlertMsg)
 
     def deliverHoleOrder(self, orderYaw, 
@@ -111,11 +123,43 @@ class AlertDeliveryBoy:
 
     def deliverThermalOrder(self, orderYaw, orderPitch, orderProbability):
 
-        self.thermal_msg.header.stamp = rospy.get_rostime()
-        self.thermal_msg.yaw = orderYaw
-        self.thermal_msg.pitch = orderPitch
-        self.thermal_msg.probability = orderProbability
-        self.thermal_pub.publish(self.thermal_msg)
+        self.general_msg.header.stamp = rospy.get_rostime()
+        self.general_msg.yaw = orderYaw
+        self.general_msg.pitch = orderPitch
+        self.general_msg.probability = orderProbability
+        self.thermal_pub.publish(self.general_msg)
+
+    def deliverFaceOrder(self, orderYaw, orderPitch, orderProbability):
+
+        self.general_msg.header.stamp = rospy.get_rostime()
+        self.general_msg.yaw = orderYaw
+        self.general_msg.pitch = orderPitch
+        self.general_msg.probability = orderProbability
+        self.face_pub.publish(self.general_msg)
+
+    def deliverMotionOrder(self, orderYaw, orderPitch, orderProbability):
+
+        self.general_msg.header.stamp = rospy.get_rostime()
+        self.general_msg.yaw = orderYaw
+        self.general_msg.pitch = orderPitch
+        self.general_msg.probability = orderProbability
+        self.motion_pub.publish(self.general_msg)
+
+    def deliverSoundOrder(self, orderYaw, orderPitch, orderProbability):
+
+        self.general_msg.header.stamp = rospy.get_rostime()
+        self.general_msg.yaw = orderYaw
+        self.general_msg.pitch = orderPitch
+        self.general_msg.probability = orderProbability
+        self.sound_pub.publish(self.general_msg)
+
+    def deliverCo2Order(self, orderYaw, orderPitch, orderProbability):
+
+        self.general_msg.header.stamp = rospy.get_rostime()
+        self.general_msg.yaw = orderYaw
+        self.general_msg.pitch = orderPitch
+        self.general_msg.probability = orderProbability
+        self.co2_pub.publish(self.general_msg)
 
     def deliverDataMatrixOrder(self, orderYaw, 
                       orderPitch, orderContent):
@@ -144,6 +188,14 @@ class AlertDeliveryBoy:
             self.hole_pub.publish(nextOrder[0])
         elif nextOrder[1] == 'thermal':
             self.thermal_pub.publish(nextOrder[0])
+        elif nextOrder[1] == 'face':
+            self.face_pub.publish(nextOrder[0])
+        elif nextOrder[1] == 'motion':
+            self.motion_pub.publish(nextOrder[0])
+        elif nextOrder[1] == 'sound':
+            self.sound_pub.publish(nextOrder[0])
+        elif nextOrder[1] == 'co2':
+            self.co2_pub.publish(nextOrder[0])
 
     def clearOrderList(self):
 
@@ -222,12 +274,52 @@ class AlertDeliveryBoy:
                 elif a[0] == 'thermal:':
                     if len(a) != 4:
                         raise BadBossOrderFile("Not right argument numbers.")
-                    thermal_msg = ThermalDirectionAlertMsg()
+                    thermal_msg = GeneralAlertMsg()
                     thermal_msg.header.frame_id = self.frame_id
                     thermal_msg.yaw = float(a[1])
                     thermal_msg.pitch = float(a[2])
                     thermal_msg.probability = float(a[3])
                     self.orderWaitingList.append((thermal_msg, 'thermal'))
+                
+                elif a[0] == 'face:':
+                    if len(a) != 4:
+                        raise BadBossOrderFile("Not right argument numbers.")
+                    face_msg = GeneralAlertMsg()
+                    face_msg.header.frame_id = self.frame_id
+                    face_msg.yaw = float(a[1])
+                    face_msg.pitch = float(a[2])
+                    face_msg.probability = float(a[3])
+                    self.orderWaitingList.append((face_msg, 'face'))
+                
+                elif a[0] == 'motion:':
+                    if len(a) != 4:
+                        raise BadBossOrderFile("Not right argument numbers.")
+                    motion_msg = GeneralAlertMsg()
+                    motion_msg.header.frame_id = self.frame_id
+                    motion_msg.yaw = float(a[1])
+                    motion_msg.pitch = float(a[2])
+                    motion_msg.probability = float(a[3])
+                    self.orderWaitingList.append((motion_msg, 'motion'))
+                
+                elif a[0] == 'sound:':
+                    if len(a) != 4:
+                        raise BadBossOrderFile("Not right argument numbers.")
+                    sound_msg = GeneralAlertMsg()
+                    sound_msg.header.frame_id = self.frame_id
+                    sound_msg.yaw = float(a[1])
+                    sound_msg.pitch = float(a[2])
+                    sound_msg.probability = float(a[3])
+                    self.orderWaitingList.append((sound_msg, 'sound'))
+                
+                elif a[0] == 'co2:':
+                    if len(a) != 4:
+                        raise BadBossOrderFile("Not right argument numbers.")
+                    co2_msg = GeneralAlertMsg()
+                    co2_msg.header.frame_id = self.frame_id
+                    co2_msg.yaw = float(a[1])
+                    co2_msg.pitch = float(a[2])
+                    co2_msg.probability = float(a[3])
+                    self.orderWaitingList.append((co2_msg, 'co2'))
                 
                 else:
                     raise BadBossOrderFile("Not recognized object type.")
