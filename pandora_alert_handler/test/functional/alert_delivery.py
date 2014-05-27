@@ -67,13 +67,13 @@ class AlertDeliveryBoy:
         self.thermalDeliveryAddress = '/sensor_processors/thermal_direction_alert'
         self.thermal_pub = rospy.Publisher(self.thermalDeliveryAddress,
                                        GeneralAlertMsg)
-        self.faceDeliveryAddress = '/sensor_processors/face_direction_alert'
+        self.faceDeliveryAddress = '/vision/face_direction_alert'
         self.face_pub = rospy.Publisher(self.faceDeliveryAddress,
                                        GeneralAlertMsg)
         self.soundDeliveryAddress = '/sensor_processors/sound_direction_alert'
         self.sound_pub = rospy.Publisher(self.soundDeliveryAddress,
                                        GeneralAlertMsg)
-        self.motionDeliveryAddress = '/sensor_processors/motion_alert'
+        self.motionDeliveryAddress = '/vision/motion_alert'
         self.motion_pub = rospy.Publisher(self.motionDeliveryAddress,
                                        GeneralAlertMsg)
         self.co2DeliveryAddress = '/sensor_processors/co2_direction_alert'
@@ -90,6 +90,7 @@ class AlertDeliveryBoy:
                                             probability = orderProbability,
                                             holeId = orderId))
         self.hole_pub.publish(self.hole_msg)
+        rospy.sleep(0.1)
 
     def deliverHazmatOrder(self, orderYaw, 
                           orderPitch, orderPattern):
@@ -100,6 +101,7 @@ class AlertDeliveryBoy:
                                             pitch = orderPitch,
                                             patternType = orderPattern))
         self.hazmat_pub.publish(self.hazmat_msg)
+        rospy.sleep(0.1)
 
     def deliverLandoltcOrder(self, orderYaw, 
                           orderPitch, orderAngles):
@@ -110,6 +112,7 @@ class AlertDeliveryBoy:
                                             pitch = orderPitch,
                                             angles = orderAngles))
         self.landoltc_pub.publish(self.landoltc_msg)
+        rospy.sleep(0.1)
 
     def deliverQrOrder(self, orderYaw, 
                       orderPitch, orderContent):
@@ -120,6 +123,7 @@ class AlertDeliveryBoy:
                                               pitch = orderPitch,
                                               QRcontent = orderContent))
         self.qr_pub.publish(self.qr_msg)
+        rospy.sleep(0.1)
 
     def deliverThermalOrder(self, orderYaw, orderPitch, orderProbability):
 
@@ -128,6 +132,7 @@ class AlertDeliveryBoy:
         self.general_msg.pitch = orderPitch
         self.general_msg.probability = orderProbability
         self.thermal_pub.publish(self.general_msg)
+        rospy.sleep(0.1)
 
     def deliverFaceOrder(self, orderYaw, orderPitch, orderProbability):
 
@@ -136,6 +141,7 @@ class AlertDeliveryBoy:
         self.general_msg.pitch = orderPitch
         self.general_msg.probability = orderProbability
         self.face_pub.publish(self.general_msg)
+        rospy.sleep(0.1)
 
     def deliverMotionOrder(self, orderYaw, orderPitch, orderProbability):
 
@@ -144,6 +150,7 @@ class AlertDeliveryBoy:
         self.general_msg.pitch = orderPitch
         self.general_msg.probability = orderProbability
         self.motion_pub.publish(self.general_msg)
+        rospy.sleep(0.1)
 
     def deliverSoundOrder(self, orderYaw, orderPitch, orderProbability):
 
@@ -152,6 +159,7 @@ class AlertDeliveryBoy:
         self.general_msg.pitch = orderPitch
         self.general_msg.probability = orderProbability
         self.sound_pub.publish(self.general_msg)
+        rospy.sleep(0.1)
 
     def deliverCo2Order(self, orderYaw, orderPitch, orderProbability):
 
@@ -160,6 +168,7 @@ class AlertDeliveryBoy:
         self.general_msg.pitch = orderPitch
         self.general_msg.probability = orderProbability
         self.co2_pub.publish(self.general_msg)
+        rospy.sleep(0.1)
 
     def deliverDataMatrixOrder(self, orderYaw, 
                       orderPitch, orderContent):
@@ -170,6 +179,7 @@ class AlertDeliveryBoy:
                                               pitch = orderPitch,
                                               datamatrixContent = orderContent))
         self.dataMatrix_pub.publish(self.dataMatrix_msg)
+        rospy.sleep(0.1)
 
     def deliverNextOrder(self):
         
@@ -196,6 +206,7 @@ class AlertDeliveryBoy:
             self.sound_pub.publish(nextOrder[0])
         elif nextOrder[1] == 'co2':
             self.co2_pub.publish(nextOrder[0])
+        rospy.sleep(0.1)
 
     def clearOrderList(self):
 
