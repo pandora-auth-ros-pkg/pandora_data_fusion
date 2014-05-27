@@ -24,8 +24,8 @@ namespace pandora_data_fusion
 
         virtual void SetUp()
         {  
-          Hole::setType("hole");
-          Thermal::setType("thermal");
+          Hole::setObjectType("hole");
+          Thermal::setObjectType("thermal");
           //!< create the Objectvector1 and fill it with various objects 
           //!< Thermal1(2, 3, 4) Thermal2(4, 3, 2) Hole1(1, 2, 0) 
           //!< (yaw = 0) ApproachDist = 5

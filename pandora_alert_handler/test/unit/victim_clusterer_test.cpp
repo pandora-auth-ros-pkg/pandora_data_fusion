@@ -18,8 +18,8 @@ namespace pandora_data_fusion
         VictimClustererTest() 
           : victimClustererPtr_( new VictimClusterer(3) )
         {
-          Hole::setType("HOLE");
-          Thermal::setType("THERMAL");
+          Hole::setObjectType("HOLE");
+          Thermal::setObjectType("THERMAL");
         }
 
         /* Helper functions */

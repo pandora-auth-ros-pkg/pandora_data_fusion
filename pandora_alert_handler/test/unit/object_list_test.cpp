@@ -49,7 +49,7 @@ namespace pandora_data_fusion
 
           Qr::setDistanceThres(0.5);
           Qr::setProbabilityThres(0.75);
-          Qr::setType("QR");
+          Qr::setObjectType("QR");
 
           qr1->setId(1);
           set(-0.5, 0, 0, qr1);

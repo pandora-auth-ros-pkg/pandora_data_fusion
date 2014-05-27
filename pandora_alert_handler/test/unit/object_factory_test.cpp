@@ -24,6 +24,7 @@ namespace pandora_data_fusion
         ObjectFactoryTest() 
           : map_type("TEST"), mapPtr(new Map) 
         { 
+          ros::Time::init();
           *mapPtr = map_loader::loadMap(
               ros::package::getPath("pandora_alert_handler") + 
               "/test/test_maps/map1.yaml");
@@ -241,11 +242,4 @@ namespace pandora_data_fusion
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-
-int main(int argc, char **argv) 
-{
-  ros::Time::init();
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
 

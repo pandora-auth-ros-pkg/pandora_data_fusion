@@ -23,8 +23,8 @@ namespace pandora_data_fusion
 
         virtual void SetUp()
         {
-          Hole::setType("HOLE");
-          Thermal::setType("THERMAL");
+          Hole::setObjectType("HOLE");
+          Thermal::setObjectType("THERMAL");
 
           victimList_.reset( new VictimList );
           objConstPtrVect1_.reset( new ObjectConstPtrVector );
@@ -272,10 +272,6 @@ namespace pandora_data_fusion
       EXPECT_EQ(victim1_, *(it));
       EXPECT_EQ(victim2_, *(++it));
       EXPECT_EQ(victim4_, *(++it));
-    }
-
-    TEST_F(VictimListTest , ValidateCurrentObject)
-    {
     }
 
 }  // namespace pandora_alert_handler
