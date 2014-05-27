@@ -49,8 +49,6 @@
 #include <ros/ros.h>
 
 #include <visualization_msgs/MarkerArray.h>
-#include <std_msgs/Empty.h>
-#include <std_msgs/Int32.h>
 
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
@@ -106,13 +104,6 @@ namespace pandora_data_fusion
          * @return void
          */
         void flush();
-
-        /**
-         * @brief Sets the current victim.
-         * @param index [int] selected victim's unique id.
-         * @return bool true, if selected successfully, false, if not found.
-         */
-        bool selectCurrentVictim(int victimId);
 
         /**
          * @brief Deletes VictimPtr from VictimsToGo list with victimId.

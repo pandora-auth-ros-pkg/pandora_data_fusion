@@ -100,13 +100,6 @@ namespace pandora_data_fusion
         bool getCurrentVictimTransform(tf::Transform* Transform) const;
 
         /**
-         * @brief Sets the victim index to a specific victim
-         * @param victimId [int] current selected victim's unique id
-         * @return bool true, if selected successfully or -1, false, if not found.
-         */
-        bool setCurrentVictim(int victimId);
-
-        /**
          * @brief Deletes VictimPtr with the corresponding victimId
          * @param victimId [int] id that will be used to search for the victim
          * @return bool true, if deleted, false, if not found.

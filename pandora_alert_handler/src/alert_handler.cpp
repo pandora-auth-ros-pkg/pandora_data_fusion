@@ -232,22 +232,9 @@ namespace pandora_data_fusion
 
       //!< action servers
 
-      if (nh_.getParam("action_server_names/select_victim", param))
-      {
-        selectVictimServer_.reset(new ChooseVictimServer(nh_, param,  false));
-      } 
-      else
-      {
-        ROS_FATAL("select_victim action name param not found");
-        ROS_BREAK();
-      }
-      selectVictimServer_->registerGoalCallback(
-          boost::bind( &AlertHandler::selectVictimCallback, this) );
-      selectVictimServer_->start();
-
       if (nh_.getParam("action_server_names/delete_victim", param))
       {
-        deleteVictimServer_.reset(new ChooseVictimServer(nh_, param,  false));
+        deleteVictimServer_.reset(new DeleteVictimServer(nh_, param,  false));
       } 
       else
       {
@@ -442,15 +429,6 @@ namespace pandora_data_fusion
       {
         currentVictimBroadcaster_.sendTransform(stampedTransform);
       }
-    }
-
-    void AlertHandler::selectVictimCallback()
-    {
-      int victimId = selectVictimServer_->acceptNewGoal()->victimId;
-      bool selected = victimHandler_->selectCurrentVictim(victimId);
-      if(!selected)
-        selectVictimServer_->setAborted();
-      selectVictimServer_->setSucceeded();
     }
 
     void AlertHandler::deleteVictimCallback()

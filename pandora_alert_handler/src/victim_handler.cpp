@@ -56,20 +56,6 @@ namespace pandora_data_fusion
       Victim::setObjectType("VICTIM");
 
       clusterer_.reset( new VictimClusterer(0.2) );
-
-      validVictimsCounter_ = 0;
-
-      std::string param; 
-      if (ros::param::get("published_topic_names/valid_victims_counter", param))
-      {
-        validVictimsPublisher_ = ros::NodeHandle().
-          advertise<std_msgs::Int32>(param, 1);
-      }
-      else
-      {
-        ROS_FATAL("valid_victims_counter topic name param not found");
-        ROS_BREAK();
-      }
     }
 
     /**
@@ -154,14 +140,6 @@ namespace pandora_data_fusion
     /**
      * @details Delegate to victimList
      */
-    bool VictimHandler::selectCurrentVictim(int victimId)
-    {
-      return victimsToGoList_->setCurrentVictim(victimId);
-    }
-
-    /**
-     * @details Delegate to victimList
-     */
     bool VictimHandler::deleteVictim(int victimId)
     {
       VictimPtr deletedVictim;
@@ -187,12 +165,6 @@ namespace pandora_data_fusion
 
       if(currentVictim.get())
       {
-        if(currentVictim->getValid())
-        {
-          std_msgs::Int32 updateValidVictims;
-          updateValidVictims.data = ++validVictimsCounter_;
-          validVictimsPublisher_.publish(updateValidVictims);
-        }
         victimsVisitedList_->addUnchanged(currentVictim);
         return true;
       }

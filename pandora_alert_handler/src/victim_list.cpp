@@ -146,28 +146,6 @@ namespace pandora_data_fusion
     }
 
     /**
-     * @details victimId = -1 means that currentVictim is to be set to
-     * nothing.
-     */
-    bool VictimList::setCurrentVictim(int victimId)
-    {
-      if(victimId == -1)
-      {
-        currentVictimIt_ = objects_.end();
-        return true;
-      }
-      for(iterator it = objects_.begin(); it != objects_.end(); ++it)
-      {
-        if((*it)->getId() == victimId)
-        {
-          currentVictimIt_ = it;
-          return true;
-        }
-      }
-      return false;
-    }
-
-    /**
      * @details If there is a victim being tracked returns its transform
      * with reversed yaw. Else, returns false.
      */

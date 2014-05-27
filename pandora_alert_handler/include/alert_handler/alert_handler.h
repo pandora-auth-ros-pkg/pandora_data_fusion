@@ -55,7 +55,7 @@
 
 #include "pandora_data_fusion_msgs/VictimsMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
-#include "pandora_data_fusion_msgs/ChooseVictimAction.h"
+#include "pandora_data_fusion_msgs/DeleteVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"
 #include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
@@ -83,7 +83,7 @@ namespace pandora_data_fusion
   {
 
     typedef actionlib::SimpleActionServer
-      <pandora_data_fusion_msgs::ChooseVictimAction> ChooseVictimServer;
+      <pandora_data_fusion_msgs::DeleteVictimAction> DeleteVictimServer;
     typedef actionlib::SimpleActionServer 
       <pandora_data_fusion_msgs::ValidateVictimAction> 
       ValidateVictimServer;
@@ -127,12 +127,6 @@ namespace pandora_data_fusion
         void updateMap(const nav_msgs::OccupancyGridConstPtr& msg);
 
         /* Victim-concerned Goal Callbacks */
-
-        /**
-         * @brief Communication with Agent. Chooses current victim to inspect.
-         * @return void
-         */
-        void selectVictimCallback();
 
         /**
          * @brief Client is Agent. Order to delete Victim.
@@ -210,8 +204,7 @@ namespace pandora_data_fusion
 
         ros::Timer currentVictimTimer_;
 
-        boost::shared_ptr<ChooseVictimServer> selectVictimServer_;
-        boost::shared_ptr<ChooseVictimServer> deleteVictimServer_;
+        boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
         boost::shared_ptr<ValidateVictimServer> validateVictimServer_;
 
         dynamic_reconfigure::Server< ::pandora_alert_handler::AlertHandlerConfig >
