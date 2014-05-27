@@ -454,8 +454,8 @@ namespace pandora_data_fusion
         tf::Transform tfObject(tfQuaternion, vec);
 
         ROS_DEBUG_NAMED("ALERT_HANDLER_TF_PUBLISHER",
-            "Publishing tf : %f , %f , %f , world to %s ",vec[0] ,vec[1] , vec[2] ,
-            it->header.frame_id.c_str() );
+            "Publishing tf : %f , %f , %f , world to %s ", vec[0], vec[1], vec[2],
+            it->header.frame_id.c_str());
 
         objectsBroadcaster_.sendTransform( 
             tf::StampedTransform(tfObject, it->header.stamp,

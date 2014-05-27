@@ -56,50 +56,46 @@ namespace pandora_data_fusion
 
     int Victim::lastVictimId_ = 0;
 
-    PoseStamped Victim::getPoseStamped() const
-    {
-      PoseStamped victimPose;
-      victimPose = Object<Victim>::getPoseStamped();
-      if(visited_)
-      {
-        if (valid_)
-        {
-          victimPose.header.frame_id = "VALID_" + victimPose.header.frame_id + 
-            "!!!!";
-        }
-        else
-        {
-          victimPose.header.frame_id = "REJECTED_" + victimPose.header.frame_id;
-        }
-      }
-
-      return victimPose;
-    }
-
     void Victim::getVisualization(visualization_msgs::MarkerArray* markers) const
     {
-      //!< fill victim pose
       visualization_msgs::Marker victimMarker;
-
+      visualization_msgs::Marker victimDescription;
       victimMarker.header.frame_id = getFrameId();
+      victimDescription.header.frame_id = getFrameId();
       victimMarker.header.stamp = ros::Time::now();
-      victimMarker.ns = "Victim";
+      victimDescription.header.stamp = ros::Time::now();
+      victimMarker.ns = type_;
+      victimDescription.ns = type_ + "_BRIEF";
       victimMarker.id = id_;
-
+      victimDescription.id = id_;
       victimMarker.pose = pose_;
-
+      victimDescription.pose = pose_;
+      victimDescription.pose.position.z = pose_.position.z + 0.1;
       victimMarker.type = visualization_msgs::Marker::SPHERE;
-
+      victimDescription.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+      victimDescription.text = type_ + "_" + boost::to_string(id_); 
       victimMarker.scale.x = 0.1;
       victimMarker.scale.y = 0.1;
       victimMarker.scale.z = 0.1;
-
-      if (visited_)
+      victimDescription.scale.z = 0.1;
+      if(visited_)
       {
         victimMarker.color.r = 1;
         victimMarker.color.g = 0;
         victimMarker.color.b = 0;
         victimMarker.color.a = 1;
+        victimDescription.color.r = 1;
+        victimDescription.color.g = 0;
+        victimDescription.color.b = 0;
+        victimDescription.color.a = 1;
+        if(valid_)
+        {
+          victimDescription.text = "VALID_" + victimDescription.text + "!!!!";
+        }
+        else
+        {
+          victimDescription.text = "REJECTED_" + victimDescription.text;
+        }
       }
       else
       {
@@ -107,15 +103,20 @@ namespace pandora_data_fusion
         victimMarker.color.g = 0.1255;
         victimMarker.color.b = 0.788;
         victimMarker.color.a = 0.7;
+        victimDescription.color.r = 0.94;
+        victimDescription.color.g = 0.1255;
+        victimDescription.color.b = 0.788;
+        victimDescription.color.a = 0.7;
       }
 
       markers->markers.push_back(victimMarker);
+      markers->markers.push_back(victimDescription);
     }
 
     void Victim::fillGeotiff(pandora_data_fusion_msgs::
         DatafusionGeotiffSrv::Response* res) const
     {
-      if (valid_)
+      if(valid_)
       {
         res->victimsx.push_back( pose_.position.x );
         res->victimsy.push_back( pose_.position.y );
@@ -126,7 +127,7 @@ namespace pandora_data_fusion
     {
       float probability = 0;
       bool victimVisionFound = false;
-      for (int ii = 0; ii < objects_.size(); ++ii)
+      for(int ii = 0; ii < objects_.size(); ++ii)
       {
         if(objects_[ii]->getType() == Face::getObjectType())
         {
@@ -155,7 +156,8 @@ namespace pandora_data_fusion
      */
     void Victim::setObjects(const ObjectConstPtrVector& objects)
     {
-      ROS_DEBUG_STREAM("Setting up victim with " << objects.size() << " objects.");
+      ROS_DEBUG_STREAM_NAMED("VICTIM_SET_OBJECTS", 
+          "Setting up victim with " << objects.size() << " objects.");
       objects_.clear();
 
       findRepresentativeObject<Hole>(objects);

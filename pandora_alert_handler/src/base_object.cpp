@@ -43,6 +43,7 @@ namespace pandora_data_fusion
   namespace pandora_alert_handler
   {
 
+    // Its possible that this should be changed to /map
     std::string BaseObject::frame_id_ = "/world";
 
 }  // namespace pandora_alert_handler

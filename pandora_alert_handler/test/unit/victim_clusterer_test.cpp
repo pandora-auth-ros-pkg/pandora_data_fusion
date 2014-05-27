@@ -55,6 +55,7 @@ namespace pandora_data_fusion
         VictimClustererTest() 
           : victimClustererPtr_( new VictimClusterer(3) )
         {
+          ros::Time::init();
           Hole::setObjectType("HOLE");
           Thermal::setObjectType("THERMAL");
         }

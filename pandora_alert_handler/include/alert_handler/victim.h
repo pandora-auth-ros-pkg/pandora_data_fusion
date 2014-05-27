@@ -97,13 +97,6 @@ namespace pandora_data_fusion
 
         /**
          * @override
-         * @brief Getter for member pose_ (stamped)
-         * @return PoseStamped pose_ (stamped)
-         */
-        virtual PoseStamped getPoseStamped() const;
-
-        /**
-         * @override
          * @brief Getter for geotiff information about the victim
          * @param res [data_fusion...::DatafusionGeotiffSrv::Response*]
          * @return void

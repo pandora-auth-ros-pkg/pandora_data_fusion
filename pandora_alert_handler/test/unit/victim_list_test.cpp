@@ -52,6 +52,7 @@ namespace pandora_data_fusion
 
         VictimListTest() 
         {
+          ros::Time::init();
           victim1_.reset( new Victim );
           victim2_.reset( new Victim );
           victim3_.reset( new Victim );
@@ -227,13 +228,6 @@ namespace pandora_data_fusion
           objConstPtrVect->push_back(holePtr1);
         } 
 
-        /* Accessors to private variables */
-
-        VictimList::iterator getCurrentVictimIt(VictimListPtr victimList)
-        {
-          return victimList->currentVictimIt_;
-        }
-
         /* Accesors to private functions */
 
         void updateObjects(VictimListPtr victimList,
@@ -246,12 +240,6 @@ namespace pandora_data_fusion
         VictimList::List& getObjects(VictimListPtr victimList)
         {
           return victimList->objects_;
-        }
-
-        void setCurrentVictimIt(VictimListPtr victimList, 
-            VictimList::iterator* it)
-        {
-          victimList->currentVictimIt_ = *it;
         }
 
         /* Variables */
@@ -267,11 +255,6 @@ namespace pandora_data_fusion
         ObjectConstPtrVectorPtr objConstPtrVect4_;
         VictimList::IteratorList iteratorList_;
     };
-
-    TEST_F(VictimListTest, constructor)
-    {
-      EXPECT_EQ(getCurrentVictimIt(victimList_), getObjects(victimList_).end());
-    }
 
     TEST_F(VictimListTest, contains)
     {

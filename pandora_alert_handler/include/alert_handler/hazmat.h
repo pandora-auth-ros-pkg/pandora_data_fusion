@@ -71,8 +71,6 @@ namespace pandora_data_fusion
 
         virtual bool isSameObject(const ObjectConstPtr& object) const;
 
-        virtual PoseStamped getPoseStamped() const;
-
         virtual void fillGeotiff(pandora_data_fusion_msgs::
             DatafusionGeotiffSrv::Response* res) const;
 

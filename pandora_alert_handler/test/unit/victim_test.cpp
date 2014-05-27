@@ -52,6 +52,7 @@ namespace pandora_data_fusion
 
         VictimTest() 
         {
+          ros::Time::init();
           victim1_.reset( new Victim ); 
           victim2_.reset( new Victim );
           objConstPtrVect1_.reset( new ObjectConstPtrVector );

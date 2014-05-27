@@ -71,8 +71,6 @@ namespace pandora_data_fusion
 
         virtual bool isSameObject(const ObjectConstPtr& object) const;
 
-        virtual PoseStamped getPoseStamped() const;
-
         virtual void getVisualization(visualization_msgs::
             MarkerArray* markers) const;
 

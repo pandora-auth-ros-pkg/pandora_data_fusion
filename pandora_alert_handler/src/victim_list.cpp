@@ -69,9 +69,9 @@ namespace pandora_data_fusion
 
     /**
      * @details A victimToUpdate from victim list is selected (this will be the 
-     * current if we are tracking one). Its info is updated by copying the given 
-     * victim's objects and the rest victims that are thought to be the same are 
-     * deleted from victim list. The fsm is informed if necessary.
+     * oldest among the ones from iteratorList). Its info is updated by copying 
+     * the given victim's objects and the rest victims that are thought to be the 
+     * same are deleted from victim list.
      */
     void VictimList::updateObjects(const ConstPtr& victim,
         const IteratorList& iteratorList)

@@ -45,13 +45,6 @@ namespace pandora_data_fusion
 
     DataMatrix::DataMatrix() {}
 
-    PoseStamped DataMatrix::getPoseStamped() const
-    {
-      PoseStamped objPose = Object<DataMatrix>::getPoseStamped();
-      objPose.header.frame_id = objPose.header.frame_id + "_" + content_;
-      return objPose;
-    }
-
     bool DataMatrix::isSameObject(const ObjectConstPtr& object) const
     {
       bool cond = Object<DataMatrix>::isSameObject(object) 
@@ -65,26 +58,36 @@ namespace pandora_data_fusion
         MarkerArray* markers) const
     {
       visualization_msgs::Marker marker;
-
       marker.header.frame_id = getFrameId();
       marker.header.stamp = ros::Time::now();
-      marker.ns = "DataMatrix";
+      marker.ns = type_;
       marker.id = id_;
-
       marker.pose = pose_;
-
       marker.type = visualization_msgs::Marker::SPHERE;
-
       marker.scale.x = 0.1;
       marker.scale.y = 0.1;
       marker.scale.z = 0.1;
-
       marker.color.r = 0.2;
       marker.color.g = 0;
-      marker.color.b = 1;
+      marker.color.b = 0.8;
       marker.color.a = 0.7;
-
       markers->markers.push_back(marker);
+
+      visualization_msgs::Marker description;
+      description.header.frame_id = getFrameId();
+      description.header.stamp = ros::Time::now();
+      description.ns = type_;
+      description.id = id_;
+      description.pose = pose_;
+      description.pose.position.z = pose_.position.z + 0.1;
+      description.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+      description.text = type_ + "_" + boost::to_string(id_) + "_" + content_;
+      description.scale.z = 0.1;
+      description.color.r = 0.2;
+      description.color.g = 0;
+      description.color.b = 0.8;
+      description.color.a = 0.7;
+      markers->markers.push_back(description);
     }
 
 }  // namespace pandora_alert_handler
