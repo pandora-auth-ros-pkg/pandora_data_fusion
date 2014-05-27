@@ -120,6 +120,15 @@ namespace pandora_data_fusion
         virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
         /**
+         * @brief Getter for member timeFound_
+         * @return ros::Time Victim's timeFound
+         */
+        ros::Time getTimeFound() const
+        {
+          return timeFound_;
+        }
+
+        /**
          * @brief Getter for member valid_
          * @return bool valid_
          */
@@ -181,6 +190,15 @@ namespace pandora_data_fusion
           visited_ = visited;
         }
 
+        /**
+         * @brief Setter for member timeFound_
+         * @return void
+         */
+        void setTimeFound(ros::Time timeFound)
+        {
+          timeFound_ = timeFound;
+        }
+
       private:
 
         /**
@@ -212,6 +230,8 @@ namespace pandora_data_fusion
         bool valid_;
         //!< True if the victim was visited false otherwise     
         bool visited_;
+        //!< The time when this victim was made
+        ros::Time timeFound_;
 
         //!< Index pointing to representative object
         int selectedObjectIndex_;

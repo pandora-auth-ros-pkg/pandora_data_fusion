@@ -49,6 +49,7 @@ namespace pandora_data_fusion
       id_ = lastVictimId_;
       valid_ = false;
       visited_ = false;
+      timeFound_ = ros::Time::now();
       selectedObjectIndex_ = -1;
       probability_ = 0;
     }
@@ -58,23 +59,17 @@ namespace pandora_data_fusion
     PoseStamped Victim::getPoseStamped() const
     {
       PoseStamped victimPose;
-
-      victimPose.pose = pose_;
-      if (!visited_)
-      {
-        victimPose.header.frame_id = "victim_" + boost::to_string(id_);
-      }
-      else
+      victimPose = Object<Victim>::getPoseStamped();
+      if(visited_)
       {
         if (valid_)
         {
-          victimPose.header.frame_id = "VALID_VICTIM" +
-            boost::to_string(id_) + "!!!!";
+          victimPose.header.frame_id = "VALID_" + victimPose.header.frame_id + 
+            "!!!!";
         }
         else
         {
-          victimPose.header.frame_id = "deleted_victim_" +
-            boost::to_string(id_);
+          victimPose.header.frame_id = "REJECTED_" + victimPose.header.frame_id;
         }
       }
 

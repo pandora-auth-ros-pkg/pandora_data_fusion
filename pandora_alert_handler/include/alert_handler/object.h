@@ -33,8 +33,6 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *
  * Authors: 
- *   Christos Zalidis <zalidis@gmail.com>
- *   Triantafyllos Afouras <afourast@gmail.com>
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
@@ -338,6 +336,7 @@ namespace pandora_data_fusion
         PoseStamped objPoseStamped;
         objPoseStamped.pose = pose_;
         objPoseStamped.header.frame_id = type_ + "_" + boost::to_string(id_);
+        objPoseStamped.header.stamp = ros::Time::now();
         return objPoseStamped;
       }
 

@@ -99,6 +99,32 @@ namespace pandora_data_fusion
          */
         explicit AlertHandler(const std::string& ns);
 
+        /* Victim-concerned Goal Callbacks */
+
+        /**
+         * @brief Client is Agent. Order to delete Victim.
+         * @return void
+         */
+        void deleteVictimCallback();
+
+        /**
+         * @brief Client is Agent. Order to validate current victim (identification mode).
+         * @return void
+         */
+        void validateVictimCallback();
+
+        /* Dynamic Reconfiguration Callback */
+        void dynamicReconfigCallback(
+            const ::pandora_alert_handler::AlertHandlerConfig &config,
+            uint32_t level);
+
+        /* Services Callbacks */
+        bool flushQueues(
+            std_srvs::Empty::Request& rq,
+            std_srvs::Empty::Response &rs);
+
+      private:
+        
         /* Alert-concerned Subscribers */
         void holeDirectionAlertCallback(
             const vision_communications::HolesDirectionsVectorMsg& msg);
@@ -125,32 +151,9 @@ namespace pandora_data_fusion
          * @return void
          */
         void updateMap(const nav_msgs::OccupancyGridConstPtr& msg);
+        
+        /* Map Visualization Callbacks */
 
-        /* Victim-concerned Goal Callbacks */
-
-        /**
-         * @brief Client is Agent. Order to delete Victim.
-         * @return void
-         */
-        void deleteVictimCallback();
-
-        /**
-         * @brief Client is Agent. Order to validate current victim (identification mode).
-         * @return void
-         */
-        void validateVictimCallback();
-
-        /* Dynamic Reconfiguration Callback */
-        void dynamicReconfigCallback(
-            const ::pandora_alert_handler::AlertHandlerConfig &config,
-            uint32_t level);
-
-        /* Services Callbacks */
-        bool flushQueues(
-            std_srvs::Empty::Request& rq,
-            std_srvs::Empty::Response &rs);
-
-        //!< Map Visualization Callbacks
         bool getObjectsServiceCb(
             pandora_data_fusion_msgs::GetObjectsSrv::Request& rq,
             pandora_data_fusion_msgs::GetObjectsSrv::Response &rs);
@@ -163,10 +166,21 @@ namespace pandora_data_fusion
             pandora_data_fusion_msgs::GetMarkersSrv::Request& rq,
             pandora_data_fusion_msgs::GetMarkersSrv::Response &rs);
 
-        /* Current Victim Timer Callback */
-        void currentVictimTimerCb(const ros::TimerEvent& event);
+        /**
+         * @brief Function that posts objects' transformations periodically.
+         * Triggered by a timer.
+         * @param event [ros::TimerEvent const&]
+         * @return void
+         */
+        void tfPublisherCallback(const ros::TimerEvent& event);
 
-      private:
+        /**
+         * @brief Broadcasts transformations from /world according to
+         * stamped poses given.
+         * @param poseVector [PoseStampedVector const&] vector containing pose info
+         * @return void
+         */
+        void broadcastPoseVector(const PoseStampedVector& poseVector);
 
         /**
          * @brief Takes info from VictimsToGo_ and publishes it to the Agent.
@@ -200,9 +214,8 @@ namespace pandora_data_fusion
 
         ros::Publisher victimsPublisher_;
 
-        tf::TransformBroadcaster currentVictimBroadcaster_;
-
-        ros::Timer currentVictimTimer_;
+        tf::TransformBroadcaster objectsBroadcaster_;
+        ros::Timer tfPublisherTimer_;
 
         boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
         boost::shared_ptr<ValidateVictimServer> validateVictimServer_;

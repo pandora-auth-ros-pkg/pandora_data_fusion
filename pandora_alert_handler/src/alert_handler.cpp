@@ -312,8 +312,8 @@ namespace pandora_data_fusion
 
       //!< timers
 
-      currentVictimTimer_ = nh_.createTimer(ros::Duration(0.1), 
-          &AlertHandler::currentVictimTimerCb, this);
+      tfPublisherTimer_ = nh_.createTimer(ros::Duration(0.1), 
+          &AlertHandler::tfPublisherCallback, this);
     }  
 
     //!< Alert-concerned callbacks
@@ -422,12 +422,44 @@ namespace pandora_data_fusion
 
     //!< Other Callbacks
 
-    void AlertHandler::currentVictimTimerCb(const ros::TimerEvent& event)
+    void AlertHandler::tfPublisherCallback(const ros::TimerEvent& event)
     {
-      tf::StampedTransform stampedTransform;
-      if(victimHandler_->getCurrentVictimTransform(&stampedTransform))
+      PoseStampedVector objectsPosesStamped; 
+      qrs_->getObjectsPosesStamped(&objectsPosesStamped);
+      hazmats_->getObjectsPosesStamped(&objectsPosesStamped);
+      thermals_->getObjectsPosesStamped(&objectsPosesStamped);
+      faces_->getObjectsPosesStamped(&objectsPosesStamped);
+      motions_->getObjectsPosesStamped(&objectsPosesStamped);
+      sounds_->getObjectsPosesStamped(&objectsPosesStamped);
+      co2s_->getObjectsPosesStamped(&objectsPosesStamped);
+      landoltcs_->getObjectsPosesStamped(&objectsPosesStamped);
+      dataMatrices_->getObjectsPosesStamped(&objectsPosesStamped);
+      victimsToGo_->getObjectsPosesStamped(&objectsPosesStamped);
+
+      broadcastPoseVector(objectsPosesStamped); 
+    }
+
+    void AlertHandler::broadcastPoseVector(const PoseStampedVector& poseVector)
+    {
+      for(PoseStampedVector::const_iterator it = poseVector.begin(); 
+          it != poseVector.end(); ++it)
       {
-        currentVictimBroadcaster_.sendTransform(stampedTransform);
+        tf::Quaternion tfQuaternion(it->pose.orientation.x, 
+            it->pose.orientation.y, 
+            it->pose.orientation.z, 
+            it->pose.orientation.w);
+        tf::Vector3 vec(it->pose.position.x, 
+            it->pose.position.y, 
+            it->pose.position.z);
+        tf::Transform tfObject(tfQuaternion, vec);
+
+        ROS_DEBUG_NAMED("ALERT_HANDLER_TF_PUBLISHER",
+            "Publishing tf : %f , %f , %f , world to %s ",vec[0] ,vec[1] , vec[2] ,
+            it->header.frame_id.c_str() );
+
+        objectsBroadcaster_.sendTransform( 
+            tf::StampedTransform(tfObject, it->header.stamp,
+              "/world", it->header.frame_id ) );
       }
     }
 

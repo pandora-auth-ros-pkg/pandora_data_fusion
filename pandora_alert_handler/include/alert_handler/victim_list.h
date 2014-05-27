@@ -93,13 +93,6 @@ namespace pandora_data_fusion
             pandora_data_fusion_msgs::VictimsMsg* victimsMsg);
 
         /**
-         * @brief Get the current victim pose as a stamped transform
-         * @param stampedTranform [tf::StampedTransform*] The output param
-         * @return bool false, if no victim is being identified
-         */
-        bool getCurrentVictimTransform(tf::Transform* Transform) const;
-
-        /**
          * @brief Deletes VictimPtr with the corresponding victimId
          * @param victimId [int] id that will be used to search for the victim
          * @return bool true, if deleted, false, if not found.
@@ -122,13 +115,6 @@ namespace pandora_data_fusion
         void addUnchanged(const VictimPtr& victim);
 
         /**
-         * @brief Checks if the approach pose of current victim has significally changed
-         * since start of tracking
-         * @return bool True if approach pose changed a significally, false otherwise
-         */
-        bool currentVictimUpdated(); 
-
-        /**
          * @override
          */
         void clear();
@@ -141,15 +127,9 @@ namespace pandora_data_fusion
         void updateObjects(const ConstPtr& victim,
             const IteratorList& iteratorList);
 
-      protected:
-
-        //!< An iterator pointing to the currently tracked victim.
-        iterator currentVictimIt_;
-
       private:
 
         friend class VictimListTest;
-
     };
 
     typedef boost::shared_ptr<VictimList> VictimListPtr;

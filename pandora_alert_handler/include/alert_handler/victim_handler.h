@@ -130,13 +130,6 @@ namespace pandora_data_fusion
         void getVictimsInfo(pandora_data_fusion_msgs::VictimsMsg* victimsMsg);
 
         /**
-         * @brief Get the current victim pose as a stamped transform
-         * @param stampedTranform [tf::StampedTransform*] The output param
-         * @return bool -1 if no victim is tracked
-         */
-        bool getCurrentVictimTransform(tf::StampedTransform* stampedTranform);
-
-        /**
          * @brief Get Poses Stamped of all victims in victimsToGo, victimsVisited and
          * their respective approachPoints
          * @param victimsToGo [PoseStampedVector*] vector with victims' poses
@@ -179,18 +172,12 @@ namespace pandora_data_fusion
 
       private:
 
-        //!< publisher for valid victims counter
-        ros::Publisher validVictimsPublisher_;
-
         VictimClustererPtr clusterer_;
 
         //!< The unvisited victims list  
         VictimListPtr victimsToGoList_;
         //!< The visited victims list  
         VictimListPtr victimsVisitedList_;
-
-        //!< counts verified victims that were validated by user
-        int validVictimsCounter_;
 
         //!< Radius within which all legit objects are associated with a victim.
         float CLUSTER_RADIUS; 

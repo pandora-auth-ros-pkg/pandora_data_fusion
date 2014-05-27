@@ -122,22 +122,6 @@ namespace pandora_data_fusion
     }
 
     /**
-     * @details Delegate to victimList and add Stamp
-     */
-    bool VictimHandler::getCurrentVictimTransform(
-        tf::StampedTransform* stampedTranform)
-    {
-      tf::Transform trans;
-      bool victimTracked = victimsToGoList_->getCurrentVictimTransform(&trans);
-      if (victimTracked)
-      {
-        *stampedTranform =  tf::StampedTransform(
-            trans, ros::Time::now(), "/world", "current_victim" );
-      } 
-      return victimTracked;
-    }
-
-    /**
      * @details Delegate to victimList
      */
     bool VictimHandler::deleteVictim(int victimId)
