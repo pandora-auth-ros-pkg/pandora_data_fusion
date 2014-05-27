@@ -106,7 +106,7 @@ namespace pandora_data_fusion
     typedef Landoltc::ListPtr LandoltcListPtr;
     typedef Landoltc::ListConstPtr LandoltcListConstPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_LANDOLTC_H

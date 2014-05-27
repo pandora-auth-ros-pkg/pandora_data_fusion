@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef ALERT_HANDLER_DATAMATRIX_H
-#define ALERT_HANDLER_DATAMATRIX_H
+#ifndef ALERT_HANDLER_DATA_MATRIX_H
+#define ALERT_HANDLER_DATA_MATRIX_H
 
 #include "alert_handler/kalman_object.h"
 
@@ -130,4 +130,4 @@ namespace pandora_data_fusion
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // ALERT_HANDLER_DATAMATRIX_H
+#endif  // ALERT_HANDLER_DATA_MATRIX_H

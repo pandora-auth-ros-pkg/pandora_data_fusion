@@ -50,4 +50,4 @@
 #include "alert_handler/landoltc.h"
 #include "alert_handler/data_matrix.h"
 
-#endif // ALERT_HANDLER_OBJECTS_H
+#endif  // ALERT_HANDLER_OBJECTS_H
