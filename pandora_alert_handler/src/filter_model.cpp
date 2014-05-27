@@ -10,13 +10,13 @@ namespace pandora_data_fusion
     /**
      * @details Sets the parameters in filter's model and initializes it.
      */
-    FilterModel::FilterModel(float system_noise_sd)
+    FilterModel::FilterModel(float system_noise_sd, float measurement_sd)
     {
-      SYSTEM_NOISE_SD = system_noise_sd;
-      initializeSystemModel();
+      initializeSystemModel(system_noise_sd);
+      initializeMeasurementModel(measurement_sd);
     }
 
-    void FilterModel::initializeSystemModel()
+    void FilterModel::initializeSystemModel(float systemStdDev)
     {
       //!< System Model Initialization
       //!< Filter's combined matrix
@@ -37,7 +37,7 @@ namespace pandora_data_fusion
       matrixAB.push_back(matrixB);
 
       systemNoiseMean(1) = 0.0;
-      systemNoiseVariance(1, 1) = pow(SYSTEM_NOISE_SD, 2);
+      systemNoiseVariance(1, 1) = pow(systemStdDev, 2);
 
       BFL::Gaussian systemUncertainty(systemNoiseMean, systemNoiseVariance); 
       systemPdfPtr_.reset( new AnalyticGaussian(matrixAB, systemUncertainty) );

@@ -218,7 +218,7 @@ namespace pandora_data_fusion
          * @param type [std::string] The new type value
          * @return void
          */
-        static void setType(std::string type)
+        static void setObjectType(std::string type)
         {
           type_ = type;
         }

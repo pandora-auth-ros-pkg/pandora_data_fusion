@@ -11,7 +11,7 @@ subscribed_topic_names:
   soundDirection: /sensor_processors/sound_direction_alert
   map: /slam/map
 published_topic_names:  
-  victims : victims
+  victims : /data_fusion/victims
   valid_victims_counter : valid_victims_counter
   qr_notification : qr_notification
   robocup_score : robocup_score

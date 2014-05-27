@@ -14,6 +14,7 @@ namespace pandora_data_fusion
       valid_ = false;
       visited_ = false;
       selectedObjectIndex_ = -1;
+      probability_ = 0;
     }
 
     int Victim::lastVictimId_ = 0;

@@ -41,7 +41,8 @@ namespace pandora_data_fusion
         /**
          * @brief Default constructor.
          */
-        explicit FilterModel(float system_noise_sd = 0.05);
+        explicit FilterModel(float system_noise_sd = 0.05,
+            float measurement_sd = 0.5);
 
         /**
          * @brief Getter for linear analytic system's model.
@@ -59,25 +60,17 @@ namespace pandora_data_fusion
 
         /**
          * @brief Initializes SystemModel according to given parameters.
+         * @param systemStdDev [float] initial standard deviation
          * @return void
          */
-        void initializeSystemModel();
+        void initializeSystemModel(float systemStdDev);
 
         /**
          * @brief Initializes MeasurementModel according to given parameters.
+         * @param measurementStdDev [float] initial standard deviation
          * @return void
          */
         void initializeMeasurementModel(float measurementStdDev);
-
-        void setSystemSD(float system_noise_sd)
-        {
-          SYSTEM_NOISE_SD = system_noise_sd;
-        }
-
-        float getSystemSD() const
-        {
-          return SYSTEM_NOISE_SD;
-        }
 
       private:
 
@@ -102,11 +95,6 @@ namespace pandora_data_fusion
         MeasurementModelPtr measurementModelY_;
         //!< Filter's measurement model for dimension z
         MeasurementModelPtr measurementModelZ_;
-
-        //!< params
-        //!< System's noise standard deviation
-        float SYSTEM_NOISE_SD;
-
     };
 
     typedef boost::shared_ptr<FilterModel> FilterModelPtr;

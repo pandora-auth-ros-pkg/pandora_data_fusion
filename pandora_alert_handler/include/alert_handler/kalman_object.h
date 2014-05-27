@@ -124,7 +124,7 @@ namespace pandora_data_fusion
 
     template <class DerivedObject>
       FilterModelPtr KalmanObject<DerivedObject>::
-      modelPtr_ = FilterModelPtr( new FilterModel(0.05) );
+      modelPtr_ = FilterModelPtr( new FilterModel );
 
     template <class DerivedObject>
       void KalmanObject<DerivedObject>::initializeObjectFilter()
@@ -163,13 +163,12 @@ namespace pandora_data_fusion
       void KalmanObject<DerivedObject>::
       update(const ObjectConstPtr& measurement)
       {
-        ROS_DEBUG_STREAM("KalmanObject::update() : before Measurement probability = " 
-            << measurement->getProbability());
-        float measurementStdDev = Utils::stdDevFromProbability(this->distanceThres_, 
-              measurement->getProbability());
-        ROS_DEBUG_STREAM("KalmanObject::update() : before Measurement std dev = " 
-            << measurementStdDev);
-        modelPtr_->initializeMeasurementModel(measurementStdDev);
+        ROS_DEBUG_STREAM("KalmanObject::update() : before measurement std dev = " 
+            << std::endl << "x : " << getStdDevX()
+            << std::endl << "y : " << getStdDevY()
+            << std::endl << "z : " << getStdDevZ());
+        ROS_DEBUG_STREAM("KalmanObject::update() : before measurement probability = " 
+            << this->getProbability());
         Point measurementPosition = measurement->getPose().position;
         MatrixWrapper::ColumnVector newPosition(1);
         //!< Filter's input vector

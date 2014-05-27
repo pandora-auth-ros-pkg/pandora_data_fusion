@@ -52,7 +52,7 @@ namespace pandora_data_fusion
       victimsToGoList_(victimsToGoList),
       victimsVisitedList_(victimsVisitedList)
     {
-      Victim::setType("victim");
+      Victim::setObjectType("VICTIM");
 
       clusterer_.reset( new VictimClusterer(0.2) );
 
