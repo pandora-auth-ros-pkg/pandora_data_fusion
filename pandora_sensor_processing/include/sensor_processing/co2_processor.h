@@ -32,33 +32,69 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors:
- *   Christos Zalidis <zalidis@gmail.com>
- *   Triantafyllos Afouras <afourast@gmail.com>
+ * Authors: 
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#include <ros/console.h>
+#ifndef SENSOR_PROCESSING_CO2_PROCESSOR_H
+#define SENSOR_PROCESSING_CO2_PROCESSOR_H
 
-#include "alert_handler/alert_handler.h"
+#include <string>
+#include <boost/utility.hpp>
 
-using pandora_data_fusion::pandora_alert_handler::AlertHandler;
+#include <ros/ros.h>
 
-int main(int argc, char** argv)
+#include <dynamic_reconfigure/server.h>
+
+#include "pandora_arm_hardware_interface/Co2Msg.h"
+#include "pandora_common_msgs/GeneralAlertMsg.h"
+#include "pandora_sensor_processing/Co2ProcessorConfig.h"
+
+namespace pandora_sensor_processing
 {
-  ros::init(argc, argv, "alert_handler", ros::init_options::NoSigintHandler);
-  if(argc == 1 && !strcmp(argv[0], "--debug"))
+
+  class Co2Processor : private boost::noncopyable
   {
-    if( ros::console::set_logger_level(
-          ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) 
-    {
-      ros::console::notifyLoggerLevelsChanged();
-    }
-  }
-  AlertHandler alertHandler("/data_fusion/alert_handler");
-  ROS_INFO_NAMED("DATA_FUSION", "Beginning Alert Handler node");
-  ros::spin();
-  // ros::MultiThreadedSpinner spinner(2); // Use 2 threads
-  // spinner.spin(); // spin
-  return 0;
-}
+    public:
+
+      /**
+       * @brief Constructor
+       * @param ns [std::string const&] Has the namespace of the node.
+       */
+      explicit Co2Processor(const std::string& ns);
+
+    private:
+
+      /**
+       * @brief callback to co2SensorSubscriber_
+       * @param msg [pandora_arm_hardware_interface::Co2Msg const&] contains
+       * co2 density ppm
+       * @return void
+       */
+      void co2SensorCallback(
+          const pandora_arm_hardware_interface::Co2Msg& msg); 
+
+      /**
+       * @brief Finalizes alert_ message and publishes alert with alertPublisher_
+       * @return void
+       */
+      void publishAlert();
+
+      void initRosInterfaces();
+
+    protected:
+
+      ros::NodeHandle nh_;
+
+      ros::Subscriber co2SensorSubscriber_;
+      ros::Publisher alertPublisher_;
+
+      pandora_common_msgs::GeneralAlertMsg alert;
+      
+      dynamic_reconfigure::Server< Co2ProcessorConfig >
+        dynReconfServer_;
+  };
+
+}  // namespace pandora_sensor_processing
+
+#endif  // SENSOR_PROCESSING_CO2_PROCESSOR_H

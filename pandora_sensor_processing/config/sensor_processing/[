@@ -32,33 +32,69 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors:
- *   Christos Zalidis <zalidis@gmail.com>
- *   Triantafyllos Afouras <afourast@gmail.com>
+ * Authors: 
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#include <ros/console.h>
+#ifndef SENSOR_PROCESSING_THERMAL_PROCESSOR_H
+#define SENSOR_PROCESSING_THERMAL_PROCESSOR_H
 
-#include "alert_handler/alert_handler.h"
+#include <string>
+#include <boost/utility.hpp>
 
-using pandora_data_fusion::pandora_alert_handler::AlertHandler;
+#include <ros/ros.h>
 
-int main(int argc, char** argv)
+#include <dynamic_reconfigure/server.h>
+
+#include "pandora_arm_hardware_interface/ThermalMsg.h"
+#include "pandora_common_msgs/GeneralAlertMsg.h"
+#include "pandora_sensor_processing/ThermalProcessorConfig.h"
+
+namespace pandora_sensor_processing
 {
-  ros::init(argc, argv, "alert_handler", ros::init_options::NoSigintHandler);
-  if(argc == 1 && !strcmp(argv[0], "--debug"))
+
+  class ThermalProcessor : private boost::noncopyable
   {
-    if( ros::console::set_logger_level(
-          ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) 
-    {
-      ros::console::notifyLoggerLevelsChanged();
-    }
-  }
-  AlertHandler alertHandler("/data_fusion/alert_handler");
-  ROS_INFO_NAMED("DATA_FUSION", "Beginning Alert Handler node");
-  ros::spin();
-  // ros::MultiThreadedSpinner spinner(2); // Use 2 threads
-  // spinner.spin(); // spin
-  return 0;
-}
+    public:
+
+      /**
+       * @brief Constructor
+       * @param ns [std::string const&] Has the namespace of the node.
+       */
+      explicit ThermalProcessor(const std::string& ns);
+
+    private:
+
+      /**
+       * @brief callback to thermalSensorSubscriber_
+       * @param msg [pandora_arm_hardware_interface::ThermalMsg const&] contains
+       * thermal density ppm
+       * @return void
+       */
+      void thermalSensorCallback(
+          const pandora_arm_hardware_interface::ThermalMsg& msg); 
+
+      /**
+       * @brief Finalizes alert_ message and publishes alert with alertPublisher_
+       * @return void
+       */
+      void publishAlert();
+
+      void initRosInterfaces();
+
+    protected:
+
+      ros::NodeHandle nh_;
+
+      ros::Subscriber thermalSensorSubscriber_;
+      ros::Publisher alertPublisher_;
+
+      pandora_common_msgs::GeneralAlertMsg alert;
+      
+      dynamic_reconfigure::Server< ThermalProcessorConfig >
+        dynReconfServer_;
+  };
+
+}  // namespace pandora_sensor_processing
+
+#endif  // SENSOR_PROCESSING_THERMAL_PROCESSOR_H

@@ -32,17 +32,15 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors:
- *   Christos Zalidis <zalidis@gmail.com>
- *   Triantafyllos Afouras <afourast@gmail.com>
+ * Authors: 
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #include <ros/console.h>
 
-#include "alert_handler/alert_handler.h"
+#include "sensor_processing/thermal_processor.h"
 
-using pandora_data_fusion::pandora_alert_handler::AlertHandler;
+using pandora_sensor_processing::ThermalProcessor;
 
 int main(int argc, char** argv)
 {
@@ -55,10 +53,8 @@ int main(int argc, char** argv)
       ros::console::notifyLoggerLevelsChanged();
     }
   }
-  AlertHandler alertHandler("/data_fusion/alert_handler");
-  ROS_INFO_NAMED("DATA_FUSION", "Beginning Alert Handler node");
+  ThermalProcessor thermalProcessor("/sensor_processing/thermal_processor");
+  ROS_INFO_NAMED("SENSOR_PROCESSING", "Beginning Thermal Processor node");
   ros::spin();
-  // ros::MultiThreadedSpinner spinner(2); // Use 2 threads
-  // spinner.spin(); // spin
   return 0;
 }

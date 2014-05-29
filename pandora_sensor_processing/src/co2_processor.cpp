@@ -32,33 +32,22 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors:
- *   Christos Zalidis <zalidis@gmail.com>
- *   Triantafyllos Afouras <afourast@gmail.com>
+ * Authors: 
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#include <ros/console.h>
+#include "sensor_processing/co2_processor.h"
 
-#include "alert_handler/alert_handler.h"
-
-using pandora_data_fusion::pandora_alert_handler::AlertHandler;
-
-int main(int argc, char** argv)
+namespace pandora_sensor_processing
 {
-  ros::init(argc, argv, "alert_handler", ros::init_options::NoSigintHandler);
-  if(argc == 1 && !strcmp(argv[0], "--debug"))
+
+  Co2Processor::Co2Processor(const std::string& ns) : nh_(ns)
   {
-    if( ros::console::set_logger_level(
-          ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) 
-    {
-      ros::console::notifyLoggerLevelsChanged();
-    }
+    initRosInterfaces();
   }
-  AlertHandler alertHandler("/data_fusion/alert_handler");
-  ROS_INFO_NAMED("DATA_FUSION", "Beginning Alert Handler node");
-  ros::spin();
-  // ros::MultiThreadedSpinner spinner(2); // Use 2 threads
-  // spinner.spin(); // spin
-  return 0;
-}
+
+  void Co2Processor::initRosInterfaces()
+  {
+  }
+
+}  // namespace pandora_sensor_processing
