@@ -15,8 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   )
 
 generate_dynamic_reconfigure_options(
-  config/sensor_processing/co2_processor_dynamic.cfg
-  config/sensor_processing/thermal_processor_dynamic.cfg
+  config/sensor_processing/sensor_processing_dynamic.cfg
   )
 
 catkin_package(
@@ -57,7 +56,7 @@ target_link_libraries(co2_node
   co2_processor
   )
 
-################### thermal_processor ###############################
+########################  thermal_processor  ########################
 
 add_library(thermal_processor src/thermal_processor.cpp)
 target_link_libraries(thermal_processor
@@ -70,7 +69,7 @@ add_dependencies(thermal_processor
   pandora_common_msgs_gencpp
   )
 
-########################  thermal_node  #################################
+########################  thermal_node  #############################
 
 add_executable(thermal_node src/thermal_node.cpp)
 target_link_libraries(thermal_node
@@ -78,7 +77,7 @@ target_link_libraries(thermal_node
   thermal_processor
   )
 
-################## roslint ######################################
+########################  roslint  ##################################
 
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS 
      RELATIVE ${PROJECT_SOURCE_DIR} 
@@ -88,7 +87,7 @@ FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 
-################# testing ######################################
+########################  testing  ##################################
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)

@@ -41,12 +41,22 @@
 namespace pandora_sensor_processing
 {
 
-  ThermalProcessor::ThermalProcessor(const std::string& ns) : nh_(ns)
+  ThermalProcessor::ThermalProcessor(const std::string& ns)
+    : SensorProcessor<ThermalProcessor>(ns, "thermal", false) {}
+
+  void ThermalProcessor::sensorCallback(const sensor_msgs::Image& msg)
   {
-    initRosInterfaces();
   }
 
-  void ThermalProcessor::initRosInterfaces()
+  void ThermalProcessor::dynamicReconfigCallback(
+      const SensorProcessorConfig& config, uint32_t level)
+  {
+  }
+
+  /**
+   * @details
+   */
+  float ThermalProcessor::analyzeImage(const sensor_msgs::Image& msg)
   {
   }
 

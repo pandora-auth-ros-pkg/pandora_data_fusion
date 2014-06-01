@@ -41,12 +41,23 @@
 namespace pandora_sensor_processing
 {
 
-  Co2Processor::Co2Processor(const std::string& ns) : nh_(ns)
+  Co2Processor::Co2Processor(const std::string& ns)
+    : SensorProcessor<Co2Processor>(ns, "co2") {}
+
+  void Co2Processor::sensorCallback(
+      const pandora_arm_hardware_interface::Co2Msg& msg)
   {
-    initRosInterfaces();
   }
 
-  void Co2Processor::initRosInterfaces()
+  void Co2Processor::dynamicReconfigCallback(
+      const SensorProcessorConfig& config, uint32_t level)
+  {
+  }
+
+  /**
+   * @details The pdf used is ...
+   */
+  float Co2Processor::calculateProbability(float ppms)
   {
   }
 

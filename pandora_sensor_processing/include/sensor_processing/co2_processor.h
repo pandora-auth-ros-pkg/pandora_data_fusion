@@ -39,21 +39,13 @@
 #ifndef SENSOR_PROCESSING_CO2_PROCESSOR_H
 #define SENSOR_PROCESSING_CO2_PROCESSOR_H
 
-#include <string>
-#include <boost/utility.hpp>
-
-#include <ros/ros.h>
-
-#include <dynamic_reconfigure/server.h>
-
 #include "pandora_arm_hardware_interface/Co2Msg.h"
-#include "pandora_common_msgs/GeneralAlertMsg.h"
-#include "pandora_sensor_processing/Co2ProcessorConfig.h"
+#include "sensor_processing/sensor_processor.h"
 
 namespace pandora_sensor_processing
 {
 
-  class Co2Processor : private boost::noncopyable
+  class Co2Processor : public SensorProcessor<Co2Processor>
   {
     public:
 
@@ -63,36 +55,34 @@ namespace pandora_sensor_processing
        */
       explicit Co2Processor(const std::string& ns);
 
-    private:
+      /* Methods that SensorProcessor needs */
 
       /**
        * @brief callback to co2SensorSubscriber_
-       * @param msg [pandora_arm_hardware_interface::Co2Msg const&] contains
+       * @param msg [pandora_arm_hardware_interface::Co2MsgConstPtr const&] contains
        * co2 density ppm
        * @return void
        */
-      void co2SensorCallback(
+      void sensorCallback(
           const pandora_arm_hardware_interface::Co2Msg& msg); 
 
+      void dynamicReconfigCallback(
+          const SensorProcessorConfig& config, uint32_t level);
+
+    private:
+
       /**
-       * @brief Finalizes alert_ message and publishes alert with alertPublisher_
-       * @return void
+       * @brief Method for calculating alert probability based on a pdf
+       * @param ppms [float] co2 particles per millions
+       * @return float probability
        */
-      void publishAlert();
+      float calculateProbability(float ppms);
 
-      void initRosInterfaces();
+    private:
 
-    protected:
-
-      ros::NodeHandle nh_;
-
-      ros::Subscriber co2SensorSubscriber_;
-      ros::Publisher alertPublisher_;
-
-      pandora_common_msgs::GeneralAlertMsg alert;
-      
-      dynamic_reconfigure::Server< Co2ProcessorConfig >
-        dynReconfServer_;
+      //!< params
+      //float MEASUREMENT_MEAN;
+      //float MEASUREMENT_STD_DEV;
   };
 
 }  // namespace pandora_sensor_processing

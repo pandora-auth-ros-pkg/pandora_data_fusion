@@ -39,21 +39,13 @@
 #ifndef SENSOR_PROCESSING_THERMAL_PROCESSOR_H
 #define SENSOR_PROCESSING_THERMAL_PROCESSOR_H
 
-#include <string>
-#include <boost/utility.hpp>
-
-#include <ros/ros.h>
-
-#include <dynamic_reconfigure/server.h>
-
 #include "sensor_msgs/Image.h"
-#include "pandora_common_msgs/GeneralAlertMsg.h"
-#include "pandora_sensor_processing/ThermalProcessorConfig.h"
+#include "sensor_processing/sensor_processor.h"
 
 namespace pandora_sensor_processing
 {
 
-  class ThermalProcessor : private boost::noncopyable
+  class ThermalProcessor : public SensorProcessor<ThermalProcessor>
   {
     public:
 
@@ -63,36 +55,27 @@ namespace pandora_sensor_processing
        */
       explicit ThermalProcessor(const std::string& ns);
 
+      /* Methods that SensorProcessor needs */
+
+      /**
+       * @brief callback to co2SensorSubscriber_
+       * @param msg [sensor_msgs::Image const&] msg containing a grid
+       * (as image) of pixels representing temperatures.
+       * @return void
+       */
+      void sensorCallback(const sensor_msgs::Image& msg); 
+
+      void dynamicReconfigCallback(
+          const SensorProcessorConfig& config, uint32_t level);
+
     private:
 
-      /**
-       * @brief callback to thermalSensorSubscriber_
-       * @param msg [pandora_arm_hardware_interface::ThermalMsg const&] contains
-       * thermal density ppm
-       * @return void
-       */
-      void thermalSensorCallback(
-          const sensor_msgs::Image& msg); 
+      float analyzeImage(const sensor_msgs::Image& msg);
 
-      /**
-       * @brief Finalizes alert_ message and publishes alert with alertPublisher_
-       * @return void
-       */
-      void publishAlert();
+    private:
 
-      void initRosInterfaces();
+      //!< params
 
-    protected:
-
-      ros::NodeHandle nh_;
-
-      ros::Subscriber thermalSensorSubscriber_;
-      ros::Publisher alertPublisher_;
-
-      pandora_common_msgs::GeneralAlertMsg alert;
-      
-      dynamic_reconfigure::Server< ThermalProcessorConfig >
-        dynReconfServer_;
   };
 
 }  // namespace pandora_sensor_processing
