@@ -77,7 +77,7 @@ namespace pandora_sensor_processing
     protected:
 
       /**
-       * @brief Finalizes alert_ message and publishes alert with alertPublisher_
+       * @brief Delegates to alertPublisher_.
        * @return void
        */
       void publishAlert();
@@ -88,9 +88,7 @@ namespace pandora_sensor_processing
 
     protected:
 
-      float yaw_;
-      float pitch_;
-      float probability_;
+      pandora_common_msgs::GeneralAlertMsg alert;
       
     private:
 
@@ -156,10 +154,6 @@ namespace pandora_sensor_processing
   template <class DerivedProcessor>
     void SensorProcessor<DerivedProcessor>::publishAlert()
     {
-      pandora_common_msgs::GeneralAlertMsg alert;
-      alert.yaw = yaw_;
-      alert.pitch = pitch_;
-      alert.probability = probability_;
       alertPublisher_.publish(alert);
     }
 

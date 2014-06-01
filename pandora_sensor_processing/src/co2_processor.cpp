@@ -47,18 +47,27 @@ namespace pandora_sensor_processing
   void Co2Processor::sensorCallback(
       const pandora_arm_hardware_interface::Co2Msg& msg)
   {
+    alert.yaw = 0;
+    alert.pitch = 0;
+    alert.probability = calculateProbability(msg.co2_percentage);
+    alert.header = msg.header;
+    publishAlert();
   }
 
   void Co2Processor::dynamicReconfigCallback(
       const SensorProcessorConfig& config, uint32_t level)
   {
+    PDF_SCALE = config.co2_optimal;
+    PDF_SHAPE = config.co2_pdf_shape;
   }
 
   /**
-   * @details The pdf used is ...
+   * @details The pdf used is Weibull distribution
    */
-  float Co2Processor::calculateProbability(float ppms)
+  float Co2Processor::calculateProbability(float percentage)
   {
+    float x = percentage / PDF_SCALE;
+    return (PDF_SHAPE/PDF_SCALE) * pow(x, PDF_SHAPE- 1) * exp(-pow(x, PDF_SHAPE));
   }
 
 }  // namespace pandora_sensor_processing

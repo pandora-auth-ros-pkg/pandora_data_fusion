@@ -73,16 +73,16 @@ namespace pandora_sensor_processing
 
       /**
        * @brief Method for calculating alert probability based on a pdf
-       * @param ppms [float] co2 particles per millions
+       * @param percentage [float] co2 percentage (v/v) in air
        * @return float probability
        */
-      float calculateProbability(float ppms);
+      float calculateProbability(float percentage);
 
     private:
 
       //!< params
-      //float MEASUREMENT_MEAN;
-      //float MEASUREMENT_STD_DEV;
+      float PDF_SCALE;
+      float PDF_SHAPE;
   };
 
 }  // namespace pandora_sensor_processing
