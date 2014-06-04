@@ -4,6 +4,7 @@ project(pandora_sensor_processing)
 set(CMAKE_BUILD_TYPE Debug)
 
 find_package(catkin REQUIRED COMPONENTS 
+  cmake_modules
   roscpp
   state_manager
   state_manager_communications
@@ -14,13 +15,17 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   )
 
+find_package(Eigen REQUIRED)
+
 generate_dynamic_reconfigure_options(
   config/sensor_processing/sensor_processing_dynamic.cfg
   )
 
 catkin_package(
   DEPENDS
+    Eigen
   CATKIN_DEPENDS
+    cmake_modules
     roscpp
     state_manager
     state_manager_communications
@@ -30,16 +35,30 @@ catkin_package(
     pandora_common_msgs
     sensor_msgs
   INCLUDE_DIRS
+    include
+    ${EIGEN_INCLUDE_DIRS}
   LIBRARIES
   )
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(
+  include 
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN_INCLUDE_DIRS}
+  )
+
+########################  utils  ####################################
+
+add_library(sensor_utils src/utils.cpp)
+target_link_libraries(sensor_utils
+  ${catkin_LIBRARIES}
+  )
 
 ########################  co2_processor  ############################
 
 add_library(co2_processor src/co2_processor.cpp)
 target_link_libraries(co2_processor
   ${catkin_LIBRARIES}
+  sensor_utils
   )
 add_dependencies(co2_processor
   pandora_sensor_processing_gencfg
@@ -56,11 +75,20 @@ target_link_libraries(co2_node
   co2_processor
   )
 
+########################  clusterer  ################################
+
+add_library(clusterer src/clusterer.cpp)
+target_link_libraries(clusterer
+  ${catkin_LIBRARIES}
+  sensor_utils
+  )
+
 ########################  thermal_processor  ########################
 
 add_library(thermal_processor src/thermal_processor.cpp)
 target_link_libraries(thermal_processor
   ${catkin_LIBRARIES}
+  sensor_utils
   )
 add_dependencies(thermal_processor
   pandora_sensor_processing_gencfg
