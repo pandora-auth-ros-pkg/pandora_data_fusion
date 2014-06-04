@@ -46,11 +46,14 @@ namespace pandora_sensor_processing
 
   void ThermalProcessor::sensorCallback(const sensor_msgs::Image& msg)
   {
+
   }
 
   void ThermalProcessor::dynamicReconfigCallback(
       const SensorProcessorConfig& config, uint32_t level)
   {
+    MAX_CLUSTER_MEMORY = config.thermal_max_cluster_memory;
+    MAX_CLUSTER_ITERATIONS = config.thermal_max_cluster_iterations;
   }
 
   /**
@@ -59,5 +62,7 @@ namespace pandora_sensor_processing
   float ThermalProcessor::analyzeImage(const sensor_msgs::Image& msg)
   {
   }
+
+
 
 }  // namespace pandora_sensor_processing

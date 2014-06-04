@@ -40,7 +40,6 @@
 #define SENSOR_PROCESSING_SENSOR_PROCESSOR_H
 
 #include <string>
-#include <boost/utility.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -49,6 +48,7 @@
 
 #include <dynamic_reconfigure/server.h>
 
+#include "sensor_processing/utils.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 #include "pandora_sensor_processing/SensorProcessorConfig.h"
 

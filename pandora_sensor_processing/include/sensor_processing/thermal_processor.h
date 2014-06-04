@@ -40,6 +40,7 @@
 #define SENSOR_PROCESSING_THERMAL_PROCESSOR_H
 
 #include "sensor_msgs/Image.h"
+#include "sensor_processing/clusterer.h"
 #include "sensor_processing/sensor_processor.h"
 
 namespace pandora_sensor_processing
@@ -74,8 +75,12 @@ namespace pandora_sensor_processing
 
     private:
 
-      //!< params
+      std::map<int, int> code_;
+      ClustererPtrVector clusterers_;
 
+      //!< params
+      int MAX_CLUSTER_MEMORY;
+      int MAX_CLUSTER_ITERATIONS;
   };
 
 }  // namespace pandora_sensor_processing
