@@ -44,13 +44,17 @@ namespace pandora_sensor_processing
   Co2Processor::Co2Processor(const std::string& ns)
     : SensorProcessor<Co2Processor>(ns, "co2") {}
 
+  /**
+   * @details Weibull distribution is used for calculating probability.
+   */
   void Co2Processor::sensorCallback(
       const pandora_arm_hardware_interface::Co2Msg& msg)
   {
-    alert.yaw = 0;
-    alert.pitch = 0;
-    alert.probability = calculateProbability(msg.co2_percentage);
-    alert.header = msg.header;
+    alert_.yaw = 0;
+    alert_.pitch = 0;
+    alert_.probability = Utils::weibullPdf(msg.co2_percentage, 
+        PDF_SHAPE, PDF_SCALE);
+    alert_.header = msg.header;
     publishAlert();
   }
 
@@ -59,15 +63,6 @@ namespace pandora_sensor_processing
   {
     PDF_SCALE = config.co2_optimal;
     PDF_SHAPE = config.co2_pdf_shape;
-  }
-
-  /**
-   * @details The pdf used is Weibull distribution
-   */
-  float Co2Processor::calculateProbability(float percentage)
-  {
-    float x = percentage / PDF_SCALE;
-    return (PDF_SHAPE/PDF_SCALE) * pow(x, PDF_SHAPE- 1) * exp(-pow(x, PDF_SHAPE));
   }
 
 }  // namespace pandora_sensor_processing

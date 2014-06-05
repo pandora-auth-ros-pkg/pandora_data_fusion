@@ -60,7 +60,7 @@ namespace pandora_sensor_processing
       /**
        * @brief callback to co2SensorSubscriber_
        * @param msg [pandora_arm_hardware_interface::Co2MsgConstPtr const&] contains
-       * co2 density ppm
+       * co2 percentage (v/v) in the air
        * @return void
        */
       void sensorCallback(
@@ -68,15 +68,6 @@ namespace pandora_sensor_processing
 
       void dynamicReconfigCallback(
           const SensorProcessorConfig& config, uint32_t level);
-
-    private:
-
-      /**
-       * @brief Method for calculating alert probability based on a pdf
-       * @param percentage [float] co2 percentage (v/v) in air
-       * @return float probability
-       */
-      float calculateProbability(float percentage);
 
     private:
 
