@@ -50,12 +50,25 @@ namespace pandora_sensor_processing
       readyToCluster_(false),
       oldestMeasurement_(0) {}
 
+  /**
+   * @details if dataSet_ has still room for another measurement to track,
+   * meaning that clusterer has not currently reached its maxClusterMemory_
+   * threshold, it will resize dataSet_ and append current measurement.
+   * Otherwise, it will overwrite the oldest measurement among those in 
+   * dataSet_. oldestMeasurement_, that keeps track of that, is updated.
+   */
   void Clusterer::
     renewDataSet(Eigen::MatrixXf newMeasurement)
     {
       if(newMeasurement.cols() != measurementSize_ ||
           newMeasurement.rows() != 4)
         throw std::range_error("New measurement has flawed size.");
+
+      // get current measurement time
+      currentTime_ = newMeasurement.col(0)(2);
+      currentExistsInCluster1_ = false;
+      currentExistsInCluster2_ = false;
+
       if(dataSet_.cols() != maxClusterMemory_ * measurementSize_)
       {
         dataSet_.conservativeResize(Eigen::NoChange, dataSet_.cols() + measurementSize_);
@@ -68,39 +81,90 @@ namespace pandora_sensor_processing
       dataSet_.block(0, oldestMeasurement_ * measurementSize_,
           4, measurementSize_) << newMeasurement;
       oldestMeasurement_++;
+
       readyToCluster_ = true;
     }
 
+  /**
+   * @details Basic operation of Clusterer class.
+   * Uses 2-means clustering to group dataSet_ into 2 categories. Hopefully,
+   * one of the two exactly is going to qualify into a thermal alert.
+   * Method also keeps track of data's mean in each cluster that correspond
+   * to current measurement (where 'current' is used to mark the measurement
+   * which was just added in DataSet_ through renewDataSet() method.
+   */
   bool Clusterer::
     cluster()
     {
       if(!readyToCluster_)
         throw std::logic_error("Clusterer is not ready to cluster. Needs new measurement.");
 
+      int startCurrentInCluster1 = -1, currentsInCluster1 = 0;
+      int startCurrentInCluster2 = -1, currentsInCluster2 = 0;
+
       //!< Implementation of 2-means clustering
-      bool converged = false;
       chooseInitialClusterCenters();
+
       for(int ii = 0; ii < maxIterations_; ++ii)
       {
+        startCurrentInCluster1 = -1;
+        startCurrentInCluster2 = -1;
+        currentsInCluster1 = 0;
+        currentsInCluster2 = 0;
         cluster1_.resize(4, 0);
         cluster2_.resize(4, 0);
         for(int jj = 0; jj < dataSet_.cols(); ++jj)
         {
+          //!< Choosing cluster according to datum euclidean distance from means.
           if(dataSet_.col(jj).transpose() * mean1_ < 
               dataSet_.col(jj).transpose() * mean2_)
           {
+            //!< Tracking data in cluster which correspond to current measurement.
+            if(dataSet_.col(jj)(2) == currentTime_)
+            {
+              currentsInCluster1++;
+              if(currentsInCluster1 == 1)
+                startCurrentInCluster1 = jj;
+            }
+            //!< Resizing cluster1_ by on column and appending qualified datum.
             cluster1_.conservativeResize(Eigen::NoChange, cluster1_.cols() + 1);
             cluster1_.col(cluster1_.cols() - 1) << dataSet_.col(jj);
           }
           else
           {
+            //!< Tracking data in cluster which correspond to current measurement.
+            if(dataSet_.col(jj)(2) == currentTime_)
+            {
+              currentsInCluster2++;
+              if(currentsInCluster2 == 1)
+                startCurrentInCluster2 = jj;
+            }
+            //!< Resizing cluster2_ by on column and appending qualified datum.
             cluster2_.conservativeResize(Eigen::NoChange, cluster2_.cols() + 1);
             cluster2_.col(cluster2_.cols() - 1) << dataSet_.col(jj);
           }
         }
-        converged = calculateMeans();
-        if(converged)
+        //!< Calcucate clusters' means and check for convergence.
+        //!< If converged then return success and find for each cluster
+        //!< current measurement's means. If there is no data in a cluster from
+        //!< current measurement, then this procedure is skipped.
+        if(calculateMeans())
+        {
+          readyToCluster_ = false;
+          if(currentsInCluster1 > 0)
+          {
+            currentExistsInCluster1_ = true;
+            currentMean1_ = cluster1_.block(0, startCurrentInCluster1,
+                4, currentsInCluster1).rowwise().mean();
+          }
+          if(currentsInCluster2 > 0)
+          {
+            currentExistsInCluster2_ = true;
+            currentMean2_ = cluster2_.block(0, startCurrentInCluster2,
+                4, currentsInCluster2).rowwise().mean();
+          }
           return true;
+        }
       }
 
       readyToCluster_ = false;

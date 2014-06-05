@@ -67,6 +67,8 @@ namespace pandora_sensor_processing
        * @brief Puts new measurement data to data set. Overwrites oldest's data,
        * if dataSet_ tracks already maxTracked_.
        * @param newMeasurement [Eigen::MatrixXf] must be (4, measurementSize_)
+       * @throw Throws std::range_error if measurement from the same frame has not
+       * consistent size.
        * @return void
        */
       void renewDataSet(Eigen::MatrixXf newMeasurement);
@@ -79,10 +81,44 @@ namespace pandora_sensor_processing
       bool cluster();
 
       /**
+       * @brief Getter for current measurement's mean that 
+       * belongs to cluster 1.
+       * @param mean [Eigen::Vector4f*] vector representing vector to be filled.
+       * @return bool true if there exists at least one cell from current
+       * measurement to cluster 1.
+       */
+      bool getCurrentMean1(Eigen::Vector4f* mean) const
+      {
+        if(currentExistsInCluster1_)
+        {
+          *mean = currentMean1_;
+          return true;
+        }
+        return false;
+      }
+
+      /**
+       * @brief Getter for current measurement's mean that 
+       * belongs to cluster 2.
+       * @param mean [Eigen::Vector4f*] vector representing vector to be filled.
+       * @return bool true if there exists at least one cell from current
+       * measurement to cluster 2.
+       */
+      bool getCurrentMean2(Eigen::Vector4f* mean) const
+      {
+        if(currentExistsInCluster2_)
+        {
+          *mean = currentMean2_;
+          return true;
+        }
+        return false;
+      }
+
+      /**
        * @brief Getter for mean of cluster 1.
        * @return Eigen::Vector4f mean
        */
-      Eigen::Vector4f getMean1()
+      Eigen::Vector4f getMean1() const
       {
         return mean1_;
       }
@@ -91,7 +127,7 @@ namespace pandora_sensor_processing
        * @brief Getter for mean of cluster 2.
        * @return Eigen::Vector4f mean
        */
-      Eigen::Vector4f getMean2()
+      Eigen::Vector4f getMean2() const
       {
         return mean2_;
       }
@@ -100,7 +136,7 @@ namespace pandora_sensor_processing
        * @brief Getter for covariance matrix of cluster 1.
        * @return Eigen::Matrix4f covariance
        */
-      Eigen::Matrix4f getCovariance1()
+      Eigen::Matrix4f getCovariance1() const
       {
         return covariance1_;
       }
@@ -109,7 +145,7 @@ namespace pandora_sensor_processing
        * @brief Getter for covariance matrix of cluster 2
        * @return Eigen::Matrix4f covariance
        */
-      Eigen::Matrix4f getCovariance2()
+      Eigen::Matrix4f getCovariance2() const
       {
         return covariance1_;
       }
@@ -118,7 +154,7 @@ namespace pandora_sensor_processing
        * @brief Getter for cluster 1
        * @return Eigen::MatrixXf cluster 1
        */
-      Eigen::MatrixXf getCluster1()
+      Eigen::MatrixXf getCluster1() const
       {
         return cluster1_;
       }
@@ -127,7 +163,7 @@ namespace pandora_sensor_processing
        * @brief Getter for cluster 2
        * @return Eigen::MatrixXf cluster 2
        */
-      Eigen::MatrixXf getCluster2()
+      Eigen::MatrixXf getCluster2() const
       {
         return cluster2_;
       }
@@ -159,6 +195,7 @@ namespace pandora_sensor_processing
 
     private:
 
+      float currentTime_;
       bool readyToCluster_;
       int measurementSize_;
       int maxClusterMemory_;
@@ -172,10 +209,15 @@ namespace pandora_sensor_processing
       Eigen::Matrix4f covariance2_;
       Eigen::MatrixXf cluster1_;
       Eigen::MatrixXf cluster2_; 
+
+      bool currentExistsInCluster1_;
+      Eigen::Vector4f currentMean1_;
+      bool currentExistsInCluster2_;
+      Eigen::Vector4f currentMean2_;
   };
 
   typedef boost::shared_ptr<Clusterer> ClustererPtr;
-  typedef std::vector<ClustererPtr> ClustererPtrVector;
+  typedef boost::shared_ptr<Clusterer const> ClustererConstPtr;
 
 }  // namespace pandora_sensor_processing
 
