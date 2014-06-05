@@ -51,4 +51,18 @@ namespace pandora_sensor_processing
       return sqrt(res);
     }
 
+  float Utils::
+    normalPdf(float x, float mean, float stdDev)
+    {
+      float xCenteredScaled = (x - mean) / stdDev;
+      return (1/(stdDev * sqrt(2*PI))) * exp(-0.5 * xCenteredScaled);
+    }
+  
+  float Utils::
+    weibullPdf(float x, float k, float l)
+    {
+      float xScaled = x / l;
+      return (k / l) * pow(xScaled, k - 1) * exp(-pow(xScaled, k));
+    }
+
 }  // namespace pandora_sensor_processing

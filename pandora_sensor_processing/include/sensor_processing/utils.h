@@ -48,9 +48,13 @@
 #include <cmath>
 #include <stdexcept>
 
+#include <boost/math/constants/constants.hpp>
 #include <boost/utility.hpp>
 
 #include <Eigen/Dense>
+
+//!< Macro for pi.
+#define PI boost::math::constants::pi<float>()
 
 namespace pandora_sensor_processing
 {
@@ -73,6 +77,24 @@ namespace pandora_sensor_processing
         getMahalanobisDistance(const Eigen::Vector4f& vec, 
             const Eigen::Vector4f& mean, 
             const Eigen::Matrix4f& covariance);
+
+      /**
+       * @brief normal distribution function
+       * @param x [float] the random variable
+       * @param mean [float] X's mean value (pdf's peak)
+       * @param stdDev [float] X's standard deviation
+       * @return float pdf's corresponding value
+       */
+      static float normalPdf(float x, float mean, float stdDev);
+
+      /**
+       * @brief weibull distribution function
+       * @param x [float] the random variable
+       * @param k [float] pdf's shape value
+       * @param l [float] X's scale
+       * @return float pdf's corresponding value
+       */
+      static float weibullPdf(float x, float k, float l);
   };
 
 }  // namespace pandora_sensor_processing

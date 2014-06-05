@@ -89,6 +89,7 @@ add_library(thermal_processor src/thermal_processor.cpp)
 target_link_libraries(thermal_processor
   ${catkin_LIBRARIES}
   sensor_utils
+  clusterer
   )
 add_dependencies(thermal_processor
   pandora_sensor_processing_gencfg
