@@ -88,7 +88,7 @@ namespace pandora_sensor_processing
 
     protected:
 
-      pandora_common_msgs::GeneralAlertMsg alert;
+      pandora_common_msgs::GeneralAlertMsg alert_;
       
     private:
 
@@ -154,7 +154,7 @@ namespace pandora_sensor_processing
   template <class DerivedProcessor>
     void SensorProcessor<DerivedProcessor>::publishAlert()
     {
-      alertPublisher_.publish(alert);
+      alertPublisher_.publish(alert_);
     }
 
   template <class DerivedProcessor>

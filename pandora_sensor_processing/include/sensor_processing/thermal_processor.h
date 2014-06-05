@@ -50,6 +50,11 @@ namespace pandora_sensor_processing
   {
     public:
 
+      //!< Type Definitions
+      typedef std::map<std::string, ClustererPtr> FrameToClusterer;
+
+    public:
+
       /**
        * @brief Constructor
        * @param ns [std::string const&] Has the namespace of the node.
@@ -71,16 +76,50 @@ namespace pandora_sensor_processing
 
     private:
 
-      float analyzeImage(const sensor_msgs::Image& msg);
+      /**
+       * @brief Converses msg to Eigen::MatrixXf form to fit clusterer,
+       * updates clusterer with the new data and calls it to cluster.
+       * @param msg [sensor_msgs::Image const&] new measurement
+       * @param clusterer [ClustererPtr const&] clusterer responsible for
+       * clustering measurements from the same frame as msg.
+       * @return bool true if clustering was done, false if a problem aroused.
+       */
+      bool analyzeImage(const sensor_msgs::Image& msg,
+          const ClustererPtr& clusterer);
+
+      /**
+       * @brief Extracts info if clustering contains useful information
+       * and thus can be made into an alert.
+       * @param msg [sensor_msgs::Image const&] new measurement
+       * @param clusterer [ClustererPtr const&] clusterer responsible for
+       * clustering measurements from the same frame as msg.
+       * @return bool true if a cluster progresses to an alert.
+       */
+      bool getResults(const sensor_msgs::Image& msg,
+          const ClustererConstPtr& clusterer);
 
     private:
 
-      std::map<int, int> code_;
-      ClustererPtrVector clusterers_;
+      FrameToClusterer frameToClusterer_;
 
       //!< params
+
+      //!< how many measurements clusterer will track to cluster.
       int MAX_CLUSTER_MEMORY;
+      //!< iteration limit of clustering algorithm.
       int MAX_CLUSTER_ITERATIONS;
+      //!< how many degrees warmer should be the candidate cluster (alert)
+      //!< from the other (environment) to be valid.
+      float OPTIMAL_HEAT_DIFFERENCE;
+      //!< actual thermal source's temperature. Peak of discrete gaussian
+      //!< probability metric.
+      float OPTIMAL_TEMPERATURE;
+      //!< chosen standard deviation of gaussian metric.
+      float THERMAL_STD_DEV;
+      //!< Horizontal field of view of thermal camera (in radians).
+      float THERMAL_X_FOV;
+      //!< Vertical field of view of thermal camera (in radians).
+      float THERMAL_Y_FOV;
   };
 
 }  // namespace pandora_sensor_processing

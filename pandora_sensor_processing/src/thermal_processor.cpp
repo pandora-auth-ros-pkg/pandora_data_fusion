@@ -41,28 +41,112 @@
 namespace pandora_sensor_processing
 {
 
-  ThermalProcessor::ThermalProcessor(const std::string& ns)
+  ThermalProcessor::
+    ThermalProcessor(const std::string& ns)
     : SensorProcessor<ThermalProcessor>(ns, "thermal", false) {}
 
-  void ThermalProcessor::sensorCallback(const sensor_msgs::Image& msg)
+  /**
+   * @details thermal processor keeps track of frame_ids, and as a consequence
+   * of the existing thermal cameras, by registering a new clusterer for each
+   * new-comer frame-id (through raw data message). Keeping distinct clusterers
+   * is a necessity because each clusterer keeps history of data from a thermal,
+   * so that data is as continuous as possible.
+   */
+  void ThermalProcessor::
+    sensorCallback(const sensor_msgs::Image& msg)
   {
-
+    if(frameToClusterer_.find(msg.header.frame_id) == 
+        frameToClusterer_.end())
+    {
+      frameToClusterer_[msg.header.frame_id] = ClustererPtr( 
+          new Clusterer(msg.height * msg.width, 
+            MAX_CLUSTER_MEMORY, MAX_CLUSTER_ITERATIONS) );
+    }
+      FrameToClusterer::const_iterator 
+        it = frameToClusterer_.find(msg.header.frame_id);
+      if(!analyzeImage(msg, (*it).second))
+        return;
+      if(!getResults(msg, (*it).second))
+        return;
+      publishAlert();
   }
 
-  void ThermalProcessor::dynamicReconfigCallback(
+  void ThermalProcessor::
+    dynamicReconfigCallback(
       const SensorProcessorConfig& config, uint32_t level)
   {
     MAX_CLUSTER_MEMORY = config.thermal_max_cluster_memory;
     MAX_CLUSTER_ITERATIONS = config.thermal_max_cluster_iterations;
+    OPTIMAL_HEAT_DIFFERENCE = config.optimal_heat_difference;
+    OPTIMAL_TEMPERATURE = config.optimal_temperature;
+    THERMAL_STD_DEV = config.thermal_std_dev;
+    THERMAL_X_FOV = config.thermal_x_fov_degrees * PI / 180;
+    THERMAL_Y_FOV = config.thermal_y_fov_degrees * PI / 180;
   }
 
   /**
-   * @details
+   * @details It returns false if measurement is not of consistent size.
+   * This is spotted by an exception that is raised by renewDataSet.
    */
-  float ThermalProcessor::analyzeImage(const sensor_msgs::Image& msg)
+  bool ThermalProcessor::
+    analyzeImage(const sensor_msgs::Image& msg,
+      const ClustererPtr& clusterer)
   {
+    Eigen::MatrixXf measurement(4, msg.height * msg.width);
+    for(int ii = 0; ii < msg.height; ++ii)
+    {
+      for(int jj = 0; jj < msg.width; ++jj)
+      {
+        measurement(0, ii * msg.width + jj) = jj;
+        measurement(1, ii * msg.width + jj) = ii;
+        measurement(2, ii * msg.width + jj) = msg.header.stamp.toSec();
+        measurement(3, ii * msg.width + jj) = msg.data[ii * msg.width + jj];
+      }
+    }
+    try
+    {
+      clusterer->renewDataSet(measurement);
+      clusterer->cluster();
+    }
+    catch(std::exception err)
+    {
+      ROS_DEBUG_NAMED("THERMAL_PROCESSOR", 
+          "[THERMAL_PROCESSOR_ANALYZE_IMAGE] %s", err.what());
+      return false;
+    }
+    return true;
   }
 
+  bool ThermalProcessor::
+    getResults(const sensor_msgs::Image& msg,
+        const ClustererConstPtr& clusterer)
+    {
+      Eigen::Vector4f center;
+      float diff = clusterer->getMean1()(3) - clusterer->getMean2()(3);
 
+      if(diff > OPTIMAL_HEAT_DIFFERENCE)
+      {
+        if(!clusterer->getCurrentMean1(&center))
+          return false;
+      }
+      else if(diff < -OPTIMAL_HEAT_DIFFERENCE)
+      {
+        if(!clusterer->getCurrentMean2(&center))
+          return false;
+      }
+      else
+        return false;
+
+      // OK. Warmer cluster has a cell from current measurement.
+      // Considering cluster to be a valid alert!
+      alert_.probability = Utils::normalPdf(center(3), 
+          OPTIMAL_TEMPERATURE, THERMAL_STD_DEV);
+      float x = center(0) - static_cast<float>(msg.width) / 2;
+      float y = static_cast<float>(msg.height) / 2 - center(1);
+      alert_.yaw = atan(2 * x / msg.width * tan(THERMAL_X_FOV / 2));
+      alert_.pitch = atan(2 * y / msg.height * tan(THERMAL_Y_FOV / 2));
+      alert_.header = msg.header;
+      return true;
+    }
 
 }  // namespace pandora_sensor_processing
