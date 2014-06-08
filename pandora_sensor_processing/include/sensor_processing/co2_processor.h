@@ -40,6 +40,7 @@
 #define SENSOR_PROCESSING_CO2_PROCESSOR_H
 
 #include "pandora_arm_hardware_interface/Co2Msg.h"
+#include "sensor_processing/utils.h"
 #include "sensor_processing/sensor_processor.h"
 
 namespace pandora_sensor_processing

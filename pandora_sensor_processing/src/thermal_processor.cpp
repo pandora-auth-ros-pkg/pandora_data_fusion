@@ -42,8 +42,17 @@ namespace pandora_sensor_processing
 {
 
   ThermalProcessor::
-    ThermalProcessor(const std::string& ns)
-    : SensorProcessor<ThermalProcessor>(ns, "thermal", false) {}
+    ThermalProcessor(const std::string& ns) : 
+      SensorProcessor<ThermalProcessor>(ns, "thermal", false)
+  {
+    MAX_CLUSTER_MEMORY = 3;
+    MAX_CLUSTER_ITERATIONS = 100;
+    OPTIMAL_HEAT_DIFFERENCE = 5;
+    OPTIMAL_TEMPERATURE = 35;
+    THERMAL_STD_DEV = 2;
+    THERMAL_X_FOV = 45 * PI / 180;
+    THERMAL_Y_FOV = 60 * PI / 180;
+  }
 
   /**
    * @details thermal processor keeps track of frame_ids, and as a consequence

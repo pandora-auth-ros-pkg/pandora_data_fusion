@@ -43,44 +43,41 @@ namespace pandora_sensor_processing
 
   Clusterer::
     Clusterer(int measurementSize, 
-        int maxClusterMemory, unsigned int maxIterations) :
+        int maxClusterMemory, int maxIterations) :
       measurementSize_(measurementSize),
       maxClusterMemory_(maxClusterMemory),
       maxIterations_(maxIterations),
       readyToCluster_(false),
-      oldestMeasurement_(0) {}
+      measurementsCounter_(0) {}
 
   /**
    * @details if dataSet_ has still room for another measurement to track,
    * meaning that clusterer has not currently reached its maxClusterMemory_
    * threshold, it will resize dataSet_ and append current measurement.
    * Otherwise, it will overwrite the oldest measurement among those in 
-   * dataSet_. oldestMeasurement_, that keeps track of that, is updated.
+   * dataSet_. measurementsCounter_, that keeps track of that, is updated.
    */
   void Clusterer::
     renewDataSet(Eigen::MatrixXf newMeasurement)
     {
       if(newMeasurement.cols() != measurementSize_ ||
           newMeasurement.rows() != 4)
-        throw std::range_error("New measurement has flawed size.");
+        throw std::range_error("New measurement has not right dimensions.");
 
       // get current measurement time
       currentTime_ = newMeasurement.col(0)(2);
       currentExistsInCluster1_ = false;
       currentExistsInCluster2_ = false;
 
-      if(dataSet_.cols() != maxClusterMemory_ * measurementSize_)
+      measurementsCounter_++;
+      if(measurementsCounter_ <= maxClusterMemory_)
       {
-        dataSet_.conservativeResize(Eigen::NoChange, dataSet_.cols() + measurementSize_);
+        dataSet_.conservativeResize(4, 
+            measurementSize_ * measurementsCounter_);
       }
-      else
-      {
-        if(oldestMeasurement_ == 3)
-          oldestMeasurement_ = 0;
-      }
-      dataSet_.block(0, oldestMeasurement_ * measurementSize_,
+      dataSet_.block(
+          0, measurementSize_ * ((measurementsCounter_ - 1) % maxClusterMemory_),
           4, measurementSize_) << newMeasurement;
-      oldestMeasurement_++;
 
       readyToCluster_ = true;
     }
@@ -101,12 +98,23 @@ namespace pandora_sensor_processing
 
       int startCurrentInCluster1 = -1, currentsInCluster1 = 0;
       int startCurrentInCluster2 = -1, currentsInCluster2 = 0;
+      bool finished = false;
 
       //!< Implementation of 2-means clustering
-      chooseInitialClusterCenters();
-
+      chooseInitialClusters();
+      //std::cout << maxIterations_ << std::endl;
       for(int ii = 0; ii < maxIterations_; ++ii)
       {
+        //std::cout << ii << " clusters:" << std::endl;
+        //std::cout << cluster1_ << std::endl;
+        //std::cout << cluster2_ << std::endl;
+        //std::cout << ii << " means:" << std::endl;
+        //std::cout << mean1_ << std::endl;
+        //std::cout << mean2_ << std::endl;
+        //std::cout << ii << " covariances:" << std::endl;
+        //std::cout << covariance1_ << std::endl;
+        //std::cout << covariance2_ << std::endl;
+
         startCurrentInCluster1 = -1;
         startCurrentInCluster2 = -1;
         currentsInCluster1 = 0;
@@ -115,16 +123,23 @@ namespace pandora_sensor_processing
         cluster2_.resize(4, 0);
         for(int jj = 0; jj < dataSet_.cols(); ++jj)
         {
+          float dist1, dist2;
           //!< Choosing cluster according to datum euclidean distance from means.
-          if(dataSet_.col(jj).transpose() * mean1_ < 
-              dataSet_.col(jj).transpose() * mean2_)
+          //std::cout << jj << " datum:\n";
+          //std::cout << dataSet_.col(jj) << std::endl;
+          //dist1 = Utils::getMahalanobisDistance(dataSet_.col(jj), mean1_, covariance1_);
+          //dist2 = Utils::getMahalanobisDistance(dataSet_.col(jj), mean2_, covariance2_);
+          dist1 = (dataSet_.col(jj) - mean1_).norm();
+          dist2 = (dataSet_.col(jj) - mean2_).norm();
+          //std::cout << dist1 << " " << dist2 << std::endl;
+          if(dist1 < dist2)
           {
             //!< Tracking data in cluster which correspond to current measurement.
             if(dataSet_.col(jj)(2) == currentTime_)
             {
               currentsInCluster1++;
               if(currentsInCluster1 == 1)
-                startCurrentInCluster1 = jj;
+                startCurrentInCluster1 = cluster1_.cols();
             }
             //!< Resizing cluster1_ by on column and appending qualified datum.
             cluster1_.conservativeResize(Eigen::NoChange, cluster1_.cols() + 1);
@@ -137,38 +152,43 @@ namespace pandora_sensor_processing
             {
               currentsInCluster2++;
               if(currentsInCluster2 == 1)
-                startCurrentInCluster2 = jj;
+                startCurrentInCluster2 = cluster2_.cols();
             }
             //!< Resizing cluster2_ by on column and appending qualified datum.
             cluster2_.conservativeResize(Eigen::NoChange, cluster2_.cols() + 1);
             cluster2_.col(cluster2_.cols() - 1) << dataSet_.col(jj);
           }
         }
-        //!< Calcucate clusters' means and check for convergence.
+        //!< Calculate clusters' means and covariances and check for convergence.
         //!< If converged then return success and find for each cluster
         //!< current measurement's means. If there is no data in a cluster from
         //!< current measurement, then this procedure is skipped.
         if(calculateMeans())
         {
-          readyToCluster_ = false;
-          if(currentsInCluster1 > 0)
-          {
-            currentExistsInCluster1_ = true;
-            currentMean1_ = cluster1_.block(0, startCurrentInCluster1,
-                4, currentsInCluster1).rowwise().mean();
-          }
-          if(currentsInCluster2 > 0)
-          {
-            currentExistsInCluster2_ = true;
-            currentMean2_ = cluster2_.block(0, startCurrentInCluster2,
-                4, currentsInCluster2).rowwise().mean();
-          }
-          return true;
+          finished = true;
         }
+        calculateCovariances();
+        if(finished)
+          break;
       }
 
+      //std::cout << "Final clusters:" << std::endl;
+      //std::cout << cluster1_ << std::endl;
+      //std::cout << cluster2_ << std::endl;
       readyToCluster_ = false;
-      return false;
+      if(currentsInCluster1 > 0)
+      {
+        currentExistsInCluster1_ = true;
+        currentMean1_ = cluster1_.block(0, startCurrentInCluster1,
+            4, currentsInCluster1).rowwise().mean();
+      }
+      if(currentsInCluster2 > 0)
+      {
+        currentExistsInCluster2_ = true;
+        currentMean2_ = cluster2_.block(0, startCurrentInCluster2,
+            4, currentsInCluster2).rowwise().mean();
+      }
+      return finished;
     }
 
   void Clusterer::
@@ -179,11 +199,11 @@ namespace pandora_sensor_processing
 
       ps = cluster1_.cols();
       cluster_centered = cluster1_.colwise() - mean1_;
-      covariance1_ = cluster_centered.transpose() * cluster_centered / (ps - 1);
+      covariance1_ = (cluster_centered * cluster_centered.transpose()) / (ps - 1);
 
       ps = cluster2_.cols();
       cluster_centered = cluster2_.colwise() - mean2_;
-      covariance2_ = cluster_centered.transpose() * cluster_centered / (ps - 1);
+      covariance2_ = (cluster_centered * cluster_centered.transpose()) / (ps - 1);
     }
 
   /**
@@ -193,8 +213,11 @@ namespace pandora_sensor_processing
   bool Clusterer::
     calculateMeans()
     {
-      Eigen::Vector4f temp1 = cluster1_.rowwise().mean();
-      Eigen::Vector4f temp2 = cluster2_.rowwise().mean();
+      Eigen::Vector4f temp1, temp2;
+      if(cluster1_.cols() != 0)
+        temp1 = cluster1_.rowwise().mean();
+      if(cluster2_.cols() != 0)
+        temp2 = cluster2_.rowwise().mean();
 
       bool converged = (temp1 - mean1_).norm() < 0.01 && (temp2 - mean2_).norm() < 0.01;
 
@@ -205,17 +228,40 @@ namespace pandora_sensor_processing
     }
 
   /**
-   * @details Third row correspond to temperature. Picks as initial centroids
-   * of clusters these data which have the lowest and the highest temperature.
+   * @details Third row corresponds to temperature. Choose initial clusters
+   * to be those which contain data that have temperature closest to the highest
+   * and the lowest temperature respectively in data set. Find initial centroids
+   * from these clusters.
    */
   void Clusterer::
-    chooseInitialClusterCenters()
+    chooseInitialClusters()
     {
       int minCol = 0, maxCol = 0;
-      dataSet_.row(3).minCoeff(&minCol);
-      dataSet_.row(3).maxCoeff(&maxCol);
-      mean1_ = dataSet_.col(minCol);
-      mean2_ = dataSet_.col(maxCol);
+      float highest = dataSet_.row(3).maxCoeff(&maxCol);
+      float lowest = dataSet_.row(3).minCoeff(&minCol);
+
+      cluster1_.resize(4, 0);
+      cluster2_.resize(4, 0);
+      for(int jj = 0; jj < dataSet_.cols(); ++jj)
+      {
+        //!< Choosing cluster according to datum euclidean distance from means.
+        if(abs(dataSet_(3, jj) - highest) < 
+            abs(dataSet_(3, jj) - lowest))
+        {
+          //!< Resizing cluster1_ by on column and appending qualified datum.
+          cluster1_.conservativeResize(Eigen::NoChange, cluster1_.cols() + 1);
+          cluster1_.col(cluster1_.cols() - 1) << dataSet_.col(jj);
+        }
+        else
+        {
+          //!< Resizing cluster2_ by on column and appending qualified datum.
+          cluster2_.conservativeResize(Eigen::NoChange, cluster2_.cols() + 1);
+          cluster2_.col(cluster2_.cols() - 1) << dataSet_.col(jj);
+        }
+      }
+
+      calculateMeans();
+      calculateCovariances();
     }
 
 }  // namespace pandora_sensor_processing

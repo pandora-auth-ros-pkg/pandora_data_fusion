@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     }
   }
   Co2Processor co2Processor("/sensor_processing/co2_processor");
-  ROS_INFO_NAMED("SENSOR_PROCESSING", "Beginning Co2 Processor node");
+  ROS_INFO("[SENSOR_PROCESSING] Beginning Co2 Processor node");
   ros::spin();
   return 0;
 }

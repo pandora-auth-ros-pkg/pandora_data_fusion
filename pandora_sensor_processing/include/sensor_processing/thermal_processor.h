@@ -120,6 +120,10 @@ namespace pandora_sensor_processing
       float THERMAL_X_FOV;
       //!< Vertical field of view of thermal camera (in radians).
       float THERMAL_Y_FOV;
+
+    private:
+
+      friend class ThermalProcessorTest;
   };
 
 }  // namespace pandora_sensor_processing

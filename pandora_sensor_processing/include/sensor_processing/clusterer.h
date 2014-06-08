@@ -61,7 +61,7 @@ namespace pandora_sensor_processing
        * @param maxIterations [int] maximum times that clustering will iterate
        */
       Clusterer(int measurementSize,
-          int maxClusterMemory = 3, unsigned int maxIterations = 100);
+          int maxClusterMemory = 3, int maxIterations = 100);
 
       /**
        * @brief Puts new measurement data to data set. Overwrites oldest's data,
@@ -79,6 +79,15 @@ namespace pandora_sensor_processing
        * limit.
        */
       bool cluster();
+
+      /**
+       * @brief Getter for how many measurements has this clusterer clustered.
+       * @return unsigned int measurementsCounter_
+       */
+      unsigned int getMeasurementsCounter() const
+      {
+        return measurementsCounter_;
+      }
 
       /**
        * @brief Getter for current measurement's mean that 
@@ -147,7 +156,7 @@ namespace pandora_sensor_processing
        */
       Eigen::Matrix4f getCovariance2() const
       {
-        return covariance1_;
+        return covariance2_;
       }
 
       /**
@@ -187,11 +196,11 @@ namespace pandora_sensor_processing
 
       /**
        * @brief Chooses from dataSet_ two data that will be the initial
-       * cluster centers from which 2-means clustering will begin.
+       * clusters from which 2-means clustering will begin.
        * @return void
        */
       void
-        chooseInitialClusterCenters();
+        chooseInitialClusters();
 
     private:
 
@@ -199,8 +208,8 @@ namespace pandora_sensor_processing
       bool readyToCluster_;
       int measurementSize_;
       int maxClusterMemory_;
-      int oldestMeasurement_;
-      unsigned int maxIterations_;
+      unsigned int measurementsCounter_;
+      int maxIterations_;
       Eigen::MatrixXf dataSet_;
 
       Eigen::Vector4f mean1_;
@@ -214,6 +223,10 @@ namespace pandora_sensor_processing
       Eigen::Vector4f currentMean1_;
       bool currentExistsInCluster2_;
       Eigen::Vector4f currentMean2_;
+    
+    private:
+
+      friend class ClustererTest;
   };
 
   typedef boost::shared_ptr<Clusterer> ClustererPtr;

@@ -41,6 +41,9 @@
 namespace pandora_sensor_processing
 {
 
+  /**
+   * @details something like Kalaripayattu...
+   */
   float Utils::
     getMahalanobisDistance(const Eigen::Vector4f& vec, 
         const Eigen::Vector4f& mean, 
@@ -55,7 +58,7 @@ namespace pandora_sensor_processing
     normalPdf(float x, float mean, float stdDev)
     {
       float xCenteredScaled = (x - mean) / stdDev;
-      return (1/(stdDev * sqrt(2*PI))) * exp(-0.5 * xCenteredScaled);
+      return (1/(stdDev * sqrt(2*PI))) * exp(-0.5 * pow(xCenteredScaled, 2));
     }
   
   float Utils::

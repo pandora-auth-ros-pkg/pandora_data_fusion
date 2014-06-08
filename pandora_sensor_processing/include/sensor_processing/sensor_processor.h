@@ -39,24 +39,29 @@
 #ifndef SENSOR_PROCESSING_SENSOR_PROCESSOR_H
 #define SENSOR_PROCESSING_SENSOR_PROCESSOR_H
 
-#include <string>
+#ifndef BOOST_NO_DEFAULTED_FUNCTIONS
+#define BOOST_NO_DEFAULTED_FUNCTIONS
+#endif
+
 #include <boost/algorithm/string.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>
 #include "state_manager/state_client.h"
 
 #include <dynamic_reconfigure/server.h>
 
-#include "sensor_processing/utils.h"
 #include "pandora_common_msgs/GeneralAlertMsg.h"
 #include "pandora_sensor_processing/SensorProcessorConfig.h"
 
 namespace pandora_sensor_processing
 {
 
+  /**
+   * @brief Abstraction layer that is responsible for communication over ROS
+   * with other nodes and processor organization through StateClient.
+   */
   template <class DerivedProcessor>
-  class SensorProcessor : public StateClient, private boost::noncopyable
+    class SensorProcessor : public StateClient, private boost::noncopyable
   {
     public:
 
@@ -64,15 +69,24 @@ namespace pandora_sensor_processing
        * @brief Constructor
        * @param ns [std::string const&] Has the namespace of the node.
        * @param sensorType [std::string const&] Name of sensor
-       * @param open [bool] if subscribe topic is to be opened
        * @param toggle [bool] if subscribe topic is to be toggled
+       * @param open [bool] if subscribe topic is to be opened by construction
        */
-      explicit SensorProcessor(const std::string& ns, 
+      SensorProcessor(const std::string& ns, 
           const std::string& sensorType, bool toggle = true, bool open = true);
 
       void startTransition(int newState);
 
       void completeTransition() {}
+
+      /**
+       * @brief getter for general alert message alert_
+       * @return pandora_common_msgs::GeneralAlertMsg alert_
+       */
+      pandora_common_msgs::GeneralAlertMsg getAlert() const
+      {
+        return alert_;
+      }
 
     protected:
 
@@ -89,23 +103,23 @@ namespace pandora_sensor_processing
     protected:
 
       pandora_common_msgs::GeneralAlertMsg alert_;
-      
-    private:
 
-      std::string sensorType_;
       std::string name_;
-      
-      bool toggle_;
-      bool open_;
+
+    private:
 
       ros::NodeHandle nh_;
 
-      ros::Subscriber sensorSubscriber_;
-      std::string subscriberTopic_;
-      bool opened_;
+      std::string sensorType_;
 
       ros::Publisher alertPublisher_;
       std::string publisherTopic_;
+
+      ros::Subscriber sensorSubscriber_;
+      std::string subscriberTopic_;
+      bool toggle_;
+      bool open_;
+      bool opened_;
 
       dynamic_reconfigure::Server< SensorProcessorConfig >
         dynReconfServer_;
@@ -116,37 +130,38 @@ namespace pandora_sensor_processing
         const std::string& sensorType, bool toggle, bool open)
     : nh_(ns), sensorType_(sensorType), open_(open), toggle_(toggle), opened_(false)
     {
-      name_ = "SENSOR_PROCESSING_" + boost::to_upper_copy(sensorType_) + "_PROCESSOR";
+      name_ = boost::to_upper_copy(ros::this_node::getName());
+
+      if(!nh_.getParam("subscribed_topic_names/" + sensorType_ + "_raw", subscriberTopic_))
+      {
+        ROS_FATAL("[%s] %s_raw topic name param not found.", 
+            name_.c_str(), sensorType_.c_str());
+        ROS_BREAK();
+      }
 
       if(open_)
       {
-        if(nh_.getParam("subscribed_topic_names/" + sensorType_ + "_raw", subscriberTopic_))
-        {
-          sensorSubscriber_ = nh_.subscribe(subscriberTopic_, 1, 
-              &DerivedProcessor::sensorCallback, dynamic_cast<DerivedProcessor*>(this));
-          opened_ = true;
-        }
-        else
-        {
-          ROS_FATAL("[%s] %s_raw topic name param not found.", name_.c_str(), sensorType_.c_str());
-          ROS_BREAK();
-        }
+        sensorSubscriber_ = nh_.subscribe(subscriberTopic_, 1, 
+            &DerivedProcessor::sensorCallback, static_cast<DerivedProcessor*>(this));
+        opened_ = true;
       }
 
-      if(nh_.getParam("published_topic_names/"+sensorType_+"_alert", publisherTopic_))
+      if(nh_.getParam("published_topic_names/" + sensorType_ + "_alert", publisherTopic_))
       {
         alertPublisher_ = nh_.advertise<pandora_common_msgs::GeneralAlertMsg>
           (publisherTopic_, 5);
       }
       else
       {
-        ROS_FATAL("[%s] %s_alert topic name param not found.", name_.c_str(), sensorType_.c_str());
+        ROS_FATAL("[%s] %s_alert topic name param not found.", 
+            name_.c_str(), sensorType_.c_str());
         ROS_BREAK();
       }
 
-      dynReconfServer_.setCallback(boost::bind(
+      dynReconfServer_.setCallback(
+          boost::bind(
             &DerivedProcessor::dynamicReconfigCallback, 
-            dynamic_cast<DerivedProcessor*>(this), _1, _2));
+            static_cast<DerivedProcessor*>(this), _1, _2));
 
       clientInitialize();
     }
@@ -154,6 +169,7 @@ namespace pandora_sensor_processing
   template <class DerivedProcessor>
     void SensorProcessor<DerivedProcessor>::publishAlert()
     {
+      ROS_INFO_NAMED("SENSOR_PROCESSING", "[%s] Publishing alert.", name_.c_str());
       alertPublisher_.publish(alert_);
     }
 
@@ -163,41 +179,41 @@ namespace pandora_sensor_processing
       switch(newState)
       {
         case state_manager_communications::robotModeMsg::MODE_EXPLORATION:
-          ROS_INFO_NAMED(name_.c_str(), "Entering exploration mode.");
+          ROS_INFO("[%s] Entering Exploration mode.", name_.c_str());
           open_ = false;
           break;
         case state_manager_communications::robotModeMsg::MODE_IDENTIFICATION:
-          ROS_INFO_NAMED(name_.c_str(), "Entering identification mode.");
+          ROS_INFO("[%s] Entering Identification mode.", name_.c_str());
           open_ = true;
           break;
         case state_manager_communications::robotModeMsg::MODE_TERMINATING:
-          ROS_ERROR_NAMED(name_.c_str(), "Terminating node.");
+          ROS_ERROR("[%s] Terminating node.", name_.c_str());
           exit(0);
           break;
         case state_manager_communications::robotModeMsg::MODE_OFF:
-          ROS_INFO_NAMED(name_.c_str(), "Node is off.");
+          ROS_INFO("[%s] Node is off.", name_.c_str());
           break;
         default:
           break;
       }
 
-      toggleSubscriber();
+      if(toggle_)
+        toggleSubscriber();
     }
 
   template <class DerivedProcessor>
     void SensorProcessor<DerivedProcessor>::toggleSubscriber()
     {
-      if(toggle_)
+      if(open_ && !opened_)
       {
-        if(open_ && !opened_)
-        {
-          sensorSubscriber_ = nh_.subscribe(subscriberTopic_, 1, 
-              &DerivedProcessor::sensorCallback, dynamic_cast<DerivedProcessor*>(this));
-        }
-        else if(!open_ && opened_)
-        {
-          sensorSubscriber_.shutdown();
-        }
+        sensorSubscriber_ = nh_.subscribe(subscriberTopic_, 1, 
+            &DerivedProcessor::sensorCallback, static_cast<DerivedProcessor*>(this));
+        opened_ = true;
+      }
+      else if(!open_ && opened_)
+      {
+        sensorSubscriber_.shutdown();
+        opened_ = false;
       }
     }
 
