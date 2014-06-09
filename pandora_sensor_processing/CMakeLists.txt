@@ -108,11 +108,14 @@ target_link_libraries(thermal_node
 
 ########################  roslint  ##################################
 
+set(ROSLINT_CPP_OPTS 
+    "--filter=-whitespace/end_of_line")
 FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS 
      RELATIVE ${PROJECT_SOURCE_DIR} 
             include/sensor_processing/*.h
             src/*.cpp
             test/unit/*.cpp
+            test/functional/*.cpp
             )
 roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 

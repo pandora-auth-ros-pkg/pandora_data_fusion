@@ -39,6 +39,8 @@
 #ifndef SENSOR_PROCESSING_CO2_PROCESSOR_H
 #define SENSOR_PROCESSING_CO2_PROCESSOR_H
 
+#include <string>
+
 #include "pandora_arm_hardware_interface/Co2Msg.h"
 #include "sensor_processing/utils.h"
 #include "sensor_processing/sensor_processor.h"
@@ -49,7 +51,6 @@ namespace pandora_sensor_processing
   class Co2Processor : public SensorProcessor<Co2Processor>
   {
     public:
-
       /**
        * @brief Constructor
        * @param ns [std::string const&] Has the namespace of the node.
@@ -65,13 +66,12 @@ namespace pandora_sensor_processing
        * @return void
        */
       void sensorCallback(
-          const pandora_arm_hardware_interface::Co2Msg& msg); 
+          const pandora_arm_hardware_interface::Co2Msg& msg);
 
       void dynamicReconfigCallback(
           const SensorProcessorConfig& config, uint32_t level);
 
     private:
-
       //!< params
       float PDF_SCALE;
       float PDF_SHAPE;

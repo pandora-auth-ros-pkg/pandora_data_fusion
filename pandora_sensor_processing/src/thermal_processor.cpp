@@ -36,6 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <string>
+
 #include "sensor_processing/thermal_processor.h"
 
 namespace pandora_sensor_processing
@@ -64,20 +66,20 @@ namespace pandora_sensor_processing
   void ThermalProcessor::
     sensorCallback(const sensor_msgs::Image& msg)
   {
-    ROS_INFO_NAMED("SENSOR_PROCESSING", 
+    ROS_INFO_NAMED("SENSOR_PROCESSING",
         "[%s] Incoming thermal raw measurement.", name_.c_str());
-    if(frameToClusterer_.find(msg.header.frame_id) == 
+    if (frameToClusterer_.find(msg.header.frame_id) ==
         frameToClusterer_.end())
     {
-      frameToClusterer_[msg.header.frame_id] = ClustererPtr( 
+      frameToClusterer_[msg.header.frame_id] = ClustererPtr(
           new Clusterer(msg.height * msg.width, 
             MAX_CLUSTER_MEMORY, MAX_CLUSTER_ITERATIONS) );
     }
       FrameToClusterer::const_iterator 
         it = frameToClusterer_.find(msg.header.frame_id);
-      if(analyzeImage(msg, (*it).second))
+      if (analyzeImage(msg, (*it).second))
       {
-        if(getResults(msg, (*it).second))
+        if (getResults(msg, (*it).second))
         {
           publishAlert();
         }
@@ -106,9 +108,9 @@ namespace pandora_sensor_processing
       const ClustererPtr& clusterer)
   {
     Eigen::MatrixXf measurement(4, msg.height * msg.width);
-    for(int ii = 0; ii < msg.height; ++ii)
+    for (int ii = 0; ii < msg.height; ++ii)
     {
-      for(int jj = 0; jj < msg.width; ++jj)
+      for (int jj = 0; jj < msg.width; ++jj)
       {
         measurement(0, ii * msg.width + jj) = jj;
         measurement(1, ii * msg.width + jj) = ii;
@@ -121,7 +123,7 @@ namespace pandora_sensor_processing
       clusterer->renewDataSet(measurement);
       clusterer->cluster();
     }
-    catch(std::exception& err)
+    catch (std::exception& err)
     {
       ROS_DEBUG_NAMED("SENSOR_PROCESSING", 
           "[%s/ANALYZE_IMAGE] %s", name_.c_str(), err.what());
@@ -139,14 +141,14 @@ namespace pandora_sensor_processing
       float mean2 = clusterer->getMean2()(3);
       float diff = mean1 - mean2;
 
-      if(diff > OPTIMAL_HEAT_DIFFERENCE)
+      if (diff > OPTIMAL_HEAT_DIFFERENCE)
       {
-        if(!clusterer->getCurrentMean1(&center))
+        if (!clusterer->getCurrentMean1(&center))
           return false;
       }
-      else if(diff < -OPTIMAL_HEAT_DIFFERENCE)
+      else if (diff < -OPTIMAL_HEAT_DIFFERENCE)
       {
-        if(!clusterer->getCurrentMean2(&center))
+        if (!clusterer->getCurrentMean2(&center))
           return false;
       }
       else

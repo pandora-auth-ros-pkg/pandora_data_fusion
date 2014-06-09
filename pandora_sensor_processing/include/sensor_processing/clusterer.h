@@ -50,10 +50,9 @@ namespace pandora_sensor_processing
    * @brief Class containing various utility functions
    * and mathematical manipulations.
    */
-  class Clusterer : private boost::noncopyable 
+  class Clusterer : private boost::noncopyable
   {
     public:
-
       /**
        * @brief Constructor
        * @param measurementSize [int] raw input's number of cells
@@ -98,7 +97,7 @@ namespace pandora_sensor_processing
        */
       bool getCurrentMean1(Eigen::Vector4f* mean) const
       {
-        if(currentExistsInCluster1_)
+        if (currentExistsInCluster1_)
         {
           *mean = currentMean1_;
           return true;
@@ -115,7 +114,7 @@ namespace pandora_sensor_processing
        */
       bool getCurrentMean2(Eigen::Vector4f* mean) const
       {
-        if(currentExistsInCluster2_)
+        if (currentExistsInCluster2_)
         {
           *mean = currentMean2_;
           return true;
@@ -188,7 +187,6 @@ namespace pandora_sensor_processing
       }
       
     private:
-
       void
         calculateCovariances();
       bool
@@ -203,7 +201,6 @@ namespace pandora_sensor_processing
         chooseInitialClusters();
 
     private:
-
       float currentTime_;
       bool readyToCluster_;
       int measurementSize_;
@@ -225,7 +222,6 @@ namespace pandora_sensor_processing
       Eigen::Vector4f currentMean2_;
     
     private:
-
       friend class ClustererTest;
   };
 

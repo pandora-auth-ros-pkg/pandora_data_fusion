@@ -43,6 +43,7 @@
 #define BOOST_NO_DEFAULTED_FUNCTIONS
 #endif
 
+#include <string>
 #include <boost/algorithm/string.hpp>
 
 #include <ros/ros.h>
@@ -61,69 +62,65 @@ namespace pandora_sensor_processing
    * with other nodes and processor organization through StateClient.
    */
   template <class DerivedProcessor>
-    class SensorProcessor : public StateClient, private boost::noncopyable
-  {
-    public:
+    class SensorProcessor 
+    : public StateClient, private boost::noncopyable
+    {
+      public:
+        /**
+         * @brief Constructor
+         * @param ns [std::string const&] Has the namespace of the node.
+         * @param sensorType [std::string const&] Name of sensor
+         * @param toggle [bool] if subscribe topic is to be toggled
+         * @param open [bool] if subscribe topic is to be opened by construction
+         */
+        SensorProcessor(const std::string& ns,
+            const std::string& sensorType, bool toggle = true, bool open = true);
 
-      /**
-       * @brief Constructor
-       * @param ns [std::string const&] Has the namespace of the node.
-       * @param sensorType [std::string const&] Name of sensor
-       * @param toggle [bool] if subscribe topic is to be toggled
-       * @param open [bool] if subscribe topic is to be opened by construction
-       */
-      SensorProcessor(const std::string& ns, 
-          const std::string& sensorType, bool toggle = true, bool open = true);
+        void startTransition(int newState);
 
-      void startTransition(int newState);
+        void completeTransition() {}
 
-      void completeTransition() {}
+        /**
+         * @brief getter for general alert message alert_
+         * @return pandora_common_msgs::GeneralAlertMsg alert_
+         */
+        pandora_common_msgs::GeneralAlertMsg getAlert() const
+        {
+          return alert_;
+        }
 
-      /**
-       * @brief getter for general alert message alert_
-       * @return pandora_common_msgs::GeneralAlertMsg alert_
-       */
-      pandora_common_msgs::GeneralAlertMsg getAlert() const
-      {
-        return alert_;
-      }
+      protected:
+        /**
+         * @brief Delegates to alertPublisher_.
+         * @return void
+         */
+        void publishAlert();
 
-    protected:
+      private:
+        void toggleSubscriber();
 
-      /**
-       * @brief Delegates to alertPublisher_.
-       * @return void
-       */
-      void publishAlert();
+      protected:
+        pandora_common_msgs::GeneralAlertMsg alert_;
 
-    private:
+        std::string name_;
 
-      void toggleSubscriber();
+      private:
+        ros::NodeHandle nh_;
 
-    protected:
+        std::string sensorType_;
 
-      pandora_common_msgs::GeneralAlertMsg alert_;
+        ros::Publisher alertPublisher_;
+        std::string publisherTopic_;
 
-      std::string name_;
+        ros::Subscriber sensorSubscriber_;
+        std::string subscriberTopic_;
+        bool toggle_;
+        bool open_;
+        bool opened_;
 
-    private:
-
-      ros::NodeHandle nh_;
-
-      std::string sensorType_;
-
-      ros::Publisher alertPublisher_;
-      std::string publisherTopic_;
-
-      ros::Subscriber sensorSubscriber_;
-      std::string subscriberTopic_;
-      bool toggle_;
-      bool open_;
-      bool opened_;
-
-      dynamic_reconfigure::Server< SensorProcessorConfig >
-        dynReconfServer_;
-  };
+        dynamic_reconfigure::Server< SensorProcessorConfig >
+          dynReconfServer_;
+    };
 
   template <class DerivedProcessor> 
     SensorProcessor<DerivedProcessor>::SensorProcessor(const std::string& ns,
@@ -132,21 +129,21 @@ namespace pandora_sensor_processing
     {
       name_ = boost::to_upper_copy(ros::this_node::getName());
 
-      if(!nh_.getParam("subscribed_topic_names/" + sensorType_ + "_raw", subscriberTopic_))
+      if (!nh_.getParam("subscribed_topic_names/" + sensorType_ + "_raw", subscriberTopic_))
       {
         ROS_FATAL("[%s] %s_raw topic name param not found.", 
             name_.c_str(), sensorType_.c_str());
         ROS_BREAK();
       }
 
-      if(open_)
+      if (open_)
       {
         sensorSubscriber_ = nh_.subscribe(subscriberTopic_, 1, 
             &DerivedProcessor::sensorCallback, static_cast<DerivedProcessor*>(this));
         opened_ = true;
       }
 
-      if(nh_.getParam("published_topic_names/" + sensorType_ + "_alert", publisherTopic_))
+      if (nh_.getParam("published_topic_names/" + sensorType_ + "_alert", publisherTopic_))
       {
         alertPublisher_ = nh_.advertise<pandora_common_msgs::GeneralAlertMsg>
           (publisherTopic_, 5);
@@ -176,7 +173,7 @@ namespace pandora_sensor_processing
   template <class DerivedProcessor>
     void SensorProcessor<DerivedProcessor>::startTransition(int newState)
     {
-      switch(newState)
+      switch (newState)
       {
         case state_manager_communications::robotModeMsg::MODE_EXPLORATION:
           ROS_INFO("[%s] Entering Exploration mode.", name_.c_str());
@@ -197,20 +194,20 @@ namespace pandora_sensor_processing
           break;
       }
 
-      if(toggle_)
+      if (toggle_)
         toggleSubscriber();
     }
 
   template <class DerivedProcessor>
     void SensorProcessor<DerivedProcessor>::toggleSubscriber()
     {
-      if(open_ && !opened_)
+      if (open_ && !opened_)
       {
         sensorSubscriber_ = nh_.subscribe(subscriberTopic_, 1, 
             &DerivedProcessor::sensorCallback, static_cast<DerivedProcessor*>(this));
         opened_ = true;
       }
-      else if(!open_ && opened_)
+      else if (!open_ && opened_)
       {
         sensorSubscriber_.shutdown();
         opened_ = false;

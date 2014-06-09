@@ -36,6 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <string>
+
 #include "sensor_processing/co2_processor.h"
 
 namespace pandora_sensor_processing

@@ -65,7 +65,6 @@ namespace pandora_sensor_processing
   class Utils : private boost::noncopyable
   {
     public:
-
       /**
        * @param vec [Eigen::Vector4f const&] vector to find its mahal. 
        * distance from a group
@@ -74,8 +73,8 @@ namespace pandora_sensor_processing
        * @return float vec's mahalanobis distance to group
        */
       static float
-        getMahalanobisDistance(const Eigen::Vector4f& vec, 
-            const Eigen::Vector4f& mean, 
+        getMahalanobisDistance(const Eigen::Vector4f& vec,
+            const Eigen::Vector4f& mean,
             const Eigen::Matrix4f& covariance);
 
       /**
@@ -99,5 +98,5 @@ namespace pandora_sensor_processing
 
 }  // namespace pandora_sensor_processing
 
-#endif  // ALERT_HANDLER_UTILS_H
+#endif  // SENSOR_PROCESSING_UTILS_H
 

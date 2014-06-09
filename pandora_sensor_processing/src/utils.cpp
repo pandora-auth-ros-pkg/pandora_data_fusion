@@ -45,8 +45,8 @@ namespace pandora_sensor_processing
    * @details something like Kalaripayattu...
    */
   float Utils::
-    getMahalanobisDistance(const Eigen::Vector4f& vec, 
-        const Eigen::Vector4f& mean, 
+    getMahalanobisDistance(const Eigen::Vector4f& vec,
+        const Eigen::Vector4f& mean,
         const Eigen::Matrix4f& covariance)
     {
       Eigen::Vector4f vec_centered = vec - mean;

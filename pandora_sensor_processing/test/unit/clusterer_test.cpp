@@ -40,7 +40,8 @@
 
 #include "sensor_processing/clusterer.h"
 
-using namespace Eigen;
+using Eigen::MatrixXf;
+using Eigen::Vector4f;
 
 namespace pandora_sensor_processing
 {
@@ -48,7 +49,6 @@ namespace pandora_sensor_processing
     class ClustererTest : public ::testing::Test
     { 
       public: 
-
         /**
          * @brief Constructor
          */
@@ -58,12 +58,11 @@ namespace pandora_sensor_processing
           clusterer_(9, clusterMemory_, 100) {}
 
       protected:
-
         /* Helper Functions */
 
         bool areEquals(MatrixXf matrixA, MatrixXf matrixB)
         {
-          if(matrixA.rows() != matrixB.rows() || matrixA.cols() != matrixB.cols())
+          if (matrixA.rows() != matrixB.rows() || matrixA.cols() != matrixB.cols())
           {
             throw std::range_error("Matrices have not the same dimensions.");
           }
@@ -142,7 +141,7 @@ namespace pandora_sensor_processing
                           0, 1, 2, 0, 1, 2, 0, 1, 2,
                           3, 3, 3, 3, 3, 3, 3, 3, 3,
                           31, 30, 32, 28, 20, 20, 21, 20, 19;
-          if(count <= clusterMemory_)
+          if (count <= clusterMemory_)
           {
             dataSet_.conservativeResize(4, 9 * count);
           }
@@ -284,13 +283,11 @@ namespace pandora_sensor_processing
              -0.25, 0.916667, 0, -0.833333,
              0, 0, 0, 0,
              -0.833333, -0.833333, 0, 8.33333;
-      //std::cout << clusterer_.getCovariance1() << "\n\n\n\n";
       EXPECT_TRUE(areEquals(cov, clusterer_.getCovariance1()));
       cov << 0.30000, -0.15000, 0.00000, 0.00000,
              -0.15000, 0.70000, 0.00000, 0.00000,
              0.00000, 0.00000, 0.00000, 0.00000,
              0.00000, 0.00000, 0.00000, 0.00000;
-      //std::cout << clusterer_.getCovariance2() << "\n\n\n\n";
       EXPECT_TRUE(areEquals(cov, clusterer_.getCovariance2()));
     }
 
@@ -324,7 +321,6 @@ namespace pandora_sensor_processing
              0.00000, 1.00000, 0.00000, 0.00000,
              0.00000, 0.00000, 0.00000, 0.00000,
              0.00000, 0.00000, 0.00000, 1.33333;
-      //std::cout << clusterer_.getCovariance1() << "\n\n\n\n";
       EXPECT_TRUE(areEquals(cov, clusterer_.getCovariance1()));
       cov << 0.30000, 0.00000, 0.00000, -0.20000,
              0.00000, 0.80000, 0.00000, -0.40000,

@@ -39,6 +39,9 @@
 #ifndef SENSOR_PROCESSING_THERMAL_PROCESSOR_H
 #define SENSOR_PROCESSING_THERMAL_PROCESSOR_H
 
+#include <map>
+#include <string>
+
 #include "sensor_msgs/Image.h"
 #include "sensor_processing/clusterer.h"
 #include "sensor_processing/sensor_processor.h"
@@ -52,7 +55,6 @@ namespace pandora_sensor_processing
   class ThermalProcessor : public SensorProcessor<ThermalProcessor>
   {
     public:
-
       /**
        * @brief Constructor
        * @param ns [std::string const&] Has the namespace of the node.
@@ -67,13 +69,12 @@ namespace pandora_sensor_processing
        * (as image) of pixels representing temperatures.
        * @return void
        */
-      void sensorCallback(const sensor_msgs::Image& msg); 
+      void sensorCallback(const sensor_msgs::Image& msg);
 
       void dynamicReconfigCallback(
           const SensorProcessorConfig& config, uint32_t level);
 
     private:
-
       /**
        * @brief Converses msg to Eigen::MatrixXf form to fit clusterer,
        * updates clusterer with the new data and calls it to cluster.
@@ -97,7 +98,6 @@ namespace pandora_sensor_processing
           const ClustererConstPtr& clusterer);
 
     private:
-
       FrameToClusterer frameToClusterer_;
 
       //!< params
@@ -120,7 +120,6 @@ namespace pandora_sensor_processing
       float THERMAL_Y_FOV;
 
     private:
-
       friend class ThermalProcessorTest;
   };
 

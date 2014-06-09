@@ -36,11 +36,12 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <vector>
+#include <string>
+
 #include "gtest/gtest.h"
 
 #include "sensor_processing/thermal_processor.h"
-
-using namespace Eigen;
 
 namespace pandora_sensor_processing
 {
@@ -48,11 +49,9 @@ namespace pandora_sensor_processing
   class ThermalProcessorTest : public ::testing::Test
   {
     public:
-      
       ThermalProcessorTest() : thermalProcessor_("/test") {}
     
     protected:
-
       void mockCallback(const pandora_common_msgs::GeneralAlertMsg& msg)
       {
         responded_ = true;
@@ -97,19 +96,19 @@ namespace pandora_sensor_processing
       void makeImage(int width, int height, 
           std::string frame, bool alert = true)
       {
-        if(width < 4)
+        if (width < 4)
           width = 4;
-        if(height < 4)
+        if (height < 4)
           height = 4;
         image_.header.stamp = ros::Time(time_ += 0.5);
         image_.header.frame_id = frame;
         image_.width = width;
         image_.height = height;
         image_.data = std::vector<uint8_t>(width * height);
-        for(int ii = 0; ii < width * height; ++ii)
+        for (int ii = 0; ii < width * height; ++ii)
         { 
           image_.data[ii] = 25;
-          if(alert && ii % width > 1 && ii / width < height - 2)
+          if (alert && ii % width > 1 && ii / width < height - 2)
             image_.data[ii] = 36;
         }
         responded_ = false;
@@ -119,7 +118,7 @@ namespace pandora_sensor_processing
       {
         mockPublisher_->publish(image_);
         int i = 20;
-        while(ros::ok() && i > 0)
+        while (ros::ok() && i > 0)
         {
           ros::spinOnce();
           ros::Duration d(0.1);
