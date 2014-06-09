@@ -46,13 +46,11 @@
 namespace pandora_sensor_processing
 {
 
+  //!< Type Definitions
+  typedef std::map<std::string, ClustererPtr> FrameToClusterer;
+
   class ThermalProcessor : public SensorProcessor<ThermalProcessor>
   {
-    public:
-
-      //!< Type Definitions
-      typedef std::map<std::string, ClustererPtr> FrameToClusterer;
-
     public:
 
       /**

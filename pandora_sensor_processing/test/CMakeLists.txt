@@ -30,3 +30,14 @@ target_link_libraries(clusterer_test
 ########################  Functional Tests  #########################
 
 add_rostest(functional/co2_processor_test.launch)
+
+if(TARGET tests)
+  add_executable(thermal_processor_test functional/thermal_processor_test.cpp)
+  target_link_libraries(thermal_processor_test 
+    ${catkin_LIBRARIES} 
+    ${GTEST_LIBRARIES}
+    thermal_processor
+    )
+  add_dependencies(tests thermal_processor_test)
+endif()
+add_rostest(functional/thermal_processor_test.launch)

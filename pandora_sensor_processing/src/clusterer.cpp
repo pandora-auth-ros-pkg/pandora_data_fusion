@@ -102,18 +102,8 @@ namespace pandora_sensor_processing
 
       //!< Implementation of 2-means clustering
       chooseInitialClusters();
-      //std::cout << maxIterations_ << std::endl;
       for(int ii = 0; ii < maxIterations_; ++ii)
       {
-        //std::cout << ii << " clusters:" << std::endl;
-        //std::cout << cluster1_ << std::endl;
-        //std::cout << cluster2_ << std::endl;
-        //std::cout << ii << " means:" << std::endl;
-        //std::cout << mean1_ << std::endl;
-        //std::cout << mean2_ << std::endl;
-        //std::cout << ii << " covariances:" << std::endl;
-        //std::cout << covariance1_ << std::endl;
-        //std::cout << covariance2_ << std::endl;
 
         startCurrentInCluster1 = -1;
         startCurrentInCluster2 = -1;
@@ -125,13 +115,10 @@ namespace pandora_sensor_processing
         {
           float dist1, dist2;
           //!< Choosing cluster according to datum euclidean distance from means.
-          //std::cout << jj << " datum:\n";
-          //std::cout << dataSet_.col(jj) << std::endl;
           //dist1 = Utils::getMahalanobisDistance(dataSet_.col(jj), mean1_, covariance1_);
           //dist2 = Utils::getMahalanobisDistance(dataSet_.col(jj), mean2_, covariance2_);
           dist1 = (dataSet_.col(jj) - mean1_).norm();
           dist2 = (dataSet_.col(jj) - mean2_).norm();
-          //std::cout << dist1 << " " << dist2 << std::endl;
           if(dist1 < dist2)
           {
             //!< Tracking data in cluster which correspond to current measurement.
@@ -172,9 +159,6 @@ namespace pandora_sensor_processing
           break;
       }
 
-      //std::cout << "Final clusters:" << std::endl;
-      //std::cout << cluster1_ << std::endl;
-      //std::cout << cluster2_ << std::endl;
       readyToCluster_ = false;
       if(currentsInCluster1 > 0)
       {
@@ -246,7 +230,7 @@ namespace pandora_sensor_processing
       {
         //!< Choosing cluster according to datum euclidean distance from means.
         if(abs(dataSet_(3, jj) - highest) < 
-            abs(dataSet_(3, jj) - lowest))
+            abs(dataSet_(3, jj) - lowest) || jj == maxCol)
         {
           //!< Resizing cluster1_ by on column and appending qualified datum.
           cluster1_.conservativeResize(Eigen::NoChange, cluster1_.cols() + 1);

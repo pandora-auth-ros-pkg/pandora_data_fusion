@@ -27,19 +27,21 @@ class Co2ProcessorTest(test_base.TestBase):
         self.raw.co2_percentage = 0.4
 
         self.mock_publisher.publish(self.raw)
+        self.replied = False
         rospy.sleep(0.1)
 
     def expect_success(self, times):
 
+        self.assertTrue(self.replied)
         self.assertEqual(len(self.alertList), times)
-        self.assertAlmostEqual(self.alertList[0].probability, 0.68171501)
-        self.assertEqual(self.alertList[0].yaw, 0)
-        self.assertEqual(self.alertList[0].pitch, 0)
-        self.assertEqual(self.alertList[0].header.frame_id, "aer")
+        self.assertAlmostEqual(self.alertList[times - 1].probability, 0.68171501)
+        self.assertEqual(self.alertList[times - 1].yaw, 0)
+        self.assertEqual(self.alertList[times - 1].pitch, 0)
+        self.assertEqual(self.alertList[times - 1].header.frame_id, "aer")
 
     def expect_fail(self):
 
-        self.assertEqual(len(self.alertList), 0)
+        self.assertFalse(self.replied)
 
     def test_mode_exploration(self):
 

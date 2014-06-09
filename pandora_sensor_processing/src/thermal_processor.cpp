@@ -48,8 +48,8 @@ namespace pandora_sensor_processing
     MAX_CLUSTER_MEMORY = 3;
     MAX_CLUSTER_ITERATIONS = 100;
     OPTIMAL_HEAT_DIFFERENCE = 5;
-    OPTIMAL_TEMPERATURE = 35;
-    THERMAL_STD_DEV = 2;
+    OPTIMAL_TEMPERATURE = 36;
+    THERMAL_STD_DEV = 1;
     THERMAL_X_FOV = 45 * PI / 180;
     THERMAL_Y_FOV = 60 * PI / 180;
   }
@@ -64,6 +64,8 @@ namespace pandora_sensor_processing
   void ThermalProcessor::
     sensorCallback(const sensor_msgs::Image& msg)
   {
+    ROS_INFO_NAMED("SENSOR_PROCESSING", 
+        "[%s] Incoming thermal raw measurement.", name_.c_str());
     if(frameToClusterer_.find(msg.header.frame_id) == 
         frameToClusterer_.end())
     {
@@ -73,11 +75,13 @@ namespace pandora_sensor_processing
     }
       FrameToClusterer::const_iterator 
         it = frameToClusterer_.find(msg.header.frame_id);
-      if(!analyzeImage(msg, (*it).second))
-        return;
-      if(!getResults(msg, (*it).second))
-        return;
-      publishAlert();
+      if(analyzeImage(msg, (*it).second))
+      {
+        if(getResults(msg, (*it).second))
+        {
+          publishAlert();
+        }
+      }
   }
 
   void ThermalProcessor::
@@ -117,10 +121,10 @@ namespace pandora_sensor_processing
       clusterer->renewDataSet(measurement);
       clusterer->cluster();
     }
-    catch(std::exception err)
+    catch(std::exception& err)
     {
-      ROS_DEBUG_NAMED("THERMAL_PROCESSOR", 
-          "[THERMAL_PROCESSOR_ANALYZE_IMAGE] %s", err.what());
+      ROS_DEBUG_NAMED("SENSOR_PROCESSING", 
+          "[%s/ANALYZE_IMAGE] %s", name_.c_str(), err.what());
       return false;
     }
     return true;
@@ -131,7 +135,9 @@ namespace pandora_sensor_processing
         const ClustererConstPtr& clusterer)
     {
       Eigen::Vector4f center;
-      float diff = clusterer->getMean1()(3) - clusterer->getMean2()(3);
+      float mean1 = clusterer->getMean1()(3);
+      float mean2 = clusterer->getMean2()(3);
+      float diff = mean1 - mean2;
 
       if(diff > OPTIMAL_HEAT_DIFFERENCE)
       {
@@ -148,6 +154,8 @@ namespace pandora_sensor_processing
 
       // OK. Warmer cluster has a cell from current measurement.
       // Considering cluster to be a valid alert!
+      ROS_INFO_NAMED("SENSOR_PROCESSING",
+          "[%s] Found thermal alert with temperature: %f", name_.c_str(), center(3));
       alert_.probability = Utils::normalPdf(center(3), 
           OPTIMAL_TEMPERATURE, THERMAL_STD_DEV);
       float x = center(0) - static_cast<float>(msg.width) / 2;
