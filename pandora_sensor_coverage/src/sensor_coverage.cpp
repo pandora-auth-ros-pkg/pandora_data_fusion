@@ -89,8 +89,7 @@ namespace pandora_data_fusion
                 nh_,
                 globalMap_,
                 static_cast<std::string>(framesToTrack[ii]),
-                param)
-              ));
+                param)));
       }
 
       clientInitialize();

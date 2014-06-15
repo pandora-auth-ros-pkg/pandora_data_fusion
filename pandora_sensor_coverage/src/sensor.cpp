@@ -51,8 +51,8 @@ namespace pandora_data_fusion
     {
       sensorWorking_ = false;
 
-      listener_.reset( TfFinder::newTfListener(mapOrigin) ); 
-      
+      listener_.reset(TfFinder::newTfListener(mapOrigin));
+
       std::string topic;
 
       if (nh_->getParam("published_topic_names/"+frameName_, topic))
@@ -67,7 +67,7 @@ namespace pandora_data_fusion
 
       getParameters();
 
-      coverageUpdater_ = nh_->createTimer(ros::Duration(0.1), 
+      coverageUpdater_ = nh_->createTimer(ros::Duration(0.1),
           &Sensor::coverageUpdate, this);
     }
 
@@ -116,12 +116,12 @@ namespace pandora_data_fusion
       patchDrawer();
       //  Publish fresh patch.
       coveragePublisher_.publish(coveragePatch_);
-    } 
+    }
 
     void Sensor::patchDrawer()
     {
     }
-        
+
     void Sensor::getParameters()
     {
       if (!nh_->getParam("sensor_range/"+frameName_, SENSOR_RANGE))

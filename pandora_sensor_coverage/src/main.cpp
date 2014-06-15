@@ -45,10 +45,10 @@ using pandora_data_fusion::pandora_sensor_coverage::SensorCoverage;
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "sensor_coverage", ros::init_options::NoSigintHandler);
-  if(argc == 1 && !strcmp(argv[0], "--debug"))
+  if (argc == 1 && !strcmp(argv[0], "--debug"))
   {
-    if( ros::console::set_logger_level(
-          ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) 
+    if (ros::console::set_logger_level(
+          ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
     {
       ros::console::notifyLoggerLevelsChanged();
     }
