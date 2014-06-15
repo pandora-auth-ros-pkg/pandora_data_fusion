@@ -4,15 +4,10 @@ project(pandora_sensor_coverage)
 find_package(catkin REQUIRED COMPONENTS 
   roscpp
   tf 
-  dynamic_reconfigure
   roslint
-  pandora_data_fusion_msgs 
+  pandora_alert_handler
   state_manager
   state_manager_communications
-  )
-
-generate_dynamic_reconfigure_options(
-  config/sensor_coverage/SensorCoverage.cfg
   )
 
 catkin_package(
@@ -20,9 +15,8 @@ catkin_package(
   CATKIN_DEPENDS 
   roscpp
   tf 
-  dynamic_reconfigure
   roslint
-  pandora_data_fusion_msgs 
+  pandora_alert_handler
   state_manager
   state_manager_communications
   INCLUDE_DIRS 
@@ -35,13 +29,14 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   )
 
-########################  utils  ####################################
+########################  sensor  ###################################
 
-#add_library(coverage_utils 
-#  src/utils.cpp)
-#target_link_libraries(coverage_utils 
-#  ${catkin_LIBRARIES}
-#  )
+add_library(sensor
+  src/sensor.cpp)
+target_link_libraries(sensor
+  ${catkin_LIBRARIES}
+  ros_tf_listener
+  )
 
 ########################  sensor_coverage  ##########################
 
@@ -49,6 +44,7 @@ add_library(sensor_coverage
   src/sensor_coverage.cpp)
 target_link_libraries(sensor_coverage
   ${catkin_LIBRARIES}
+  sensor
   )
 
 ########################  sensor_coverage_node  #####################
@@ -76,5 +72,4 @@ roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)
 endif()
-
 

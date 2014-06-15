@@ -15,17 +15,15 @@
 
    <build_depend>roscpp</build_depend> 
    <build_depend>tf</build_depend> 
-   <build_depend>pandora_data_fusion_msgs</build_depend> 
    <build_depend>roslint</build_depend> 
-   <build_depend>dynamic_reconfigure</build_depend> 
+   <build_depend>pandora_alert_handler</build_depend>
    <build_depend>state_manager</build_depend>
    <build_depend>state_manager_communications</build_depend>
    
    <run_depend>roscpp</run_depend>
    <run_depend>tf</run_depend>
-   <run_depend>pandora_data_fusion_msgs</run_depend> 
    <run_depend>roslint</run_depend> 
-   <run_depend>dynamic_reconfigure</run_depend> 
+   <run_depend>pandora_alert_handler</run_depend>
    <run_depend>state_manager</run_depend>
    <run_depend>state_manager_communications</run_depend>
 
