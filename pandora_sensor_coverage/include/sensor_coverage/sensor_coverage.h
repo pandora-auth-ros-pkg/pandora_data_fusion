@@ -39,15 +39,22 @@
 #ifndef SENSOR_COVERAGE_SENSOR_COVERAGE_H
 #define SENSOR_COVERAGE_SENSOR_COVERAGE_H
 
+#ifndef BOOST_NO_DEFAULTED_FUNCTIONS
+#define BOOST_NO_DEFAULTED_FUNCTIONS
+#endif
+
 #include <string>
+#include <vector>
 #include <boost/utility.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>
-#include <dynamic_reconfigure/server.h>
+
+#include "octomap_msgs/Octomap.h"
 
 #include "state_manager/state_client.h"
-#include "pandora_sensor_coverage/SensorCoverageConfig.h"
+
+#include "sensor_coverage/sensor.h"
 
 namespace pandora_data_fusion
 {
@@ -56,8 +63,9 @@ namespace pandora_data_fusion
 
     //!< Type Definitions
     typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
+    typedef boost::shared_ptr<octomap_msgs::Octomap> OctomapPtr;
 
-    class SensorCoverage 
+    class SensorCoverage
       : public StateClient, private boost::noncopyable
     {
       public:
@@ -67,7 +75,6 @@ namespace pandora_data_fusion
          */
         explicit SensorCoverage(const std::string& ns);
 
-
         /**
          * @override
          * @brief Callback for every state change that occurs in state server.
@@ -75,7 +82,7 @@ namespace pandora_data_fusion
          * @param newState [int] number that indicates the state
          * @return void
          */
-        void startTransition(int newState) {}
+        void startTransition(int newState);
 
         /**
          * @override
@@ -83,31 +90,30 @@ namespace pandora_data_fusion
          * all state clients.
          * @return void
          */
-        void completeTransition() {}
-
-        /**
-         * @brief Dynamic reconfiguration callback
-         * @param config [...::SensorCoverageConfig const&] struct containing new params
-         * @param level [uint32_t] level value
-         * @return void
-         */
-        void dynamicReconfigCallback(
-            const ::pandora_sensor_coverage::SensorCoverageConfig& config,
-            uint32_t level);
+        void completeTransition();
 
       private:
         /**
-         * @brief Method for initializing ros interfaces: subscribers, publishers,
-         * action clients, dynamic reconfiguration servers.
+         * @brief mapSubscriber_'s callback to copy map from SLAM
+         * @param map [octomap_msgs::Octomap const&] fetched map
          * @return void
          */
-        void initRosInterfaces();
+        void mapUpdate(const octomap_msgs::Octomap& map);
 
       private:
+        //!< This node's NodeHandle.
         NodeHandlePtr nh_;
 
-        dynamic_reconfigure::Server< ::pandora_sensor_coverage::SensorCoverageConfig >
-          dynReconfServer_;
+        //!< subscriber that fetches map.
+        ros::Subscriber mapSubscriber_;
+
+        //!< Robot's current mode of operation
+        int currentState_;
+        //!< 3d map recieved from SLAM.
+        OctomapPtr globalMap_;
+        //!< vector containing all sensors registered to track their views and
+        //!< make their coverage patches.
+        std::vector<SensorPtr> registeredSensors_;
     };
 
 }  // namespace pandora_sensor_coverage

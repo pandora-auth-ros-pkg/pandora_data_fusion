@@ -36,6 +36,9 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <string>
+#include <vector>
+
 #include "sensor_coverage/sensor_coverage.h"
 
 namespace pandora_data_fusion
@@ -45,21 +48,70 @@ namespace pandora_data_fusion
 
     SensorCoverage::SensorCoverage(const std::string& ns)
     {
+      //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
+      globalMap_.reset( new octomap_msgs::Octomap );
+
+      //  Subscribe to octomap topic.
+      std::string param;
+      if (nh_->getParam("subscribed_topic_names/map", param))
+      {
+        mapSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::mapUpdate, this);
+      }
+      else
+      {
+        ROS_FATAL("map topic name param not found");
+        ROS_BREAK();
+      }
+
+      currentState_ = 0;
+
+      //  Get map's origin (can be either SLAM or TEST).
+      if (!nh_->getParam("map_origin", param))
+      {
+        ROS_FATAL("map origin param not found");
+        ROS_BREAK();
+      }
+      //  Get frames that will be tracked to produce their coverage patch maps.
+      XmlRpc::XmlRpcValue framesToTrack;
+      if (!nh_->getParam("frames_to_track", framesToTrack))
+      {
+        ROS_FATAL("frames to track param not found");
+        ROS_BREAK();
+      }
+      ROS_ASSERT(framesToTrack.getType() == XmlRpc::XmlRpcValue::TypeArray);
+      //  For each frame make a Sensor object.
+      for (int32_t ii = 0; ii < framesToTrack.size(); ++ii)
+      {
+        ROS_ASSERT(framesToTrack[ii].getType() == XmlRpc::XmlRpcValue::TypeString);
+        registeredSensors_.push_back(
+            SensorPtr( new Sensor(
+                nh_,
+                globalMap_,
+                static_cast<std::string>(framesToTrack[ii]),
+                param)
+              ));
+      }
+
+      clientInitialize();
     }
 
-    void SensorCoverage::dynamicReconfigCallback(
-        const ::pandora_sensor_coverage::SensorCoverageConfig& config,
-        uint32_t level)
+    void SensorCoverage::startTransition(int newState)
     {
+      currentState_ = newState;
     }
 
-    void SensorCoverage::initRosInterfaces()
+    void SensorCoverage::completeTransition()
     {
-      //!< dynamic reconfigure server
+      for (int ii = 0; ii < registeredSensors_.size(); ++ii)
+      {
+        registeredSensors_[ii]->notifyStateChange(currentState_);
+      }
+    }
 
-      dynReconfServer_.setCallback(boost::bind(
-            &SensorCoverage::dynamicReconfigCallback, this, _1, _2));
+    void SensorCoverage::mapUpdate(const octomap_msgs::Octomap& map)
+    {
+      *globalMap_ = map;
     }
 
 }  // namespace pandora_sensor_coverage
