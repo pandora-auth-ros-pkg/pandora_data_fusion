@@ -62,7 +62,7 @@ namespace pandora_data_fusion
           setUpHole( newHole, msg.holesDirections[ii] );
           holesVectorPtr->push_back( newHole );
         }
-        catch (TfException ex)
+        catch (AlertException ex)
         {
           ROS_WARN_NAMED("ALERT_HANDLER",
               "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
@@ -86,7 +86,7 @@ namespace pandora_data_fusion
           setUpHazmat( newHazmat, msg.hazmatAlerts[ii] );
           hazmatsVectorPtr->push_back( newHazmat );
         }
-        catch (TfException ex)
+        catch (AlertException ex)
         {
           ROS_WARN_NAMED("ALERT_HANDLER",
               "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
@@ -110,7 +110,7 @@ namespace pandora_data_fusion
           setUpQr( newQr, msg.qrAlerts[ii], msg.header.stamp );
           qrsVectorPtr->push_back( newQr );
         }
-        catch (TfException ex)
+        catch (AlertException ex)
         {
           ROS_WARN_NAMED("ALERT_HANDLER",
               "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
@@ -134,7 +134,7 @@ namespace pandora_data_fusion
           setUpLandoltc( newLandoltc, msg.landoltcAlerts[ii] );
           landoltcsVectorPtr->push_back( newLandoltc );
         }
-        catch (TfException ex)
+        catch (AlertException ex)
         {
           ROS_WARN_NAMED("ALERT_HANDLER",
               "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
@@ -158,7 +158,7 @@ namespace pandora_data_fusion
           setUpDataMatrix( newDataMatrix, msg.dataMatrixAlerts[ii] );
           dataMatricesVectorPtr->push_back( newDataMatrix );
         }
-        catch (TfException ex)
+        catch (AlertException ex)
         {
           ROS_WARN_NAMED("ALERT_HANDLER",
               "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());

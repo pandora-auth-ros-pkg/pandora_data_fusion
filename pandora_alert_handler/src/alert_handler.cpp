@@ -330,7 +330,7 @@ namespace pandora_data_fusion
       {
         holesVectorPtr = objectFactory_->makeHoles(msg);
       }
-      catch (AlertException ex)
+      catch (TfException ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
         return;
@@ -354,7 +354,7 @@ namespace pandora_data_fusion
       {
         hazmatsVectorPtr = objectFactory_->makeHazmats(msg);
       }
-      catch (AlertException ex)
+      catch (TfException ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
         return;
@@ -374,7 +374,7 @@ namespace pandora_data_fusion
       {
         qrsVectorPtr = objectFactory_->makeQrs(msg);
       }
-      catch (AlertException ex)
+      catch (TfException ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
         return;
@@ -393,7 +393,7 @@ namespace pandora_data_fusion
       {
         landoltcsVectorPtr = objectFactory_->makeLandoltcs(msg);
       }
-      catch (AlertException ex)
+      catch (TfException ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
         return;
@@ -412,7 +412,7 @@ namespace pandora_data_fusion
       {
         dataMatricesVectorPtr = objectFactory_->makeDataMatrices(msg);
       }
-      catch (AlertException ex)
+      catch (TfException ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d]%s",  __LINE__, ex.what());
         return;
