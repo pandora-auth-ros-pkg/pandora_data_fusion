@@ -468,6 +468,7 @@ namespace pandora_data_fusion
     {
       int victimId = deleteVictimServer_->acceptNewGoal()->victimId;
       bool deleted = victimHandler_->deleteVictim(victimId);
+      publishVictims();
       if(!deleted)
         deleteVictimServer_->setAborted();
       deleteVictimServer_->setSucceeded();
@@ -477,6 +478,7 @@ namespace pandora_data_fusion
     {
       GoalConstPtr goal = validateVictimServer_->acceptNewGoal();
       bool validated = victimHandler_->validateVictim(goal->victimId, goal->victimValid);
+      publishVictims();
       if(!validated)
         validateVictimServer_->setAborted();
       validateVictimServer_->setSucceeded();

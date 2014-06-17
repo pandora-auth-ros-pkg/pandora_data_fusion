@@ -144,14 +144,14 @@ namespace pandora_data_fusion
      * from victim list. Deleted victim is returned to search and delete
      * its associated objects from their respective lists.
      */
-    bool VictimList::deleteVictim(int victimId, VictimPtr deletedVictim)
+    bool VictimList::deleteVictim(int victimId, const VictimPtr& deletedVictim)
     {
       for(VictimList::iterator it = objects_.begin();
           it != objects_.end(); ++it)
       {
         if((*it)->getId() == victimId)
         {
-          deletedVictim = *it;
+          deletedVictim->setPose((*it)->getPose());
           objects_.erase(it);
           return true;
         }
