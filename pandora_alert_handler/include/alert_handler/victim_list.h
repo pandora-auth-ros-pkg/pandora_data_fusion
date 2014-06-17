@@ -90,7 +90,7 @@ namespace pandora_data_fusion
          * @return void
          */
         void getVictimsInfo(
-            pandora_data_fusion_msgs::WorldModelMsg* victimsMsg);
+            std::vector<pandora_data_fusion_msgs::VictimInfoMsg>* victimsMsg);
 
         /**
          * @brief Deletes VictimPtr with the corresponding victimId

@@ -84,8 +84,6 @@ namespace pandora_data_fusion
 
     void AlertHandler::publishVictims()
     {
-      if(victimsToGo_->size() == 0)
-        return;
       pandora_data_fusion_msgs::WorldModelMsg worldModelMsg;
       victimHandler_->getVictimsInfo(&worldModelMsg);
       worldModelPublisher_.publish(worldModelMsg);
