@@ -50,17 +50,32 @@ namespace pandora_data_fusion
     {
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
-      globalMap_.reset( new octomap_msgs::Octomap );
+      globalMap3D_.reset( new octomap_msgs::Octomap );
+      globalMap2D_.reset( new nav_msgs::OccupancyGrid );
+      SpaceChecker::setMap(globalMap2D_);
+      SurfaceChecker::setMap(globalMap3D_);
 
-      //  Subscribe to octomap topic.
       std::string param;
-      if (nh_->getParam("subscribed_topic_names/map", param))
+      
+      //  Subscribe to 3d slam topic.
+      if (nh_->getParam("subscribed_topic_names/map3D", param))
       {
-        mapSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::mapUpdate, this);
+        map3DSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map3DUpdate, this);
       }
       else
       {
-        ROS_FATAL("map topic name param not found");
+        ROS_FATAL("map3D topic name param not found");
+        ROS_BREAK();
+      }
+
+      //  Subscribe to 2d slam topic.
+      if (nh_->getParam("subscribed_topic_names/map2D", param))
+      {
+        map2DSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map2DUpdate, this);
+      }
+      else
+      {
+        ROS_FATAL("map2D topic name param not found");
         ROS_BREAK();
       }
 
@@ -87,7 +102,6 @@ namespace pandora_data_fusion
         registeredSensors_.push_back(
             SensorPtr( new Sensor(
                 nh_,
-                globalMap_,
                 static_cast<std::string>(framesToTrack[ii]),
                 param)));
       }
@@ -108,9 +122,14 @@ namespace pandora_data_fusion
       }
     }
 
-    void SensorCoverage::mapUpdate(const octomap_msgs::Octomap& map)
+    void SensorCoverage::map3DUpdate(const octomap_msgs::Octomap& map)
     {
-      *globalMap_ = map;
+      *globalMap3D_ = map;
+    }
+
+    void SensorCoverage::map2DUpdate(const nav_msgs::OccupancyGrid& map)
+    {
+      *globalMap2D_ = map;
     }
 
 }  // namespace pandora_sensor_coverage

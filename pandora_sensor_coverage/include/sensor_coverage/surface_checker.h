@@ -36,106 +36,99 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef SENSOR_COVERAGE_SENSOR_H
-#define SENSOR_COVERAGE_SENSOR_H
+#ifndef SENSOR_COVERAGE_SURFACE_CHECKER_H
+#define SENSOR_COVERAGE_SURFACE_CHECKER_H
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-#include "state_manager_communications/robotModeMsg.h"
+#include "octomap_msgs/Octomap.h"
 
-#include "alert_handler/tf_finder.h"
-#include "alert_handler/tf_listener.h"
-#include "alert_handler/exceptions.h"
-
-#include "sensor_coverage/space_checker.h"
-#include "sensor_coverage/surface_checker.h"
+#include "sensor_coverage/coverage_checker.h"
 
 namespace pandora_data_fusion
 {
   namespace pandora_sensor_coverage
   {
 
-    //!< Type Definitions
-    using ::pandora_data_fusion::pandora_alert_handler::TfFinder;
-    using ::pandora_data_fusion::pandora_alert_handler::TfListener;
-    using ::pandora_data_fusion::pandora_alert_handler::TfListenerPtr;
-    using ::pandora_data_fusion::pandora_alert_handler::TfException;
-    typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
-
     /**
-     * @brief class that correspond to a tracked sensor.
-     * Contains methods that draw coverage into current map.
+     * @brief class that contains methods to find surface coverage.
+     * Keeps surface coverage patch.
      */
-    class Sensor
+    class SurfaceChecker : public CoverageChecker
     {
       public:
         /**
-         * @brief constructor for sensor class
+         * @brief Constructor for surface checker class
          * @param nh [NodeHandlePtr const&] pointer to node's nodehandle
          * @param frameName [std::string const&] frame whose view is to be tracked
-         * @param mapOrigin [std::string const&] map's origin (SLAM or TEST)
          */
-        Sensor(const NodeHandlePtr& nh, 
-            const std::string& frameName, const std::string& mapOrigin);
+        SurfaceChecker(const NodeHandlePtr& nh, const std::string& frameName);
 
         /**
-         * @brief notifies state change
-         * @param newState [int] the state to which sensor is transitioning
+         * @override
+         * @brief function that finds coverage, triggered when updating it
+         * @param transform [tf::StampedTransform const&] tf that will be used
+         * in coverage finding
          * @return void
          */
-        void notifyStateChange(int newState);
+        virtual void findCoverage(const tf::StampedTransform& transform);
 
-      protected:
         /**
-         * @brief callback for timer that updates sensor's coverage patch
-         * @param event [ros::TimerEvent const&]
+         * @override
+         * @brief publishes coverage map or patch
          * @return void
          */
-        void coverageUpdate(const ros::TimerEvent& event);
+        virtual void publishCoverage();
+
+        /**
+         * @brief Setter of static variable 3DMap_
+         * @param map3D [boost::shared_ptr<octomap_msgs::Octomap> const&] map
+         * @note Will reset to null, deleting reference, if a null ptr is passed.
+         * @return void
+         */
+        static void setMap(const boost::shared_ptr<octomap_msgs::Octomap>& map3D)
+        {
+          map3D_ = map3D;
+        }
+
+        /**
+         * @brief Deletes reference of variable 3DMap_
+         * @return void
+         */
+        static void deleteMap()
+        {
+          map3D_.reset();
+        }
 
       private:
         /**
+         * @override
          * @brief Getter for sensor's parameters
          * @return void
          */
-        void getParameters();
+        virtual void getParameters();
 
       protected:
-        //!< Node's shared NodeHandle.
-        NodeHandlePtr nh_;
+        //!< Global 3d map as it is sent by SLAM
+        static boost::shared_ptr<octomap_msgs::Octomap> map3D_;
+        //!< Sensor's surface coverage patch
+        octomap_msgs::Octomap coveredSurface_;
 
-        //!< Timer that triggers updating of the surface coverage patch 
-        //!< and space coverage map.
-        ros::Timer coverageUpdater_;
-
-        //!< is sensor open and working?
-        bool sensorWorking_;
-        //!< Sensor's tf frame which is being tracked.
-        std::string frameName_;
-        //!< Abstract transformation listener.
-        TfListenerPtr listener_;
-
-        //!< Space coverage finder
-        SpaceChecker spaceChecker_;
-        //!< Surface coverage finder
-        SurfaceChecker surfaceChecker_;
-
-        /*  Sensor's state: True if open, False if closed  */
-        //!< sensor's state in EXPLORATION_MODE
-        bool EXPLORATION_STATE;
-        //!< sensor's state in IDENTIFICATION_MODE
-        bool IDENTIFICATION_STATE;
-        //!< sensor's state in HOLD_MODE
-        bool HOLD_STATE;
+        /*  Parameters  */
+        //!< sensor's range
+        double SENSOR_RANGE;
+        //!< sensor's horizontal field of view
+        double SENSOR_HFOV;
+        //!< sensor's vertical field of view
+        double SENSOR_VFOV;
 
       private:
-        friend class SensorTest;
+        friend class SurfaceCheckerTest;
     };
-
-    typedef boost::shared_ptr<Sensor> SensorPtr;
 
 }  // namespace pandora_sensor_coverage
 }  // namespace pandora_data_fusion
 
-#endif  // SENSOR_COVERAGE_SENSOR_H
+#endif  // SENSOR_COVERAGE_SURFACE_CHECKER_H
+

@@ -45,25 +45,14 @@ namespace pandora_data_fusion
   namespace pandora_sensor_coverage
   {
 
-    Sensor::Sensor(const NodeHandlePtr& nh, const OctomapPtr& globalMap,
-            const std::string& frameName, const std::string& mapOrigin)
-      : nh_(nh), globalMap_(globalMap), frameName_(frameName)
+    Sensor::Sensor(const NodeHandlePtr& nh, 
+        const std::string& frameName, const std::string& mapOrigin)
+      : nh_(nh), frameName_(frameName), 
+      spaceChecker_(nh, frameName), surfaceChecker_(nh, frameName)
     {
       sensorWorking_ = false;
 
       listener_.reset(TfFinder::newTfListener(mapOrigin));
-
-      std::string topic;
-
-      if (nh_->getParam("published_topic_names/"+frameName_, topic))
-      {
-        coveragePublisher_ = nh_->advertise<octomap_msgs::Octomap>(topic, 1);
-      }
-      else
-      {
-        ROS_FATAL("%s topic name param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
 
       getParameters();
 
@@ -99,46 +88,30 @@ namespace pandora_data_fusion
       if (!sensorWorking_)
         return;
       //  If it does, fetch current transformation.
+      ros::Time timeNow = ros::Time::now();
+      tf::StampedTransform sensorTransform;
       try
       {
-        ros::Time timeNow = ros::Time::now();
         listener_->waitForTransform(
             "/map", frameName_, timeNow, ros::Duration(0.5));
         listener_->lookupTransform(
-            "/map", frameName_, timeNow, tfTransform_);
+            "/map", frameName_, timeNow, sensorTransform);
       }
       catch (TfException ex)
       {
         ROS_WARN_NAMED("SENSOR_COVERAGE",
             "[SENSOR_COVERAGE_SENSOR %d] %s", __LINE__, ex.what());
       }
-      //  Update coverage patch.
-      patchDrawer();
-      //  Publish fresh patch.
-      coveragePublisher_.publish(coveragePatch_);
-    }
-
-    void Sensor::patchDrawer()
-    {
+      //  Update coverage perception.
+      spaceChecker_.findCoverage(sensorTransform);
+      surfaceChecker_.findCoverage(sensorTransform);
+      //  Publish updated coverage perception.
+      spaceChecker_.publishCoverage();
+      surfaceChecker_.publishCoverage();
     }
 
     void Sensor::getParameters()
     {
-      if (!nh_->getParam("sensor_range/"+frameName_, SENSOR_RANGE))
-      {
-        ROS_FATAL("%s sensor range param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
-      if (!nh_->getParam("sensor_hfov/"+frameName_, SENSOR_HFOV))
-      {
-        ROS_FATAL("%s sensor hfov param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
-      if (!nh_->getParam("sensor_vfov/"+frameName_, SENSOR_VFOV))
-      {
-        ROS_FATAL("%s sensor vfov param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
       if (!nh_->getParam("exploration_state/"+frameName_, EXPLORATION_STATE))
       {
         ROS_FATAL("%s exploration state param not found", frameName_.c_str());
