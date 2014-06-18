@@ -64,11 +64,54 @@ namespace pandora_data_fusion
     }
 
     boost::shared_ptr<nav_msgs::OccupancyGrid> SpaceChecker::map2D_;
-    
-    void SpaceChecker::findCoverage(const tf::StampedTransform& transform)
+    float SpaceChecker::OCCUPIED_CELL_THRES = 0.5;
+
+    void SpaceChecker::findCoverage(const tf::StampedTransform& sensorTransform,
+        const tf::StampedTransform& baseTransform)
     {
-      CoverageChecker::findCoverage(transform);
-      //  TODO
+      CoverageChecker::findCoverage(sensorTransform);
+
+      const double resolution = map2D_->info.resolution;
+      double step = 5 * resolution;
+      double minZ = baseTransform.getOrigin()[2];
+      double currX = position_.x;
+      double currY = position_.y;
+      double fov = (SENSOR_HFOV / 180.0) * PI;
+      geometry_msgs::Point cell;
+
+      for (double angle = -fov/2; angle < fov/2; angle += PI / 180.0)
+      {
+        cell.x = step * cos(yaw_ + angle) + currX;
+        cell.y = step * sin(yaw_ + angle) + currY;
+
+        while (CELL(cell.x, cell.y, map2D_) < OCCUPIED_CELL_THRES * 100
+            && Utils::distanceBetweenPoints2D(position_, cell) < SENSOR_RANGE)
+        {
+          float covered = cellCoverage(cell, minZ);
+          if (covered > CELL(cell.x, cell.y, (&coveredSpace_)))
+          {
+            CELL(cell.x, cell.y, (&coveredSpace_)) = covered;
+          }
+          cell.x += resolution * cos(yaw_ + angle);
+          cell.y += resolution * sin(yaw_ + angle);
+        }
+      }
+
+      for (int ii = 0; ii < map2D_->info.width; ++ii)
+      {
+        for (int jj = 0; jj < map2D_->info.height; ++jj)
+        {
+          if (map2D_->data[ii + jj * map2D_->info.width] >= OCCUPIED_CELL_THRES * 100)
+          {
+            coveredSpace_.data[ii + jj * coveredSpace_.info.width] = 0;
+          }
+        }
+      }
+    }
+
+    float SpaceChecker::cellCoverage(const geometry_msgs::Point& cell, double minHeight)
+    {
+      return 0;
     }
 
     void SpaceChecker::publishCoverage()
@@ -78,6 +121,7 @@ namespace pandora_data_fusion
 
     void SpaceChecker::getParameters()
     {
+      CoverageChecker::getParameters();
       if (!nh_->getParam("max_height/"+frameName_, MAX_HEIGHT))
       {
         ROS_FATAL("%s maximum height of interest param not found", frameName_.c_str());

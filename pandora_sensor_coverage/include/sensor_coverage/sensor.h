@@ -76,7 +76,7 @@ namespace pandora_data_fusion
          * @param frameName [std::string const&] frame whose view is to be tracked
          * @param mapOrigin [std::string const&] map's origin (SLAM or TEST)
          */
-        Sensor(const NodeHandlePtr& nh, 
+        Sensor(const NodeHandlePtr& nh,
             const std::string& frameName, const std::string& mapOrigin);
 
         /**
@@ -105,7 +105,7 @@ namespace pandora_data_fusion
         //!< Node's shared NodeHandle.
         NodeHandlePtr nh_;
 
-        //!< Timer that triggers updating of the surface coverage patch 
+        //!< Timer that triggers updating of the surface coverage patch
         //!< and space coverage map.
         ros::Timer coverageUpdater_;
 

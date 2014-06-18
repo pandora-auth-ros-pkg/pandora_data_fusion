@@ -45,9 +45,9 @@ namespace pandora_data_fusion
   namespace pandora_sensor_coverage
   {
 
-    Sensor::Sensor(const NodeHandlePtr& nh, 
+    Sensor::Sensor(const NodeHandlePtr& nh,
         const std::string& frameName, const std::string& mapOrigin)
-      : nh_(nh), frameName_(frameName), 
+      : nh_(nh), frameName_(frameName),
       spaceChecker_(nh, frameName), surfaceChecker_(nh, frameName)
     {
       sensorWorking_ = false;
@@ -89,7 +89,7 @@ namespace pandora_data_fusion
         return;
       //  If it does, fetch current transformation.
       ros::Time timeNow = ros::Time::now();
-      tf::StampedTransform sensorTransform;
+      tf::StampedTransform sensorTransform, baseTransform;
       try
       {
         listener_->waitForTransform(
@@ -102,11 +102,23 @@ namespace pandora_data_fusion
         ROS_WARN_NAMED("SENSOR_COVERAGE",
             "[SENSOR_COVERAGE_SENSOR %d] %s", __LINE__, ex.what());
       }
+      try
+      {
+        listener_->waitForTransform(
+            "/map", "/base_footprint", timeNow, ros::Duration(0.5));
+        listener_->lookupTransform(
+            "/map", "/base_footprint", timeNow, baseTransform);
+      }
+      catch (TfException ex)
+      {
+        ROS_WARN_NAMED("SENSOR_COVERAGE",
+            "[SENSOR_COVERAGE_SENSOR %d] %s", __LINE__, ex.what());
+      }
       //  Update coverage perception.
-      spaceChecker_.findCoverage(sensorTransform);
-      surfaceChecker_.findCoverage(sensorTransform);
       //  Publish updated coverage perception.
+      spaceChecker_.findCoverage(sensorTransform, baseTransform);
       spaceChecker_.publishCoverage();
+      surfaceChecker_.findCoverage(sensorTransform);
       surfaceChecker_.publishCoverage();
     }
 

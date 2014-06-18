@@ -45,12 +45,17 @@
 #include <ros/ros.h>
 #include "tf/transform_datatypes.h"
 
+#include "octomap_msgs/Octomap.h"
+
+#include "alert_handler/utils.h"
+
 namespace pandora_data_fusion
 {
   namespace pandora_sensor_coverage
   {
 
     //!< Type Definitions
+    using ::pandora_data_fusion::pandora_alert_handler::Utils;
     typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
 
     /**
@@ -77,22 +82,56 @@ namespace pandora_data_fusion
          */
         virtual void publishCoverage() {}
 
+        /**
+         * @brief Setter of static variable 3DMap_
+         * @param map3D [boost::shared_ptr<octomap_msgs::Octomap> const&] map
+         * @note Will reset to null, deleting reference, if a null ptr is passed.
+         * @return void
+         */
+        static void setMap(const boost::shared_ptr<octomap_msgs::Octomap>& map3D)
+        {
+          map3D_ = map3D;
+        }
+
+        /**
+         * @brief Deletes reference of variable 3DMap_
+         * @return void
+         */
+        static void deleteMap()
+        {
+          map3D_.reset();
+        }
+
       protected:
         /**
          * @brief Getter for sensor's parameters
          * @return void
          */
-        virtual void getParameters() {}
+        virtual void getParameters();
 
       protected:
+        //!< Global 3d map as it is sent by SLAM
+        static boost::shared_ptr<octomap_msgs::Octomap> map3D_;
+
         //!< Node's NodeHandle
         NodeHandlePtr nh_;
         //!< Name of tracked sensor's frame
         std::string frameName_;
         //!< Publisher for this sensor's surface coverage.
         ros::Publisher coveragePublisher_;
-        //!< Current sensor's transformation stamped.
-        tf::StampedTransform transform_;
+        //!< Useful for coverage finding.
+        double roll_;
+        double pitch_;
+        double yaw_;
+        geometry_msgs::Point position_;
+
+        /*  Parameters  */
+        //!< sensor's range
+        double SENSOR_RANGE;
+        //!< sensor's horizontal field of view
+        double SENSOR_HFOV;
+        //!< sensor's vertical field of view
+        double SENSOR_VFOV;
     };
 
 }  // namespace pandora_sensor_coverage

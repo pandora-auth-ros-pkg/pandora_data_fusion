@@ -63,8 +63,6 @@ namespace pandora_data_fusion
       getParameters();
     }
 
-    boost::shared_ptr<octomap_msgs::Octomap> SurfaceChecker::map3D_;
-
     void SurfaceChecker::findCoverage(const tf::StampedTransform& transform)
     {
       CoverageChecker::findCoverage(transform);
@@ -74,25 +72,6 @@ namespace pandora_data_fusion
     void SurfaceChecker::publishCoverage()
     {
       coveragePublisher_.publish(coveredSurface_);
-    }
-
-    void SurfaceChecker::getParameters()
-    {
-      if (!nh_->getParam("sensor_range/"+frameName_, SENSOR_RANGE))
-      {
-        ROS_FATAL("%s sensor range param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
-      if (!nh_->getParam("sensor_hfov/"+frameName_, SENSOR_HFOV))
-      {
-        ROS_FATAL("%s sensor hfov param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
-      if (!nh_->getParam("sensor_vfov/"+frameName_, SENSOR_VFOV))
-      {
-        ROS_FATAL("%s sensor vfov param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
     }
 
 }  // namespace pandora_sensor_coverage

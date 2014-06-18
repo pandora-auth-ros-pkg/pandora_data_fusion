@@ -58,6 +58,7 @@
 #include "sensor_coverage/sensor.h"
 #include "sensor_coverage/space_checker.h"
 #include "sensor_coverage/surface_checker.h"
+#include "sensor_coverage/coverage_checker.h"
 
 namespace pandora_data_fusion
 {

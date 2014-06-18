@@ -57,6 +57,9 @@
     / MAP->info.resolution) + ceil((Y - MAP->info.origin.position.y)\
       / MAP->info.resolution) * MAP->info.width
 
+//!< Macro to convert to map coordinates from meters.
+#define CELL(X, Y, MAP) MAP->data[COORDS(X, Y, MAP)]
+
 namespace pandora_data_fusion
 {
   namespace pandora_alert_handler

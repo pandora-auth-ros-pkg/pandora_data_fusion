@@ -52,11 +52,11 @@ namespace pandora_data_fusion
       nh_.reset( new ros::NodeHandle(ns) );
       globalMap3D_.reset( new octomap_msgs::Octomap );
       globalMap2D_.reset( new nav_msgs::OccupancyGrid );
-      SpaceChecker::setMap(globalMap2D_);
-      SurfaceChecker::setMap(globalMap3D_);
+      CoverageChecker::setMap(globalMap3D_);
+      SpaceChecker::setMap2D(globalMap2D_);
 
       std::string param;
-      
+
       //  Subscribe to 3d slam topic.
       if (nh_->getParam("subscribed_topic_names/map3D", param))
       {

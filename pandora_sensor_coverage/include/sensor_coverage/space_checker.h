@@ -72,8 +72,8 @@ namespace pandora_data_fusion
          * in coverage finding
          * @return void
          */
-        virtual void findCoverage(const tf::StampedTransform& transform);
-
+        virtual void findCoverage(const tf::StampedTransform& sensorTransform,
+        const tf::StampedTransform& baseTransform);
         /**
          * @override
          * @brief publishes coverage map or patch
@@ -86,7 +86,7 @@ namespace pandora_data_fusion
          * @param map2D [boost::shared_ptr<nav_msgs::OccupancyGrid> const&] map
          * @return void
          */
-        static void setMap(const boost::shared_ptr<nav_msgs::OccupancyGrid>& map2D)
+        static void setMap2D(const boost::shared_ptr<nav_msgs::OccupancyGrid>& map2D)
         {
           map2D_ = map2D;
         }
@@ -100,7 +100,26 @@ namespace pandora_data_fusion
           map2D_.reset();
         }
 
+        /**
+         * @brief Setter for static variable OCCUPIED_CELL_THRES
+         * @param occupiedCellThres [float] threshold
+         * @return void
+         */
+        static void setOccupiedCellThres(float occupiedCellThres)
+        {
+          OCCUPIED_CELL_THRES = occupiedCellThres;
+        }
+
       private:
+        /**
+         * @brief finds cell's space coverage as a percentage of the covered
+         * space above it
+         * @param cell [geometry_msgs::Point const&] cell in question
+         * @param minHeight [double] minimun height of interest (base footprint)
+         * @return float percentage of space covered by sensor.
+         */
+        float cellCoverage(const geometry_msgs::Point& cell, double minHeight);
+
         /**
          * @override
          * @brief Getter for sensor's parameters
@@ -117,6 +136,7 @@ namespace pandora_data_fusion
         /*  Parameters  */
         //!< maximum height of interest
         double MAX_HEIGHT;
+        static float OCCUPIED_CELL_THRES;
 
       private:
         friend class SpaceCheckerTest;

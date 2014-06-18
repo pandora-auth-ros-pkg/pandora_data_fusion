@@ -36,6 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <string>
+
 #include "sensor_coverage/coverage_checker.h"
 
 namespace pandora_data_fusion
@@ -47,9 +49,31 @@ namespace pandora_data_fusion
       : nh_(nh), frameName_(frameName)
     {}
 
+    boost::shared_ptr<octomap_msgs::Octomap> CoverageChecker::map3D_;
+
     void CoverageChecker::findCoverage(const tf::StampedTransform& transform)
     {
-      transform_ = transform;
+      transform.getBasis().getRPY(roll_, pitch_, yaw_);
+      position_ = Utils::vector3ToPoint(transform.getOrigin());
+    }
+
+    void CoverageChecker::getParameters()
+    {
+      if (!nh_->getParam("sensor_range/"+frameName_, SENSOR_RANGE))
+      {
+        ROS_FATAL("%s sensor range param not found", frameName_.c_str());
+        ROS_BREAK();
+      }
+      if (!nh_->getParam("sensor_hfov/"+frameName_, SENSOR_HFOV))
+      {
+        ROS_FATAL("%s sensor hfov param not found", frameName_.c_str());
+        ROS_BREAK();
+      }
+      if (!nh_->getParam("sensor_vfov/"+frameName_, SENSOR_VFOV))
+      {
+        ROS_FATAL("%s sensor vfov param not found", frameName_.c_str());
+        ROS_BREAK();
+      }
     }
 
 }  // namespace pandora_sensor_coverage

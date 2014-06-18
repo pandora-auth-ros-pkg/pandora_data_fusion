@@ -35,6 +35,7 @@ add_library(coverage_checker
   src/coverage_checker.cpp)
 target_link_libraries(coverage_checker
   ${catkin_LIBRARIES}
+  utils
   )
 
 ########################  space checker  ############################
