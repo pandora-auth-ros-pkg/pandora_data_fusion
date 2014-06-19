@@ -8,7 +8,11 @@ find_package(catkin REQUIRED COMPONENTS
   pandora_alert_handler
   state_manager
   state_manager_communications
+  octomap_msgs
+  octomap_ros
   )
+
+find_package(octomap REQUIRED)
 
 catkin_package(
   DEPENDS
@@ -27,6 +31,10 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${OCTOMAP_INCLUDE_DIRS}
+  )
+link_directories(
+  ${OCTOMAP_LIBRARY_DIRS}
   )
 
 ########################  coverage checker  #########################

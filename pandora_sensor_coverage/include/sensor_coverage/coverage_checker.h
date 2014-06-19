@@ -45,6 +45,8 @@
 #include <ros/ros.h>
 #include "tf/transform_datatypes.h"
 
+#include "octomap/octomap.h"
+#include "octomap_ros/conversions.h"
 #include "octomap_msgs/Octomap.h"
 
 #include "alert_handler/utils.h"
@@ -84,11 +86,11 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter of static variable 3DMap_
-         * @param map3D [boost::shared_ptr<octomap_msgs::Octomap> const&] map
+         * @param map3D [boost::shared_ptr<octomap::OcTree> const&] map
          * @note Will reset to null, deleting reference, if a null ptr is passed.
          * @return void
          */
-        static void setMap(const boost::shared_ptr<octomap_msgs::Octomap>& map3D)
+        static void setMap(const boost::shared_ptr<octomap::OcTree>& map3D)
         {
           map3D_ = map3D;
         }
@@ -111,7 +113,7 @@ namespace pandora_data_fusion
 
       protected:
         //!< Global 3d map as it is sent by SLAM
-        static boost::shared_ptr<octomap_msgs::Octomap> map3D_;
+        static boost::shared_ptr<octomap::OcTree> map3D_;
 
         //!< Node's NodeHandle
         NodeHandlePtr nh_;

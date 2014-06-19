@@ -50,6 +50,7 @@
 
 #include <ros/ros.h>
 
+#include "octomap/octomap.h"
 #include "octomap_msgs/Octomap.h"
 #include "nav_msgs/OccupancyGrid.h"
 
@@ -122,7 +123,7 @@ namespace pandora_data_fusion
         //!< Robot's current mode of operation.
         int currentState_;
         //!< 3d map recieved from SLAM.
-        boost::shared_ptr<octomap_msgs::Octomap> globalMap3D_;
+        boost::shared_ptr<octomap::OcTree> globalMap3D_;
         //!< 2d map recieved from SLAM.
         boost::shared_ptr<nav_msgs::OccupancyGrid> globalMap2D_;
         //!< vector containing all sensors registered to track their views and

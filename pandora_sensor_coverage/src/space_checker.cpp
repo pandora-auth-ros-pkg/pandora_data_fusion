@@ -71,29 +71,30 @@ namespace pandora_data_fusion
     {
       CoverageChecker::findCoverage(sensorTransform);
 
-      const double resolution = map2D_->info.resolution;
-      double step = 5 * resolution;
-      double minZ = baseTransform.getOrigin()[2];
-      double currX = position_.x;
-      double currY = position_.y;
-      double fov = (SENSOR_HFOV / 180.0) * PI;
-      geometry_msgs::Point cell;
+      const float resolution = map2D_->info.resolution;
+      float step = 5 * resolution;
+      float minZ = baseTransform.getOrigin()[2];
+      float currX = position_.x;
+      float currY = position_.y;
+      float fov = (SENSOR_HFOV / 180.0) * PI;
+      octomath::Vector3 cell;
 
-      for (double angle = -fov/2; angle < fov/2; angle += PI / 180.0)
+      for (float angle = -fov/2; angle < fov/2; angle += PI / 180.0)
       {
-        cell.x = step * cos(yaw_ + angle) + currX;
-        cell.y = step * sin(yaw_ + angle) + currY;
+        cell.x() = step * cos(yaw_ + angle) + currX;
+        cell.y() = step * sin(yaw_ + angle) + currY;
 
-        while (CELL(cell.x, cell.y, map2D_) < OCCUPIED_CELL_THRES * 100
-            && Utils::distanceBetweenPoints2D(position_, cell) < SENSOR_RANGE)
+        while (CELL(cell.x(), cell.y(), map2D_) < OCCUPIED_CELL_THRES * 100
+            && Utils::distanceBetweenPoints2D(
+              position_, octomap::pointOctomapToMsg(cell)) < SENSOR_RANGE)
         {
-          float covered = cellCoverage(cell, minZ);
-          if (covered > CELL(cell.x, cell.y, (&coveredSpace_)))
+          int covered = ceil(cellCoverage(cell, minZ) * 100);
+          if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_)))
           {
-            CELL(cell.x, cell.y, (&coveredSpace_)) = covered;
+            CELL(cell.x(), cell.y(), (&coveredSpace_)) = covered;
           }
-          cell.x += resolution * cos(yaw_ + angle);
-          cell.y += resolution * sin(yaw_ + angle);
+          cell.x() += resolution * cos(yaw_ + angle);
+          cell.y() += resolution * sin(yaw_ + angle);
         }
       }
 
@@ -109,9 +110,57 @@ namespace pandora_data_fusion
       }
     }
 
-    float SpaceChecker::cellCoverage(const geometry_msgs::Point& cell, double minHeight)
+    float SpaceChecker::cellCoverage(const octomath::Vector3& cell, float minHeight)
     {
-      return 0;
+      bool coversSpace = false, occupied = false;
+      float totalCoverage = 0, startZ = 0, occupiedHeight = 0;
+      octomath::Vector3 begin(cell.x(), cell.y(), minHeight);
+      //  end can be later implemented having z = minHeight + MAX_HEIGHT
+      octomath::Vector3 end(cell.x(), cell.y(), MAX_HEIGHT);
+      std::vector<octomath::Vector3> pointVector;
+      map3D_->computeRay(begin, end, pointVector);
+      for (unsigned int ii = 0;
+          ii < pointVector.size(); ++ii)
+      {
+        octomap::OcTreeNode* node = map3D_->search(pointVector[ii]);
+        if (!coversSpace &&
+            node->getOccupancy() <= map3D_->getOccupancyThres() &&
+            node->getOccupancy() > 0)
+        {
+          coversSpace = true;
+          startZ = pointVector[ii].z();
+        }
+        if (coversSpace)
+        {
+          if (node->getOccupancy() == 0 || ii == pointVector.size() - 1)
+          {
+            coversSpace = false;
+            if (occupied)
+            {
+              occupied = false;
+              occupiedHeight += pointVector[ii].z() - startZ;
+            }
+            else
+            {
+              totalCoverage += pointVector[ii].z() - startZ;
+            }
+          }
+          else if (node->getOccupancy() > map3D_->getOccupancyThres())
+          {
+            totalCoverage += pointVector[ii].z() - startZ;
+            occupied = true;
+            startZ = pointVector[ii].z();
+          }
+          else if (occupied)
+          {
+            occupied = false;
+            occupiedHeight += pointVector[ii].z() - startZ;
+            startZ = pointVector[ii].z();
+          }
+        }
+      }
+      float totalHeight = pointVector[pointVector.size() - 1].z() - pointVector[0].z();
+      return totalCoverage / (totalHeight - occupiedHeight); 
     }
 
     void SpaceChecker::publishCoverage()

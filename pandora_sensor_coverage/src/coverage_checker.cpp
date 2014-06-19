@@ -49,7 +49,7 @@ namespace pandora_data_fusion
       : nh_(nh), frameName_(frameName)
     {}
 
-    boost::shared_ptr<octomap_msgs::Octomap> CoverageChecker::map3D_;
+    boost::shared_ptr<octomap::OcTree> CoverageChecker::map3D_;
 
     void CoverageChecker::findCoverage(const tf::StampedTransform& transform)
     {

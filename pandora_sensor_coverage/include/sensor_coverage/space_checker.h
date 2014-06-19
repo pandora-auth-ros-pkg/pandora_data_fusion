@@ -43,6 +43,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "nav_msgs/OccupancyGrid.h"
+#include "octomap_msgs/conversions.h"
 
 #include "sensor_coverage/coverage_checker.h"
 
@@ -114,11 +115,11 @@ namespace pandora_data_fusion
         /**
          * @brief finds cell's space coverage as a percentage of the covered
          * space above it
-         * @param cell [geometry_msgs::Point const&] cell in question
-         * @param minHeight [double] minimun height of interest (base footprint)
+         * @param cell [octomath::Vector3 const&] cell in question
+         * @param minHeight [float] minimun height of interest (base footprint)
          * @return float percentage of space covered by sensor.
          */
-        float cellCoverage(const geometry_msgs::Point& cell, double minHeight);
+        float cellCoverage(const octomath::Vector3& cell, float minHeight);
 
         /**
          * @override

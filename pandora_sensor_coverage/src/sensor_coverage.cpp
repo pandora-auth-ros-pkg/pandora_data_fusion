@@ -50,8 +50,8 @@ namespace pandora_data_fusion
     {
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
-      globalMap3D_.reset( new octomap_msgs::Octomap );
-      globalMap2D_.reset( new nav_msgs::OccupancyGrid );
+      globalMap3D_.reset();
+      globalMap2D_.reset();
       CoverageChecker::setMap(globalMap3D_);
       SpaceChecker::setMap2D(globalMap2D_);
 
@@ -122,14 +122,35 @@ namespace pandora_data_fusion
       }
     }
 
-    void SensorCoverage::map3DUpdate(const octomap_msgs::Octomap& map)
+    void SensorCoverage::map3DUpdate(const octomap_msgs::Octomap& msg)
     {
-      *globalMap3D_ = map;
+      octomap::AbstractOcTree* map = octomap_msgs::fullMsgToMap(msg);
+      if (map)
+      {
+        octomap::OcTree* map3D = dynamic_cast<octomap::OcTree*>(map);
+        if (map3D)
+        {
+          globalMap3D_.reset(map3D);
+          CoverageChecker::setMap(globalMap3D_);
+        }
+        else
+        {
+          ROS_WARN_NAMED("SENSOR_COVERAGE",
+              "[SENSOR_COVERAGE_MAP3D_UPDATE %d] AbstractOcTree sent is not OcTree",
+              __LINE__);
+        }
+      }
+      else
+      {
+        ROS_WARN_NAMED("SENSOR_COVERAGE",
+            "[SENSOR_COVERAGE_MAP3D_UPDATE %d] Could not deserialize message to OcTree",
+            __LINE__);
+      }
     }
 
-    void SensorCoverage::map2DUpdate(const nav_msgs::OccupancyGrid& map)
+    void SensorCoverage::map2DUpdate(const nav_msgs::OccupancyGrid& msg)
     {
-      *globalMap2D_ = map;
+      *globalMap2D_ = msg;
     }
 
 }  // namespace pandora_sensor_coverage
