@@ -43,8 +43,8 @@
 #include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>
-#include "tf/transform_datatypes.h"
 
+#include "tf/transform_datatypes.h"
 #include "octomap/octomap.h"
 #include "octomap_ros/conversions.h"
 #include "octomap_msgs/Octomap.h"

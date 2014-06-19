@@ -79,6 +79,11 @@ namespace pandora_data_fusion
         ROS_BREAK();
       }
 
+      //  Set up occupancy grid 2d map occupancy threshold.
+      double thres = 0;
+      nh_->param<double>("occupied_cell_thres", thres, double(0.5));
+      SpaceChecker::setOccupiedCellThres(thres);
+
       currentState_ = 0;
 
       //  Get map's origin (can be either SLAM or TEST).

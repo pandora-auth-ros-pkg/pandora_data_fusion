@@ -74,7 +74,8 @@ namespace pandora_data_fusion
          * @return void
          */
         virtual void findCoverage(const tf::StampedTransform& sensorTransform,
-        const tf::StampedTransform& baseTransform);
+            const tf::StampedTransform& baseTransform);
+
         /**
          * @override
          * @brief publishes coverage map or patch
@@ -103,10 +104,10 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter for static variable OCCUPIED_CELL_THRES
-         * @param occupiedCellThres [float] threshold
+         * @param occupiedCellThres [double] threshold
          * @return void
          */
-        static void setOccupiedCellThres(float occupiedCellThres)
+        static void setOccupiedCellThres(double occupiedCellThres)
         {
           OCCUPIED_CELL_THRES = occupiedCellThres;
         }
@@ -120,6 +121,13 @@ namespace pandora_data_fusion
          * @return float percentage of space covered by sensor.
          */
         float cellCoverage(const octomath::Vector3& cell, float minHeight);
+
+        /**
+         * @brief aligns coverage map with current global world map. Rotates,
+         * translates and scales coverage map appropriately.
+         * @return void
+         */
+        void alignCoverageWithMap();
 
         /**
          * @override
@@ -137,7 +145,7 @@ namespace pandora_data_fusion
         /*  Parameters  */
         //!< maximum height of interest
         double MAX_HEIGHT;
-        static float OCCUPIED_CELL_THRES;
+        static double OCCUPIED_CELL_THRES;
 
       private:
         friend class SpaceCheckerTest;

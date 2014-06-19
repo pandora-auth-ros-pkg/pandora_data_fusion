@@ -1,5 +1,7 @@
 subscribed_topic_names:
-  map: /map
+  map2D: /map
+  map3D: /map3D
+occupied_cell_thres: 0.5
 frames_to_track: [kinect]
 published_topic_names:
   space_kinect: space_kinect
