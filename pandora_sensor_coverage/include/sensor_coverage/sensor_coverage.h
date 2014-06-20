@@ -106,10 +106,10 @@ namespace pandora_data_fusion
 
         /**
          * @brief map2DSubscriber_'s callback to copy map from SLAM
-         * @param map [nav_msgs::OccupancyGrid const&] fetched map
+         * @param msg [nav_msgs::OccupancyGridConstPtr const&] fetched map
          * @return void
          */
-        void map2DUpdate(const nav_msgs::OccupancyGrid& map);
+        void map2DUpdate(const nav_msgs::OccupancyGridConstPtr& msg);
 
       private:
         //!< This node's NodeHandle.
@@ -125,7 +125,7 @@ namespace pandora_data_fusion
         //!< 3d map recieved from SLAM.
         boost::shared_ptr<octomap::OcTree> globalMap3D_;
         //!< 2d map recieved from SLAM.
-        boost::shared_ptr<nav_msgs::OccupancyGrid> globalMap2D_;
+        nav_msgs::OccupancyGridPtr globalMap2D_;
         //!< vector containing all sensors registered to track their views and
         //!< make their coverage patches.
         std::vector<SensorPtr> registeredSensors_;

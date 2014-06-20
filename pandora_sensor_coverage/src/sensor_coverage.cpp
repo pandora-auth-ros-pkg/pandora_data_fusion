@@ -51,7 +51,7 @@ namespace pandora_data_fusion
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
       globalMap3D_.reset();
-      globalMap2D_.reset();
+      globalMap2D_.reset( new nav_msgs::OccupancyGrid );
       CoverageChecker::setMap(globalMap3D_);
       SpaceChecker::setMap2D(globalMap2D_);
 
@@ -117,14 +117,18 @@ namespace pandora_data_fusion
     void SensorCoverage::startTransition(int newState)
     {
       currentState_ = newState;
-    }
-
-    void SensorCoverage::completeTransition()
-    {
       for (int ii = 0; ii < registeredSensors_.size(); ++ii)
       {
         registeredSensors_[ii]->notifyStateChange(currentState_);
       }
+    }
+
+    void SensorCoverage::completeTransition()
+    {
+//~       for (int ii = 0; ii < registeredSensors_.size(); ++ii)
+//~       {
+//~         registeredSensors_[ii]->notifyStateChange(currentState_);
+//~       }
     }
 
     void SensorCoverage::map3DUpdate(const octomap_msgs::Octomap& msg)
@@ -153,9 +157,10 @@ namespace pandora_data_fusion
       }
     }
 
-    void SensorCoverage::map2DUpdate(const nav_msgs::OccupancyGrid& msg)
+    void SensorCoverage::map2DUpdate(const nav_msgs::OccupancyGridConstPtr& msg)
     {
-      *globalMap2D_ = msg;
+      *globalMap2D_ = *msg;
+      globalMap2D_->info.origin.orientation.w = 1;
     }
 
 }  // namespace pandora_sensor_coverage

@@ -87,6 +87,7 @@ namespace pandora_data_fusion
       //  If sensor is not open and working, do not update coverage patch.
       if (!sensorWorking_)
         return;
+      ROS_ERROR("cool");
       //  If it does, fetch current transformation.
       ros::Time timeNow = ros::Time::now();
       tf::StampedTransform sensorTransform, baseTransform;
@@ -118,8 +119,8 @@ namespace pandora_data_fusion
       //  Publish updated coverage perception.
       spaceChecker_.findCoverage(sensorTransform, baseTransform);
       spaceChecker_.publishCoverage();
-      surfaceChecker_.findCoverage(sensorTransform);
-      surfaceChecker_.publishCoverage();
+//~       surfaceChecker_.findCoverage(sensorTransform);
+//~       surfaceChecker_.publishCoverage();
     }
 
     void Sensor::getParameters()

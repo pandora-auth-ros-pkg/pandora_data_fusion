@@ -85,10 +85,10 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter for static variable map2D_
-         * @param map2D [boost::shared_ptr<nav_msgs::OccupancyGrid> const&] map
+         * @param map2D [nav_msgs::OccupancyGridPtr const&] map
          * @return void
          */
-        static void setMap2D(const boost::shared_ptr<nav_msgs::OccupancyGrid>& map2D)
+        static void setMap2D(const nav_msgs::OccupancyGridPtr& map2D)
         {
           map2D_ = map2D;
         }
@@ -138,9 +138,9 @@ namespace pandora_data_fusion
 
       protected:
         //!< Global 2d map as it is sent by SLAM
-        static boost::shared_ptr<nav_msgs::OccupancyGrid> map2D_;
+        static nav_msgs::OccupancyGridPtr map2D_;
         //!< Sensor's space coverage map
-        nav_msgs::OccupancyGrid coveredSpace_;
+        nav_msgs::OccupancyGridPtr coveredSpace_;
 
         /*  Parameters  */
         //!< maximum height of interest

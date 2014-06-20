@@ -1,22 +1,23 @@
 subscribed_topic_names:
-  map2D: /map
-  map3D: /map3D
+  map2D: /slam/map
+  map3D: /octomap_full
 occupied_cell_thres: 0.5
-frames_to_track: [kinect]
+#kinect_frame
+frames_to_track: [kinect_link]
 published_topic_names:
-  space_kinect: space_kinect
-  surface_kinect: surface_kinect
+  space_kinect_link: space_kinect
+  surface_kinect_link: surface_kinect
 sensor_range:
-  kinect: 10
+  kinect_link: 2.2
 sensor_hfov:
-  kinect: 60
+  kinect_link: 58
 sensor_vfov:
-  kinect: 40
+  kinect_link: 45
 max_height:
-  kinect: 1.20
+  kinect_link: 1.20
 exploration_state:
-  kinect: true
+  kinect_link: true
 identification_state:
-  kinect: true
+  kinect_link: true
 hold_state:
-  kinect: true
+  kinect_link: true
