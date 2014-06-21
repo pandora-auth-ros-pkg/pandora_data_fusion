@@ -69,13 +69,14 @@ namespace pandora_data_fusion
     void SpaceChecker::findCoverage(const tf::StampedTransform& sensorTransform,
         const tf::StampedTransform& baseTransform)
     {
-//~       alignCoverageWithMap();
+      //~       alignCoverageWithMap();
       if (!coveredSpace_.get())
       {
         coveredSpace_.reset( new nav_msgs::OccupancyGrid );
         coveredSpace_->header = map2D_->header;
         coveredSpace_->info = map2D_->info;
-        coveredSpace_->data.resize(coveredSpace_->info.width * coveredSpace_->info.height);
+        coveredSpace_->data = std::vector<int8_t>(
+            coveredSpace_->info.width * coveredSpace_->info.height, 0);
         coveredSpace_->info.origin.orientation.w = 1.0;
       }
 
@@ -98,7 +99,8 @@ namespace pandora_data_fusion
             && Utils::distanceBetweenPoints2D(
               position_, octomap::pointOctomapToMsg(cell)) < SENSOR_RANGE)
         {
-          int covered = ceil(cellCoverage(cell, minZ) * 100);
+          //int covered = ceil(cellCoverage(cell, minZ) * 100);
+          int covered = 100;
           if (covered > CELL(cell.x(), cell.y(), coveredSpace_))
             CELL(cell.x(), cell.y(), coveredSpace_) = covered;
           cell.x() += resolution * cos(yaw_ + angle);
@@ -141,7 +143,7 @@ namespace pandora_data_fusion
       bool coversSpace = false, occupied = false;
       float coveredSpace = 0, startZ = begin.z(), unoccupiedSpace = 0;
       for (octomap::KeyRay::iterator it = keyRay.begin();
-        it != keyRay.end(); ++it)
+          it != keyRay.end(); ++it)
       {
         octomap::OcTreeNode* node = map3D_->search(*it);
         if (!node)
@@ -210,32 +212,33 @@ namespace pandora_data_fusion
       coveredSpace_.reset( new nav_msgs::OccupancyGrid );
       coveredSpace_->header = map2D_->header;
       coveredSpace_->info = map2D_->info;
-      coveredSpace_->data.resize(coveredSpace_->info.width * coveredSpace_->info.height);
+      coveredSpace_->data = std::vector<int8_t>(
+          coveredSpace_->info.width * coveredSpace_->info.height, 0);
       coveredSpace_->info.origin.orientation.w = 1.0;
 
       if (oldCoverage.get())
       {
-      double yawDiff = tf::getYaw(coveredSpace_->info.origin.orientation) -
-        tf::getYaw(oldCoverage->info.origin.orientation);
-      double xDiff = coveredSpace_->info.origin.position.x - 
-        oldCoverage->info.origin.position.x;
-      double yDiff = coveredSpace_->info.origin.position.y - 
-        oldCoverage->info.origin.position.y;
-      
-      unsigned int ii = 0, jj = 0, iin = 0, jjn = 0;
-      double x = 0, y = 0, xn = 0, yn = 0;
-      for (ii = 0; ii < oldCoverage->info.width; ++ii)
-      {
-        for (jj = 0; jj < oldCoverage->info.height; ++jj)
+        double yawDiff = tf::getYaw(coveredSpace_->info.origin.orientation) -
+          tf::getYaw(oldCoverage->info.origin.orientation);
+        double xDiff = coveredSpace_->info.origin.position.x - 
+          oldCoverage->info.origin.position.x;
+        double yDiff = coveredSpace_->info.origin.position.y - 
+          oldCoverage->info.origin.position.y;
+
+        unsigned int ii = 0, jj = 0, iin = 0, jjn = 0;
+        double x = 0, y = 0, xn = 0, yn = 0;
+        for (ii = 0; ii < oldCoverage->info.width; ++ii)
         {
-          x = oldCoverage->info.origin.position.x + ii * oldCoverage->info.resolution;
-          y = oldCoverage->info.origin.position.y + jj * oldCoverage->info.resolution;
-          xn = cos(yawDiff) * x - sin(yawDiff) * y + xDiff;
-          yn = sin(yawDiff) * x + cos(yawDiff) * y + yDiff;
-          CELL(xn, yn, coveredSpace_) = oldCoverage->data[
-            ii + jj * oldCoverage->info.width];
+          for (jj = 0; jj < oldCoverage->info.height; ++jj)
+          {
+            x = oldCoverage->info.origin.position.x + ii * oldCoverage->info.resolution;
+            y = oldCoverage->info.origin.position.y + jj * oldCoverage->info.resolution;
+            xn = cos(yawDiff) * x - sin(yawDiff) * y + xDiff;
+            yn = sin(yawDiff) * x + cos(yawDiff) * y + yDiff;
+            CELL(xn, yn, coveredSpace_) = oldCoverage->data[
+              ii + jj * oldCoverage->info.width];
+          }
         }
-      }
       }
     }
 
