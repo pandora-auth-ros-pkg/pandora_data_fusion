@@ -52,6 +52,9 @@
 //!< Macro for pi.
 #define PI boost::math::constants::pi<float>()
 
+//!< Macro for a degree in radians.
+#define DEGREE (PI / 180.0)
+
 //!< Macro to convert to map coordinates from meters.
 #define COORDS(X, Y, MAP) ceil((X - MAP->info.origin.position.x)\
     / MAP->info.resolution) + ceil((Y - MAP->info.origin.position.y)\

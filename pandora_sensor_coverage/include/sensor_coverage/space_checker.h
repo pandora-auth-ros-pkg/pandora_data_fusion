@@ -42,9 +42,6 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-#include "nav_msgs/OccupancyGrid.h"
-#include "octomap_msgs/conversions.h"
-
 #include "sensor_coverage/coverage_checker.h"
 
 namespace pandora_data_fusion
@@ -83,35 +80,6 @@ namespace pandora_data_fusion
          */
         virtual void publishCoverage();
 
-        /**
-         * @brief Setter for static variable map2D_
-         * @param map2D [nav_msgs::OccupancyGridPtr const&] map
-         * @return void
-         */
-        static void setMap2D(const nav_msgs::OccupancyGridPtr& map2D)
-        {
-          map2D_ = map2D;
-        }
-
-        /**
-         * @brief Deletes reference of variable 3DMap_
-         * @return void
-         */
-        static void deleteMap()
-        {
-          map2D_.reset();
-        }
-
-        /**
-         * @brief Setter for static variable OCCUPIED_CELL_THRES
-         * @param occupiedCellThres [double] threshold
-         * @return void
-         */
-        static void setOccupiedCellThres(double occupiedCellThres)
-        {
-          OCCUPIED_CELL_THRES = occupiedCellThres;
-        }
-
       private:
         /**
          * @brief finds cell's space coverage as a percentage of the covered
@@ -137,15 +105,12 @@ namespace pandora_data_fusion
         virtual void getParameters();
 
       protected:
-        //!< Global 2d map as it is sent by SLAM
-        static nav_msgs::OccupancyGridPtr map2D_;
         //!< Sensor's space coverage map
         nav_msgs::OccupancyGridPtr coveredSpace_;
 
         /*  Parameters  */
         //!< maximum height of interest
         double MAX_HEIGHT;
-        static double OCCUPIED_CELL_THRES;
 
       private:
         friend class SpaceCheckerTest;

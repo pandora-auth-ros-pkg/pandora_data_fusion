@@ -42,6 +42,8 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#include "octomap/ColorOcTree.h"
+
 #include "sensor_coverage/coverage_checker.h"
 
 namespace pandora_data_fusion
@@ -79,9 +81,20 @@ namespace pandora_data_fusion
          */
         virtual void publishCoverage();
 
+      private:
+        /**
+         * @brief finds at map3D_ the coverage of a point on a surface 
+         * as the product of direction with surface's normal vector.
+         * @param pointOnWall [octomap::point3d const&] point in search
+         * @param direction [octomap::point3d const&] direction of tracing ray
+         * @return unsigned char estimation of point's coverage.
+         */
+        unsigned char findPointCoverage(const octomap::point3d& pointOnWall,
+            const octomap::point3d& direction);
+
       protected:
         //!< Sensor's surface coverage patch
-        octomap_msgs::Octomap coveredSurface_;
+        boost::shared_ptr<octomap::ColorOcTree> coveredSurface_;
 
       private:
         friend class SurfaceCheckerTest;

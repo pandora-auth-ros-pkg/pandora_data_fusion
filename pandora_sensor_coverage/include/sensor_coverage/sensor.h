@@ -86,6 +86,39 @@ namespace pandora_data_fusion
          */
         void notifyStateChange(int newState);
 
+        /**
+         * @brief Setter for static variable map2d_
+         * @param map2d [nav_msgs::OccupancyGridPtr const&] map
+         * @return void
+         */
+        static void setMap2d(const nav_msgs::OccupancyGridPtr& map2d)
+        {
+          map2d_ = map2d;
+          CoverageChecker::setMap2d(map2d);
+        }
+
+        /**
+         * @brief Setter of static variable 3dMap_
+         * @param map3d [boost::shared_ptr<octomap::OcTree> const&] map
+         * @note Will reset to null, deleting reference, if a null ptr is passed.
+         * @return void
+         */
+        static void setMap3d(const boost::shared_ptr<octomap::OcTree>& map3d)
+        {
+          map3d_ = map3d;
+          CoverageChecker::setMap3d(map3d);
+        }
+
+        /**
+         * @brief delegate to coverage checker
+         * @param occupiedCellThres [double] threshold
+         * @return void
+         */
+        static void setOccupiedCellThres(double occupiedCellThres)
+        {
+          CoverageChecker::setOccupiedCellThres(occupiedCellThres);
+        }
+
       protected:
         /**
          * @brief callback for timer that updates sensor's coverage patch
@@ -120,6 +153,10 @@ namespace pandora_data_fusion
         SpaceChecker spaceChecker_;
         //!< Surface coverage finder
         SurfaceChecker surfaceChecker_;
+
+        //!< Global 3d and 2d maps as they are sent by SLAM
+        static boost::shared_ptr<octomap::OcTree> map3d_;
+        static nav_msgs::OccupancyGridPtr map2d_;
 
         /*  Sensor's state: True if open, False if closed  */
         //!< sensor's state in EXPLORATION_MODE

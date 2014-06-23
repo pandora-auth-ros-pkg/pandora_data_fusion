@@ -49,12 +49,15 @@ namespace pandora_data_fusion
       : nh_(nh), frameName_(frameName)
     {}
 
-    boost::shared_ptr<octomap::OcTree> CoverageChecker::map3D_;
+    boost::shared_ptr<octomap::OcTree> CoverageChecker::map3d_;
+    nav_msgs::OccupancyGridPtr CoverageChecker::map2d_;
+    double CoverageChecker::OCCUPIED_CELL_THRES = 0.5;
 
     void CoverageChecker::findCoverage(const tf::StampedTransform& transform)
     {
       transform.getBasis().getRPY(roll_, pitch_, yaw_);
-      position_ = Utils::vector3ToPoint(transform.getOrigin());
+      position_ = octomap::pointMsgToOctomap(
+          Utils::vector3ToPoint(transform.getOrigin()));
     }
 
     void CoverageChecker::getParameters()

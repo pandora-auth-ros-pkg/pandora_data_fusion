@@ -57,9 +57,6 @@
 #include "state_manager/state_client.h"
 
 #include "sensor_coverage/sensor.h"
-#include "sensor_coverage/space_checker.h"
-#include "sensor_coverage/surface_checker.h"
-#include "sensor_coverage/coverage_checker.h"
 
 namespace pandora_data_fusion
 {
@@ -98,34 +95,34 @@ namespace pandora_data_fusion
 
       private:
         /**
-         * @brief map3DSubscriber_'s callback to copy map from SLAM
-         * @param map [octomap_msgs::Octomap const&] fetched map
+         * @brief map3dSubscriber_'s callback to copy map from SLAM
+         * @param msg [octomap_msgs::Octomap const&] fetched map
          * @return void
          */
-        void map3DUpdate(const octomap_msgs::Octomap& map);
+        void map3dUpdate(const octomap_msgs::Octomap& msg);
 
         /**
-         * @brief map2DSubscriber_'s callback to copy map from SLAM
+         * @brief map2dsubscriber_'s callback to copy map from SLAM
          * @param msg [nav_msgs::OccupancyGridConstPtr const&] fetched map
          * @return void
          */
-        void map2DUpdate(const nav_msgs::OccupancyGridConstPtr& msg);
+        void map2dUpdate(const nav_msgs::OccupancyGridConstPtr& msg);
 
       private:
         //!< This node's NodeHandle.
         NodeHandlePtr nh_;
 
         //!< subscriber that fetches 3d map.
-        ros::Subscriber map3DSubscriber_;
+        ros::Subscriber map3dSubscriber_;
         //!< subscriber that fetches 2d map.
-        ros::Subscriber map2DSubscriber_;
+        ros::Subscriber map2dSubscriber_;
 
         //!< Robot's current mode of operation.
         int currentState_;
         //!< 3d map recieved from SLAM.
-        boost::shared_ptr<octomap::OcTree> globalMap3D_;
+        boost::shared_ptr<octomap::OcTree> globalMap3d_;
         //!< 2d map recieved from SLAM.
-        nav_msgs::OccupancyGridPtr globalMap2D_;
+        nav_msgs::OccupancyGridPtr globalMap2d_;
         //!< vector containing all sensors registered to track their views and
         //!< make their coverage patches.
         std::vector<SensorPtr> registeredSensors_;

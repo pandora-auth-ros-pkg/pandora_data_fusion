@@ -50,38 +50,38 @@ namespace pandora_data_fusion
     {
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
-      globalMap3D_.reset();
-      globalMap2D_.reset( new nav_msgs::OccupancyGrid );
-      CoverageChecker::setMap(globalMap3D_);
-      SpaceChecker::setMap2D(globalMap2D_);
+      globalMap3d_.reset();
+      globalMap2d_.reset();
+      Sensor::setMap3d(globalMap3d_);
+      Sensor::setMap2d(globalMap2d_);
 
       std::string param;
 
       //  Subscribe to 3d slam topic.
-      if (nh_->getParam("subscribed_topic_names/map3D", param))
+      if (nh_->getParam("subscribed_topic_names/map3d", param))
       {
-        map3DSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map3DUpdate, this);
+        map3dSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map3dUpdate, this);
       }
       else
       {
-        ROS_FATAL("map3D topic name param not found");
+        ROS_FATAL("map3d topic name param not found");
         ROS_BREAK();
       }
 
       //  Subscribe to 2d slam topic.
-      if (nh_->getParam("subscribed_topic_names/map2D", param))
+      if (nh_->getParam("subscribed_topic_names/map2d", param))
       {
-        map2DSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map2DUpdate, this);
+        map2dSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map2dUpdate, this);
       }
       else
       {
-        ROS_FATAL("map2D topic name param not found");
+        ROS_FATAL("map2d topic name param not found");
         ROS_BREAK();
       }
 
       //  Set up occupancy grid 2d map occupancy threshold.
       double thres = 0;
-      nh_->param<double>("occupied_cell_thres", thres, double(0.5));
+      nh_->param<double>("occupied_cell_thres", thres, static_cast<double>(0.5));
       SpaceChecker::setOccupiedCellThres(thres);
 
       currentState_ = 0;
@@ -125,22 +125,22 @@ namespace pandora_data_fusion
 
     void SensorCoverage::completeTransition()
     {
-//~       for (int ii = 0; ii < registeredSensors_.size(); ++ii)
-//~       {
-//~         registeredSensors_[ii]->notifyStateChange(currentState_);
-//~       }
+      // for (int ii = 0; ii < registeredSensors_.size(); ++ii)
+      // {
+      //   registeredSensors_[ii]->notifyStateChange(currentState_);
+      // }
     }
 
-    void SensorCoverage::map3DUpdate(const octomap_msgs::Octomap& msg)
+    void SensorCoverage::map3dUpdate(const octomap_msgs::Octomap& msg)
     {
       octomap::AbstractOcTree* map = octomap_msgs::fullMsgToMap(msg);
       if (map)
       {
-        octomap::OcTree* map3D = dynamic_cast<octomap::OcTree*>(map);
-        if (map3D)
+        octomap::OcTree* map3d = dynamic_cast<octomap::OcTree*>(map);
+        if (map3d)
         {
-          globalMap3D_.reset(map3D);
-          CoverageChecker::setMap(globalMap3D_);
+          globalMap3d_.reset(map3d);
+          Sensor::setMap3d(globalMap3d_);
         }
         else
         {
@@ -157,10 +157,12 @@ namespace pandora_data_fusion
       }
     }
 
-    void SensorCoverage::map2DUpdate(const nav_msgs::OccupancyGridConstPtr& msg)
+    void SensorCoverage::map2dUpdate(const nav_msgs::OccupancyGridConstPtr& msg)
     {
-      *globalMap2D_ = *msg;
-      globalMap2D_->info.origin.orientation.w = 1;
+      globalMap2d_.reset( new nav_msgs::OccupancyGrid );
+      *globalMap2d_ = *msg;
+      globalMap2d_->info.origin.orientation.w = 1;
+      Sensor::setMap2d(globalMap2d_);
     }
 
 }  // namespace pandora_sensor_coverage

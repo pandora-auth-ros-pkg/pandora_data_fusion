@@ -60,6 +60,9 @@ namespace pandora_data_fusion
           &Sensor::coverageUpdate, this);
     }
 
+    boost::shared_ptr<octomap::OcTree> Sensor::map3d_;
+    nav_msgs::OccupancyGridPtr Sensor::map2d_;
+
     void Sensor::notifyStateChange(int newState)
     {
       switch (newState)
@@ -86,6 +89,8 @@ namespace pandora_data_fusion
     {
       //  If sensor is not open and working, do not update coverage patch.
       if (!sensorWorking_)
+        return;
+      if (map2d_ == NULL || map3d_ == NULL)
         return;
       ROS_ERROR("cool");
       //  If it does, fetch current transformation.
@@ -119,8 +124,8 @@ namespace pandora_data_fusion
       //  Publish updated coverage perception.
       spaceChecker_.findCoverage(sensorTransform, baseTransform);
       spaceChecker_.publishCoverage();
-//~       surfaceChecker_.findCoverage(sensorTransform);
-//~       surfaceChecker_.publishCoverage();
+      //  surfaceChecker_.findCoverage(sensorTransform);
+      //  surfaceChecker_.publishCoverage();
     }
 
     void Sensor::getParameters()

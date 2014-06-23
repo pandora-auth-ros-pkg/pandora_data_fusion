@@ -65,13 +65,64 @@ namespace pandora_data_fusion
 
     void SurfaceChecker::findCoverage(const tf::StampedTransform& transform)
     {
+      //  Initialize surface coverage map, if uninitialized.
+      if (coveredSurface_.get() == NULL)
+        coveredSurface_.reset( new octomap::ColorOcTree(map3d_->getResolution()) );
       CoverageChecker::findCoverage(transform);
-      //  TODO
+      double yaw_curr = 0, pitch_curr = 0;
+      double h_fov = (SENSOR_HFOV / 180.0) * PI;
+      double v_fov = (SENSOR_VFOV / 180.0) * PI;
+      octomap::point3d pointOnWall;
+      for (double h_angle = -h_fov / 2; h_angle < h_fov / 2; h_angle += DEGREE)
+      {
+        for (double v_angle = -v_fov / 2; v_angle < v_fov / 2; v_angle += DEGREE)
+        {
+          yaw_curr = yaw_ + h_angle;
+          pitch_curr = pitch_ + v_angle;
+          octomap::point3d direction(1, 0, 0);
+          if (map3d_->castRay(position_,
+                direction.rotate_IP(roll_, pitch_curr, yaw_curr),
+                pointOnWall,
+                true,
+                SENSOR_RANGE))
+          {
+            if (coveredSurface_->insertRay(position_,
+                pointOnWall,
+                SENSOR_RANGE,
+                true))
+            {
+              octomap::ColorOcTreeNode* node = coveredSurface_->search(pointOnWall);
+              if (node != NULL)
+              {
+                unsigned char coverage = 0;
+                bool toSet = true;
+                if (node->isColorSet())
+                {
+                  coverage = findPointCoverage(pointOnWall, direction);
+                  if (node->getColor().r >= coverage)
+                    toSet = false;
+                }
+                if (toSet)
+                  node->setColor(coverage, 0, 0);
+              }
+            }
+          }
+        }
+      }
+      coveredSurface_->updateInnerOccupancy();
+    }
+
+    unsigned char SurfaceChecker::findPointCoverage(const octomap::point3d& pointOnWall,
+        const octomap::point3d& direction)
+    {
+      return 255;
     }
 
     void SurfaceChecker::publishCoverage()
     {
-      coveragePublisher_.publish(coveredSurface_);
+      octomap_msgs::Octomap msg;
+      if (octomap_msgs::fullMapToMsg(*coveredSurface_, msg))
+        coveragePublisher_.publish(msg);
     }
 
 }  // namespace pandora_sensor_coverage
