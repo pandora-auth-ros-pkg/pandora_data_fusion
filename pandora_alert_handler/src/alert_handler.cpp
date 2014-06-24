@@ -469,10 +469,6 @@ namespace pandora_data_fusion
             it->pose.position.z);
         tf::Transform tfObject(tfQuaternion, vec);
 
-        ROS_DEBUG_NAMED("ALERT_HANDLER_TF_PUBLISHER",
-            "Publishing tf : %f , %f , %f , world to %s ", vec[0], vec[1], vec[2],
-            it->header.frame_id.c_str());
-
         objectsBroadcaster_.sendTransform( 
             tf::StampedTransform(tfObject, it->header.stamp,
               "/world", it->header.frame_id ) );
@@ -578,7 +574,7 @@ namespace pandora_data_fusion
 
       objectHandler_->updateParams(config.sensorRange, config.clusterRadius);
 
-      victimHandler_->updateParams(config.clusterRadius , config.sameVictimRadius);
+      victimHandler_->updateParams(config.clusterRadius, config.sameVictimRadius);
     }
 
     ///////////////////////////////////////////////////////
