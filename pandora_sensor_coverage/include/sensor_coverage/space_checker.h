@@ -98,6 +98,12 @@ namespace pandora_data_fusion
         void alignCoverageWithMap();
 
         /**
+         * @brief Wrapper for pandora_vision::Morphology::dilation()
+         * @return void
+         */
+        void coverageDilation(int steps, int coords);
+
+        /**
          * @override
          * @brief Getter for sensor's parameters
          * @return void

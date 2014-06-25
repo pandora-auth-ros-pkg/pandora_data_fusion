@@ -60,7 +60,7 @@ namespace pandora_data_fusion
           &Sensor::coverageUpdate, this);
     }
 
-    boost::shared_ptr<octomap::OcTree> Sensor::map3d_;
+    octomap::OcTree* Sensor::map3d_ = NULL;
     nav_msgs::OccupancyGridPtr Sensor::map2d_;
 
     void Sensor::notifyStateChange(int newState)
@@ -90,7 +90,7 @@ namespace pandora_data_fusion
       //  If sensor is not open and working, do not update coverage patch.
       if (!sensorWorking_)
         return;
-      if (map2d_ == NULL || map3d_ == NULL)
+      if (map2d_->data.size() == 0 || map3d_ == NULL)
         return;
       ROS_ERROR("cool");
       //  If it does, fetch current transformation.

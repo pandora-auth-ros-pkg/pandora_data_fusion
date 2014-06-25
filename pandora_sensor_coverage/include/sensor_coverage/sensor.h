@@ -99,11 +99,11 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter of static variable 3dMap_
-         * @param map3d [boost::shared_ptr<octomap::OcTree> const&] map
+         * @param map3d [octomap::OcTree*] map
          * @note Will reset to null, deleting reference, if a null ptr is passed.
          * @return void
          */
-        static void setMap3d(const boost::shared_ptr<octomap::OcTree>& map3d)
+        static void setMap3d(octomap::OcTree* map3d)
         {
           map3d_ = map3d;
           CoverageChecker::setMap3d(map3d);
@@ -155,7 +155,7 @@ namespace pandora_data_fusion
         SurfaceChecker surfaceChecker_;
 
         //!< Global 3d and 2d maps as they are sent by SLAM
-        static boost::shared_ptr<octomap::OcTree> map3d_;
+        static octomap::OcTree* map3d_;
         static nav_msgs::OccupancyGridPtr map2d_;
 
         /*  Sensor's state: True if open, False if closed  */
