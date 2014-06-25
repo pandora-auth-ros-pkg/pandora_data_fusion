@@ -132,6 +132,9 @@ namespace pandora_data_fusion
 
     void SensorCoverage::map3dUpdate(const octomap_msgs::Octomap& msg)
     {
+      //ROS_INFO("yo");
+      //if (globalMap3d_ != NULL)
+        //globalMap3d_->clear();
       octomap::AbstractOcTree* map = octomap_msgs::fullMsgToMap(msg);
       if (map)
       {

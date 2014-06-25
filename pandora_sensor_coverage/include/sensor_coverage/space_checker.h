@@ -112,7 +112,9 @@ namespace pandora_data_fusion
 
       protected:
         //!< Sensor's space coverage map
-        nav_msgs::OccupancyGridPtr coveredSpace_;
+        nav_msgs::OccupancyGrid coveredSpace_;
+        //!< Total area covered with this sensor
+        float totalAreaCovered_;
 
         /*  Parameters  */
         //!< maximum height of interest

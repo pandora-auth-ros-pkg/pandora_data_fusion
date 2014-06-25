@@ -90,9 +90,9 @@ namespace pandora_data_fusion
       //  If sensor is not open and working, do not update coverage patch.
       if (!sensorWorking_)
         return;
+      //if (map2d_->data.size() == 0)
       if (map2d_->data.size() == 0 || map3d_ == NULL)
         return;
-      ROS_ERROR("cool");
       //  If it does, fetch current transformation.
       ros::Time timeNow = ros::Time::now();
       tf::StampedTransform sensorTransform, baseTransform;
@@ -102,30 +102,22 @@ namespace pandora_data_fusion
             "/map", frameName_, timeNow, ros::Duration(0.5));
         listener_->lookupTransform(
             "/map", frameName_, timeNow, sensorTransform);
-      }
-      catch (TfException ex)
-      {
-        ROS_WARN_NAMED("SENSOR_COVERAGE",
-            "[SENSOR_COVERAGE_SENSOR %d] %s", __LINE__, ex.what());
-      }
-      try
-      {
         listener_->waitForTransform(
             "/map", "/base_footprint", timeNow, ros::Duration(0.5));
         listener_->lookupTransform(
             "/map", "/base_footprint", timeNow, baseTransform);
+        //  Update coverage perception.
+        //  Publish updated coverage perception.
+        spaceChecker_.findCoverage(sensorTransform, baseTransform);
+        spaceChecker_.publishCoverage();
+        //  surfaceChecker_.findCoverage(sensorTransform);
+        //  surfaceChecker_.publishCoverage();
       }
       catch (TfException ex)
       {
         ROS_WARN_NAMED("SENSOR_COVERAGE",
             "[SENSOR_COVERAGE_SENSOR %d] %s", __LINE__, ex.what());
       }
-      //  Update coverage perception.
-      //  Publish updated coverage perception.
-      spaceChecker_.findCoverage(sensorTransform, baseTransform);
-      spaceChecker_.publishCoverage();
-      //  surfaceChecker_.findCoverage(sensorTransform);
-      //  surfaceChecker_.publishCoverage();
     }
 
     void Sensor::getParameters()
