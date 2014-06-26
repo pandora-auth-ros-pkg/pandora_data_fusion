@@ -90,8 +90,8 @@ namespace pandora_data_fusion
             && Utils::distanceBetweenPoints2D(octomap::pointOctomapToMsg(position_),
               octomap::pointOctomapToMsg(cell)) < SENSOR_RANGE)
         {
-          //signed char covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
-          signed char covered = 254;
+          signed char covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
+          //signed char covered = 100;
           if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_))) 
           {
             CELL(cell.x(), cell.y(), (&coveredSpace_)) = covered;
@@ -141,7 +141,8 @@ namespace pandora_data_fusion
       octomap::KeyRay keyRay;
       if (!map3d_->computeRayKeys(begin, end, keyRay))
       {
-        ROS_ERROR("Compute ray went out of range!");
+        ROS_ERROR("[SENSOR_COVERAGE_SPACE_CHECKER %d] Compute ray went out of range!",
+            __LINE__);
       }
       bool coversSpace = false, occupied = false;
       float coveredSpace = 0, startZ = begin.z(), unoccupiedSpace = 0;

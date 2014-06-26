@@ -50,7 +50,8 @@ namespace pandora_data_fusion
     {
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
-      globalMap3d_ == NULL;
+      globalMap3d_ = NULL;
+      ROS_ASSERT(globalMap3d_ == NULL);
       globalMap2d_.reset( new nav_msgs::OccupancyGrid );
       Sensor::setMap2d(globalMap2d_);
 
@@ -132,9 +133,12 @@ namespace pandora_data_fusion
 
     void SensorCoverage::map3dUpdate(const octomap_msgs::Octomap& msg)
     {
-      //ROS_INFO("yo");
-      //if (globalMap3d_ != NULL)
-        //globalMap3d_->clear();
+      ROS_INFO("yo");
+      if (globalMap3d_ != NULL)
+      {
+        ROS_ERROR("yay!!");
+        delete globalMap3d_;
+      }
       octomap::AbstractOcTree* map = octomap_msgs::fullMsgToMap(msg);
       if (map)
       {
