@@ -62,17 +62,17 @@ namespace pandora_data_fusion
 
     void CoverageChecker::getParameters()
     {
-      if (!nh_->getParam("sensor_range/"+frameName_, SENSOR_RANGE))
+      if (!nh_->getParam(frameName_+"/sensor_range", SENSOR_RANGE))
       {
         ROS_FATAL("%s sensor range param not found", frameName_.c_str());
         ROS_BREAK();
       }
-      if (!nh_->getParam("sensor_hfov/"+frameName_, SENSOR_HFOV))
+      if (!nh_->getParam(frameName_+"/sensor_hfov", SENSOR_HFOV))
       {
         ROS_FATAL("%s sensor hfov param not found", frameName_.c_str());
         ROS_BREAK();
       }
-      if (!nh_->getParam("sensor_vfov/"+frameName_, SENSOR_VFOV))
+      if (!nh_->getParam(frameName_+"/sensor_vfov", SENSOR_VFOV))
       {
         ROS_FATAL("%s sensor vfov param not found", frameName_.c_str());
         ROS_BREAK();

@@ -51,17 +51,15 @@ namespace pandora_data_fusion
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
       globalMap3d_ = NULL;
-      ROS_ASSERT(globalMap3d_ == NULL);
       globalMap2d_.reset( new nav_msgs::OccupancyGrid );
       Sensor::setMap2d(globalMap2d_);
 
       std::string param;
+      double paramD = 0;
 
       //  Subscribe to 3d slam topic.
       if (nh_->getParam("subscribed_topic_names/map3d", param))
-      {
         map3dSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map3dUpdate, this);
-      }
       else
       {
         ROS_FATAL("map3d topic name param not found");
@@ -70,9 +68,7 @@ namespace pandora_data_fusion
 
       //  Subscribe to 2d slam topic.
       if (nh_->getParam("subscribed_topic_names/map2d", param))
-      {
         map2dSubscriber_ = nh_->subscribe(param, 1, &SensorCoverage::map2dUpdate, this);
-      }
       else
       {
         ROS_FATAL("map2d topic name param not found");
@@ -80,9 +76,53 @@ namespace pandora_data_fusion
       }
 
       //  Set up occupancy grid 2d map occupancy threshold.
-      double thres = 0;
-      nh_->param<double>("occupied_cell_thres", thres, static_cast<double>(0.5));
-      SpaceChecker::setOccupiedCellThres(thres);
+      nh_->param<double>("occupied_cell_thres", paramD, static_cast<double>(0.5));
+      SpaceChecker::setOccupiedCellThres(paramD);
+
+      //  Set up maximum height of interest.
+      if (nh_->getParam("max_height", paramD))
+        SpaceChecker::setMaxHeight(paramD);
+      else
+      {
+        ROS_FATAL("max_height name param not found");
+        ROS_BREAK();
+      }
+
+      //  Set up footprint's width.
+      if (nh_->getParam("footprint/width", paramD))
+        SpaceChecker::setFootprintWidth(paramD);
+      else
+      {
+        ROS_FATAL("footprint's width name param not found");
+        ROS_BREAK();
+      }
+
+      //  Set up footprint's height.
+      if (nh_->getParam("footprint/height", paramD))
+        SpaceChecker::setFootprintHeight(paramD);
+      else
+      {
+        ROS_FATAL("footprint's height name param not found");
+        ROS_BREAK();
+      }
+
+      //  Set up maps' global static frame.
+      if (nh_->getParam("global_frame", param))
+        Sensor::setGlobalFrame(param);
+      else
+      {
+        ROS_FATAL("global_frame name param not found");
+        ROS_BREAK();
+      }
+
+      //  Set up robot's base frame name.
+      if (nh_->getParam("robot_base_frame", param))
+        Sensor::setRobotBaseFrame(param);
+      else
+      {
+        ROS_FATAL("robot_base_frame name param not found");
+        ROS_BREAK();
+      }
 
       currentState_ = 0;
 
@@ -133,10 +173,8 @@ namespace pandora_data_fusion
 
     void SensorCoverage::map3dUpdate(const octomap_msgs::Octomap& msg)
     {
-      ROS_INFO("yo");
       if (globalMap3d_ != NULL)
       {
-        ROS_ERROR("yay!!");
         delete globalMap3d_;
       }
       octomap::AbstractOcTree* map = octomap_msgs::fullMsgToMap(msg);

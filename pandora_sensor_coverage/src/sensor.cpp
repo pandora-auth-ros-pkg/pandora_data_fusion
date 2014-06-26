@@ -62,6 +62,8 @@ namespace pandora_data_fusion
 
     octomap::OcTree* Sensor::map3d_ = NULL;
     nav_msgs::OccupancyGridPtr Sensor::map2d_;
+    std::string Sensor::GLOBAL_FRAME;
+    std::string Sensor::ROBOT_BASE_FRAME;
 
     void Sensor::notifyStateChange(int newState)
     {
@@ -100,13 +102,13 @@ namespace pandora_data_fusion
       try
       {
         listener_->waitForTransform(
-            "/map", frameName_, timeNow, ros::Duration(0.5));
+            GLOBAL_FRAME, frameName_, timeNow, ros::Duration(0.5));
         listener_->lookupTransform(
-            "/map", frameName_, timeNow, sensorTransform);
+            GLOBAL_FRAME, frameName_, timeNow, sensorTransform);
         listener_->waitForTransform(
-            "/map", "/base_footprint", timeNow, ros::Duration(0.5));
+            GLOBAL_FRAME, ROBOT_BASE_FRAME, timeNow, ros::Duration(0.5));
         listener_->lookupTransform(
-            "/map", "/base_footprint", timeNow, baseTransform);
+            GLOBAL_FRAME, ROBOT_BASE_FRAME, timeNow, baseTransform);
         //  Update coverage perception.
         //  Publish updated coverage perception.
         spaceChecker_.findCoverage(sensorTransform, baseTransform);
@@ -123,17 +125,17 @@ namespace pandora_data_fusion
 
     void Sensor::getParameters()
     {
-      if (!nh_->getParam("exploration_state/"+frameName_, EXPLORATION_STATE))
+      if (!nh_->getParam(frameName_+"/exploration_state", EXPLORATION_STATE))
       {
         ROS_FATAL("%s exploration state param not found", frameName_.c_str());
         ROS_BREAK();
       }
-      if (!nh_->getParam("identification_state/"+frameName_, IDENTIFICATION_STATE))
+      if (!nh_->getParam(frameName_+"/identification_state", IDENTIFICATION_STATE))
       {
         ROS_FATAL("%s identification state param not found", frameName_.c_str());
         ROS_BREAK();
       }
-      if (!nh_->getParam("hold_state/"+frameName_, HOLD_STATE))
+      if (!nh_->getParam(frameName_+"/hold_state", HOLD_STATE))
       {
         ROS_FATAL("%s hold state param not found", frameName_.c_str());
         ROS_BREAK();

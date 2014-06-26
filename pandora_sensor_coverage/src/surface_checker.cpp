@@ -50,7 +50,7 @@ namespace pandora_data_fusion
     {
       std::string topic;
 
-      if (nh_->getParam("published_topic_names/surface_"+frameName_, topic))
+      if (nh_->getParam(frameName_+"/published_topic_names/surface", topic))
       {
         coveragePublisher_ = nh_->advertise<octomap_msgs::Octomap>(topic, 1);
       }

@@ -80,6 +80,36 @@ namespace pandora_data_fusion
          */
         virtual void publishCoverage();
 
+        /**
+         * @brief Setter for static variable MAX_HEIGHT
+         * @param maxHeight [double] maximum height of interest
+         * @return void
+         */
+        static void setMaxHeight(double maxHeight)
+        {
+          MAX_HEIGHT = maxHeight;
+        }
+
+        /**
+         * @brief Setter for static variable FOOTPRINT_WIDTH
+         * @param maxHeight [double] robot's orthogonal footprint width
+         * @return void
+         */
+        static void setFootprintWidth(double footprintWidth)
+        {
+          FOOTPRINT_WIDTH = footprintWidth;
+        }
+
+        /**
+         * @brief Setter for static variable FOOTPRINT_HEIGHT
+         * @param maxHeight [double] robot's orthogonal footprint height
+         * @return void
+         */
+        static void setFootprintHeight(double footprintHeight)
+        {
+          FOOTPRINT_HEIGHT = footprintHeight;
+        }
+
       private:
         /**
          * @brief finds cell's space coverage as a percentage of the covered
@@ -103,13 +133,6 @@ namespace pandora_data_fusion
          */
         void coverageDilation(int steps, int coords);
 
-        /**
-         * @override
-         * @brief Getter for sensor's parameters
-         * @return void
-         */
-        virtual void getParameters();
-
       protected:
         //!< Sensor's space coverage map
         nav_msgs::OccupancyGrid coveredSpace_;
@@ -118,7 +141,9 @@ namespace pandora_data_fusion
 
         /*  Parameters  */
         //!< maximum height of interest
-        double MAX_HEIGHT;
+        static double MAX_HEIGHT;
+        static double FOOTPRINT_WIDTH;
+        static double FOOTPRINT_HEIGHT;
 
       private:
         friend class SpaceCheckerTest;

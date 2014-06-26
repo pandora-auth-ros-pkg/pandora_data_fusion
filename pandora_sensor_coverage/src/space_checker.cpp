@@ -51,7 +51,7 @@ namespace pandora_data_fusion
     {
       std::string topic;
 
-      if (nh_->getParam("published_topic_names/space_"+frameName_, topic))
+      if (nh_->getParam(frameName_+"/published_topic_names/space", topic))
       {
         coveragePublisher_ = nh_->advertise<nav_msgs::OccupancyGrid>(topic, 1);
       }
@@ -62,9 +62,11 @@ namespace pandora_data_fusion
       }
 
       getParameters();
-
-      //coveredSpace_.reset( new nav_msgs::OccupancyGrid );
     }
+
+    double SpaceChecker::MAX_HEIGHT = 0;
+    double SpaceChecker::FOOTPRINT_WIDTH = 0;
+    double SpaceChecker::FOOTPRINT_HEIGHT = 0;
 
     void SpaceChecker::findCoverage(const tf::StampedTransform& sensorTransform,
         const tf::StampedTransform& baseTransform)
@@ -313,16 +315,6 @@ namespace pandora_data_fusion
     void SpaceChecker::publishCoverage()
     {
       coveragePublisher_.publish(coveredSpace_);
-    }
-
-    void SpaceChecker::getParameters()
-    {
-      CoverageChecker::getParameters();
-      if (!nh_->getParam("max_height/"+frameName_, MAX_HEIGHT))
-      {
-        ROS_FATAL("%s maximum height of interest param not found", frameName_.c_str());
-        ROS_BREAK();
-      }
     }
 
   }  // namespace pandora_sensor_coverage

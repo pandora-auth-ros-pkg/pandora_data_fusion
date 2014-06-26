@@ -98,7 +98,7 @@ namespace pandora_data_fusion
         }
 
         /**
-         * @brief Setter of static variable 3dMap_
+         * @brief Setter for static variable map3d_
          * @param map3d [octomap::OcTree*] map
          * @note Will reset to null, deleting reference, if a null ptr is passed.
          * @return void
@@ -107,6 +107,26 @@ namespace pandora_data_fusion
         {
           map3d_ = map3d;
           CoverageChecker::setMap3d(map3d);
+        }
+
+        /**
+         * @brief Setter for static global static frame.
+         * @param globalFrame [std::string const&] static frame of map
+         * @return void
+         */
+        static void setGlobalFrame(const std::string& globalFrame)
+        {
+          GLOBAL_FRAME = globalFrame;
+        }
+
+        /**
+         * @brief Setter for robot's base frame.
+         * @param robotBaseFrame [std::string const&] base footprint
+         * @return void
+         */
+        static void setRobotBaseFrame(const std::string& robotBaseFrame)
+        {
+          ROBOT_BASE_FRAME = robotBaseFrame;
         }
 
         /**
@@ -157,6 +177,10 @@ namespace pandora_data_fusion
         //!< Global 3d and 2d maps as they are sent by SLAM
         static octomap::OcTree* map3d_;
         static nav_msgs::OccupancyGridPtr map2d_;
+        
+        /*  Params  */
+        static std::string GLOBAL_FRAME;
+        static std::string ROBOT_BASE_FRAME;
 
         /*  Sensor's state: True if open, False if closed  */
         //!< sensor's state in EXPLORATION_MODE
