@@ -56,9 +56,9 @@
 #define DEGREE (PI / 180.0)
 
 //!< Macro to convert to map coordinates from meters.
-#define COORDS(X, Y, MAP) ceil((X - MAP->info.origin.position.x)\
-    / MAP->info.resolution) + ceil((Y - MAP->info.origin.position.y)\
-      / MAP->info.resolution) * MAP->info.width
+#define COORDS(X, Y, MAP) int(floor((X - MAP->info.origin.position.x)\
+    / MAP->info.resolution) + floor((Y - MAP->info.origin.position.y)\
+      / MAP->info.resolution) * MAP->info.width)
 
 //!< Macro to convert to map coordinates from meters.
 #define CELL(X, Y, MAP) MAP->data[COORDS(X, Y, MAP)]

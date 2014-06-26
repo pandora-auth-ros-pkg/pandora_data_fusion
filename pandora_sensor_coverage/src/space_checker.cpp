@@ -90,10 +90,12 @@ namespace pandora_data_fusion
             && Utils::distanceBetweenPoints2D(octomap::pointOctomapToMsg(position_),
               octomap::pointOctomapToMsg(cell)) < SENSOR_RANGE)
         {
-          //int covered = ceil(cellCoverage(cell, minZ) * 100);
-          int covered = 254;
-          //if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_)))
-          CELL(cell.x(), cell.y(), (&coveredSpace_)) = covered;
+          //signed char covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
+          signed char covered = 254;
+          if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_))) 
+          {
+            CELL(cell.x(), cell.y(), (&coveredSpace_)) = covered;
+          }
           coverageDilation(1, COORDS(cell.x(), cell.y(), (&coveredSpace_)));
           cell.x() += resolution * cos(yaw_ + angle);
           cell.y() += resolution * sin(yaw_ + angle);
@@ -227,7 +229,8 @@ namespace pandora_data_fusion
       if (oldSize != newSize)
       {
         ROS_WARN("[SENSOR_COVERAGE_SPACE_CHECKER %d] Resizing space coverage...", __LINE__);
-        coveredSpace_.data = std::vector<int8_t>(newSize, 0);
+        coveredSpace_.data.resize(newSize, 0);
+        ROS_ASSERT(newSize == coveredSpace_.data.size());
 
         if (oldSize != 0)
         {
@@ -243,12 +246,14 @@ namespace pandora_data_fusion
           {
             for (unsigned int jj = 0; jj < oldMetaData.height; ++jj)
             {
-              x = oldMetaData.origin.position.x + ii * oldMetaData.resolution;
-              y = oldMetaData.origin.position.y + jj * oldMetaData.resolution;
-              xn = cos(yawDiff) * x - sin(yawDiff) * y + xDiff;
-              yn = sin(yawDiff) * x + cos(yawDiff) * y + yDiff;
-              CELL(xn, yn, (&coveredSpace_)) = oldCoverage[ii + jj * oldMetaData.width];
-              coverageDilation(2, COORDS(xn, yn, (&coveredSpace_)));
+              x = ii * oldMetaData.resolution;
+              y = jj * oldMetaData.resolution;
+              xn = cos(yawDiff) * x - sin(yawDiff) * y - xDiff;
+              yn = sin(yawDiff) * x + cos(yawDiff) * y - yDiff;
+              int coords = int(floor((xn + yn * coveredSpace_.info.width) 
+                    / coveredSpace_.info.resolution));
+              coveredSpace_.data[coords] = oldCoverage[ii + jj * oldMetaData.width];
+              coverageDilation(1, COORDS(xn, yn, (&coveredSpace_)));
             }
           }
         }
@@ -260,7 +265,7 @@ namespace pandora_data_fusion
       if (steps == 0)
         return;
 
-      unsigned char cell = coveredSpace_.data[coords];
+      signed char cell = coveredSpace_.data[coords];
 
       if (cell != 0) // That's foreground
       {
