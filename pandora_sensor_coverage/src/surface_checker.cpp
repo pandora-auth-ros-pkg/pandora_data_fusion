@@ -48,15 +48,28 @@ namespace pandora_data_fusion
     SurfaceChecker::SurfaceChecker(const NodeHandlePtr& nh, const std::string& frameName)
       : CoverageChecker(nh, frameName)
     {
-      std::string topic;
+      coveredSurface_.reset();
 
+      std::string topic;
       if (nh_->getParam(frameName_+"/published_topic_names/surface", topic))
       {
         coveragePublisher_ = nh_->advertise<octomap_msgs::Octomap>(topic, 1);
       }
       else
       {
-        ROS_FATAL("%s topic name param not found", frameName_.c_str());
+        ROS_FATAL("%s surface topic name param not found", frameName_.c_str());
+        ROS_BREAK();
+      }
+
+      if (!nh_->getParam(frameName_+"/binary/surface", binary_))
+      {
+        ROS_FATAL("%s has binary surface coverage param not found", frameName_.c_str());
+        ROS_BREAK();
+      }
+
+      if (!nh_->getParam(frameName_+"/surface_blur_factor", blurFactor_))
+      {
+        ROS_FATAL("%s blur surface factor param not found", frameName_.c_str());
         ROS_BREAK();
       }
 
@@ -67,15 +80,26 @@ namespace pandora_data_fusion
     {
       //  Initialize surface coverage map, if uninitialized.
       if (coveredSurface_.get() == NULL)
-        coveredSurface_.reset( new octomap::ColorOcTree(map3d_->getResolution()) );
+      {
+        double resolution = map3d_->getResolution() / blurFactor_;
+        coveredSurface_.reset( new octomap::ColorOcTree(resolution) );
+      }
+
+      // Declare helper variables.
       CoverageChecker::findCoverage(transform);
       double yaw_curr = 0, pitch_curr = 0;
       double h_fov = (SENSOR_HFOV / 180.0) * PI;
       double v_fov = (SENSOR_VFOV / 180.0) * PI;
       octomap::point3d pointOnWall;
-      for (double h_angle = -h_fov / 2; h_angle < h_fov / 2; h_angle += DEGREE)
+
+      // For every direction in sensor's field of view, ray trace on 3d map.
+      // If it hits successfully find its corresponding coverage (metric) and
+      // save ray to surface coverage.
+      for (double h_angle = -h_fov / 2; h_angle < h_fov / 2;
+          h_angle += blurFactor_ * DEGREE)
       {
-        for (double v_angle = -v_fov / 2; v_angle < v_fov / 2; v_angle += DEGREE)
+        for (double v_angle = -v_fov / 2; v_angle < v_fov / 2;
+            v_angle += blurFactor_ * DEGREE)
         {
           yaw_curr = yaw_ + h_angle;
           pitch_curr = pitch_ + v_angle;
@@ -83,7 +107,7 @@ namespace pandora_data_fusion
           if (map3d_->castRay(position_,
                 direction.rotate_IP(roll_, pitch_curr, yaw_curr),
                 pointOnWall,
-                true,
+                false,
                 SENSOR_RANGE))
           {
             if (coveredSurface_->insertRay(position_,
@@ -94,16 +118,10 @@ namespace pandora_data_fusion
               octomap::ColorOcTreeNode* node = coveredSurface_->search(pointOnWall);
               if (node != NULL)
               {
-                unsigned char coverage = 0;
-                bool toSet = true;
-                if (node->isColorSet())
-                {
-                  coverage = findPointCoverage(pointOnWall, direction);
-                  if (node->getColor().r >= coverage)
-                    toSet = false;
-                }
-                if (toSet)
-                  node->setColor(coverage, 0, 0);
+                unsigned char coverage = findPointCoverage(pointOnWall, direction);
+                if (node->isColorSet() && node->getColor().r >= coverage)
+                  continue;
+                node->setColor(coverage, 0, 0);
               }
             }
           }
@@ -115,11 +133,67 @@ namespace pandora_data_fusion
     unsigned char SurfaceChecker::findPointCoverage(const octomap::point3d& pointOnWall,
         const octomap::point3d& direction)
     {
-      return 255;
+      // if surface coverage is to be taken as a binary quantity.
+      if (binary_) return 255;
+
+      // else it is assumed that coverage is a percentage of the best view
+      // one can get at the wall.
+      octomap::point3d normalOnWall = findNormalVectorOnWall(pointOnWall);
+      return metric(normalOnWall, direction);
     }
+
+    unsigned char SurfaceChecker::metric(const octomap::point3d& normalOnWall,
+        const octomap::point3d& direction)
+    {
+      octomap::point3d unitOnWall = normalOnWall.normalized();
+      return static_cast<unsigned char>(
+          floor(
+            abs(unitOnWall.dot(direction.normalized())) * 255));
+    }
+
+    octomap::point3d SurfaceChecker::findNormalVectorOnWall(
+        const octomap::point3d& point)
+    {
+      // find for constant z = point.z, the normal vector on the line which
+      // results from intersection of the surface-wall (approx. a plane) with the
+      // plane z = point.z
+      //std::vector<octomap::point3d> points;
+      //float x = 0, y = 0;
+      //for (unsigned int i = 0; i < 360; i += 5)
+      //{
+      //  x = point.x() + ORIENTATION_CIRCLE * cos((i / 180.0) * PI);
+      //  y = point.y() + ORIENTATION_CIRCLE * sin((i / 180.0) * PI);
+
+      //  if (map3d_->search(x, y, point.z())->getOccupancy()
+      //      > map3d_->getOccupancyThres())
+      //  {
+      //    octomap::point3d temp;
+      //    temp.x() = x;
+      //    temp.y() = y;
+      //    temp.z() = point.z()
+      //    points.push_back(temp);
+      //  }
+      //}
+      //std::pair<octomap::point3d, octomap::point3d> pointsOnWall;
+      //pointsOnWall = findDiameterEndPointsOnWall(points);
+      //float angle = atan2((pointsOnWall.second.y - pointsOnWall.first.y),
+      //    (pointsOnWall.second.x - pointsOnWall.first.x));
+      //x = point.x() + ORIENTATION_CIRCLE * cos((PI / 2) + angle);
+      //y = point.y() + ORIENTATION_CIRCLE * sin((PI / 2) + angle);
+
+
+
+
+
+
+
+      return octomap::point3d();
+    } 
 
     void SurfaceChecker::publishCoverage()
     {
+      coveredSurface_->toMaxLikelihood();
+      coveredSurface_->prune();
       octomap_msgs::Octomap msg;
       if (octomap_msgs::fullMapToMsg(*coveredSurface_, msg))
         coveragePublisher_.publish(msg);

@@ -57,7 +57,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("%s topic name param not found", frameName_.c_str());
+        ROS_FATAL("%s published topic name param not found", frameName_.c_str());
         ROS_BREAK();
       }
 
@@ -71,17 +71,34 @@ namespace pandora_data_fusion
     void SpaceChecker::findCoverage(const tf::StampedTransform& sensorTransform,
         const tf::StampedTransform& baseTransform)
     {
+      // Aligning coverage OGD with current map. Resizing, rotating and translating.
       alignCoverageWithMap();
 
+      // Declare helper variables
       CoverageChecker::findCoverage(sensorTransform);
-
       const float resolution = map2d_->info.resolution;
+      float robotX = baseTransform.getOrigin()[0];
+      float robotY = baseTransform.getOrigin()[1];
       float minZ = baseTransform.getOrigin()[2];
       float currX = position_.x();
       float currY = position_.y();
       float fov = (SENSOR_HFOV / 180.0) * PI;
       octomap::point3d cell;
 
+      // Robot is standing in fully covered space (assumption).
+      for (int ii = -int(ceil(FOOTPRINT_WIDTH/resolution));
+          ii < int(ceil(FOOTPRINT_WIDTH/resolution)) + 1; ii++)
+      {
+        for (int jj = -int(ceil(FOOTPRINT_HEIGHT/resolution));
+            jj < int(ceil(FOOTPRINT_HEIGHT/resolution)) + 1; jj++)
+        {
+          coveredSpace_.data[ii + jj * coveredSpace_.info.width] = 100;
+        }
+      }
+
+      // Raycast on 2d map rays that orient between -fov_x/2 and fov_x/2 and
+      // find how to much covered space (line) corresponds to a 2d cell of
+      // the map inside the raycasting area.
       for (float angle = -fov/2; angle < fov/2; angle += DEGREE)
       {
         cell.x() = resolution * cos(yaw_ + angle) + currX;
@@ -104,6 +121,8 @@ namespace pandora_data_fusion
         }
       }
 
+      // Exclude all cells that are currently truly unknown or occupied. Count all those
+      // that are covered indeed.
       unsigned int cellsCovered = 0;
       for (int ii = 0; ii < coveredSpace_.info.width; ++ii)
       {
@@ -119,6 +138,7 @@ namespace pandora_data_fusion
           }
         }
       }
+      // Calculate total area explored according to this sensor.
       totalAreaCovered_ = cellsCovered * resolution * resolution;
       ROS_INFO_THROTTLE(20,
           "[SENSOR_COVERAGE_SPACE_CHECKER %d] Total area covered is %f m^2.",

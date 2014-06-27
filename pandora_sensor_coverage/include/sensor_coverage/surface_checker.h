@@ -81,19 +81,43 @@ namespace pandora_data_fusion
          */
         virtual void publishCoverage();
 
+      protected:
+        /**
+         * @brief Metric that finds the coverage of a covered point on a surface.
+         * @note By default it is estimated as the flux of the ray that traced it.
+         * @param normalOnWall [octomap::point3d const&] normal vector on a surface.
+         * @param direction [octomap::point3d const&] direction at which we are
+         * facing the point
+         * @return unsigned char dot product of two vectors scaled on 255.
+         */
+        virtual unsigned char metric(const octomap::point3d& normalOnWall,
+            const octomap::point3d& direction);
+
       private:
         /**
-         * @brief finds at map3D_ the coverage of a point on a surface 
-         * as the product of direction with surface's normal vector.
-         * @param pointOnWall [octomap::point3d const&] point in search
-         * @param direction [octomap::point3d const&] direction of tracing ray
+         * @brief finds pointOnWall's respective coverage.
+         * @param pointOnWall [octomap::point3d const&] a covered point on a surface.
+         * @param direction [octomap::point3d const&] direction at which we are
+         * facing the point.
          * @return unsigned char estimation of point's coverage.
          */
         unsigned char findPointCoverage(const octomap::point3d& pointOnWall,
             const octomap::point3d& direction);
 
+        /**
+         * @brief finds a normal (unit) vector on wall of the 3d map at the given point.
+         * @param point [octomap::point3d const&] point on wall
+         * @return octomap::point3d normal vector on wall.
+         */
+        octomap::point3d findNormalVectorOnWall(const octomap::point3d& point);
+
       protected:
-        //!< Sensor's surface coverage patch
+        //!< If surface coverage is to be taken binary or by percentage.
+        bool binary_;
+        //!< Factor by which surface coverage's resolution is lowered compared to
+        //!< map3d_'s resolution.
+        double blurFactor_;
+        //!< Sensor's surface coverage patch.
         boost::shared_ptr<octomap::ColorOcTree> coveredSurface_;
 
       private:
