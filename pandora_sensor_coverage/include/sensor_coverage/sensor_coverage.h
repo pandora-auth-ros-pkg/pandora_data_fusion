@@ -120,7 +120,7 @@ namespace pandora_data_fusion
         //!< Robot's current mode of operation.
         int currentState_;
         //!< 3d map recieved from SLAM.
-        octomap::OcTree* globalMap3d_;
+        boost::shared_ptr<octomap::OcTree> globalMap3d_;
         //!< 2d map recieved from SLAM.
         nav_msgs::OccupancyGridPtr globalMap2d_;
         //!< vector containing all sensors registered to track their views and

@@ -99,11 +99,11 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter for static variable map3d_
-         * @param map3d [octomap::OcTree*] map
+         * @param map3d [boost::shared_ptr<octomap::OcTree> const&] map
          * @note Will reset to null, deleting reference, if a null ptr is passed.
          * @return void
          */
-        static void setMap3d(octomap::OcTree* map3d)
+        static void setMap3d(const boost::shared_ptr<octomap::OcTree>& map3d)
         {
           map3d_ = map3d;
           CoverageChecker::setMap3d(map3d);
@@ -166,18 +166,21 @@ namespace pandora_data_fusion
         bool sensorWorking_;
         //!< Sensor's tf frame which is being tracked.
         std::string frameName_;
+        //!< Is surface coverage needed?
+        bool surfaceCoverage_;
+
         //!< Abstract transformation listener.
         TfListenerPtr listener_;
 
         //!< Space coverage finder
-        SpaceChecker spaceChecker_;
+        boost::scoped_ptr<SpaceChecker> spaceChecker_;
         //!< Surface coverage finder
-        SurfaceChecker surfaceChecker_;
+        boost::scoped_ptr<SurfaceChecker> surfaceChecker_;
 
         //!< Global 3d and 2d maps as they are sent by SLAM
-        static octomap::OcTree* map3d_;
+        static boost::shared_ptr<octomap::OcTree> map3d_;
         static nav_msgs::OccupancyGridPtr map2d_;
-        
+
         /*  Params  */
         static std::string GLOBAL_FRAME;
         static std::string ROBOT_BASE_FRAME;

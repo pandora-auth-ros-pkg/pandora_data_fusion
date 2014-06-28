@@ -40,6 +40,8 @@
 #define SENSOR_COVERAGE_SURFACE_CHECKER_H
 
 #include <string>
+#include <utility>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 #include "octomap/ColorOcTree.h"
@@ -81,6 +83,26 @@ namespace pandora_data_fusion
          */
         virtual void publishCoverage();
 
+        /**
+         * @brief Setter for static variable ORIENTATION_CIRCLE
+         * @param orientationCircle [double] radius in which a surface
+         * is considered planar.
+         * @return void
+         */
+        static void setOrientationCircle(double orientationCircle)
+        {
+          ORIENTATION_CIRCLE = orientationCircle;
+        }
+
+        /**
+         * @brief Getter checker's coverage map
+         * @return boost::shared_ptr<octomap::ColorOcTree>
+         */
+        boost::shared_ptr<octomap::ColorOcTree> getCoverageMap3d() const
+        {
+          return coveredSurface_;
+        }
+
       protected:
         /**
          * @brief Metric that finds the coverage of a covered point on a surface.
@@ -107,18 +129,32 @@ namespace pandora_data_fusion
         /**
          * @brief finds a normal (unit) vector on wall of the 3d map at the given point.
          * @param point [octomap::point3d const&] point on wall
-         * @return octomap::point3d normal vector on wall.
+         * @param normal [octomap::point3d*] normal vector to be found
+         * @return bool whether operation was successful or not.
          */
-        octomap::point3d findNormalVectorOnWall(const octomap::point3d& point);
+        bool findNormalVectorOnWall(const octomap::point3d& point,
+            octomap::point3d* normal);
+
+        /**
+         * @brief finds from a collection of points the two that are farther apart.
+         * @param points [std::vector<octomap::point3d> const&] collection of points
+         * @return std::pair<octomap::point3d, octomap::point3d> these two points.
+         */
+        std::pair<octomap::point3d, octomap::point3d> findDiameterEndPointsOnWall(
+            const std::vector<octomap::point3d>& points);
 
       protected:
-        //!< If surface coverage is to be taken binary or by percentage.
+        //!< If surface coverage is considered as a binary value or as a percentage.
         bool binary_;
         //!< Factor by which surface coverage's resolution is lowered compared to
         //!< map3d_'s resolution.
         double blurFactor_;
         //!< Sensor's surface coverage patch.
         boost::shared_ptr<octomap::ColorOcTree> coveredSurface_;
+
+        /*  Parameters  */
+        //!< Radius in which a surface is considered to be planar.
+        static double ORIENTATION_CIRCLE;
 
       private:
         friend class SurfaceCheckerTest;

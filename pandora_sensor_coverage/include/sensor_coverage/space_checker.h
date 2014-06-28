@@ -81,6 +81,17 @@ namespace pandora_data_fusion
         virtual void publishCoverage();
 
         /**
+         * @brief Setter for variable coverageMap3d_
+         * @param map [boost::shared_ptr<octomap::OcTree> const&]
+         * map which will be projected down to find area and space coverage.
+         * @return void
+         */
+        void setCoverageMap3d(const boost::shared_ptr<octomap::OcTree>& map)
+        {
+          coverageMap3d_ = map;
+        }
+
+        /**
          * @brief Setter for static variable MAX_HEIGHT
          * @param maxHeight [double] maximum height of interest
          * @return void
@@ -92,17 +103,17 @@ namespace pandora_data_fusion
 
         /**
          * @brief Setter for static variable FOOTPRINT_WIDTH
-         * @param maxHeight [double] robot's orthogonal footprint width
+         * @param footprintWidth [double] robot's orthogonal footprint width
          * @return void
          */
-        static void setFootprintWidth(double footprintWidth)
+        static void setFootprintWidth(double orientationCircle)
         {
-          FOOTPRINT_WIDTH = footprintWidth;
+          FOOTPRINT_WIDTH = orientationCircle;
         }
 
         /**
          * @brief Setter for static variable FOOTPRINT_HEIGHT
-         * @param maxHeight [double] robot's orthogonal footprint height
+         * @param footprintHeight [double] robot's orthogonal footprint height
          * @return void
          */
         static void setFootprintHeight(double footprintHeight)
@@ -134,15 +145,27 @@ namespace pandora_data_fusion
         void coverageDilation(int steps, int coords);
 
       protected:
-        //!< Sensor's space coverage map
+        //!< If space coverage is considered as a binary value or as a percentage.
+        bool binary_;
+        //!< Do we use for 3d map, the produced map by surface checker?
+        bool surfaceCoverage_;
+        //!< Sensor's space coverage map.
         nav_msgs::OccupancyGrid coveredSpace_;
-        //!< Total area covered with this sensor
+
+        //!< 3d coverage map produced when surfacing checking.
+        boost::shared_ptr<octomap::OcTree> coverageMap3d_;
+
+        //!< Total area covered with this sensor.
         float totalAreaCovered_;
+        //!< publishes total area covered with this sensor.
+        ros::Publisher areaCoveragePublisher_;
 
         /*  Parameters  */
         //!< maximum height of interest
         static double MAX_HEIGHT;
+        //!< Robot's footprint width
         static double FOOTPRINT_WIDTH;
+        //!< Robot's footprint height
         static double FOOTPRINT_HEIGHT;
 
       private:

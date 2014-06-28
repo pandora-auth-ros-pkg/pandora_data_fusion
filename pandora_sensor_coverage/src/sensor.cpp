@@ -47,20 +47,28 @@ namespace pandora_data_fusion
 
     Sensor::Sensor(const NodeHandlePtr& nh,
         const std::string& frameName, const std::string& mapOrigin)
-      : nh_(nh), frameName_(frameName),
-      spaceChecker_(nh, frameName), surfaceChecker_(nh, frameName)
+      : nh_(nh), frameName_(frameName)
     {
+      if (!nh_->getParam(frameName_+"/produces_surface_coverage", surfaceCoverage_))
+      {
+        ROS_FATAL("%s produces surface coverage param not found", frameName_.c_str());
+        ROS_BREAK();
+      }
+      spaceChecker_.reset( new SpaceChecker(nh_, frameName_) );
+      if (surfaceCoverage_)
+      {
+        surfaceChecker_.reset( new SurfaceChecker(nh_, frameName_) );
+        spaceChecker_->setCoverageMap3d(
+            boost::dynamic_pointer_cast<octomap::OcTree>(surfaceChecker_->getCoverageMap3d()));
+      }
       sensorWorking_ = false;
-
       listener_.reset(TfFinder::newTfListener(mapOrigin));
-
       getParameters();
-
       coverageUpdater_ = nh_->createTimer(ros::Duration(0.1),
           &Sensor::coverageUpdate, this);
     }
 
-    octomap::OcTree* Sensor::map3d_ = NULL;
+    boost::shared_ptr<octomap::OcTree> Sensor::map3d_ = boost::shared_ptr<octomap::OcTree>();
     nav_msgs::OccupancyGridPtr Sensor::map2d_;
     std::string Sensor::GLOBAL_FRAME;
     std::string Sensor::ROBOT_BASE_FRAME;
@@ -92,10 +100,8 @@ namespace pandora_data_fusion
       //  If sensor is not open and working, do not update coverage patch.
       if (!sensorWorking_)
         return;
-      //if (map2d_->data.size() == 0) {
-      if (map2d_->data.size() == 0 || map3d_ == NULL) {
+      if (map2d_->data.size() == 0 || map3d_.get() == NULL)
         return;
-      }
       //  If it does, fetch current transformation.
       ros::Time timeNow = ros::Time::now();
       tf::StampedTransform sensorTransform, baseTransform;
@@ -111,10 +117,13 @@ namespace pandora_data_fusion
             GLOBAL_FRAME, ROBOT_BASE_FRAME, timeNow, baseTransform);
         //  Update coverage perception.
         //  Publish updated coverage perception.
-        spaceChecker_.findCoverage(sensorTransform, baseTransform);
-        spaceChecker_.publishCoverage();
-        //  surfaceChecker_.findCoverage(sensorTransform);
-        //  surfaceChecker_.publishCoverage();
+        if (surfaceCoverage_)
+        {
+          surfaceChecker_->findCoverage(sensorTransform);
+          surfaceChecker_->publishCoverage();
+        }
+        spaceChecker_->findCoverage(sensorTransform, baseTransform);
+        spaceChecker_->publishCoverage();
       }
       catch (TfException ex)
       {

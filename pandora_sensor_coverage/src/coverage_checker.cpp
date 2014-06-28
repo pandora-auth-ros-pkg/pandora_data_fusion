@@ -49,7 +49,7 @@ namespace pandora_data_fusion
       : nh_(nh), frameName_(frameName)
     {}
 
-    octomap::OcTree* CoverageChecker::map3d_ = NULL;
+    boost::shared_ptr<octomap::OcTree> CoverageChecker::map3d_;
     nav_msgs::OccupancyGridPtr CoverageChecker::map2d_;
     double CoverageChecker::OCCUPIED_CELL_THRES = 0.5;
 

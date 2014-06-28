@@ -37,6 +37,8 @@
  *********************************************************************/
 
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "sensor_coverage/surface_checker.h"
 
@@ -51,19 +53,20 @@ namespace pandora_data_fusion
       coveredSurface_.reset();
 
       std::string topic;
-      if (nh_->getParam(frameName_+"/published_topic_names/surface", topic))
+      if (nh_->getParam(frameName_+"/published_topic_names/surface_coverage", topic))
       {
         coveragePublisher_ = nh_->advertise<octomap_msgs::Octomap>(topic, 1);
       }
       else
       {
-        ROS_FATAL("%s surface topic name param not found", frameName_.c_str());
+        ROS_FATAL("%s surface coverage published topic name param not found",
+            frameName_.c_str());
         ROS_BREAK();
       }
 
-      if (!nh_->getParam(frameName_+"/binary/surface", binary_))
+      if (!nh_->getParam(frameName_+"/binary/surface_coverage", binary_))
       {
-        ROS_FATAL("%s has binary surface coverage param not found", frameName_.c_str());
+        ROS_FATAL("%s binary surface coverage param not found", frameName_.c_str());
         ROS_BREAK();
       }
 
@@ -75,6 +78,8 @@ namespace pandora_data_fusion
 
       getParameters();
     }
+
+    double SurfaceChecker::ORIENTATION_CIRCLE = 0.03;
 
     void SurfaceChecker::findCoverage(const tf::StampedTransform& transform)
     {
@@ -138,7 +143,9 @@ namespace pandora_data_fusion
 
       // else it is assumed that coverage is a percentage of the best view
       // one can get at the wall.
-      octomap::point3d normalOnWall = findNormalVectorOnWall(pointOnWall);
+      octomap::point3d normalOnWall;
+      if (!findNormalVectorOnWall(pointOnWall, &normalOnWall))
+        return 0;
       return metric(normalOnWall, direction);
     }
 
@@ -148,47 +155,120 @@ namespace pandora_data_fusion
       octomap::point3d unitOnWall = normalOnWall.normalized();
       return static_cast<unsigned char>(
           floor(
-            abs(unitOnWall.dot(direction.normalized())) * 255));
+            fabs(unitOnWall.dot(direction.normalized())) * 255));
     }
 
-    octomap::point3d SurfaceChecker::findNormalVectorOnWall(
-        const octomap::point3d& point)
+    bool SurfaceChecker::findNormalVectorOnWall(
+        const octomap::point3d& point, octomap::point3d* normal)
     {
+      std::vector<octomap::point3d> points;
+      std::pair<octomap::point3d, octomap::point3d> pointsOnWall;
+
       // find for constant z = point.z, the normal vector on the line which
       // results from intersection of the surface-wall (approx. a plane) with the
       // plane z = point.z
-      //std::vector<octomap::point3d> points;
-      //float x = 0, y = 0;
-      //for (unsigned int i = 0; i < 360; i += 5)
-      //{
-      //  x = point.x() + ORIENTATION_CIRCLE * cos((i / 180.0) * PI);
-      //  y = point.y() + ORIENTATION_CIRCLE * sin((i / 180.0) * PI);
+      double x = 0, y = 0, dx = 0, dy = 0;
+      for (unsigned int i = 0; i < 360; i += 5)
+      {
+        x = point.x() + ORIENTATION_CIRCLE * cos((i / 180.0) * PI);
+        y = point.y() + ORIENTATION_CIRCLE * sin((i / 180.0) * PI);
 
-      //  if (map3d_->search(x, y, point.z())->getOccupancy()
-      //      > map3d_->getOccupancyThres())
-      //  {
-      //    octomap::point3d temp;
-      //    temp.x() = x;
-      //    temp.y() = y;
-      //    temp.z() = point.z()
-      //    points.push_back(temp);
-      //  }
-      //}
-      //std::pair<octomap::point3d, octomap::point3d> pointsOnWall;
-      //pointsOnWall = findDiameterEndPointsOnWall(points);
-      //float angle = atan2((pointsOnWall.second.y - pointsOnWall.first.y),
-      //    (pointsOnWall.second.x - pointsOnWall.first.x));
-      //x = point.x() + ORIENTATION_CIRCLE * cos((PI / 2) + angle);
-      //y = point.y() + ORIENTATION_CIRCLE * sin((PI / 2) + angle);
+        if (map3d_->search(x, y, point.z())->getOccupancy()
+            > map3d_->getOccupancyThres())
+        {
+          octomap::point3d temp;
+          temp.x() = x;
+          temp.y() = y;
+          temp.z() = point.z();
+          points.push_back(temp);
+        }
+      }
+      try
+      {
+        pointsOnWall = findDiameterEndPointsOnWall(points);
+      }
+      catch (std::runtime_error& ex)
+      {
+        return false;
+      }
+      float angle = atan2((pointsOnWall.second.y() - pointsOnWall.first.y()),
+          (pointsOnWall.second.x() - pointsOnWall.first.x()));
+      dx = ORIENTATION_CIRCLE * cos((PI / 2) + angle);
+      dy = ORIENTATION_CIRCLE * sin((PI / 2) + angle);
 
+      // find the intersection of the plane [1] (λx, λy, z) ~λ,z with the plane which
+      // results from the far-most points on wall and on the plane [1]. This is going
+      // to be wall's normal vector.
+      points.clear();
+      double z = 0, dz = 0;
+      for (double lambda = -1.0; lambda <= 1; lambda += 0.005)
+      {
+        dz = sqrt((1 - pow(lambda, 2)) * pow(ORIENTATION_CIRCLE, 2));
+        x = point.x() + lambda * dx;
+        y = point.y() + lambda * dy;
+        if (map3d_->search(x, y, point.z() + dz)->getOccupancy()
+            > map3d_->getOccupancyThres())
+        {
+          octomap::point3d temp;
+          temp.x() = x;
+          temp.y() = y;
+          temp.z() = point.z() + dz;
+          points.push_back(temp);
+        }
+        if (map3d_->search(x, y, point.z() - dz)->getOccupancy()
+            > map3d_->getOccupancyThres())
+        {
+          octomap::point3d temp;
+          temp.x() = x;
+          temp.y() = y;
+          temp.z() = point.z() - dz;
+          points.push_back(temp);
+        }
+      }
+      try
+      {
+        pointsOnWall = findDiameterEndPointsOnWall(points);
+      }
+      catch (std::runtime_error& ex)
+      {
+        return false;
+      }
+      x = dx;
+      y = dy;
+      z = x * (pointsOnWall.second.x() - pointsOnWall.first.x()) +
+        y * (pointsOnWall.second.y() - pointsOnWall.first.y());
+      z /= pointsOnWall.second.z() - pointsOnWall.first.z();
 
+      normal->x() = x;
+      normal->y() = y;
+      normal->z() = z;
+      normal->normalize();
+      return true;
+    }
 
-
-
-
-
-      return octomap::point3d();
-    } 
+    std::pair<octomap::point3d, octomap::point3d> SurfaceChecker::
+      findDiameterEndPointsOnWall(const std::vector<octomap::point3d>& points)
+      {
+        if (points.size() < 2)
+        {
+          throw std::runtime_error("Cannot calculate pair with less than 2 points.");
+        }
+        float maxDist = 0, dist = 0;
+        std::pair<octomap::point3d, octomap::point3d> pointsOnWall;
+        for (unsigned int i = 0; i < points.size(); i++)
+        {
+          for (unsigned int j = i + 1; j < points.size(); j++)
+          {
+            dist = points[i].distance(points[j]);
+            if (dist > maxDist)
+            {
+              maxDist = dist;
+              pointsOnWall = std::make_pair(points[i], points[j]);
+            }
+          }
+        }
+        return pointsOnWall;
+      }
 
     void SurfaceChecker::publishCoverage()
     {

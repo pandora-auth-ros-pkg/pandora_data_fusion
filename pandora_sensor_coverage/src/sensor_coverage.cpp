@@ -50,7 +50,7 @@ namespace pandora_data_fusion
     {
       //  initialize NodeHandle and Map.
       nh_.reset( new ros::NodeHandle(ns) );
-      globalMap3d_ = NULL;
+      globalMap3d_.reset();
       globalMap2d_.reset( new nav_msgs::OccupancyGrid );
       Sensor::setMap2d(globalMap2d_);
 
@@ -84,7 +84,7 @@ namespace pandora_data_fusion
         SpaceChecker::setMaxHeight(paramD);
       else
       {
-        ROS_FATAL("max_height name param not found");
+        ROS_FATAL("max height param not found");
         ROS_BREAK();
       }
 
@@ -93,7 +93,7 @@ namespace pandora_data_fusion
         SpaceChecker::setFootprintWidth(paramD);
       else
       {
-        ROS_FATAL("footprint's width name param not found");
+        ROS_FATAL("footprint's width param not found");
         ROS_BREAK();
       }
 
@@ -102,7 +102,16 @@ namespace pandora_data_fusion
         SpaceChecker::setFootprintHeight(paramD);
       else
       {
-        ROS_FATAL("footprint's height name param not found");
+        ROS_FATAL("footprint's height param not found");
+        ROS_BREAK();
+      }
+
+      //  Set up orientation circle.
+      if (nh_->getParam("orientation_circle", paramD))
+        SurfaceChecker::setOrientationCircle(paramD);
+      else
+      {
+        ROS_FATAL("orientation circle param not found");
         ROS_BREAK();
       }
 
@@ -111,7 +120,7 @@ namespace pandora_data_fusion
         Sensor::setGlobalFrame(param);
       else
       {
-        ROS_FATAL("global_frame name param not found");
+        ROS_FATAL("global frame name param not found");
         ROS_BREAK();
       }
 
@@ -120,7 +129,7 @@ namespace pandora_data_fusion
         Sensor::setRobotBaseFrame(param);
       else
       {
-        ROS_FATAL("robot_base_frame name param not found");
+        ROS_FATAL("robot base frame name param not found");
         ROS_BREAK();
       }
 
@@ -173,15 +182,11 @@ namespace pandora_data_fusion
 
     void SensorCoverage::map3dUpdate(const octomap_msgs::Octomap& msg)
     {
-      if (globalMap3d_ != NULL)
-      {
-        delete globalMap3d_;
-      }
       octomap::AbstractOcTree* map = octomap_msgs::fullMsgToMap(msg);
       if (map)
       {
-        globalMap3d_ = dynamic_cast<octomap::OcTree*>(map);
-        if (globalMap3d_)
+        globalMap3d_.reset(dynamic_cast<octomap::OcTree*>(map));
+        if (globalMap3d_.get())
         {
           Sensor::setMap3d(globalMap3d_);
         }

@@ -39,6 +39,8 @@
 #include <string>
 #include <vector>
 
+#include "std_msgs/Float32.h"
+
 #include "sensor_coverage/space_checker.h"
 
 namespace pandora_data_fusion
@@ -49,15 +51,35 @@ namespace pandora_data_fusion
     SpaceChecker::SpaceChecker(const NodeHandlePtr& nh, const std::string& frameName)
       : CoverageChecker(nh, frameName)
     {
+      coverageMap3d_ = map3d_;
+
       std::string topic;
 
-      if (nh_->getParam(frameName_+"/published_topic_names/space", topic))
+      if (nh_->getParam(frameName_+"/published_topic_names/space_coverage", topic))
       {
         coveragePublisher_ = nh_->advertise<nav_msgs::OccupancyGrid>(topic, 1);
       }
       else
       {
-        ROS_FATAL("%s published topic name param not found", frameName_.c_str());
+        ROS_FATAL("%s space coverage published topic name param not found",
+            frameName_.c_str());
+        ROS_BREAK();
+      }
+
+      if (nh_->getParam(frameName_+"/published_topic_names/area_coverage", topic))
+      {
+        areaCoveragePublisher_ = nh_->advertise<std_msgs::Float32>(topic, 1);
+      }
+      else
+      {
+        ROS_FATAL("%s area coverage published topic name param not found",
+            frameName_.c_str());
+        ROS_BREAK();
+      }
+
+      if (!nh_->getParam(frameName_+"/binary/space_coverage", binary_))
+      {
+        ROS_FATAL("%s binary space coverage param not found", frameName_.c_str());
         ROS_BREAK();
       }
 
@@ -86,11 +108,11 @@ namespace pandora_data_fusion
       octomap::point3d cell;
 
       // Robot is standing in fully covered space (assumption).
-      for (int ii = -int(ceil(FOOTPRINT_WIDTH/resolution));
-          ii < int(ceil(FOOTPRINT_WIDTH/resolution)) + 1; ii++)
+      for (int ii = -static_cast<int>((ceil(FOOTPRINT_WIDTH/resolution)));
+          ii < static_cast<int>((ceil(FOOTPRINT_WIDTH/resolution))) + 1; ii++)
       {
-        for (int jj = -int(ceil(FOOTPRINT_HEIGHT/resolution));
-            jj < int(ceil(FOOTPRINT_HEIGHT/resolution)) + 1; jj++)
+        for (int jj = -static_cast<int>((ceil(FOOTPRINT_HEIGHT/resolution)));
+            jj < static_cast<int>((ceil(FOOTPRINT_HEIGHT/resolution))) + 1; jj++)
         {
           coveredSpace_.data[ii + jj * coveredSpace_.info.width] = 100;
         }
@@ -104,14 +126,17 @@ namespace pandora_data_fusion
         cell.x() = resolution * cos(yaw_ + angle) + currX;
         cell.y() = resolution * sin(yaw_ + angle) + currY;
 
-        while (CELL(cell.x(), cell.y(), map2d_) 
+        while (CELL(cell.x(), cell.y(), map2d_)
             < static_cast<int8_t>(OCCUPIED_CELL_THRES * 100)
             && Utils::distanceBetweenPoints2D(octomap::pointOctomapToMsg(position_),
               octomap::pointOctomapToMsg(cell)) < SENSOR_RANGE)
         {
-          signed char covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
-          //signed char covered = 100;
-          if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_))) 
+          signed covered;
+          if (binary_)
+            covered = 100;
+          else
+            covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
+          if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_)))
           {
             CELL(cell.x(), cell.y(), (&coveredSpace_)) = covered;
           }
@@ -161,7 +186,7 @@ namespace pandora_data_fusion
       //  begin can be later implemented having z = minHeight + MAX_HEIGHT.
       octomap::point3d begin(cell.x(), cell.y(), MAX_HEIGHT);
       octomap::KeyRay keyRay;
-      if (!map3d_->computeRayKeys(begin, end, keyRay))
+      if (!coverageMap3d_->computeRayKeys(begin, end, keyRay))
       {
         ROS_ERROR("[SENSOR_COVERAGE_SPACE_CHECKER %d] Compute ray went out of range!",
             __LINE__);
@@ -171,7 +196,7 @@ namespace pandora_data_fusion
       for (octomap::KeyRay::iterator it = keyRay.begin();
           it != keyRay.end(); ++it)
       {
-        octomap::OcTreeNode* node = map3d_->search(*it);
+        octomap::OcTreeNode* node = coverageMap3d_->search(*it);
         if (!node)
         {
           continue;
@@ -185,11 +210,11 @@ namespace pandora_data_fusion
             coversSpace = false;
             break;
           }
-          else if (node->getOccupancy() <= map3d_->getOccupancyThres())
+          else if (node->getOccupancy() <= coverageMap3d_->getOccupancyThres())
           {
             occupied = false;
             coversSpace = true;
-            startZ = map3d_->keyToCoord(*it).z();
+            startZ = coverageMap3d_->keyToCoord(*it).z();
           }
         }
         else if (coversSpace)
@@ -197,31 +222,31 @@ namespace pandora_data_fusion
           if (node->getOccupancy() == 0 || it == --keyRay.end())
           {
             coversSpace = false;
-            octomap::point3d coord = map3d_->keyToCoord(*it);
+            octomap::point3d coord = coverageMap3d_->keyToCoord(*it);
             coveredSpace += startZ - coord.z();
             unoccupiedSpace += startZ - coord.z();
             startZ = coord.z();
           }
-          else if (node->getOccupancy() > map3d_->getOccupancyThres())
+          else if (node->getOccupancy() > coverageMap3d_->getOccupancyThres())
           {
             occupied = true;
             coversSpace = false;
-            octomap::point3d coord = map3d_->keyToCoord(*it);
+            octomap::point3d coord = coverageMap3d_->keyToCoord(*it);
             coveredSpace += startZ - coord.z();
             unoccupiedSpace += startZ - coord.z();
           }
         }
         else
         {
-          if (node->getOccupancy() > map3d_->getOccupancyThres())
+          if (node->getOccupancy() > coverageMap3d_->getOccupancyThres())
           {
             occupied = true;
-            unoccupiedSpace += startZ - map3d_->keyToCoord(*it).z();
+            unoccupiedSpace += startZ - coverageMap3d_->keyToCoord(*it).z();
           }
           else if (node->getOccupancy() > 0)
           {
             coversSpace = true;
-            octomap::point3d coord = map3d_->keyToCoord(*it);
+            octomap::point3d coord = coverageMap3d_->keyToCoord(*it);
             unoccupiedSpace += startZ - coord.z();
             startZ = coord.z();
           }
@@ -234,7 +259,7 @@ namespace pandora_data_fusion
     {
       int oldSize = coveredSpace_.data.size();
       int newSize = map2d_->data.size();
-      int8_t oldCoverage[oldSize];
+      int8_t* oldCoverage = new int8_t[oldSize];
       nav_msgs::MapMetaData oldMetaData;
       if (oldSize != 0 && oldSize != newSize)
       {
@@ -273,14 +298,15 @@ namespace pandora_data_fusion
               y = jj * oldMetaData.resolution;
               xn = cos(yawDiff) * x - sin(yawDiff) * y - xDiff;
               yn = sin(yawDiff) * x + cos(yawDiff) * y - yDiff;
-              int coords = int(floor((xn + yn * coveredSpace_.info.width) 
-                    / coveredSpace_.info.resolution));
+              int coords = static_cast<int>((floor((xn + yn * coveredSpace_.info.width)
+                    / coveredSpace_.info.resolution)));
               coveredSpace_.data[coords] = oldCoverage[ii + jj * oldMetaData.width];
               coverageDilation(1, COORDS(xn, yn, (&coveredSpace_)));
             }
           }
         }
       }
+      delete[] oldCoverage;
     }
 
     void SpaceChecker::coverageDilation(int steps, int coords)
@@ -290,7 +316,7 @@ namespace pandora_data_fusion
 
       signed char cell = coveredSpace_.data[coords];
 
-      if (cell != 0) // That's foreground
+      if (cell != 0)  // That's foreground
       {
         // Check for all adjacent
         if (coveredSpace_.data[coords + coveredSpace_.info.width + 1] == 0)
@@ -335,8 +361,11 @@ namespace pandora_data_fusion
     void SpaceChecker::publishCoverage()
     {
       coveragePublisher_.publish(coveredSpace_);
+      std_msgs::Float32 msg;
+      msg.data = totalAreaCovered_;
+      areaCoveragePublisher_.publish(msg);
     }
 
-  }  // namespace pandora_sensor_coverage
+}  // namespace pandora_sensor_coverage
 }  // namespace pandora_data_fusion
 
