@@ -32,12 +32,14 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #ifndef ALERT_HANDLER_FACE_H
 #define ALERT_HANDLER_FACE_H
+
+#include <vector>
 
 #include "alert_handler/kalman_object.h"
 
@@ -49,11 +51,10 @@ namespace pandora_data_fusion
     /**
      * @class Face
      * @brief Concrete class representing a Face Object. Inherits from Object
-     */ 
+     */
     class Face : public KalmanObject<Face>
     {
       public:
-
         //!< Type Definitions
         typedef boost::shared_ptr<Face> Ptr;
         typedef boost::shared_ptr<Face const> ConstPtr;
@@ -64,7 +65,6 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr< const ObjectList<Face> > ListConstPtr;
 
       public:
-
         /**
          * @brief Constructor
          */

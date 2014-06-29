@@ -32,12 +32,14 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #ifndef ALERT_HANDLER_HAZMAT_H
 #define ALERT_HANDLER_HAZMAT_H
+
+#include <vector>
 
 #include "alert_handler/kalman_object.h"
 
@@ -49,11 +51,10 @@ namespace pandora_data_fusion
     /**
      * @class Hazmat
      * @brief Concrete class representing a Hazmat Object. Inherits from Object
-     */ 
+     */
     class Hazmat : public KalmanObject<Hazmat>
     {
       public:
-
         //!< Type Definitions
         typedef boost::shared_ptr<Hazmat> Ptr;
         typedef boost::shared_ptr<Hazmat const> ConstPtr;
@@ -64,7 +65,6 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr< const ObjectList<Hazmat> > ListConstPtr;
 
       public:
-
         /**
          * @brief Constructor
          */
@@ -96,7 +96,6 @@ namespace pandora_data_fusion
         }
 
       private:
-
         //!< The hazmat's pattern
         int pattern_;
     };

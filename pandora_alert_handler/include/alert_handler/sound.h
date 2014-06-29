@@ -32,12 +32,14 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #ifndef ALERT_HANDLER_SOUND_H
 #define ALERT_HANDLER_SOUND_H
+
+#include <vector>
 
 #include "alert_handler/kalman_object.h"
 
@@ -49,11 +51,10 @@ namespace pandora_data_fusion
     /**
      * @class Sound
      * @brief Concrete class representing a Sound Object. Inherits from Object
-     */ 
+     */
     class Sound : public KalmanObject<Sound>
     {
       public:
-
         //!< Type Definitions
         typedef boost::shared_ptr<Sound> Ptr;
         typedef boost::shared_ptr<Sound const> ConstPtr;
@@ -64,7 +65,6 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr< const ObjectList<Sound> > ListConstPtr;
 
       public:
-
         /**
          * @brief Constructor
          */

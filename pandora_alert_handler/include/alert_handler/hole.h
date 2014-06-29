@@ -32,12 +32,14 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #ifndef ALERT_HANDLER_HOLE_H
 #define ALERT_HANDLER_HOLE_H
+
+#include <vector>
 
 #include "alert_handler/kalman_object.h"
 
@@ -49,11 +51,10 @@ namespace pandora_data_fusion
     /**
      * @class Hole
      * @brief Concrete class representing a Hole Object. Inherits from Object
-     */ 
+     */
     class Hole : public KalmanObject<Hole>
     {
       public:
-
         //!< Type Definitions
         typedef boost::shared_ptr<Hole> Ptr;
         typedef boost::shared_ptr<Hole const> ConstPtr;
@@ -64,7 +65,6 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr< const ObjectList<Hole> > ListConstPtr;
 
       public:
-
         /**
          * @brief Constructor
          */
@@ -75,9 +75,9 @@ namespace pandora_data_fusion
 
         /**
          * @brief Getter for member holeId_
-         * @return int The holeId 
+         * @return int The holeId
          */
-        unsigned int getHoleId() const 
+        unsigned int getHoleId() const
         {
           return holeId_;
         }
@@ -86,13 +86,12 @@ namespace pandora_data_fusion
          * @brief Setter for member holeId_
          * @return void
          */
-        void setHoleId(int holeId) 
+        void setHoleId(int holeId)
         {
           holeId_ = holeId;
         }
 
       private:
-
         //!< The hole's holeId. Caution: Not to be confused with the Object id!
         unsigned int holeId_;
     };

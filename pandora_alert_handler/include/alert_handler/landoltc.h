@@ -32,12 +32,14 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #ifndef ALERT_HANDLER_LANDOLTC_H
 #define ALERT_HANDLER_LANDOLTC_H
+
+#include <vector>
 
 #include "alert_handler/kalman_object.h"
 
@@ -49,11 +51,10 @@ namespace pandora_data_fusion
     /**
      * @class Landoltc
      * @brief Concrete class representing a Landoltc Object. Inherits from Object
-     */ 
+     */
     class Landoltc : public KalmanObject<Landoltc>
     {
       public:
-
         //!< Type Definitions
         typedef boost::shared_ptr<Landoltc> Ptr;
         typedef boost::shared_ptr<Landoltc const> ConstPtr;
@@ -64,7 +65,6 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr< const ObjectList<Landoltc> > ListConstPtr;
 
       public:
-
         /**
          * @brief Constructor
          */
@@ -91,7 +91,6 @@ namespace pandora_data_fusion
         }
 
       private:
-
         //!< The hazmat's pattern
         std::vector<float> angles_;
     };

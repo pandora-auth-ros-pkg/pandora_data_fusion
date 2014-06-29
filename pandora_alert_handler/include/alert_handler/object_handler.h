@@ -32,7 +32,7 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
@@ -65,13 +65,12 @@ namespace pandora_data_fusion
     class ObjectHandler : private boost::noncopyable
     {
       public:
-
         /**
          * @brief constructor
          * @param nh [NodeHandlePtr const&] Alert Handler's node to register publishers
-         * @param victimsToGoList [VictimListConstPtr const&] 
+         * @param victimsToGoList [VictimListConstPtr const&]
          * list with victims to go - to be used in alert filtering
-         * @param victimsVisited [VictimListConstPtr const&] 
+         * @param victimsVisited [VictimListConstPtr const&]
          * list with victims visited - to be used in alert filtering
          */
         ObjectHandler(
@@ -79,17 +78,17 @@ namespace pandora_data_fusion
             const VictimListConstPtr& victimsToGoList,
             const VictimListConstPtr& victimsVisited);
 
-        void handleHoles(const HolePtrVectorPtr& newHoles, 
+        void handleHoles(const HolePtrVectorPtr& newHoles,
             const tf::Transform& transform);
-        void handleQrs(const QrPtrVectorPtr& newQrs); 
+        void handleQrs(const QrPtrVectorPtr& newQrs);
         /**
          * @brief methods that handle alerts after their creation.
          * They try to keep those of interest and ignore the rest.
          * @param objectsPtr [ObjectType::PtrVectorPtr const&] vector with alerts
          * @return void
          */
-        template <class ObjectType> 
-          void handleObjects( 
+        template <class ObjectType>
+          void handleObjects(
               const typename ObjectType::PtrVectorPtr& objectsPtr);
 
         /**
@@ -103,10 +102,9 @@ namespace pandora_data_fusion
         void updateParams(float sensor_range, float victim_cluster_radius);
 
       private:
-
         /**
          * @brief Alert filtering for holes.
-         * @param holesPtr [HolePtrVectorPtr const&] vector with newly 
+         * @param holesPtr [HolePtrVectorPtr const&] vector with newly
          * created hole alerts
          * @param cameraTransform [tf::Transform const&] camera transform gives
          * current location
@@ -119,7 +117,6 @@ namespace pandora_data_fusion
               const typename ObjectType::PtrVectorPtr& objectsPtr);
 
       private:
-
         ros::Publisher qrPublisher_;
         ros::Publisher scorePublisher_;
 
@@ -136,16 +133,16 @@ namespace pandora_data_fusion
       void ObjectHandler::handleObjects(
           const typename ObjectType::PtrVectorPtr& newObjects)
       {
-        if(ObjectType::getObjectType() != Thermal::getObjectType() && 
+        if (ObjectType::getObjectType() != Thermal::getObjectType() &&
             ObjectType::getObjectType() != Hazmat::getObjectType() &&
             ObjectType::getObjectType() != Landoltc::getObjectType() &&
             ObjectType::getObjectType() != DataMatrix::getObjectType())
         {
           keepValidVerificationObjects<ObjectType>(newObjects);
         }
-        for(int ii = 0; ii < newObjects->size(); ++ii)
+        for (int ii = 0; ii < newObjects->size(); ++ii)
         {
-          if(ObjectType::getList()->add(newObjects->at(ii)))
+          if (ObjectType::getList()->add(newObjects->at(ii)))
           {
             std_msgs::Int32 updateScoreMsg;
             roboCupScore_ += ObjectType::getObjectScore();
@@ -161,10 +158,10 @@ namespace pandora_data_fusion
       {
         typename ObjectType::PtrVector::iterator iter = objectsPtr->begin();
 
-        while(iter != objectsPtr->end())
+        while (iter != objectsPtr->end())
         {
           bool valid = false;
-          if(ObjectType::getObjectType() == Sound::getObjectType() ||
+          if (ObjectType::getObjectType() == Sound::getObjectType() ||
               ObjectType::getObjectType() == Co2::getObjectType())
           {
             valid = victimsToGoList_->isObjectPoseInList(
@@ -173,9 +170,9 @@ namespace pandora_data_fusion
           else
             valid = victimsToGoList_->isObjectPoseInList(
                 (*iter), VICTIM_CLUSTER_RADIUS);
-          // valid = valid || 
+          // valid = valid ||
           //   victimsVisitedList_->isObjectPoseInList((*iter), VICTIM_CLUSTER_RADIUS);
-          if(!valid)
+          if (!valid)
           {
             ROS_DEBUG_NAMED("OBJECT_HANDLER",
                 "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);

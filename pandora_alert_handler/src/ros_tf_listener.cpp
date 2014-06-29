@@ -32,9 +32,11 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
+
+#include <string>
 
 #include "alert_handler/tf_listener.h"
 
@@ -47,22 +49,22 @@ namespace pandora_data_fusion
     {
       tf::StampedTransform tfTransform;
 
-      waitForTransform("/map", "/map",
+      waitForTransform("/world", "/map",
           ros::Time(0), ros::Duration(1));
 
-      lookupTransform("/map", "/map", 
+      lookupTransform("/world", "/map",
           ros::Time(0), tfTransform);
     }
 
-    bool RosTfListener::waitForTransform(const std::string& target_frame, 
-        const std::string& source_frame, const ros::Time& time, 
-        const ros::Duration& timeout, const ros::Duration& polling_sleep_duration, 
+    bool RosTfListener::waitForTransform(const std::string& target_frame,
+        const std::string& source_frame, const ros::Time& time,
+        const ros::Duration& timeout, const ros::Duration& polling_sleep_duration,
         std::string* error_msg) const
     {
       bool flag;
       try
       {
-        flag = listener.waitForTransform(target_frame, source_frame, time, 
+        flag = listener.waitForTransform(target_frame, source_frame, time,
             timeout, polling_sleep_duration, error_msg);
       }
       catch (tf::TransformException ex)
@@ -74,8 +76,8 @@ namespace pandora_data_fusion
       return flag;
     }
 
-    void RosTfListener::lookupTransform(const std::string& target_frame, 
-        const std::string& source_frame, const ros::Time& time, 
+    void RosTfListener::lookupTransform(const std::string& target_frame,
+        const std::string& source_frame, const ros::Time& time,
         tf::StampedTransform& transform) const
     {
       try

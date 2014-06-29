@@ -32,12 +32,15 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * Authors: 
+ * Authors:
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
 #ifndef ALERT_HANDLER_DATA_MATRIX_H
 #define ALERT_HANDLER_DATA_MATRIX_H
+
+#include <vector>
+#include <string>
 
 #include "alert_handler/kalman_object.h"
 
@@ -49,11 +52,10 @@ namespace pandora_data_fusion
     /**
      * @class DataMatrix
      * @brief Concrete class representing a DataMatrix Object. Inherits from Object
-     */ 
+     */
     class DataMatrix : public KalmanObject<DataMatrix>
     {
       public:
-
         //!< Type Definitions
         typedef boost::shared_ptr<DataMatrix> Ptr;
         typedef boost::shared_ptr<DataMatrix const> ConstPtr;
@@ -64,7 +66,6 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr< const ObjectList<DataMatrix> > ListConstPtr;
 
       public:
-
         /**
          * @brief Constructor
          */
@@ -112,7 +113,6 @@ namespace pandora_data_fusion
         }
 
       private:
-
         //!< The dataMatrix's content
         std::string content_;
         //!< The time when this dataMatrix was first found
