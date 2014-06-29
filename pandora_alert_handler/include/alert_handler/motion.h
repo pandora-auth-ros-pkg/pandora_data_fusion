@@ -59,7 +59,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Motion const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<Motion> > ListPtr;
+        typedef ObjectList<Motion> List;
+        typedef boost::shared_ptr<List> ListPtr;
         typedef boost::shared_ptr< const ObjectList<Motion> > ListConstPtr;
 
       public:
@@ -76,6 +77,7 @@ namespace pandora_data_fusion
     typedef Motion::ConstPtr MotionConstPtr;
     typedef Motion::PtrVector MotionPtrVector;
     typedef Motion::PtrVectorPtr MotionPtrVectorPtr;
+    typedef Motion::List MotionList;
     typedef Motion::ListPtr MotionListPtr;
     typedef Motion::ListConstPtr MotionListConstPtr;
 

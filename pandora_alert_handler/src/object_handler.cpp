@@ -109,10 +109,9 @@ namespace pandora_data_fusion
 
     void ObjectHandler::handleQrs(const QrPtrVectorPtr& newQrs) 
     {
-      for(int ii = 0; ii < newQrs->size(); ++ii)
+      for (int ii = 0; ii < newQrs->size(); ++ii)
       {
-        int qrScore = Qr::getList()->add(newQrs->at(ii));
-        if(qrScore)
+        if (Qr::getList()->add(newQrs->at(ii)))
         {
           pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;
           newQrNofifyMsg.header.stamp = newQrs->at(ii)->getTimeFound();
@@ -121,7 +120,7 @@ namespace pandora_data_fusion
           newQrNofifyMsg.content = newQrs->at(ii)->getContent();
           qrPublisher_.publish(newQrNofifyMsg);
           std_msgs::Int32 updateScoreMsg;
-          roboCupScore_ += qrScore;
+          roboCupScore_ += Qr::getObjectScore();
           updateScoreMsg.data = roboCupScore_;
           scorePublisher_.publish(updateScoreMsg);
         }
@@ -143,7 +142,7 @@ namespace pandora_data_fusion
 
         if(invalid)
         {
-          ROS_DEBUG_NAMED("object_handler",
+          ROS_DEBUG_NAMED("OBJECT_HANDLER",
               "[OBJECT_HANDLER %d] Deleting not valid hole...", __LINE__);
           iter = holesPtr->erase(iter);
         }

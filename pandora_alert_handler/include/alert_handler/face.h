@@ -59,7 +59,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Face const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<Face> > ListPtr;
+        typedef ObjectList<Face> List;
+        typedef boost::shared_ptr<List> ListPtr;
         typedef boost::shared_ptr< const ObjectList<Face> > ListConstPtr;
 
       public:
@@ -76,6 +77,7 @@ namespace pandora_data_fusion
     typedef Face::ConstPtr FaceConstPtr;
     typedef Face::PtrVector FacePtrVector;
     typedef Face::PtrVectorPtr FacePtrVectorPtr;
+    typedef Face::List FaceList;
     typedef Face::ListPtr FaceListPtr;
     typedef Face::ListConstPtr FaceListConstPtr;
 

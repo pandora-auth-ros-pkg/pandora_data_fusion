@@ -48,16 +48,16 @@ namespace pandora_data_fusion
       nh_.reset( new ros::NodeHandle(ns) );
       map_.reset( new Map );
 
-      holes_.reset( new ObjectList<Hole> );
-      qrs_.reset( new ObjectList<Qr> );
-      hazmats_.reset( new ObjectList<Hazmat> );
-      thermals_.reset( new ObjectList<Thermal> );
-      faces_.reset( new ObjectList<Face> );
-      motions_.reset( new ObjectList<Motion> );
-      sounds_.reset( new ObjectList<Sound> );
-      co2s_.reset( new ObjectList<Co2> );
-      landoltcs_.reset( new ObjectList<Landoltc> );
-      dataMatrices_.reset( new ObjectList<DataMatrix> );
+      holes_.reset( new HoleList );
+      qrs_.reset( new QrList );
+      hazmats_.reset( new HazmatList );
+      thermals_.reset( new ThermalList );
+      faces_.reset( new FaceList );
+      motions_.reset( new MotionList );
+      sounds_.reset( new SoundList );
+      co2s_.reset( new Co2List );
+      landoltcs_.reset( new LandoltcList );
+      dataMatrices_.reset( new DataMatrixList );
 
       Hole::setList(holes_);
       Qr::setList(qrs_);

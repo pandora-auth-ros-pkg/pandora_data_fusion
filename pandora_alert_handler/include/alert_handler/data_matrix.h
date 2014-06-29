@@ -59,7 +59,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<DataMatrix const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<DataMatrix> > ListPtr;
+        typedef ObjectList<DataMatrix> List;
+        typedef boost::shared_ptr<List> ListPtr;
         typedef boost::shared_ptr< const ObjectList<DataMatrix> > ListConstPtr;
 
       public:
@@ -122,6 +123,7 @@ namespace pandora_data_fusion
     typedef DataMatrix::ConstPtr DataMatrixConstPtr;
     typedef DataMatrix::PtrVector DataMatrixPtrVector;
     typedef DataMatrix::PtrVectorPtr DataMatrixPtrVectorPtr;
+    typedef DataMatrix::List DataMatrixList;
     typedef DataMatrix::ListPtr DataMatrixListPtr;
     typedef DataMatrix::ListConstPtr DataMatrixListConstPtr;
 

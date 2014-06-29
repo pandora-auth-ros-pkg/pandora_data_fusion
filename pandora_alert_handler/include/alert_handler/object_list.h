@@ -74,7 +74,7 @@ namespace pandora_data_fusion
 
           ObjectList(); 
 
-          int add(const Ptr& object);
+          bool add(const Ptr& object);
 
           /**
            * @brief Fills a vector with all legit ObjectTypes from list.
@@ -147,19 +147,19 @@ namespace pandora_data_fusion
       }
 
     template <class ObjectType>
-      int ObjectList<ObjectType>::add(const Ptr& object)
+      bool ObjectList<ObjectType>::add(const Ptr& object)
       {
         IteratorList iteratorList;
 
         if (isAnExistingObject(object, &iteratorList))
         {
           updateObjects(object, iteratorList);
-          return 0;
+          return false;
         }
 
         object->setId(id_++);
         objects_.push_back(object);
-        return ObjectType::getObjectScore();
+        return true;
       }
 
     template <class ObjectType>
@@ -242,9 +242,9 @@ namespace pandora_data_fusion
 
           if ( inRange ) 
           {
-            ROS_DEBUG_NAMED("object_handler",
-                "[OBJECT_HANDLER %d] Deleting hole...", __LINE__);
-            objects_.erase(iter++);
+            ROS_DEBUG_NAMED("OBJECT_LIST",
+                "[OBJECT_LIST %d] Deleting hole...", __LINE__);
+            iter = objects_.erase(iter);
           }
           else 
           {

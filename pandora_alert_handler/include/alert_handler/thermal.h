@@ -58,7 +58,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Thermal const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<Thermal> > ListPtr;
+        typedef ObjectList<Thermal> List;
+        typedef boost::shared_ptr<List> ListPtr;
         typedef boost::shared_ptr< const ObjectList<Thermal> > ListConstPtr;
 
         /**
@@ -74,6 +75,7 @@ namespace pandora_data_fusion
     typedef Thermal::ConstPtr ThermalConstPtr;
     typedef Thermal::PtrVector ThermalPtrVector;
     typedef Thermal::PtrVectorPtr ThermalPtrVectorPtr;
+    typedef Thermal::List ThermalList;
     typedef Thermal::ListPtr ThermalListPtr;
     typedef Thermal::ListConstPtr ThermalListConstPtr;
 

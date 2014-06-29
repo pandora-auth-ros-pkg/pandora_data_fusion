@@ -178,7 +178,7 @@ namespace pandora_data_fusion
          * @brief Getter for static distance threshold.
          * @return float distanceThres
          */
-        float getDistanceThres() const
+        static float getDistanceThres()
         {
           return distanceThres_;
         }

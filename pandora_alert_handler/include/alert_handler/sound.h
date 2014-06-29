@@ -59,7 +59,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Sound const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<Sound> > ListPtr;
+        typedef ObjectList<Sound> List;
+        typedef boost::shared_ptr<List> ListPtr;
         typedef boost::shared_ptr< const ObjectList<Sound> > ListConstPtr;
 
       public:
@@ -77,6 +78,7 @@ namespace pandora_data_fusion
     typedef Sound::ConstPtr SoundConstPtr;
     typedef Sound::PtrVector SoundPtrVector;
     typedef Sound::PtrVectorPtr SoundPtrVectorPtr;
+    typedef Sound::List SoundList;
     typedef Sound::ListPtr SoundListPtr;
     typedef Sound::ListConstPtr SoundListConstPtr;
 

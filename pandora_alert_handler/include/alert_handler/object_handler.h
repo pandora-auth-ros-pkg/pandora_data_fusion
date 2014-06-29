@@ -145,11 +145,10 @@ namespace pandora_data_fusion
         }
         for(int ii = 0; ii < newObjects->size(); ++ii)
         {
-          int objectScore = ObjectType::getList()->add(newObjects->at(ii));
-          if(objectScore)
+          if(ObjectType::getList()->add(newObjects->at(ii)))
           {
             std_msgs::Int32 updateScoreMsg;
-            roboCupScore_ += objectScore;
+            roboCupScore_ += ObjectType::getObjectScore();
             updateScoreMsg.data = roboCupScore_;
             scorePublisher_.publish(updateScoreMsg);
           }
@@ -169,7 +168,7 @@ namespace pandora_data_fusion
               ObjectType::getObjectType() == Co2::getObjectType())
           {
             valid = victimsToGoList_->isObjectPoseInList(
-                (*iter), VICTIM_CLUSTER_RADIUS, true);
+                (*iter), VICTIM_CLUSTER_RADIUS, false);
           }
           else
             valid = victimsToGoList_->isObjectPoseInList(
@@ -178,7 +177,7 @@ namespace pandora_data_fusion
           //   victimsVisitedList_->isObjectPoseInList((*iter), VICTIM_CLUSTER_RADIUS);
           if(!valid)
           {
-            ROS_DEBUG_NAMED("object_handler",
+            ROS_DEBUG_NAMED("OBJECT_HANDLER",
                 "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
             iter = objectsPtr->erase(iter);
           }

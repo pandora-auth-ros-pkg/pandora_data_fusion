@@ -59,7 +59,8 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<Landoltc const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<Landoltc> > ListPtr;
+        typedef ObjectList<Landoltc> List;
+        typedef boost::shared_ptr<List> ListPtr;
         typedef boost::shared_ptr< const ObjectList<Landoltc> > ListConstPtr;
 
       public:
@@ -99,6 +100,7 @@ namespace pandora_data_fusion
     typedef Landoltc::ConstPtr LandoltcConstPtr;
     typedef Landoltc::PtrVector LandoltcPtrVector;
     typedef Landoltc::PtrVectorPtr LandoltcPtrVectorPtr;
+    typedef Landoltc::List LandoltcList;
     typedef Landoltc::ListPtr LandoltcListPtr;
     typedef Landoltc::ListConstPtr LandoltcListConstPtr;
 
