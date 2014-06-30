@@ -97,12 +97,12 @@ namespace pandora_data_fusion
 
     void Sensor::coverageUpdate(const ros::TimerEvent& event)
     {
-      //  If sensor is not open and working, do not update coverage patch.
+      // If sensor is not open and working, do not update coverage patch.
       if (!sensorWorking_)
         return;
-      if (map2d_->data.size() == 0 || map3d_.get() == NULL)
+      if (map2d_->data.size() == 0 || (surfaceCoverage_ && map3d_.get() == NULL))
         return;
-      //  If it does, fetch current transformation.
+      // If it does, fetch current transformation.
       ros::Time timeNow = ros::Time::now();
       tf::StampedTransform sensorTransform, baseTransform;
       try

@@ -304,8 +304,8 @@ namespace pandora_data_fusion
               y = jj * oldMetaData.resolution;
               xn = cos(yawDiff) * x - sin(yawDiff) * y - xDiff;
               yn = sin(yawDiff) * x + cos(yawDiff) * y - yDiff;
-              int coords = static_cast<int>((ceil((xn + yn * coveredSpace_.info.width)
-                    / coveredSpace_.info.resolution)));
+              int coords = static_cast<int>(round((xn + yn * coveredSpace_.info.width)
+                    / coveredSpace_.info.resolution));
               coveredSpace_.data[coords] = oldCoverage[ii + jj * oldMetaData.width];
               coverageDilation(2, COORDS(xn, yn, (&coveredSpace_)));
             }
