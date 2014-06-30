@@ -120,10 +120,10 @@ namespace pandora_data_fusion
         if (surfaceCoverage_)
         {
           surfaceChecker_->findCoverage(sensorTransform);
-          surfaceChecker_->publishCoverage();
+          surfaceChecker_->publishCoverage(GLOBAL_FRAME);
         }
         spaceChecker_->findCoverage(sensorTransform, baseTransform);
-        spaceChecker_->publishCoverage();
+        spaceChecker_->publishCoverage(GLOBAL_FRAME);
       }
       catch (TfException ex)
       {
