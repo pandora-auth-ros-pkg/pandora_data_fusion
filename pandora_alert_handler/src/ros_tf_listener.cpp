@@ -49,10 +49,10 @@ namespace pandora_data_fusion
     {
       tf::StampedTransform tfTransform;
 
-      waitForTransform("/world", "/map",
+      waitForTransform("/map", "/map",
           ros::Time(0), ros::Duration(1));
 
-      lookupTransform("/world", "/map",
+      lookupTransform("/map", "/map",
           ros::Time(0), tfTransform);
     }
 
@@ -69,7 +69,7 @@ namespace pandora_data_fusion
       }
       catch (tf::TransformException ex)
       {
-        ROS_ERROR("[ALERT_HANDLER %d]%s", __LINE__, ex.what());
+        ROS_ERROR("[ALERT_HANDLER %d] %s", __LINE__, ex.what());
         throw TfException(
             "Something went wrong with tf, ignoring current message");
       }
@@ -86,7 +86,7 @@ namespace pandora_data_fusion
       }
       catch (tf::TransformException ex)
       {
-        ROS_ERROR("[ALERT_HANDLER %d]%s", __LINE__, ex.what());
+        ROS_ERROR("[ALERT_HANDLER %d] %s", __LINE__, ex.what());
         throw TfException(
             "Something went wrong with tf, ignoring current message");
       }
