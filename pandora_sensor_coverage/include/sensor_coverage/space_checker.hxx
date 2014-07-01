@@ -41,19 +41,19 @@
 
 #include "std_msgs/Float32.h"
 
-#include "sensor_coverage/space_checker.h"
-
 namespace pandora_data_fusion
 {
   namespace pandora_sensor_coverage
   {
 
-    SpaceChecker::SpaceChecker(const NodeHandlePtr& nh, const std::string& frameName)
+    template <class TreeType>
+    SpaceChecker<TreeType>::SpaceChecker(
+        const NodeHandlePtr& nh, const std::string& frameName)
       : CoverageChecker(nh, frameName)
     {
       resetCoverage();
 
-      coverageMap3d_ = map3d_;
+      coverageMap3d_ = boost::dynamic_pointer_cast<TreeType>(map3d_);
 
       std::string topic;
 
@@ -88,26 +88,25 @@ namespace pandora_data_fusion
       getParameters();
     }
 
-    double SpaceChecker::MAX_HEIGHT = 0;
-    double SpaceChecker::FOOTPRINT_WIDTH = 0;
-    double SpaceChecker::FOOTPRINT_HEIGHT = 0;
+    template <class TreeType>
+    double SpaceChecker<TreeType>::MAX_HEIGHT = 0;
+    template <class TreeType>
+    double SpaceChecker<TreeType>::FOOTPRINT_WIDTH = 0;
+    template <class TreeType>
+    double SpaceChecker<TreeType>::FOOTPRINT_HEIGHT = 0;
 
-    void SpaceChecker::findCoverage(const tf::StampedTransform& sensorTransform,
-        const tf::StampedTransform& baseTransform)
+    template <class TreeType>
+    void SpaceChecker<TreeType>::findCoverage(
+        const tf::StampedTransform& sensorTransform, const tf::StampedTransform& baseTransform)
     {
       // Aligning coverage OGD with current map. Resizing, rotating and translating.
       alignCoverageWithMap();
 
       // Declare helper variables
-      CoverageChecker::findCoverage(sensorTransform);
+      CoverageChecker::findCoverage(sensorTransform, baseTransform);
       const float resolution = map2d_->info.resolution;
-      double robotX = baseTransform.getOrigin()[0];
-      double robotY = baseTransform.getOrigin()[1];
-      float minZ = baseTransform.getOrigin()[2];
-      double robotRoll = 0, robotPitch = 0, robotYaw = 0;
-      baseTransform.getBasis().getRPY(robotRoll, robotPitch, robotYaw);
-      float currX = position_.x();
-      float currY = position_.y();
+      float currX = sensorPosition_.x();
+      float currY = sensorPosition_.y();
       float fov = (SENSOR_HFOV / 180.0) * PI;
       octomap::point3d cell;
 
@@ -116,26 +115,27 @@ namespace pandora_data_fusion
       // the map inside the raycasting area.
       for (float angle = -fov/2; angle < fov/2; angle += DEGREE)
       {
-        cell.x() = resolution * cos(yaw_ + angle) + currX;
-        cell.y() = resolution * sin(yaw_ + angle) + currY;
+        cell.x() = resolution * cos(sensorYaw_ + angle) + currX;
+        cell.y() = resolution * sin(sensorYaw_ + angle) + currY;
 
         while (CELL(cell.x(), cell.y(), map2d_)
             < static_cast<int8_t>(OCCUPIED_CELL_THRES * 100)
-            && Utils::distanceBetweenPoints2D(octomap::pointOctomapToMsg(position_),
+            && Utils::distanceBetweenPoints2D(octomap::pointOctomapToMsg(sensorPosition_),
               octomap::pointOctomapToMsg(cell)) < SENSOR_RANGE)
         {
           signed covered;
           if (binary_)
             covered = 100;
           else
-            covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
+            covered = static_cast<signed char>(
+                round(cellCoverage(cell, robotPosition_.z()) * 100));
           if (covered > CELL(cell.x(), cell.y(), coveredSpace_))
           {
             CELL(cell.x(), cell.y(), coveredSpace_) = covered;
           }
           coverageDilation(1, COORDS(cell.x(), cell.y(), coveredSpace_));
-          cell.x() += resolution * cos(yaw_ + angle);
-          cell.y() += resolution * sin(yaw_ + angle);
+          cell.x() += resolution * cos(sensorYaw_ + angle);
+          cell.y() += resolution * sin(sensorYaw_ + angle);
         }
       }
 
@@ -171,8 +171,8 @@ namespace pandora_data_fusion
         for (double y = -FOOTPRINT_HEIGHT / 2;
             y <= FOOTPRINT_HEIGHT / 2; y += resolution)
         {
-          xn = cos(robotYaw) * x - sin(robotYaw) * y + robotX;
-          yn = sin(robotYaw) * x + cos(robotYaw) * y + robotY;
+          xn = cos(robotYaw_) * x - sin(robotYaw_) * y + robotPosition_.x();
+          yn = sin(robotYaw_) * x + cos(robotYaw_) * y + robotPosition_.y();
           CELL(xn, yn, coveredSpace_) = 100;
           coverageDilation(1, COORDS(xn, yn, coveredSpace_));
         }
@@ -189,7 +189,9 @@ namespace pandora_data_fusion
      * but it assures that coverage as a percentage is true at all times and it is not
      * dependent of current z.
      */
-    float SpaceChecker::cellCoverage(const octomap::point3d& cell, float minHeight)
+    template <class TreeType>
+    float SpaceChecker<TreeType>::cellCoverage(
+        const octomap::point3d& cell, float minHeight)
     {
       octomap::point3d end(cell.x(), cell.y(), minHeight);
       //  begin can be later implemented having z = minHeight + MAX_HEIGHT.
@@ -264,7 +266,8 @@ namespace pandora_data_fusion
       return coveredSpace / unoccupiedSpace;
     }
 
-    void SpaceChecker::alignCoverageWithMap()
+    template <class TreeType>
+    void SpaceChecker<TreeType>::alignCoverageWithMap()
     {
       int oldSize = coveredSpace_->data.size();
       int newSize = map2d_->data.size();
@@ -318,7 +321,8 @@ namespace pandora_data_fusion
       delete[] oldCoverage;
     }
 
-    void SpaceChecker::coverageDilation(int steps, int coords)
+    template <class TreeType>
+    void SpaceChecker<TreeType>::coverageDilation(int steps, int coords)
     {
       if (steps == 0)
         return;
@@ -367,7 +371,8 @@ namespace pandora_data_fusion
       }
     }
 
-    void SpaceChecker::publishCoverage(const std::string& frame)
+    template <class TreeType>
+    void SpaceChecker<TreeType>::publishCoverage(const std::string& frame)
     {
       coveredSpace_->header.stamp = ros::Time::now();
       coveredSpace_->header.frame_id = frame;
@@ -377,7 +382,8 @@ namespace pandora_data_fusion
       areaCoveragePublisher_.publish(msg);
     }
 
-    void SpaceChecker::resetCoverage()
+    template <class TreeType>
+    void SpaceChecker<TreeType>::resetCoverage()
     {
       coveredSpace_.reset( new nav_msgs::OccupancyGrid );
     }

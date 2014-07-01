@@ -6,7 +6,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf 
   roslint
   pandora_alert_handler
-  #pandora_vision_hole_detector
   state_manager
   state_manager_communications
   octomap_msgs
@@ -22,7 +21,6 @@ catkin_package(
   tf 
   roslint
   pandora_alert_handler
-  #pandora_vision_hole_detector
   state_manager
   state_manager_communications
   INCLUDE_DIRS 
@@ -49,12 +47,12 @@ target_link_libraries(coverage_checker
 
 ########################  space checker  ############################
 
-add_library(space_checker
-  src/space_checker.cpp)
-target_link_libraries(space_checker
-  ${catkin_LIBRARIES}
-  coverage_checker
-  )
+#add_library(space_checker
+  #src/space_checker.cpp)
+#target_link_libraries(space_checker
+  #${catkin_LIBRARIES}
+  #coverage_checker
+  #)
 
 ########################  surface checker  ##########################
 

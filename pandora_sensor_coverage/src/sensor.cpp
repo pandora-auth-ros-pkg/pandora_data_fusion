@@ -54,12 +54,17 @@ namespace pandora_data_fusion
         ROS_FATAL("%s produces surface coverage param not found", frameName_.c_str());
         ROS_BREAK();
       }
-      spaceChecker_.reset( new SpaceChecker(nh_, frameName_) );
       if (surfaceCoverage_)
       {
+        spaceChecker_.reset( new SpaceChecker<octomap::ColorOcTree>(nh_, frameName_) );
         surfaceChecker_.reset( new SurfaceChecker(nh_, frameName_) );
-        spaceChecker_->setCoverageMap3d(
-            boost::dynamic_pointer_cast<octomap::OcTree>(surfaceChecker_->getCoverageMap3d()));
+        boost::dynamic_pointer_cast< SpaceChecker<octomap::ColorOcTree> >(spaceChecker_)->
+          setCoverageMap3d(
+            surfaceChecker_->getCoverageMap3d());
+      }
+      else
+      {
+        spaceChecker_.reset( new SpaceChecker<octomap::OcTree>(nh_, frameName_) );
       }
       sensorWorking_ = false;
       listener_.reset(TfFinder::newTfListener(mapOrigin));

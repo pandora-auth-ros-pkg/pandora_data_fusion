@@ -278,6 +278,7 @@ namespace pandora_data_fusion
       msg.header.frame_id = frame;
       msg.binary = false;
       msg.id = coveredSurface_->getTreeType();
+      ROS_DEBUG("Tree class type: %s", msg.id.c_str());
       msg.resolution = coveredSurface_->getResolution();
       if (octomap_msgs::fullMapToMsg(*coveredSurface_, msg))
         coveragePublisher_.publish(msg);
