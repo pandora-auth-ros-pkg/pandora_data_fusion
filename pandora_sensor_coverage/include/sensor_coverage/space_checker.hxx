@@ -89,15 +89,9 @@ namespace pandora_data_fusion
     }
 
     template <class TreeType>
-    double SpaceChecker<TreeType>::MAX_HEIGHT = 0;
-    template <class TreeType>
-    double SpaceChecker<TreeType>::FOOTPRINT_WIDTH = 0;
-    template <class TreeType>
-    double SpaceChecker<TreeType>::FOOTPRINT_HEIGHT = 0;
-
-    template <class TreeType>
     void SpaceChecker<TreeType>::findCoverage(
-        const tf::StampedTransform& sensorTransform, const tf::StampedTransform& baseTransform)
+        const tf::StampedTransform& sensorTransform,
+        const tf::StampedTransform& baseTransform)
     {
       // Aligning coverage OGD with current map. Resizing, rotating and translating.
       alignCoverageWithMap();

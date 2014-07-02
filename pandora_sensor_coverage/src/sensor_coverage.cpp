@@ -89,11 +89,11 @@ namespace pandora_data_fusion
 
       //  Set up occupancy grid 2d map occupancy threshold.
       nh_->param<double>("occupied_cell_thres", paramD, static_cast<double>(0.5));
-      SpaceChecker::setOccupiedCellThres(paramD);
+      CoverageChecker::setOccupiedCellThres(paramD);
 
       //  Set up maximum height of interest.
       if (nh_->getParam("max_height", paramD))
-        SpaceChecker::setMaxHeight(paramD);
+        CoverageChecker::setMaxHeight(paramD);
       else
       {
         ROS_FATAL("max height param not found");
@@ -102,7 +102,7 @@ namespace pandora_data_fusion
 
       //  Set up footprint's width.
       if (nh_->getParam("footprint/width", paramD))
-        SpaceChecker::setFootprintWidth(paramD);
+        CoverageChecker::setFootprintWidth(paramD);
       else
       {
         ROS_FATAL("footprint's width param not found");
@@ -111,7 +111,7 @@ namespace pandora_data_fusion
 
       //  Set up footprint's height.
       if (nh_->getParam("footprint/height", paramD))
-        SpaceChecker::setFootprintHeight(paramD);
+        CoverageChecker::setFootprintHeight(paramD);
       else
       {
         ROS_FATAL("footprint's height param not found");

@@ -70,7 +70,6 @@ add_library(sensor
 target_link_libraries(sensor
   ${catkin_LIBRARIES}
   ros_tf_listener
-  space_checker
   surface_checker
   )
 

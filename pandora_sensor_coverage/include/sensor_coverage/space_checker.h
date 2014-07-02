@@ -67,8 +67,9 @@ namespace pandora_data_fusion
           /**
            * @override
            * @brief function that finds coverage, triggered when updating it
-           * @param transform [tf::StampedTransform const&] tf that will be used
+           * @param sensorTransform [tf::StampedTransform const&] tf that will be used
            * in coverage finding
+           * @param baseTransform [tf::StampedTransform const&] base footprint's tf
            * @return void
            */
           virtual void findCoverage(const tf::StampedTransform& sensorTransform,
@@ -98,36 +99,6 @@ namespace pandora_data_fusion
           void setCoverageMap3d(const boost::shared_ptr<TreeType>& map)
           {
             coverageMap3d_ = map;
-          }
-
-          /**
-           * @brief Setter for static variable MAX_HEIGHT
-           * @param maxHeight [double] maximum height of interest
-           * @return void
-           */
-          static void setMaxHeight(double maxHeight)
-          {
-            MAX_HEIGHT = maxHeight;
-          }
-
-          /**
-           * @brief Setter for static variable FOOTPRINT_WIDTH
-           * @param footprintWidth [double] robot's orthogonal footprint width
-           * @return void
-           */
-          static void setFootprintWidth(double orientationCircle)
-          {
-            FOOTPRINT_WIDTH = orientationCircle;
-          }
-
-          /**
-           * @brief Setter for static variable FOOTPRINT_HEIGHT
-           * @param footprintHeight [double] robot's orthogonal footprint height
-           * @return void
-           */
-          static void setFootprintHeight(double footprintHeight)
-          {
-            FOOTPRINT_HEIGHT = footprintHeight;
           }
 
         private:
@@ -170,12 +141,6 @@ namespace pandora_data_fusion
           ros::Publisher areaCoveragePublisher_;
 
           /*  Parameters  */
-          //!< maximum height of interest
-          static double MAX_HEIGHT;
-          //!< Robot's footprint width
-          static double FOOTPRINT_WIDTH;
-          //!< Robot's footprint height
-          static double FOOTPRINT_HEIGHT;
 
         private:
           friend class SpaceCheckerTest;

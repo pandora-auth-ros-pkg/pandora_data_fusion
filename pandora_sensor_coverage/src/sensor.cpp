@@ -59,8 +59,7 @@ namespace pandora_data_fusion
         spaceChecker_.reset( new SpaceChecker<octomap::ColorOcTree>(nh_, frameName_) );
         surfaceChecker_.reset( new SurfaceChecker(nh_, frameName_) );
         boost::dynamic_pointer_cast< SpaceChecker<octomap::ColorOcTree> >(spaceChecker_)->
-          setCoverageMap3d(
-            surfaceChecker_->getCoverageMap3d());
+          setCoverageMap3d(surfaceChecker_->getCoverageMap3d());
       }
       else
       {
@@ -130,7 +129,7 @@ namespace pandora_data_fusion
         //  Publish updated coverage perception.
         if (surfaceCoverage_)
         {
-          surfaceChecker_->findCoverage(sensorTransform);
+          surfaceChecker_->findCoverage(sensorTransform, baseTransform);
           surfaceChecker_->publishCoverage(GLOBAL_FRAME);
         }
         spaceChecker_->findCoverage(sensorTransform, baseTransform);

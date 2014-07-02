@@ -70,11 +70,14 @@ namespace pandora_data_fusion
         /**
          * @override
          * @brief function that finds coverage, triggered when updating it
-         * @param transform [tf::StampedTransform const&] tf that will be used
+         * @param sensorTransform [tf::StampedTransform const&] tf that will be used
          * in coverage finding
+         * @param baseTransform [tf::StampedTransform const&] base footprint's tf
          * @return void
          */
-        virtual void findCoverage(const tf::StampedTransform& transform);
+        virtual void findCoverage(
+            const tf::StampedTransform& sensorTransform,
+            const tf::StampedTransform& baseTransform);
 
         /**
          * @override
