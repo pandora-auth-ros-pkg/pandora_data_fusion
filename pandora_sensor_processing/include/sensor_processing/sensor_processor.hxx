@@ -91,7 +91,7 @@ namespace pandora_sensor_processing
             name_.c_str());
         ROS_BREAK();
       }
-      if (!nh_.getParam("states/identification" + sensorType_ + "_raw", IDENTIFICATION_STATE))
+      if (!nh_.getParam("states/identification", IDENTIFICATION_STATE))
       {
         ROS_FATAL("[%s] mode in identification state param not found",
             name_.c_str());

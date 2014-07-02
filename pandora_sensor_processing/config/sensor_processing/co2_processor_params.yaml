@@ -1,7 +1,7 @@
 subscribed_topic_names:
-  co2_raw: /sensors/co2
+  raw_input: /sensors/co2
 published_topic_names:
-  co2_alert: co2_alert
+  alert_output: co2_alert
 states:
   exploration: false
   identification: true
