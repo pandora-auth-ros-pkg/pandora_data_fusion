@@ -45,7 +45,7 @@ namespace pandora_sensor_processing
 
   ThermalProcessor::
     ThermalProcessor(const std::string& ns) : 
-      SensorProcessor<ThermalProcessor>(ns, "thermal", false)
+      SensorProcessor<ThermalProcessor>(ns, "thermal")
   {
     MAX_CLUSTER_MEMORY = 3;
     MAX_CLUSTER_ITERATIONS = 100;
