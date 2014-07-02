@@ -72,9 +72,18 @@ namespace pandora_sensor_processing
           const SensorProcessingConfig& config, uint32_t level);
 
     private:
-      //!< params
-      float PDF_SCALE;
-      float PDF_SHAPE;
+      //!< Estimated ambient co2 concentration.
+      float ambientCo2_;
+      //!< Spike found?
+      bool spikeFound_;
+      //!< Time measurement spike was found.
+      float spikeTime_;
+
+      /*  Parameters  */
+      //!< Time constant of weibull pdf
+      float TIME_RATE;
+      //!< Shape constant of weibull pdf
+      float SHAPE_PARAMETER;
   };
 
 }  // namespace pandora_sensor_processing

@@ -44,7 +44,7 @@ namespace pandora_sensor_processing
 {
 
   Co2Processor::Co2Processor(const std::string& ns)
-    : SensorProcessor<Co2Processor>(ns, "co2", true, false) {}
+    : SensorProcessor<Co2Processor>(ns, "co2") {}
 
   /**
    * @details Weibull distribution is used for calculating probability.
@@ -52,21 +52,45 @@ namespace pandora_sensor_processing
   void Co2Processor::sensorCallback(
       const pandora_arm_hardware_interface::Co2Msg& msg)
   {
-    ROS_DEBUG_NAMED("SENSOR_PROCESSING", 
-        "[%s] Incoming co2 raw info.", name_.c_str());
+    ROS_DEBUG_NAMED("SENSOR_PROCESSING", "[%s] Incoming co2 raw info.", name_.c_str());
     alert_.yaw = 0;
     alert_.pitch = 0;
-    alert_.probability = Utils::weibullPdf(msg.co2_percentage, 
-        PDF_SHAPE, PDF_SCALE);
     alert_.header = msg.header;
-    publishAlert();
+    // Measurement has no information because it has the same value with the ambience.
+    float concentrationSpike = msg.co2_percentage - ambientCo2_;
+    if (concentrationSpike < 0)
+    {
+      ambientCo2_ = msg.co2_percentage;
+      spikeFound_ = false;
+    }
+    else if (concentrationSpike > 0)
+    {
+      if (!spikeFound_)
+      {
+        spikeFound_ = true;
+        spikeTime_ = ros::Time::now().toSec();
+      }
+      float timeFromSpike = ros::Time::now().toSec() - spikeTime_;
+      alert_.probability = Utils::weibullPdf(timeFromSpike,
+          SHAPE_PARAMETER, TIME_RATE);
+      publishAlert();
+      if (alert_.probability < 0.4)
+      {
+        ambientCo2_ = msg.co2_percentage;
+        spikeFound_ = false;
+      }
+    }
+    else
+    {
+      spikeFound_ = false;
+    }
   }
 
   void Co2Processor::dynamicReconfigCallback(
       const SensorProcessingConfig& config, uint32_t level)
   {
-    PDF_SCALE = config.co2_optimal;
-    PDF_SHAPE = config.co2_pdf_shape;
+    TIME_RATE = config.co2_time_rate;
+    SHAPE_PARAMETER = config.co2_pdf_shape;
   }
 
 }  // namespace pandora_sensor_processing
