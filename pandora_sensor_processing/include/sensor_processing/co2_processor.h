@@ -40,6 +40,7 @@
 #define SENSOR_PROCESSING_CO2_PROCESSOR_H
 
 #include <string>
+#include <limits>
 
 #include "pandora_arm_hardware_interface/Co2Msg.h"
 #include "sensor_processing/utils.h"
@@ -73,17 +74,19 @@ namespace pandora_sensor_processing
 
     private:
       //!< Estimated ambient co2 concentration.
-      float ambientCo2_;
+      double ambientCo2_;
       //!< Spike found?
       bool spikeFound_;
       //!< Time measurement spike was found.
-      float spikeTime_;
+      double spikeTime_;
 
       /*  Parameters  */
       //!< Time constant of weibull pdf
-      float TIME_RATE;
+      double TIME_CONSTANT;
       //!< Shape constant of weibull pdf
-      float SHAPE_PARAMETER;
+      double SHAPE_PARAMETER;
+      //!< Probability which determines whether a spike is ambience or not
+      float PROBABILITY_THRES;
   };
 
 }  // namespace pandora_sensor_processing
