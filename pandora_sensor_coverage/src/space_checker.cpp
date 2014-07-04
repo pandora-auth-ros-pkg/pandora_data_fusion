@@ -109,21 +109,6 @@ namespace pandora_data_fusion
       float fov = (SENSOR_HFOV / 180.0) * PI;
       octomap::point3d cell;
 
-      // Robot is standing in fully covered space (assumption).
-      double xn = 0, yn = 0;
-      for (double x = -FOOTPRINT_WIDTH / 2;
-          x <= FOOTPRINT_WIDTH / 2; x += resolution)
-      {
-        for (double y = -FOOTPRINT_HEIGHT / 2;
-            y <= FOOTPRINT_HEIGHT / 2; y += resolution)
-        {
-          xn = cos(robotYaw) * x - sin(robotYaw) * y + robotX;
-          yn = sin(robotYaw) * x + cos(robotYaw) * y + robotY;
-          CELL(xn, yn, (&coveredSpace_)) = 100;
-          coverageDilation(1, COORDS(xn, yn, (&coveredSpace_)));
-        }
-      }
-
       // Raycast on 2d map rays that orient between -fov_x/2 and fov_x/2 and
       // find how to much covered space (line) corresponds to a 2d cell of
       // the map inside the raycasting area.
@@ -169,11 +154,27 @@ namespace pandora_data_fusion
           }
         }
       }
+
       // Calculate total area explored according to this sensor.
       totalAreaCovered_ = cellsCovered * resolution * resolution;
       ROS_INFO_THROTTLE(20,
           "[SENSOR_COVERAGE_SPACE_CHECKER %d] Total area covered is %f m^2.",
           __LINE__, totalAreaCovered_);
+
+      // Robot is standing in fully covered space (assumption).
+      double xn = 0, yn = 0;
+      for (double x = -FOOTPRINT_WIDTH / 2;
+          x <= FOOTPRINT_WIDTH / 2; x += resolution)
+      {
+        for (double y = -FOOTPRINT_HEIGHT / 2;
+            y <= FOOTPRINT_HEIGHT / 2; y += resolution)
+        {
+          xn = cos(robotYaw) * x - sin(robotYaw) * y + robotX;
+          yn = sin(robotYaw) * x + cos(robotYaw) * y + robotY;
+          CELL(xn, yn, (&coveredSpace_)) = 100;
+          coverageDilation(1, COORDS(xn, yn, (&coveredSpace_)));
+        }
+      }
     }
 
     /**
