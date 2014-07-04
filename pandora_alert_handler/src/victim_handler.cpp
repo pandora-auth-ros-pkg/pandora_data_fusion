@@ -105,34 +105,37 @@ namespace pandora_data_fusion
       notify();
       victimsToGoList_->inspect();
 
-      VictimList::const_iterator currentVictim = victimsToGoList_->begin();
-      ros::Time oldestVictim = (*currentVictim)->getTimeFound();
-      for (VictimList::const_iterator it = ++victimsToGoList_->begin();
-          it != victimsToGoList_->end(); it++)
+      if (victimsToGoList_->size() != 0)
       {
-        if ((*it)->getTimeFound() < oldestVictim)
+        VictimList::const_iterator currentVictim = victimsToGoList_->begin();
+        ros::Time oldestVictim = (*currentVictim)->getTimeFound();
+        for (VictimList::const_iterator it = ++victimsToGoList_->begin();
+            it != victimsToGoList_->end(); it++)
         {
-          oldestVictim = (*it)->getTimeFound();
-          currentVictim = it;
+          if ((*it)->getTimeFound() < oldestVictim)
+          {
+            oldestVictim = (*it)->getTimeFound();
+            currentVictim = it;
+          }
         }
-      }
 
-      pandora_data_fusion_msgs::GlobalProbabilitiesMsg probabilities;
-      ObjectConstPtrVector currentVictimsObjects = (*currentVictim)->getObjects();
-      for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
-      {
-        if (currentVictimsObjects[ii]->getType() == Face::getObjectType())
-          probabilities.victim = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Thermal::getObjectType())
-          probabilities.thermal = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Motion::getObjectType())
-          probabilities.motion = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Co2::getObjectType())
-          probabilities.co2 = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Sound::getObjectType())
-          probabilities.sound = currentVictimsObjects[ii]->getProbability();
+        pandora_data_fusion_msgs::GlobalProbabilitiesMsg probabilities;
+        ObjectConstPtrVector currentVictimsObjects = (*currentVictim)->getObjects();
+        for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
+        {
+          if (currentVictimsObjects[ii]->getType() == Face::getObjectType())
+            probabilities.victim = currentVictimsObjects[ii]->getProbability();
+          if (currentVictimsObjects[ii]->getType() == Thermal::getObjectType())
+            probabilities.thermal = currentVictimsObjects[ii]->getProbability();
+          if (currentVictimsObjects[ii]->getType() == Motion::getObjectType())
+            probabilities.motion = currentVictimsObjects[ii]->getProbability();
+          if (currentVictimsObjects[ii]->getType() == Co2::getObjectType())
+            probabilities.co2 = currentVictimsObjects[ii]->getProbability();
+          if (currentVictimsObjects[ii]->getType() == Sound::getObjectType())
+            probabilities.sound = currentVictimsObjects[ii]->getProbability();
+        }
+        probabilitiesPublisher_.publish(probabilities);
       }
-      probabilitiesPublisher_.publish(probabilities);
     }
 
     /**
