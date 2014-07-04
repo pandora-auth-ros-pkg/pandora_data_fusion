@@ -45,17 +45,30 @@ namespace pandora_data_fusion
   namespace pandora_alert_handler
   {
 
-    /**
-     * @details
-     */
-    VictimHandler::VictimHandler(VictimListPtr victimsToGoList,
+    VictimHandler::VictimHandler(
+        const NodeHandlePtr& nh,
+        VictimListPtr victimsToGoList,
         VictimListPtr victimsVisitedList) :
       victimsToGoList_(victimsToGoList),
       victimsVisitedList_(victimsVisitedList)
     {
-      Victim::setObjectType("VICTIM");
+      std::string param;
+
+      nh->param<std::string>("object_names/victim", param, std::string("VICTIM"));
+      Victim::setObjectType(param);
 
       clusterer_.reset(new VictimClusterer(0.2));
+
+      if (nh->getParam("published_topic_names/global_probabilities", param))
+      {
+        probabilitiesPublisher_ = nh->
+          advertise<pandora_data_fusion_msgs::GlobalProbabilitiesMsg>(param, 10);
+      }
+      else
+      {
+        ROS_FATAL("global probabilities topic name param not found");
+        ROS_BREAK();
+      }
     }
 
     /**
@@ -91,6 +104,35 @@ namespace pandora_data_fusion
     {
       notify();
       victimsToGoList_->inspect();
+
+      VictimList::const_iterator currentVictim = victimsToGoList_->begin();
+      ros::Time oldestVictim = (*currentVictim)->getTimeFound();
+      for (VictimList::const_iterator it = ++victimsToGoList_->begin();
+          it != victimsToGoList_->end(); it++)
+      {
+        if ((*it)->getTimeFound() < oldestVictim)
+        {
+          oldestVictim = (*it)->getTimeFound();
+          currentVictim = it;
+        }
+      }
+
+      pandora_data_fusion_msgs::GlobalProbabilitiesMsg probabilities;
+      ObjectConstPtrVector currentVictimsObjects = (*currentVictim)->getObjects();
+      for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
+      {
+        if (currentVictimsObjects[ii]->getType() == Face::getObjectType())
+          probabilities.victim = currentVictimsObjects[ii]->getProbability();
+        if (currentVictimsObjects[ii]->getType() == Thermal::getObjectType())
+          probabilities.thermal = currentVictimsObjects[ii]->getProbability();
+        if (currentVictimsObjects[ii]->getType() == Motion::getObjectType())
+          probabilities.motion = currentVictimsObjects[ii]->getProbability();
+        if (currentVictimsObjects[ii]->getType() == Co2::getObjectType())
+          probabilities.co2 = currentVictimsObjects[ii]->getProbability();
+        if (currentVictimsObjects[ii]->getType() == Sound::getObjectType())
+          probabilities.sound = currentVictimsObjects[ii]->getProbability();
+      }
+      probabilitiesPublisher_.publish(probabilities);
     }
 
     /**

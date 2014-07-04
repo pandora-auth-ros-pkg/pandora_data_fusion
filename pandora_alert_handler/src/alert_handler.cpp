@@ -83,7 +83,7 @@ namespace pandora_data_fusion
       }
       objectFactory_.reset( new ObjectFactory(map_, param) );
       objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_) );
-      victimHandler_.reset( new VictimHandler(victimsToGo_, victimsVisited_) );
+      victimHandler_.reset( new VictimHandler(nh_, victimsToGo_, victimsVisited_) );
 
       if (!nh_->getParam("global_frame", param))
       {
