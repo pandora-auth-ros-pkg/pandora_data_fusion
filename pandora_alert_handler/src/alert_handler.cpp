@@ -485,7 +485,7 @@ namespace pandora_data_fusion
 
         objectsBroadcaster_.sendTransform(
             tf::StampedTransform(tfObject, it->header.stamp,
-              "/world", it->header.frame_id));
+              BaseObject::getGlobalFrame(), it->header.frame_id));
       }
     }
 

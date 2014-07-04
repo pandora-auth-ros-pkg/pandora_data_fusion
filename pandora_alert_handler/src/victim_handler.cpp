@@ -100,7 +100,7 @@ namespace pandora_data_fusion
      */
     ObjectConstPtrVectorPtr VictimHandler::getAllLegitObjects()
     {
-      ObjectConstPtrVectorPtr result(new ObjectConstPtrVector);
+      ObjectConstPtrVectorPtr result( new ObjectConstPtrVector );
 
       Hole::getList()->getAllLegitObjects(result);
       Thermal::getList()->getAllLegitObjects(result);

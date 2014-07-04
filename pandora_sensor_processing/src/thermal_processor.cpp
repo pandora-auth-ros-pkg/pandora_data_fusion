@@ -138,9 +138,9 @@ namespace pandora_sensor_processing
     {
       Eigen::Vector4f center;
       float mean1 = clusterer->getMean1()(3);
-      ROS_WARN("Mean 1: %f", mean1);
+      //ROS_WARN("Mean 1: %f", mean1);
       float mean2 = clusterer->getMean2()(3);
-      ROS_WARN("Mean 2: %f", mean2);
+      //ROS_WARN("Mean 2: %f", mean2);
       float diff = mean1 - mean2;
 
       if (abs(diff) > OPTIMAL_HEAT_DIFFERENCE)
@@ -161,11 +161,11 @@ namespace pandora_sensor_processing
 
       // OK. Warmer cluster has a cell from current measurement.
       // Considering cluster to be a valid alert!
-      ROS_INFO_THROTTLE_NAMED(5, "SENSOR_PROCESSING",
+      ROS_INFO_THROTTLE_NAMED(10, "SENSOR_PROCESSING",
           "[%s] Found thermal alert with temperature: %f", name_.c_str(), center(3));
       alert_.probability = Utils::normalPdf(center(3), 
           OPTIMAL_TEMPERATURE, THERMAL_STD_DEV);
-      ROS_ERROR("Thermal probability: %f", alert_.probability);
+      //ROS_ERROR("Thermal probability: %f", alert_.probability);
       float x = center(0) - static_cast<float>(msg.width) / 2;
       float y = static_cast<float>(msg.height) / 2 - center(1);
       alert_.yaw = atan(2 * x / msg.width * tan(THERMAL_X_FOV / 2));

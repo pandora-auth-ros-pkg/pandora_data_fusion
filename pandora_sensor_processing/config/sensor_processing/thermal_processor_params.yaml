@@ -3,6 +3,6 @@ subscribed_topic_names:
 published_topic_names:
   alert_output: thermal_direction_alert
 states:
-  exploration: true
+  exploration: false
   identification: true
   sensor_hold: true
