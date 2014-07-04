@@ -242,8 +242,8 @@ namespace pandora_data_fusion
 
       HazmatPtr hazmatPtr1 = (*hazmatsVectorPtr)[0];
       EXPECT_EQ(1, hazmatPtr1->getPattern());
-      EXPECT_NEAR(5.75, hazmatPtr1->getPose().position.x, 0.01);
-      EXPECT_NEAR(5.75, hazmatPtr1->getPose().position.y, 0.01);
+      EXPECT_NEAR(5.76, hazmatPtr1->getPose().position.x, 0.01);
+      EXPECT_NEAR(5.76, hazmatPtr1->getPose().position.y, 0.01);
       EXPECT_NEAR(0.9205, hazmatPtr1->getPose().position.z, 0.01);
       EXPECT_NEAR(0, hazmatPtr1->getPose().orientation.x, 0.1);
       EXPECT_NEAR(0, hazmatPtr1->getPose().orientation.y, 0.1);
@@ -267,8 +267,8 @@ namespace pandora_data_fusion
       thermalsVectorPtr = objectFactoryPtr->makeObjects<Thermal>(thermalDir1);
       EXPECT_EQ(1, thermalsVectorPtr->size());
       ThermalPtr thermalPtr1 = (*thermalsVectorPtr)[0];
-      EXPECT_NEAR(5.75, thermalPtr1->getPose().position.x, 0.01);
-      EXPECT_NEAR(5.75, thermalPtr1->getPose().position.y, 0.01);
+      EXPECT_NEAR(5.76, thermalPtr1->getPose().position.x, 0.01);
+      EXPECT_NEAR(5.76, thermalPtr1->getPose().position.y, 0.01);
       EXPECT_NEAR(0.9205, thermalPtr1->getPose().position.z, 0.01);
       EXPECT_NEAR(0, thermalPtr1->getPose().orientation.x, 0.1);
       EXPECT_NEAR(0, thermalPtr1->getPose().orientation.y, 0.1);
