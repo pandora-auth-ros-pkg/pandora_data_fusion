@@ -151,7 +151,9 @@ namespace pandora_data_fusion
         cool = cool && object->getPose().orientation.y == 0;
         cool = cool && object->getPose().orientation.z == 0;
         cool = cool && object->getPose().orientation.w == 0;
-        ROS_ASSERT_MSG(!cool, "Tried to add an object with uninitialized pose.");
+        //ROS_ASSERT_MSG(!cool, "Tried to add an object with uninitialized pose.");
+        if (!cool)
+          return false;
 
         IteratorList iteratorList;
 
