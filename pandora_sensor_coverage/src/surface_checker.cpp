@@ -283,6 +283,12 @@ namespace pandora_data_fusion
         coveragePublisher_.publish(msg);
     }
 
+    void SurfaceChecker::resetCoverage()
+    {
+      double resolution = map3d_->getResolution() / blurFactor_;
+      coveredSurface_.reset( new octomap::ColorOcTree(resolution) );
+    }
+
 }  // namespace pandora_sensor_coverage
 }  // namespace pandora_data_fusion
 

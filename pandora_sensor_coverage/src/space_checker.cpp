@@ -51,6 +51,8 @@ namespace pandora_data_fusion
     SpaceChecker::SpaceChecker(const NodeHandlePtr& nh, const std::string& frameName)
       : CoverageChecker(nh, frameName)
     {
+      resetCoverage();
+
       coverageMap3d_ = map3d_;
 
       std::string topic;
@@ -127,11 +129,11 @@ namespace pandora_data_fusion
             covered = 100;
           else
             covered = static_cast<signed char>(floor(cellCoverage(cell, minZ) * 100));
-          if (covered > CELL(cell.x(), cell.y(), (&coveredSpace_)))
+          if (covered > CELL(cell.x(), cell.y(), coveredSpace_))
           {
-            CELL(cell.x(), cell.y(), (&coveredSpace_)) = covered;
+            CELL(cell.x(), cell.y(), coveredSpace_) = covered;
           }
-          coverageDilation(1, COORDS(cell.x(), cell.y(), (&coveredSpace_)));
+          coverageDilation(1, COORDS(cell.x(), cell.y(), coveredSpace_));
           cell.x() += resolution * cos(yaw_ + angle);
           cell.y() += resolution * sin(yaw_ + angle);
         }
@@ -140,15 +142,15 @@ namespace pandora_data_fusion
       // Exclude all cells that are currently truly unknown or occupied. Count all those
       // that are covered indeed.
       unsigned int cellsCovered = 0;
-      for (int ii = 0; ii < coveredSpace_.info.width; ++ii)
+      for (int ii = 0; ii < coveredSpace_->info.width; ++ii)
       {
-        for (int jj = 0; jj < coveredSpace_.info.height; ++jj)
+        for (int jj = 0; jj < coveredSpace_->info.height; ++jj)
         {
           if (map2d_->data[ii + jj * map2d_->info.width] >= static_cast<int8_t>(OCCUPIED_CELL_THRES * 100))
           {
-            coveredSpace_.data[ii + jj * coveredSpace_.info.width] = 0;
+            coveredSpace_->data[ii + jj * coveredSpace_->info.width] = 0;
           }
-          if (coveredSpace_.data[ii + jj * coveredSpace_.info.width] != 0)
+          if (coveredSpace_->data[ii + jj * coveredSpace_->info.width] != 0)
           {
             cellsCovered++;
           }
@@ -171,8 +173,8 @@ namespace pandora_data_fusion
         {
           xn = cos(robotYaw) * x - sin(robotYaw) * y + robotX;
           yn = sin(robotYaw) * x + cos(robotYaw) * y + robotY;
-          CELL(xn, yn, (&coveredSpace_)) = 100;
-          coverageDilation(1, COORDS(xn, yn, (&coveredSpace_)));
+          CELL(xn, yn, coveredSpace_) = 100;
+          coverageDilation(1, COORDS(xn, yn, coveredSpace_));
         }
       }
     }
@@ -264,36 +266,36 @@ namespace pandora_data_fusion
 
     void SpaceChecker::alignCoverageWithMap()
     {
-      int oldSize = coveredSpace_.data.size();
+      int oldSize = coveredSpace_->data.size();
       int newSize = map2d_->data.size();
       int8_t* oldCoverage = new int8_t[oldSize];
       nav_msgs::MapMetaData oldMetaData;
       if (oldSize != 0 && oldSize != newSize)
       {
         // Copy old coverage map meta data.
-        oldMetaData = coveredSpace_.info;
+        oldMetaData = coveredSpace_->info;
         // Copy old coverage map.
         for (unsigned int ii = 0; ii < oldSize; ++ii)
         {
-          oldCoverage[ii] = coveredSpace_.data[ii];
+          oldCoverage[ii] = coveredSpace_->data[ii];
         }
       }
-      // Reset coveredSpace_ and copy map2D_'s metadata.
-      coveredSpace_.header = map2d_->header;
-      coveredSpace_.info = map2d_->info;
+      // Reset coveredSpace_->and copy map2D_'s metadata.
+      coveredSpace_->header = map2d_->header;
+      coveredSpace_->info = map2d_->info;
       if (oldSize != newSize)
       {
         ROS_WARN("[SENSOR_COVERAGE_SPACE_CHECKER %d] Resizing space coverage...", __LINE__);
-        coveredSpace_.data.resize(newSize, 0);
-        ROS_ASSERT(newSize == coveredSpace_.data.size());
+        coveredSpace_->data.resize(newSize, 0);
+        ROS_ASSERT(newSize == coveredSpace_->data.size());
 
         if (oldSize != 0)
         {
-          double yawDiff = tf::getYaw(coveredSpace_.info.origin.orientation) -
+          double yawDiff = tf::getYaw(coveredSpace_->info.origin.orientation) -
             tf::getYaw(oldMetaData.origin.orientation);
-          double xDiff = coveredSpace_.info.origin.position.x -
+          double xDiff = coveredSpace_->info.origin.position.x -
             oldMetaData.origin.position.x;
-          double yDiff = coveredSpace_.info.origin.position.y -
+          double yDiff = coveredSpace_->info.origin.position.y -
             oldMetaData.origin.position.y;
 
           double x = 0, y = 0, xn = 0, yn = 0;
@@ -305,10 +307,10 @@ namespace pandora_data_fusion
               y = jj * oldMetaData.resolution;
               xn = cos(yawDiff) * x - sin(yawDiff) * y - xDiff;
               yn = sin(yawDiff) * x + cos(yawDiff) * y - yDiff;
-              int coords = static_cast<int>(round((xn + yn * coveredSpace_.info.width)
-                    / coveredSpace_.info.resolution));
-              coveredSpace_.data[coords] = oldCoverage[ii + jj * oldMetaData.width];
-              coverageDilation(2, COORDS(xn, yn, (&coveredSpace_)));
+              int coords = static_cast<int>(round((xn + yn * coveredSpace_->info.width)
+                    / coveredSpace_->info.resolution));
+              coveredSpace_->data[coords] = oldCoverage[ii + jj * oldMetaData.width];
+              coverageDilation(2, COORDS(xn, yn, coveredSpace_));
             }
           }
         }
@@ -321,58 +323,63 @@ namespace pandora_data_fusion
       if (steps == 0)
         return;
 
-      signed char cell = coveredSpace_.data[coords];
+      signed char cell = coveredSpace_->data[coords];
 
       if (cell != 0)  // That's foreground
       {
         // Check for all adjacent
-        if (coveredSpace_.data[coords + coveredSpace_.info.width + 1] == 0)
+        if (coveredSpace_->data[coords + coveredSpace_->info.width + 1] == 0)
         {
-          coveredSpace_.data[coords + coveredSpace_.info.width + 1] = cell;
-          coverageDilation(steps - 1, coords + coveredSpace_.info.width + 1);
+          coveredSpace_->data[coords + coveredSpace_->info.width + 1] = cell;
+          coverageDilation(steps - 1, coords + coveredSpace_->info.width + 1);
         }
-        if (coveredSpace_.data[coords + coveredSpace_.info.width] == 0)
+        if (coveredSpace_->data[coords + coveredSpace_->info.width] == 0)
         {
-          coveredSpace_.data[coords + coveredSpace_.info.width] = cell;
+          coveredSpace_->data[coords + coveredSpace_->info.width] = cell;
         }
-        if (coveredSpace_.data[coords + coveredSpace_.info.width - 1] == 0)
+        if (coveredSpace_->data[coords + coveredSpace_->info.width - 1] == 0)
         {
-          coveredSpace_.data[coords + coveredSpace_.info.width - 1] = cell;
-          coverageDilation(steps - 1, coords + coveredSpace_.info.width - 1);
+          coveredSpace_->data[coords + coveredSpace_->info.width - 1] = cell;
+          coverageDilation(steps - 1, coords + coveredSpace_->info.width - 1);
         }
-        if (coveredSpace_.data[coords + 1] == 0)
+        if (coveredSpace_->data[coords + 1] == 0)
         {
-          coveredSpace_.data[coords + 1] = cell;
+          coveredSpace_->data[coords + 1] = cell;
         }
-        if (coveredSpace_.data[coords - 1] == 0)
+        if (coveredSpace_->data[coords - 1] == 0)
         {
-          coveredSpace_.data[coords - 1] = cell;
+          coveredSpace_->data[coords - 1] = cell;
         }
-        if (coveredSpace_.data[coords - coveredSpace_.info.width + 1] == 0)
+        if (coveredSpace_->data[coords - coveredSpace_->info.width + 1] == 0)
         {
-          coveredSpace_.data[coords - coveredSpace_.info.width + 1] = cell;
-          coverageDilation(steps - 1, coords - coveredSpace_.info.width + 1);
+          coveredSpace_->data[coords - coveredSpace_->info.width + 1] = cell;
+          coverageDilation(steps - 1, coords - coveredSpace_->info.width + 1);
         }
-        if (coveredSpace_.data[coords - coveredSpace_.info.width] == 0)
+        if (coveredSpace_->data[coords - coveredSpace_->info.width] == 0)
         {
-          coveredSpace_.data[coords - coveredSpace_.info.width] = cell;
+          coveredSpace_->data[coords - coveredSpace_->info.width] = cell;
         }
-        if (coveredSpace_.data[coords - coveredSpace_.info.width - 1] == 0)
+        if (coveredSpace_->data[coords - coveredSpace_->info.width - 1] == 0)
         {
-          coveredSpace_.data[coords - coveredSpace_.info.width - 1] = cell;
-          coverageDilation(steps - 1, coords - coveredSpace_.info.width - 1);
+          coveredSpace_->data[coords - coveredSpace_->info.width - 1] = cell;
+          coverageDilation(steps - 1, coords - coveredSpace_->info.width - 1);
         }
       }
     }
 
     void SpaceChecker::publishCoverage(const std::string& frame)
     {
-      coveredSpace_.header.stamp = ros::Time::now();
-      coveredSpace_.header.frame_id = frame;
-      coveragePublisher_.publish(coveredSpace_);
+      coveredSpace_->header.stamp = ros::Time::now();
+      coveredSpace_->header.frame_id = frame;
+      coveragePublisher_.publish(*coveredSpace_);
       std_msgs::Float32 msg;
       msg.data = totalAreaCovered_;
       areaCoveragePublisher_.publish(msg);
+    }
+
+    void SpaceChecker::resetCoverage()
+    {
+      coveredSpace_.reset( new nav_msgs::OccupancyGrid );
     }
 
 }  // namespace pandora_sensor_coverage

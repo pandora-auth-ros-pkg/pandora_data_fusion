@@ -75,6 +75,18 @@ namespace pandora_data_fusion
         ROS_BREAK();
       }
 
+      // Server of flushing service
+      if (nh_->getParam("service_server_names/flush_coverage", param))
+      {
+        flushService_ = nh_->advertiseService(param,
+            &SensorCoverage::flushCoverage, this);
+      }
+      else
+      {
+        ROS_FATAL("flush_coverage service name param not found");
+        ROS_BREAK();
+      }
+
       //  Set up occupancy grid 2d map occupancy threshold.
       nh_->param<double>("occupied_cell_thres", paramD, static_cast<double>(0.5));
       SpaceChecker::setOccupiedCellThres(paramD);
@@ -206,6 +218,18 @@ namespace pandora_data_fusion
     {
       *globalMap2d_ = *msg;
       globalMap2d_->info.origin.orientation.w = 1;
+    }
+
+    bool SensorCoverage::flushCoverage(
+        std_srvs::Empty::Request& rq,
+        std_srvs::Empty::Response& rs)
+    {
+      for (int ii = 0; ii < registeredSensors_.size(); ++ii)
+      {
+        registeredSensors_[ii]->flushCoverage();
+      }
+
+      return true;
     }
 
 }  // namespace pandora_sensor_coverage

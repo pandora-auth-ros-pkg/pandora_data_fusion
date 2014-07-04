@@ -94,6 +94,12 @@ namespace pandora_data_fusion
           break;
       }
     }
+    
+    void Sensor::flushCoverage()
+    {
+      spaceChecker_->resetCoverage();
+      surfaceChecker_->resetCoverage();
+    }
 
     void Sensor::coverageUpdate(const ros::TimerEvent& event)
     {

@@ -88,6 +88,12 @@ namespace pandora_data_fusion
         virtual void publishCoverage(const std::string& frame) {}
 
         /**
+         * @brief resets coverage map.
+         * @return void
+         */
+        virtual void resetCoverage() {}
+
+        /**
          * @brief Setter for static variable map2D_
          * @param map2D [nav_msgs::OccupancyGridPtr const&] map
          * @return void

@@ -82,6 +82,13 @@ namespace pandora_data_fusion
         virtual void publishCoverage(const std::string& frame);
 
         /**
+         * @override
+         * @brief resets coverage map.
+         * @return void
+         */
+        virtual void resetCoverage();
+
+        /**
          * @brief Setter for variable coverageMap3d_
          * @param map [boost::shared_ptr<octomap::OcTree> const&]
          * map which will be projected down to find area and space coverage.
@@ -107,9 +114,9 @@ namespace pandora_data_fusion
          * @param footprintWidth [double] robot's orthogonal footprint width
          * @return void
          */
-        static void setFootprintWidth(double orientationCircle)
+        static void setFootprintWidth(double footprintWidth)
         {
-          FOOTPRINT_WIDTH = orientationCircle;
+          FOOTPRINT_WIDTH = footprintWidth;
         }
 
         /**
@@ -151,7 +158,7 @@ namespace pandora_data_fusion
         //!< Do we use for 3d map, the produced map by surface checker?
         bool surfaceCoverage_;
         //!< Sensor's space coverage map.
-        nav_msgs::OccupancyGrid coveredSpace_;
+        nav_msgs::OccupancyGridPtr coveredSpace_;
 
         //!< 3d coverage map produced when surfacing checking.
         boost::shared_ptr<octomap::OcTree> coverageMap3d_;

@@ -87,6 +87,12 @@ namespace pandora_data_fusion
         void notifyStateChange(int newState);
 
         /**
+         * @brief flushes coverage.
+         * @return void
+         */
+        void flushCoverage();
+
+        /**
          * @brief Setter for static variable map2d_
          * @param map2d [nav_msgs::OccupancyGridPtr const&] map
          * @return void

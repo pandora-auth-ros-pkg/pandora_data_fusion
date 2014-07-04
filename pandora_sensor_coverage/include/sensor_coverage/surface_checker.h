@@ -85,6 +85,13 @@ namespace pandora_data_fusion
         virtual void publishCoverage(const std::string& frame);
 
         /**
+         * @override
+         * @brief resets coverage map.
+         * @return void
+         */
+        virtual void resetCoverage();
+
+        /**
          * @brief Setter for static variable ORIENTATION_CIRCLE
          * @param orientationCircle [double] radius in which a surface
          * is considered planar.

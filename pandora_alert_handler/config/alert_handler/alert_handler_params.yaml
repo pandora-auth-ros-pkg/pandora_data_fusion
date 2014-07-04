@@ -38,5 +38,4 @@ service_server_names:
   get_markers: /data_fusion/get_markers
   geotiff: /data_fusion/geotiffSrv
   flush_queues: /data_fusion/flush_queues
-      
   
