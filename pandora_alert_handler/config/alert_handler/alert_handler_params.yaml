@@ -29,7 +29,7 @@ published_topic_names:
   world_model: /data_fusion/world_model
   qr_notification: /data_fusion/qr_notification
   robocup_score: /data_fusion/robocup_score
-  global_probabilities: /data_fusion/victim_probabilities
+  global_probabilities: /data_fusion/signs_of_life
 action_server_names:
   delete_victim: /data_fusion/delete_victim
   validate_victim: /data_fusion/validate_victim

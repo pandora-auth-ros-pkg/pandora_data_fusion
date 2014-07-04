@@ -53,7 +53,7 @@ namespace pandora_data_fusion
      * @brief class that correspond to a tracked sensor.
      * Contains methods that draw coverage into current map.
      */
-    template <class TreeType> 
+    template <class TreeType>
       class SpaceChecker : public CoverageChecker
       {
         public:

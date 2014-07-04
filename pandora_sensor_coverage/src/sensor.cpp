@@ -98,7 +98,7 @@ namespace pandora_data_fusion
           break;
       }
     }
-    
+
     void Sensor::flushCoverage()
     {
       spaceChecker_->resetCoverage();
