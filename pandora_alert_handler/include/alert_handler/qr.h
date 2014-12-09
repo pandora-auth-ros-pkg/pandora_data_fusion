@@ -74,7 +74,7 @@ namespace pandora_data_fusion
         virtual bool isSameObject(const ObjectConstPtr& object) const;
 
         virtual void fillGeotiff(pandora_data_fusion_msgs::
-            DatafusionGeotiffSrv::Response* res) const;
+            GeotiffSrv::Response* res) const;
 
         virtual void getVisualization(visualization_msgs::
             MarkerArray* markers) const;

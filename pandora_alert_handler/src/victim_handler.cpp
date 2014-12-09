@@ -216,7 +216,7 @@ namespace pandora_data_fusion
      * @details
      */
     void VictimHandler::fillGeotiff(
-        pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res)
+        pandora_data_fusion_msgs::GeotiffSrv::Response* res)
     {
       victimsVisitedList_->fillGeotiff(res);
     }

@@ -94,7 +94,7 @@ namespace pandora_data_fusion
 
           void getObjectsPosesStamped(PoseStampedVector* poses) const;
           void fillGeotiff(
-              pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res) const;
+              pandora_data_fusion_msgs::GeotiffSrv::Response* res) const;
           void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
         protected:
@@ -269,7 +269,7 @@ namespace pandora_data_fusion
 
     template <class ObjectType>
       void ObjectList<ObjectType>::fillGeotiff(
-          pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response* res) const
+          pandora_data_fusion_msgs::GeotiffSrv::Response* res) const
       {
         for (const_iterator it = this->begin(); it != this->end(); ++it)
         {

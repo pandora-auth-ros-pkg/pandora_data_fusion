@@ -98,11 +98,11 @@ namespace pandora_data_fusion
         /**
          * @override
          * @brief Getter for geotiff information about the victim
-         * @param res [data_fusion...::DatafusionGeotiffSrv::Response*]
+         * @param res [data_fusion...::GeotiffSrv::Response*]
          * @return void
          */
         virtual void fillGeotiff(pandora_data_fusion_msgs::
-            DatafusionGeotiffSrv::Response* res) const;
+            GeotiffSrv::Response* res) const;
 
         /**
          * @override

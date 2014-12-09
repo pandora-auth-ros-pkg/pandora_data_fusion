@@ -55,14 +55,9 @@ namespace pandora_data_fusion
     }
 
     void Qr::fillGeotiff(pandora_data_fusion_msgs::
-        DatafusionGeotiffSrv::Response* res) const
+        GeotiffSrv::Response* res) const
     {
-      res->qrx.push_back(pose_.position.x);
-      res->qry.push_back(pose_.position.y);
-      res->qrworldx.push_back(pose_.position.x);
-      res->qrworldy.push_back(pose_.position.y);
-      res->qrcontent.push_back(content_);
-      res->qrtimestamp.push_back(timeFound_);
+      //TODO: fill me!
     }
 
     void Qr::getVisualization(visualization_msgs::

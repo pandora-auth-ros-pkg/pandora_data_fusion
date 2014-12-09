@@ -55,11 +55,9 @@ namespace pandora_data_fusion
     }
 
     void Hazmat::fillGeotiff(pandora_data_fusion_msgs::
-        DatafusionGeotiffSrv::Response* res) const
+        GeotiffSrv::Response* res) const
     {
-      res->hazmatx.push_back(pose_.position.x);
-      res->hazmaty.push_back(pose_.position.y);
-      res->pattern.push_back(pattern_);
+      //TODO: fill me!
     }
 
     void Hazmat::getVisualization(visualization_msgs::

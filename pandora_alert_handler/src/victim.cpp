@@ -114,12 +114,11 @@ namespace pandora_data_fusion
     }
 
     void Victim::fillGeotiff(pandora_data_fusion_msgs::
-        DatafusionGeotiffSrv::Response* res) const
+        GeotiffSrv::Response* res) const
     {
       if (valid_)
       {
-        res->victimsx.push_back(pose_.position.x);
-        res->victimsy.push_back(pose_.position.y);
+        //TODO: fill me!
       }
     }
 

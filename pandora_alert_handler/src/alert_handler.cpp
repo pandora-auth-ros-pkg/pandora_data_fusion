@@ -644,30 +644,10 @@ namespace pandora_data_fusion
     }
 
     bool AlertHandler::geotiffServiceCb(
-        pandora_data_fusion_msgs::DatafusionGeotiffSrv::Request &req,
-        pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response &res)
+        pandora_data_fusion_msgs::GeotiffSrv::Request &req,
+        pandora_data_fusion_msgs::GeotiffSrv::Response &res)
     {
-      qrs_->fillGeotiff(&res);
-      hazmats_->fillGeotiff(&res);
-      victimHandler_->fillGeotiff(&res);
-
-      for (int i = 0; i < res.victimsx.size(); i++)
-      {
-        res.victimsx[i] -= prevxMin;
-        res.victimsy[i] -= prevyMin;
-      }
-
-      for (int i = 0; i < res.qrx.size(); i++)
-      {
-        res.qrx[i] -=  prevxMin;
-        res.qry[i] -=  prevyMin;
-      }
-
-      for (int i = 0; i < res.hazmatx.size(); i++)
-      {
-        res.hazmatx[i] -=  prevxMin;
-        res.hazmaty[i] -=  prevyMin;
-      }
+      //TODO: fill me!
 
       return true;
     }

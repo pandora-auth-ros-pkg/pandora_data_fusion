@@ -58,7 +58,7 @@
 #include "pandora_data_fusion_msgs/DeleteVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"
-#include "pandora_data_fusion_msgs/DatafusionGeotiffSrv.h"
+#include "pandora_data_fusion_msgs/GeotiffSrv.h"
 #include "pandora_data_fusion_msgs/GetMarkersSrv.h"
 
 #include "pandora_vision_msgs/HolesDirectionsVectorMsg.h"
@@ -155,8 +155,8 @@ namespace pandora_data_fusion
             pandora_data_fusion_msgs::GetObjectsSrv::Response &rs);
 
         bool geotiffServiceCb(
-            pandora_data_fusion_msgs::DatafusionGeotiffSrv::Request &req,
-            pandora_data_fusion_msgs::DatafusionGeotiffSrv::Response &res);
+            pandora_data_fusion_msgs::GeotiffSrv::Request &req,
+            pandora_data_fusion_msgs::GeotiffSrv::Response &res);
 
         bool getMarkersServiceCb(
             pandora_data_fusion_msgs::GetMarkersSrv::Request& rq,
