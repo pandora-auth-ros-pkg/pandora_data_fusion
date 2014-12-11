@@ -108,16 +108,20 @@ namespace pandora_data_fusion
 
       // Alert-concerned Subscribers
 
-      if (nh_->getParam("subscribed_topic_names/holeDirection", param))
-      {
-        holeDirectionSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::holeDirectionAlertCallback, this);
-      }
-      else
-      {
-        ROS_FATAL("holeDirection topic name param not found");
-        ROS_BREAK();
-      }
+
+      setSubscriber <const vision_communications::HolesDirectionsVectorMsg&>
+        ("holeDirection", &AlertHandler::holeDirectionAlertCallback);
+
+      // if (nh_->getParam("subscribed_topic_names/holeDirection", param))
+      // {
+      //   holeDirectionSubscriber_ = nh_->subscribe(param,
+      //       1, &AlertHandler::holeDirectionAlertCallback, this);
+      // }
+      // else
+      // {
+      //   ROS_FATAL("holeDirection topic name param not found");
+      //   ROS_BREAK();
+      // }
 
       if (nh_->getParam("subscribed_topic_names/thermalDirection", param))
       {

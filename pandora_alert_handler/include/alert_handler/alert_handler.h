@@ -120,6 +120,11 @@ namespace pandora_data_fusion
             uint32_t level);
 
       private:
+
+
+        template <class MsgType, class ClassType>
+          void setSubscriber(const std::string name, void (ClassType::*callback) (MsgType));
+
         /*  Alert-concerned Subscribers  */
 
         void holeDirectionAlertCallback(
@@ -250,6 +255,8 @@ namespace pandora_data_fusion
         ObjectFactoryPtr objectFactory_;
         ObjectHandlerPtr objectHandler_;
         VictimHandlerPtr victimHandler_;
+
+        std::map<std::string, ros::Subscriber> subscriberMap_;
     };
 
     template <class ObjectType>
@@ -279,6 +286,23 @@ namespace pandora_data_fusion
 
         publishVictims();
       }
+
+      template <class MsgType, class ClassType>
+        void AlertHandler::setSubscriber(const std::string name, void (ClassType::*callback) (MsgType))
+        {
+          std::string param;
+          if (nh_->getParam("subscribed_topic_names/" + name, param))
+          {
+            ros::Subscriber sub;
+            sub = nh_->subscribe(param, 1, callback, this);
+            subscriberMap_[name] = sub;
+          }
+          else
+          {
+            ROS_FATAL(/*name + */" topic name param not found");
+            ROS_BREAK();
+          } 
+        }
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
