@@ -256,6 +256,7 @@ namespace pandora_data_fusion
         ObjectHandlerPtr objectHandler_;
         VictimHandlerPtr victimHandler_;
 
+        //!< Holds the subscribers using a key
         std::map<std::string, ros::Subscriber> subscriberMap_;
     };
 
@@ -287,6 +288,14 @@ namespace pandora_data_fusion
         publishVictims();
       }
 
+      /**
+       * @brief tamplated function responsible for initialising each one of the
+       * node's subscribers.
+       * @param name [std::string] string with the name of the subscriber and
+       * of the yaml param
+       * @param callback [void] pointer to the Callback of the subscriber
+       * @return void
+       */
       template <class MsgType, class ClassType>
         void AlertHandler::setSubscriber(const std::string name, void (ClassType::*callback) (MsgType))
         {
@@ -295,11 +304,12 @@ namespace pandora_data_fusion
           {
             ros::Subscriber sub;
             sub = nh_->subscribe(param, 1, callback, this);
+            //!< Store the subscriber to the std::map
             subscriberMap_[name] = sub;
           }
           else
           {
-            ROS_FATAL(/*name + */" topic name param not found");
+            ROS_FATAL("%s topic name param not found", name.c_str());
             ROS_BREAK();
           } 
         }

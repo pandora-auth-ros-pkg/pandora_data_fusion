@@ -95,6 +95,9 @@ namespace pandora_data_fusion
       initRosInterfaces();
     }
 
+    /**
+     * [AlertHandler::publishVictims description]
+     */
     void AlertHandler::publishVictims()
     {
       pandora_data_fusion_msgs::WorldModelMsg worldModelMsg;
@@ -104,134 +107,44 @@ namespace pandora_data_fusion
 
     void AlertHandler::initRosInterfaces()
     {
-      std::string param;
-
       // Alert-concerned Subscribers
-
-
-      setSubscriber <const vision_communications::HolesDirectionsVectorMsg&>
+      
+      setSubscriber <const pandora_vision_msgs::HolesDirectionsVectorMsg&>
         ("holeDirection", &AlertHandler::holeDirectionAlertCallback);
 
-      // if (nh_->getParam("subscribed_topic_names/holeDirection", param))
-      // {
-      //   holeDirectionSubscriber_ = nh_->subscribe(param,
-      //       1, &AlertHandler::holeDirectionAlertCallback, this);
-      // }
-      // else
-      // {
-      //   ROS_FATAL("holeDirection topic name param not found");
-      //   ROS_BREAK();
-      // }
+      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
+        ("thermalDirection", &AlertHandler::objectDirectionAlertCallback< Thermal >);
 
-      if (nh_->getParam("subscribed_topic_names/thermalDirection", param))
-      {
-        thermalDirectionSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::objectDirectionAlertCallback< Thermal >, this);
-      }
-      else
-      {
-        ROS_FATAL("thermalDirection topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_vision_msgs::QRAlertsVectorMsg&>
+        ("qr", &AlertHandler::qrAlertCallback);
 
-      if (nh_->getParam("subscribed_topic_names/qr", param))
-      {
-        qrSubscriber_ = nh_->subscribe(param, 1, &AlertHandler::qrAlertCallback, this);
-      }
-      else
-      {
-        ROS_FATAL("qr topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_vision_msgs::HazmatAlertsVectorMsg&>
+        ("hazmat", &AlertHandler::hazmatAlertCallback);
 
-      if (nh_->getParam("subscribed_topic_names/hazmat", param))
-      {
-        hazmatSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::hazmatAlertCallback, this);
-      }
-      else
-      {
-        ROS_FATAL("hazmat topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
+        ("faceDirection", &AlertHandler::objectDirectionAlertCallback< Face >);
 
-      if (nh_->getParam("subscribed_topic_names/faceDirection", param))
-      {
-        faceDirectionSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::objectDirectionAlertCallback< Face >, this);
-      }
-      else
-      {
-        ROS_FATAL("faceDirection topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
+        ("co2Direction", &AlertHandler::objectDirectionAlertCallback< Co2 >);
 
-      if (nh_->getParam("subscribed_topic_names/co2Direction", param))
-      {
-        co2DirectionSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::objectDirectionAlertCallback< Co2 >, this);
-      }
-      else
-      {
-        ROS_FATAL("co2Direction topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
+        ("motionDirection", &AlertHandler::objectDirectionAlertCallback< Motion >);
 
-      if (nh_->getParam("subscribed_topic_names/motionDirection", param))
-      {
-        motionDirectionSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::objectDirectionAlertCallback< Motion >, this);
-      }
-      else
-      {
-        ROS_FATAL("motionDirection topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
+        ("soundDirection", &AlertHandler::objectDirectionAlertCallback< Sound >);
 
-      if (nh_->getParam("subscribed_topic_names/soundDirection", param))
-      {
-        soundDirectionSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::objectDirectionAlertCallback< Sound >, this);
-      }
-      else
-      {
-        ROS_FATAL("soundDirection topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_vision_msgs::LandoltcAlertsVectorMsg&>
+        ("landoltc", &AlertHandler::landoltcAlertCallback);
 
-      if (nh_->getParam("subscribed_topic_names/landoltc", param))
-      {
-        landoltcSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::landoltcAlertCallback, this);
-      }
-      else
-      {
-        ROS_FATAL("landoltc topic name param not found");
-        ROS_BREAK();
-      }
-
-      if (nh_->getParam("subscribed_topic_names/dataMatrix", param))
-      {
-        dataMatrixSubscriber_ = nh_->subscribe(param,
-            1, &AlertHandler::dataMatrixAlertCallback, this);
-      }
-      else
-      {
-        ROS_FATAL("dataMatrix topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const pandora_vision_msgs::DataMatrixAlertsVectorMsg&>
+        ("dataMatrix", &AlertHandler::dataMatrixAlertCallback);
 
       // Map Subscriber
 
-      if (nh_->getParam("subscribed_topic_names/map", param))
-      {
-        mapSubscriber_ = nh_->subscribe(param, 1, &AlertHandler::updateMap, this);
-      }
-      else
-      {
-        ROS_FATAL("map topic name param not found");
-        ROS_BREAK();
-      }
+      setSubscriber <const nav_msgs::OccupancyGridConstPtr&>
+        ("map", &AlertHandler::updateMap);
+
+      std::string param;
 
       // Publishers
 
