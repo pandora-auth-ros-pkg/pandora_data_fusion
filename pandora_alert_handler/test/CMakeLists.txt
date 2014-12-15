@@ -1,24 +1,27 @@
-find_package(catkin REQUIRED COMPONENTS
-  rostest
-  roslib 
-  map_server
-  )
+find_package(roslib REQUIRED)
+find_package(rostest REQUIRED)
+find_package(map_server REQUIRED)
 
-find_package(PkgConfig)
 pkg_check_modules(NEW_YAMLCPP yaml-cpp>=0.5)
+
 if(NEW_YAMLCPP_FOUND)
   add_definitions(-DHAVE_NEW_YAMLCPP)
 endif(NEW_YAMLCPP_FOUND)
 
-link_directories(${catkin_LIBRARY_DIRS})
-include_directories(map_loader/include ${catkin_INCLUDE_DIRS})
+#link_directories(${catkin_LIBRARY_DIRS})
+include_directories(
+  map_loader/include
+  ${map_server_INCLUDE_DIRS}
+  ${roslib_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS})
 
 ########################  map loader  ###############################
 
 add_library(map_loader map_loader/src/map_loader.cpp)
 target_link_libraries(map_loader 
-  image_loader
+  #image_loader
   yaml-cpp
+  ${map_server_LIBRARIES}
   ${catkin_LIBRARIES}
   )
 
@@ -60,6 +63,7 @@ target_link_libraries(object_list_test
 catkin_add_gtest(object_factory_test unit/object_factory_test.cpp)
 target_link_libraries(object_factory_test 
   ${catkin_LIBRARIES} 
+  ${roslib_LIBRARIES}
   object_factory
   map_loader
   gtest_main
@@ -70,6 +74,7 @@ target_link_libraries(object_factory_test
 catkin_add_gtest(pose_finder_test unit/pose_finder_test.cpp)
 target_link_libraries(pose_finder_test 
   ${catkin_LIBRARIES}
+  ${roslib_LIBRARIES}
   pose_finder 
   map_loader 
   gtest_main
@@ -106,7 +111,14 @@ target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
   ) 
 
 #########################  Functional Tests  ########################
- 
+
+catkin_download_test_data(
+  ${PROJECT_NAME}_saloon.bag
+  http://downloads.pandora.ee.auth.gr/bags/saloon_2014-04-27-20-30-41.bag
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test/functional
+  MD5 01603ce158575da859b8afff5b676bf9
+  )
+
 add_rostest(functional/alert_handler_static_test.launch)
 add_rostest(functional/alert_handler_test.launch)
 
