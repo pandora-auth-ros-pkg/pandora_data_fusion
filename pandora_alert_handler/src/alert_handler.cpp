@@ -647,7 +647,10 @@ namespace pandora_data_fusion
         pandora_data_fusion_msgs::GeotiffSrv::Request &req,
         pandora_data_fusion_msgs::GeotiffSrv::Response &res)
     {
-      //TODO: fill me!
+      qrs_->getObjectsPosesStamped(&res.qrs);
+      hazmats_->getObjectsPosesStamped(&res.hazmats);
+      
+      victimHandler_->fillGeotiff(&res);
 
       return true;
     }

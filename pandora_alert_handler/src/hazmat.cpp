@@ -54,12 +54,6 @@ namespace pandora_data_fusion
       return cond;
     }
 
-    void Hazmat::fillGeotiff(pandora_data_fusion_msgs::
-        GeotiffSrv::Response* res) const
-    {
-      //TODO: fill me!
-    }
-
     void Hazmat::getVisualization(visualization_msgs::
         MarkerArray* markers) const
     {

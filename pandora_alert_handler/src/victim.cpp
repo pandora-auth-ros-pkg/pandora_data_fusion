@@ -118,7 +118,7 @@ namespace pandora_data_fusion
     {
       if (valid_)
       {
-        //TODO: fill me!
+        res->victims.push_back(getPoseStamped());
       }
     }
 

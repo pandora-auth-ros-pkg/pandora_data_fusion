@@ -54,11 +54,6 @@ namespace pandora_data_fusion
       return cond;
     }
 
-    void Qr::fillGeotiff(pandora_data_fusion_msgs::
-        GeotiffSrv::Response* res) const
-    {
-      //TODO: fill me!
-    }
 
     void Qr::getVisualization(visualization_msgs::
         MarkerArray* markers) const
