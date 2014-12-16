@@ -1,6 +1,7 @@
 find_package(roslib REQUIRED)
 find_package(rostest REQUIRED)
 find_package(map_server REQUIRED)
+find_package(pandora_testing_tools REQUIRED)
 
 pkg_check_modules(NEW_YAMLCPP yaml-cpp>=0.5)
 
@@ -8,22 +9,11 @@ if(NEW_YAMLCPP_FOUND)
   add_definitions(-DHAVE_NEW_YAMLCPP)
 endif(NEW_YAMLCPP_FOUND)
 
-#link_directories(${catkin_LIBRARY_DIRS})
 include_directories(
-  map_loader/include
+  ${pandora_testing_tools_INCLUDE_DIRS}
   ${map_server_INCLUDE_DIRS}
   ${roslib_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS})
-
-########################  map loader  ###############################
-
-add_library(map_loader map_loader/src/map_loader.cpp)
-target_link_libraries(map_loader 
-  #image_loader
-  yaml-cpp
-  ${map_server_LIBRARIES}
-  ${catkin_LIBRARIES}
-  )
 
 ########################  Tests  ####################################
 
@@ -32,28 +22,28 @@ target_link_libraries(map_loader
 ########################  Utils  ####################################
 
 catkin_add_gtest(utils_test unit/utils_test.cpp)
-target_link_libraries(utils_test 
-  ${catkin_LIBRARIES} 
-  utils 
+target_link_libraries(utils_test
+  ${catkin_LIBRARIES}
+  utils
   gtest_main
   )
 
 #########################  ObjectsTest  #############################
 
 catkin_add_gtest(objects_test unit/objects_test.cpp)
-target_link_libraries(objects_test 
+target_link_libraries(objects_test
   ${catkin_LIBRARIES}
   utils
   objects
   gtest_main
-  ) 
+  )
 
 ########################  ObjectListTest  ###########################
 
 catkin_add_gtest(object_list_test unit/object_list_test.cpp)
-target_link_libraries(object_list_test 
-  ${catkin_LIBRARIES} 
-  objects 
+target_link_libraries(object_list_test
+  ${catkin_LIBRARIES}
+  objects
   utils
   gtest_main
   )
@@ -61,22 +51,21 @@ target_link_libraries(object_list_test
 ########################  ObjectFactoryTest  ########################
 
 catkin_add_gtest(object_factory_test unit/object_factory_test.cpp)
-target_link_libraries(object_factory_test 
-  ${catkin_LIBRARIES} 
+target_link_libraries(object_factory_test
+  ${catkin_LIBRARIES}
   ${roslib_LIBRARIES}
   object_factory
-  map_loader
   gtest_main
-  ) 
+  )
 
 ########################  PoseFinderTest  ############################
 
 catkin_add_gtest(pose_finder_test unit/pose_finder_test.cpp)
-target_link_libraries(pose_finder_test 
+target_link_libraries(pose_finder_test
   ${catkin_LIBRARIES}
   ${roslib_LIBRARIES}
-  pose_finder 
-  map_loader 
+  ${pandora_testing_tools_LIBRARIES}
+  pose_finder
   gtest_main
   )
 
@@ -86,29 +75,29 @@ catkin_add_gtest(victim_test unit/victim_test.cpp)
 target_link_libraries(victim_test
   ${catkin_LIBRARIES}
   objects
-  victim 
+  victim
   gtest_main
-  ) 
-   
+  )
+
 #########################  VictimListTest  ##########################
 
 catkin_add_gtest(victim_list_test unit/victim_list_test.cpp)
-target_link_libraries(victim_list_test 
+target_link_libraries(victim_list_test
   ${catkin_LIBRARIES}
   objects
   victim_list
   gtest_main
-  ) 
+  )
 
 ########################  VictimClustererTest  ######################
 
 catkin_add_gtest(victim_clusterer_test unit/victim_clusterer_test.cpp)
 target_link_libraries(victim_clusterer_test ${catkin_LIBRARIES}
-  victim_clusterer 
+  victim_clusterer
   objects
   victim
   gtest_main
-  ) 
+  )
 
 #########################  Functional Tests  ########################
 
