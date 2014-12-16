@@ -1,17 +1,9 @@
 find_package(roslib REQUIRED)
 find_package(rostest REQUIRED)
-find_package(map_server REQUIRED)
 find_package(pandora_testing_tools REQUIRED)
-
-pkg_check_modules(NEW_YAMLCPP yaml-cpp>=0.5)
-
-if(NEW_YAMLCPP_FOUND)
-  add_definitions(-DHAVE_NEW_YAMLCPP)
-endif(NEW_YAMLCPP_FOUND)
 
 include_directories(
   ${pandora_testing_tools_INCLUDE_DIRS}
-  ${map_server_INCLUDE_DIRS}
   ${roslib_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS})
 
@@ -54,6 +46,7 @@ catkin_add_gtest(object_factory_test unit/object_factory_test.cpp)
 target_link_libraries(object_factory_test
   ${catkin_LIBRARIES}
   ${roslib_LIBRARIES}
+  ${pandora_testing_tools_LIBRARIES}
   object_factory
   gtest_main
   )
