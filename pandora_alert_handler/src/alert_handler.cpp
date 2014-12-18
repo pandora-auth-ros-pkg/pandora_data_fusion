@@ -649,7 +649,7 @@ namespace pandora_data_fusion
     {
       qrs_->getObjectsPosesStamped(&res.qrs);
       hazmats_->getObjectsPosesStamped(&res.hazmats);
-      
+
       victimHandler_->fillGeotiff(&res);
 
       return true;
