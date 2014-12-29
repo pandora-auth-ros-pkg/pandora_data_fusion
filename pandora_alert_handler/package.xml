@@ -3,7 +3,7 @@
   <version>0.0.0</version>
   <description>Data Fusion Alert Handler</description>
 
-  <maintainer email='tsirif@gmail.com'>Tsirigotis Christos</maintainer> 
+  <maintainer email='tsirif@gmail.com'>Tsirigotis Christos</maintainer>
 
   <license>BSD</license>
 
@@ -32,7 +32,6 @@
   <test_depend>rostest</test_depend>
   <test_depend>roslib</test_depend>
   <test_depend>python-numpy</test_depend>
-  <test_depend>map_server</test_depend>
   <test_depend>pandora_testing_tools</test_depend>
 
   <export>

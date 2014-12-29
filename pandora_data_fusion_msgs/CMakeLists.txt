@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(pandora_data_fusion_msgs)
 
-find_package(catkin REQUIRED COMPONENTS 
-  message_generation 
-  std_msgs 
-  actionlib_msgs 
+find_package(catkin REQUIRED COMPONENTS
+  message_generation
+  std_msgs
+  actionlib_msgs
   geometry_msgs
   visualization_msgs
   std_srvs
@@ -38,8 +38,8 @@ generate_messages(
 catkin_package(
   CATKIN_DEPENDS
     message_runtime
-    std_msgs 
-    actionlib_msgs 
+    std_msgs
+    actionlib_msgs
     geometry_msgs
     visualization_msgs
     std_srvs
