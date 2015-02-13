@@ -108,7 +108,7 @@ namespace pandora_data_fusion
     void AlertHandler::initRosInterfaces()
     {
       // Alert-concerned Subscribers
-      
+
       setSubscriber <const pandora_vision_msgs::HolesDirectionsVectorMsg&>
         ("holeDirection", &AlertHandler::holeDirectionAlertCallback);
 

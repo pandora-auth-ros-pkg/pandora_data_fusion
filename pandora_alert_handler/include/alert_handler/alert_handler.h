@@ -41,6 +41,7 @@
 
 #include <string>
 #include <boost/utility.hpp>
+#include <map>
 
 #include <ros/ros.h>
 
@@ -120,10 +121,12 @@ namespace pandora_data_fusion
             uint32_t level);
 
       private:
-
-
+        /**
+         * @brief Templated subscriber for all objects
+         */
         template <class MsgType, class ClassType>
-          void setSubscriber(const std::string name, void (ClassType::*callback) (MsgType));
+          void setSubscriber(const std::string name,
+            void (ClassType::*callback)(MsgType));
 
         /*  Alert-concerned Subscribers  */
 
@@ -297,7 +300,8 @@ namespace pandora_data_fusion
        * @return void
        */
       template <class MsgType, class ClassType>
-        void AlertHandler::setSubscriber(const std::string name, void (ClassType::*callback) (MsgType))
+        void AlertHandler::setSubscriber(const std::string name,
+          void (ClassType::*callback)(MsgType))
         {
           std::string param;
           if (nh_->getParam("subscribed_topic_names/" + name, param))
@@ -311,7 +315,7 @@ namespace pandora_data_fusion
           {
             ROS_FATAL("%s topic name param not found", name.c_str());
             ROS_BREAK();
-          } 
+          }
         }
 
 }  // namespace pandora_alert_handler
