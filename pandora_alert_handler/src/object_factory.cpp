@@ -182,9 +182,9 @@ namespace pandora_data_fusion
     void ObjectFactory::setUpHole(const HolePtr& holePtr,
         const pandora_vision_msgs::HoleDirectionMsg& msg)
     {
-      holePtr->setPose(poseFinder_->findAlertPose(msg.yaw,
-            msg.pitch, currentTransform_));
-      holePtr->setProbability(msg.probability);
+      holePtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
+            msg.info.pitch, currentTransform_));
+      holePtr->setProbability(msg.info.probability);
       holePtr->setHoleId(msg.holeId);
       holePtr->initializeObjectFilter();
     }
@@ -192,9 +192,9 @@ namespace pandora_data_fusion
     void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr,
         const pandora_vision_msgs::HazmatAlertMsg& msg)
     {
-      hazmatPtr->setPose(poseFinder_->findAlertPose(msg.yaw,
-            msg.pitch, currentTransform_));
-      hazmatPtr->setProbability(0.9);
+      hazmatPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
+            msg.info.pitch, currentTransform_));
+      hazmatPtr->setProbability(1);
       hazmatPtr->setPattern(msg.patternType);
       hazmatPtr->initializeObjectFilter();
     }
@@ -203,9 +203,9 @@ namespace pandora_data_fusion
         const pandora_vision_msgs::QRAlertMsg& msg,
         ros::Time timeFound)
     {
-      qrPtr->setPose(poseFinder_->findAlertPose(msg.yaw,
-            msg.pitch, currentTransform_));
-      qrPtr->setProbability(0.9);
+      qrPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
+            msg.info.pitch, currentTransform_));
+      qrPtr->setProbability(1);
       qrPtr->setContent(msg.QRcontent);
       qrPtr->initializeObjectFilter();
       qrPtr->setTimeFound(timeFound);
@@ -214,9 +214,9 @@ namespace pandora_data_fusion
     void ObjectFactory::setUpLandoltc(const LandoltcPtr& landoltcPtr,
         const pandora_vision_msgs::LandoltcAlertMsg& msg)
     {
-      landoltcPtr->setPose(poseFinder_->findAlertPose(msg.yaw,
-            msg.pitch, currentTransform_));
-      landoltcPtr->setProbability(0.9);
+      landoltcPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
+            msg.info.pitch, currentTransform_));
+      landoltcPtr->setProbability(1);
       landoltcPtr->setAngles(msg.angles);
       landoltcPtr->initializeObjectFilter();
     }
@@ -224,9 +224,9 @@ namespace pandora_data_fusion
     void ObjectFactory::setUpDataMatrix(const DataMatrixPtr& dataMatrixPtr,
         const pandora_vision_msgs::DataMatrixAlertMsg& msg)
     {
-      dataMatrixPtr->setPose(poseFinder_->findAlertPose(msg.yaw,
-            msg.pitch, currentTransform_));
-      dataMatrixPtr->setProbability(0.9);
+      dataMatrixPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
+            msg.info.pitch, currentTransform_));
+      dataMatrixPtr->setProbability(1);
       dataMatrixPtr->setContent(msg.datamatrixContent);
       dataMatrixPtr->initializeObjectFilter();
     }
