@@ -51,29 +51,6 @@ namespace pandora_data_fusion
       victimsToGoList_(victimsToGoList),
       victimsVisitedList_(victimsVisitedList)
     {
-      std::string param;
-
-      nh->param<std::string>("object_names/hole", param, std::string("HOLE"));
-      Hole::setObjectType(param);
-      nh->param<std::string>("object_names/hazmat", param, std::string("HAZMAT"));
-      Hazmat::setObjectType(param);
-      nh->param<std::string>("object_names/qr", param, std::string("QR"));
-      Qr::setObjectType(param);
-      nh->param<std::string>("object_names/thermal", param, std::string("THERMAL"));
-      Thermal::setObjectType(param);
-      nh->param<std::string>("object_names/face", param, std::string("FACE"));
-      Face::setObjectType(param);
-      nh->param<std::string>("object_names/motion", param, std::string("MOTION"));
-      Motion::setObjectType(param);
-      nh->param<std::string>("object_names/sound", param, std::string("SOUND"));
-      Sound::setObjectType(param);
-      nh->param<std::string>("object_names/co2", param, std::string("CO2"));
-      Co2::setObjectType(param);
-      nh->param<std::string>("object_names/landoltc", param, std::string("LANDOLTC"));
-      Landoltc::setObjectType(param);
-      nh->param<std::string>("object_names/datamatrix", param, std::string("DATAMATRIX"));
-      DataMatrix::setObjectType(param);
-
       roboCupScore_ = 0;
 
       if (nh->getParam("published_topic_names/qr_notification", param))

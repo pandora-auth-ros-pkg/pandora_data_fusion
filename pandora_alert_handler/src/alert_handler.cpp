@@ -54,7 +54,7 @@ namespace pandora_data_fusion
       qrs_.reset( new QrList );
       hazmats_.reset( new HazmatList );
       thermals_.reset( new ThermalList );
-      faces_.reset( new FaceList );
+      victimImages_.reset( new VictimImageList );
       motions_.reset( new MotionList );
       sounds_.reset( new SoundList );
       co2s_.reset( new Co2List );
@@ -65,29 +65,53 @@ namespace pandora_data_fusion
       Qr::setList(qrs_);
       Hazmat::setList(hazmats_);
       Thermal::setList(thermals_);
-      Face::setList(faces_);
+      VictimImage::setList(victimImages_);
       Motion::setList(motions_);
       Sound::setList(sounds_);
       Co2::setList(co2s_);
       Landoltc::setList(landoltcs_);
       DataMatrix::setList(dataMatrices_);
 
+      std::string param;
+
+      nh->param<std::string>("object_names/hazmat", param, "hazmat");
+      Hazmat::setObjectType(param);
+      nh->param<std::string>("object_names/qr", param, "qr");
+      Qr::setObjectType(param);
+      nh->param<std::string>("object_names/landoltc", param, "landoltc");
+      Landoltc::setObjectType(param);
+      nh->param<std::string>("object_names/data_matrix", param, "data_matrix");
+      DataMatrix::setObjectType(param);
+
+      nh->param<std::string>("object_names/hole", param, "hole");
+      Hole::setObjectType(param);
+      nh->param<std::string>("object_names/thermal", param, "thermal");
+      Thermal::setObjectType(param);
+      nh->param<std::string>("object_names/victim_image", param, "victim_image");
+      VictimImage::setObjectType(param);
+      nh->param<std::string>("object_names/motion", param, "motion");
+      Motion::setObjectType(param);
+      nh->param<std::string>("object_names/sound", param, "sound");
+      Sound::setObjectType(param);
+      nh->param<std::string>("object_names/co2", param, "co2");
+      Co2::setObjectType(param);
+
       victimsToGo_.reset( new VictimList );
       victimsVisited_.reset( new VictimList );
 
-      std::string param;
       if (!nh_->getParam("map_type", param))
       {
-        ROS_FATAL("map type param not found");
+        ROS_FATAL("[ALERT_HANDLER] map_type param not found");
         ROS_BREAK();
       }
+
       objectFactory_.reset( new ObjectFactory(map_, param) );
       objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_) );
       victimHandler_.reset( new VictimHandler(nh_, victimsToGo_, victimsVisited_) );
 
       if (!nh_->getParam("global_frame", param))
       {
-        ROS_FATAL("global frame param not found");
+        ROS_FATAL("[ALERT_HANDLER] global_frame param not found");
         ROS_BREAK();
       }
       BaseObject::setGlobalFrame(param);
@@ -108,46 +132,35 @@ namespace pandora_data_fusion
     void AlertHandler::initRosInterfaces()
     {
       // Alert-concerned Subscribers
+      setSubscriber <pandora_vision_msgs::QRAlertVector const&>
+        (Qr::getObjectType(), &AlertHandler::qrAlertCallback);
+      setSubscriber <pandora_vision_msgs::HazmatAlertVector const&>
+        (Hazmat::getObjectType(), &AlertHandler::hazmatAlertCallback);
+      setSubscriber <pandora_vision_msgs::LandoltcAlertVector const&>
+        (Landoltc::getObjectType(), &AlertHandler::landoltcAlertCallback);
+      setSubscriber <pandora_vision_msgs::DataMatrixAlertVector const&>
+        (DataMatrix::getObjectType(), &AlertHandler::dataMatrixAlertCallback);
 
-      setSubscriber <const pandora_vision_msgs::HolesDirectionsVectorMsg&>
-        ("holeDirection", &AlertHandler::holeDirectionAlertCallback);
-
-      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
-        ("thermalDirection", &AlertHandler::objectDirectionAlertCallback< Thermal >);
-
-      setSubscriber <const pandora_vision_msgs::QRAlertsVectorMsg&>
-        ("qr", &AlertHandler::qrAlertCallback);
-
-      setSubscriber <const pandora_vision_msgs::HazmatAlertsVectorMsg&>
-        ("hazmat", &AlertHandler::hazmatAlertCallback);
-
-      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
-        ("faceDirection", &AlertHandler::objectDirectionAlertCallback< Face >);
-
-      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
-        ("co2Direction", &AlertHandler::objectDirectionAlertCallback< Co2 >);
-
-      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
-        ("motionDirection", &AlertHandler::objectDirectionAlertCallback< Motion >);
-
-      setSubscriber <const pandora_common_msgs::GeneralAlertMsg&>
-        ("soundDirection", &AlertHandler::objectDirectionAlertCallback< Sound >);
-
-      setSubscriber <const pandora_vision_msgs::LandoltcAlertsVectorMsg&>
-        ("landoltc", &AlertHandler::landoltcAlertCallback);
-
-      setSubscriber <const pandora_vision_msgs::DataMatrixAlertsVectorMsg&>
-        ("dataMatrix", &AlertHandler::dataMatrixAlertCallback);
+      setSubscriber <pandora_vision_msgs::HoleDirectionVector const&>
+        (Hole::getObjectType(), &AlertHandler::holeAlertCallback);
+      setSubscriber <pandora_common_msgs::GeneralAlertVector const&>
+        (Thermal::getObjectType(), &AlertHandler::victimAlertCallback<Thermal>);
+      setSubscriber <pandora_common_msgs::GeneralAlertVector const&>
+        (VictimImage::getObjectType(), &AlertHandler::victimAlertCallback<VictimImage>);
+      setSubscriber <pandora_common_msgs::GeneralAlertVector const&>
+        (Co2::getObjectType(), &AlertHandler::victimAlertCallback<Co2>);
+      setSubscriber <pandora_common_msgs::GeneralAlertVector const&>
+        (Motion::getObjectType(), &AlertHandler::victimAlertCallback<Motion>);
+      setSubscriber <pandora_common_msgs::GeneralAlertVector const&>
+        (Sound::getObjectType(), &AlertHandler::victimAlertCallback<Sound>);
 
       // Map Subscriber
-
-      setSubscriber <const nav_msgs::OccupancyGridConstPtr&>
+      setSubscriber <nav_msgs::OccupancyGridConstPtr const&>
         ("map", &AlertHandler::updateMap);
 
       std::string param;
 
       // Publishers
-
       if (nh_->getParam("published_topic_names/world_model", param))
       {
         worldModelPublisher_ = nh_->
@@ -155,7 +168,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("victims topic name param not found");
+        ROS_FATAL("[ALERT_HANDLER] world_model topic name param not found");
         ROS_BREAK();
       }
 
@@ -167,7 +180,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("delete_victim action name param not found");
+        ROS_FATAL("[ALERT_HANDLER] delete_victim action name param not found");
         ROS_BREAK();
       }
       deleteVictimServer_->registerGoalCallback(
@@ -181,7 +194,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("validate_victim action name param not found");
+        ROS_FATAL("[ALERT_HANDLER] validate_victim action name param not found");
         ROS_BREAK();
       }
       validateVictimServer_->registerGoalCallback(
@@ -189,7 +202,6 @@ namespace pandora_data_fusion
       validateVictimServer_->start();
 
       // Service Servers
-
       if (nh_->getParam("service_server_names/flush_queues", param))
       {
         flushService_ = nh_->advertiseService(param,
@@ -197,7 +209,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("flush_queues service name param not found");
+        ROS_FATAL("[ALERT_HANDLER] flush_queues service name param not found");
         ROS_BREAK();
       }
 
@@ -208,7 +220,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("get_objects service name param not found");
+        ROS_FATAL("[ALERT_HANDLER] get_objects service name param not found");
         ROS_BREAK();
       }
 
@@ -219,7 +231,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("get_markers service name param not found");
+        ROS_FATAL("[ALERT_HANDLER] get_markers service name param not found");
         ROS_BREAK();
       }
 
@@ -230,25 +242,23 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("geotiffSrv service name param not found");
+        ROS_FATAL("[ALERT_HANDLER] geotiffSrv service name param not found");
         ROS_BREAK();
       }
 
       // Dynamic Reconfigure Server
-
       dynReconfServer_.setCallback(boost::bind(
             &AlertHandler::dynamicReconfigCallback, this, _1, _2));
 
       // Timers
-
       tfPublisherTimer_ = nh_->createTimer(ros::Duration(0.1),
           &AlertHandler::tfPublisherCallback, this);
     }
 
     /*  Alert-concerned Callbacks  */
 
-    void AlertHandler::holeDirectionAlertCallback(
-        const pandora_vision_msgs::HolesDirectionsVectorMsg& msg)
+    void AlertHandler::holeAlertCallback(
+        const pandora_vision_msgs::HoleDirectionVector& msg)
     {
       if (map_->data.size() == 0)
         return;
@@ -275,7 +285,7 @@ namespace pandora_data_fusion
     }
 
     void AlertHandler::hazmatAlertCallback(
-        const pandora_vision_msgs::HazmatAlertsVectorMsg& msg)
+        const pandora_vision_msgs::HazmatAlertVector& msg)
     {
       if (map_->data.size() == 0)
         return;
@@ -298,7 +308,7 @@ namespace pandora_data_fusion
     }
 
     void AlertHandler::qrAlertCallback(
-        const pandora_vision_msgs::QRAlertsVectorMsg& msg)
+        const pandora_vision_msgs::QRAlertVector& msg)
     {
       if (map_->data.size() == 0)
         return;
@@ -321,7 +331,7 @@ namespace pandora_data_fusion
     }
 
     void AlertHandler::landoltcAlertCallback(
-        const pandora_vision_msgs::LandoltcAlertsVectorMsg& msg)
+        const pandora_vision_msgs::LandoltcAlertVector& msg)
     {
       if (map_->data.size() == 0)
         return;
@@ -344,7 +354,7 @@ namespace pandora_data_fusion
     }
 
     void AlertHandler::dataMatrixAlertCallback(
-        const pandora_vision_msgs::DataMatrixAlertsVectorMsg& msg)
+        const pandora_vision_msgs::DataMatrixAlertVector& msg)
     {
       if (map_->data.size() == 0)
         return;
@@ -374,7 +384,7 @@ namespace pandora_data_fusion
       qrs_->getObjectsPosesStamped(&objectsPosesStamped);
       hazmats_->getObjectsPosesStamped(&objectsPosesStamped);
       thermals_->getObjectsPosesStamped(&objectsPosesStamped);
-      faces_->getObjectsPosesStamped(&objectsPosesStamped);
+      victimImages_->getObjectsPosesStamped(&objectsPosesStamped);
       motions_->getObjectsPosesStamped(&objectsPosesStamped);
       sounds_->getObjectsPosesStamped(&objectsPosesStamped);
       co2s_->getObjectsPosesStamped(&objectsPosesStamped);
@@ -485,12 +495,12 @@ namespace pandora_data_fusion
       Thermal::getFilterModel()->initializeSystemModel(config.thermalSystemNoiseSD);
       Thermal::getFilterModel()->initializeMeasurementModel(config.thermalMeasurementSD);
 
-      Face::setObjectScore(config.faceScore);
-      Face::setProbabilityThres(config.faceMinProbability);
-      Face::setDistanceThres(config.faceMinDistance);
-      Face::setMergeDistance(config.objectMergeDistance);
-      Face::getFilterModel()->initializeSystemModel(config.faceSystemNoiseSD);
-      Face::getFilterModel()->initializeMeasurementModel(config.faceMeasurementSD);
+      VictimImage::setObjectScore(config.victimImageScore);
+      VictimImage::setProbabilityThres(config.victimImageMinProbability);
+      VictimImage::setDistanceThres(config.victimImageMinDistance);
+      VictimImage::setMergeDistance(config.objectMergeDistance);
+      VictimImage::getFilterModel()->initializeSystemModel(config.victimImageSystemNoiseSD);
+      VictimImage::getFilterModel()->initializeMeasurementModel(config.victimImageMeasurementSD);
 
       Motion::setObjectScore(config.motionScore);
       Motion::setProbabilityThres(config.motionMinProbability);
@@ -528,7 +538,7 @@ namespace pandora_data_fusion
       qrs_->getObjectsPosesStamped(&rs.qrs);
       hazmats_->getObjectsPosesStamped(&rs.hazmats);
       thermals_->getObjectsPosesStamped(&rs.thermals);
-      faces_->getObjectsPosesStamped(&rs.faces);
+      victimImages_->getObjectsPosesStamped(&rs.victimImages);
       motions_->getObjectsPosesStamped(&rs.motions);
       sounds_->getObjectsPosesStamped(&rs.sounds);
       co2s_->getObjectsPosesStamped(&rs.co2s);
@@ -548,7 +558,7 @@ namespace pandora_data_fusion
       qrs_->getVisualization(&rs.hazmats);
       hazmats_->getVisualization(&rs.qrs);
       thermals_->getVisualization(&rs.thermals);
-      faces_->getVisualization(&rs.faces);
+      victimImages_->getVisualization(&rs.victimImages);
       motions_->getVisualization(&rs.motions);
       sounds_->getVisualization(&rs.sounds);
       co2s_->getVisualization(&rs.co2s);
@@ -581,7 +591,7 @@ namespace pandora_data_fusion
       qrs_->clear();
       hazmats_->clear();
       thermals_->clear();
-      faces_->clear();
+      victimImages_->clear();
       motions_->clear();
       sounds_->clear();
       co2s_->clear();
@@ -591,6 +601,5 @@ namespace pandora_data_fusion
       return true;
     }
 
-}  // namespace pandora_alert_handler
+  }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-
