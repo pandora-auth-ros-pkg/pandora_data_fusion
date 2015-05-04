@@ -55,12 +55,12 @@ namespace pandora_data_fusion
 
       if (nh->getParam("published_topic_names/qr_notification", param))
       {
-        qrPublisher_ = nh->
-          advertise<pandora_data_fusion_msgs::QrNotificationMsg>(param, 10);
+        qrPublisher_ = nh->advertise<
+          pandora_data_fusion_msgs::QrNotificationMsg>(param, 10);
       }
       else
       {
-        ROS_FATAL("qr_notification topic name param not found");
+        ROS_FATAL("[ALERT_HANDLER] qr_notification topic name param not found");
         ROS_BREAK();
       }
 
@@ -70,7 +70,7 @@ namespace pandora_data_fusion
       }
       else
       {
-        ROS_FATAL("robocup_score topic name param not found");
+        ROS_FATAL("[ALERT_HANDLER] robocup_score topic name param not found");
         ROS_BREAK();
       }
     }
@@ -121,8 +121,10 @@ namespace pandora_data_fusion
 
         if (invalid)
         {
-          ROS_DEBUG_NAMED("OBJECT_HANDLER",
+          ROS_DEBUG_NAMED("ALERT_HANDLER",
               "[OBJECT_HANDLER %d] Deleting not valid hole...", __LINE__);
+          ROS_DEBUG_NAMED("ALERT_HANDLER",
+              "[OBJECT_HANDLER %d] SENSOR_RANGE = %f", __LINE__, SENSOR_RANGE);
           iter = holesPtr->erase(iter);
         }
         else
@@ -138,6 +140,5 @@ namespace pandora_data_fusion
       VICTIM_CLUSTER_RADIUS = victim_cluster_radius;
     }
 
-}  // namespace pandora_alert_handler
+  }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-
