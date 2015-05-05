@@ -114,6 +114,7 @@ namespace pandora_data_fusion
 
         private:
           friend class ObjectListTest;
+
       };
 
     typedef boost::shared_ptr< ObjectList<BaseObject> > ObjectListPtr;
@@ -142,6 +143,7 @@ namespace pandora_data_fusion
     template <class ObjectType>
       bool ObjectList<ObjectType>::add(const Ptr& object)
       {
+        // TODO RESOLVE!
         // Shepherdness for resolving uninitialized pose issue.
         bool cool = true;
         cool = cool && object->getPose().position.x == 0;
@@ -211,22 +213,14 @@ namespace pandora_data_fusion
 
     template <class ObjectType>
       bool ObjectList<ObjectType>::isObjectPoseInList(
-          const ObjectConstPtr& object, float radius, bool is3D) const
+          const ObjectConstPtr& object, float radius) const
       {
         for (const_iterator it = this->begin(); it != this->end(); ++it)
         {
-          float distance = 0;
-          if (is3D)
-          {
-            distance = Utils::distanceBetweenPoints3D(object->getPose().position,
-                (*it)->getPose().position);
-          }
-          else
-          {
-            distance = Utils::distanceBetweenPoints2D(object->getPose().position,
-                (*it)->getPose().position);
-          }
-          if (distance < radius)
+          bool inRange = false;
+          inRange = Utils::arePointsInRange(object->getPose().position,
+              (*it)->getPose().position, ObjectType::is3D, radius);
+          if (inRange)
           {
             return true;
           }
@@ -236,99 +230,101 @@ namespace pandora_data_fusion
       }
 
     template <class ObjectType>
-      void ObjectList<ObjectType>::removeInRangeOfObject(
-          const ObjectConstPtr& object, float range)
+    void ObjectList<ObjectType>::removeInRangeOfObject(
+        const ObjectConstPtr& object, float range)
+    {
+      iterator iter = objects_.begin();
+
+      while (iter != objects_.end())
       {
-        iterator iter = objects_.begin();
+        bool inRange = false;
+        inRange = Utils::arePointsInRange(object->getPose().position,
+            (*iter)->getPose().position, ObjectType::is3D, range);
 
-        while (iter != objects_.end())
+        if (inRange)
         {
-          bool inRange = Utils::distanceBetweenPoints3D(
-              object->getPose().position, (*iter)->getPose().position) < range;
+          ROS_DEBUG_NAMED("OBJECT_LIST",
+              "[OBJECT_LIST %d] Deleting hole...", __LINE__);
+          iter = objects_.erase(iter);
+        }
+        else
+        {
+          ++iter;
+        }
+      }
+    }
 
-          if (inRange)
+    template <class ObjectType>
+    void ObjectList<ObjectType>::getObjectsPosesStamped(
+        PoseStampedVector* poses) const
+    {
+      for (const_iterator it = this->begin(); it != this->end(); ++it)
+      {
+        poses->push_back((*it)->getPoseStamped());
+      }
+    }
+
+    template <class ObjectType>
+    void ObjectList<ObjectType>::fillGeotiff(
+        pandora_data_fusion_msgs::GeotiffSrv::Response* res) const
+    {
+      for (const_iterator it = this->begin(); it != this->end(); ++it)
+      {
+        (*it)->fillGeotiff(res);
+      }
+    }
+
+    template <class ObjectType>
+    void ObjectList<ObjectType>::getVisualization(
+        visualization_msgs::MarkerArray* markers) const
+    {
+      markers->markers.clear();
+      for (const_iterator it = this->begin(); it != this->end(); ++it)
+      {
+        (*it)->getVisualization(markers);
+      }
+    }
+
+    template <class ObjectType>
+    bool ObjectList<ObjectType>::isAnExistingObject(
+        const ConstPtr& object, IteratorList* iteratorListPtr)
+    {
+      for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+      {
+        if ((*it)->isSameObject(object))
+        {
+          iteratorListPtr->push_back(it);
+        }
+      }
+      if (!iteratorListPtr->empty())
+      {
+        return true;
+      }
+      return false;
+    }
+
+    template <class ObjectType>
+    void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
+        const IteratorList& iteratorList)
+    {
+      bool first = true;
+      for (typename IteratorList::const_iterator it = iteratorList.begin();
+          it != iteratorList.end(); ++it)
+      {
+        (*(*it))->update(object);
+        if (Utils::arePointsInRange(
+              object->getPose().position, (*(*it))->getPose().position,
+              ObjectType::is3D, ObjectType::getMergeDistance())
+        {
+          if (first)
           {
-            ROS_DEBUG_NAMED("OBJECT_LIST",
-                "[OBJECT_LIST %d] Deleting hole...", __LINE__);
-            iter = objects_.erase(iter);
+            first = false;
+            continue;
           }
-          else
-          {
-            ++iter;
-          }
+          removeElementAt(*it);
         }
       }
-
-    template <class ObjectType>
-      void ObjectList<ObjectType>::getObjectsPosesStamped(
-          PoseStampedVector* poses) const
-      {
-        for (const_iterator it = this->begin(); it != this->end(); ++it)
-        {
-          poses->push_back((*it)->getPoseStamped());
-        }
-      }
-
-    template <class ObjectType>
-      void ObjectList<ObjectType>::fillGeotiff(
-          pandora_data_fusion_msgs::GeotiffSrv::Response* res) const
-      {
-        for (const_iterator it = this->begin(); it != this->end(); ++it)
-        {
-          (*it)->fillGeotiff(res);
-        }
-      }
-
-    template <class ObjectType>
-      void ObjectList<ObjectType>::getVisualization(
-          visualization_msgs::MarkerArray* markers) const
-      {
-        markers->markers.clear();
-        for (const_iterator it = this->begin(); it != this->end(); ++it)
-        {
-          (*it)->getVisualization(markers);
-        }
-      }
-
-    template <class ObjectType>
-      bool ObjectList<ObjectType>::isAnExistingObject(
-          const ConstPtr& object, IteratorList* iteratorListPtr)
-      {
-        for (iterator it = objects_.begin(); it != objects_.end(); ++it)
-        {
-          if ((*it)->isSameObject(object))
-          {
-            iteratorListPtr->push_back(it);
-          }
-        }
-        if (!iteratorListPtr->empty())
-        {
-          return true;
-        }
-        return false;
-      }
-
-    template <class ObjectType>
-      void ObjectList<ObjectType>::updateObjects(const ConstPtr& object,
-          const IteratorList& iteratorList)
-      {
-        bool first = true;
-        for (typename IteratorList::const_iterator it = iteratorList.begin();
-            it != iteratorList.end(); ++it)
-        {
-          (*(*it))->update(object);
-          if (Utils::distanceBetweenPoints3D(
-                object->getPose().position, (*(*it))->getPose().position) < ObjectType::getMergeDistance())
-          {
-            if (first)
-            {
-              first = false;
-              continue;
-            }
-            removeElementAt(*it);
-          }
-        }
-      }
+    }
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
