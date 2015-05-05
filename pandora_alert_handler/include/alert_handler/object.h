@@ -157,6 +157,15 @@ namespace pandora_data_fusion
         }
 
         /**
+         * @brief Getter for member timeFound_
+         * @return ros::Time The QR's timeFound
+         */
+        ros::Time getTimeFound() const
+        {
+          return timeFound_;
+        }
+
+        /**
          * @brief Getter for member pose_
          * @return geometry_msgs::Pose& The object's pose
          */
@@ -261,6 +270,15 @@ namespace pandora_data_fusion
         }
 
         /**
+         * @brief Setter for member timeFound_
+         * @return void
+         */
+        void setTimeFound(const ros::Time& timeFound)
+        {
+          timeFound_ = timeFound;
+        }
+
+        /**
          * @brief Setter for member pose_
          * @param pose [const geometry_msgs::Pose&] The new pose value
          * @return void
@@ -330,6 +348,8 @@ namespace pandora_data_fusion
         bool legit_;
         //!< The Objects's probability
         float probability_;
+        //!< The time when this object was first found
+        ros::Time timeFound_;
 
         //!< The object's pose in 3d space
         Pose pose_;
@@ -365,7 +385,7 @@ namespace pandora_data_fusion
         PoseStamped objPoseStamped;
         objPoseStamped.pose = pose_;
         objPoseStamped.header.frame_id = frame_id_;
-        objPoseStamped.header.stamp = ros::Time::now();
+        objPoseStamped.header.stamp = ros::Time(0);
         return objPoseStamped;
       }
 
@@ -374,9 +394,9 @@ namespace pandora_data_fusion
       {
         if (type_ != object->getType())
           return false;
-        return Utils::distanceBetweenPoints3D(
-            pose_.position, object->getPose().position)
-          < distanceThres_;
+        return Utils::arePointsInRange(
+            pose_.position, object->getPose().position,
+            DerivedObject::is3D, distanceThres_);
       }
 
     template <class DerivedObject>
@@ -394,7 +414,7 @@ namespace pandora_data_fusion
         }
       }
 
-}  // namespace pandora_alert_handler
+  }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_H
