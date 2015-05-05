@@ -44,6 +44,7 @@ namespace pandora_data_fusion
 {
   namespace pandora_alert_handler
   {
+    Co2::is3D = false;
 
     Co2::Co2() {}
 

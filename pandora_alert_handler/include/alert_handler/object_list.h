@@ -88,8 +88,7 @@ namespace pandora_data_fusion
           void pop_back();
           void clear();
 
-          bool isObjectPoseInList(const ObjectConstPtr& object, float radius,
-              bool is3D = true) const;
+          bool isObjectPoseInList(const ObjectConstPtr& object, float radius) const;
           void removeInRangeOfObject(const ObjectConstPtr& object, float range);
 
           void getObjectsPosesStamped(PoseStampedVector* poses) const;

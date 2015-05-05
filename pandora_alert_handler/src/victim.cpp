@@ -42,6 +42,7 @@ namespace pandora_data_fusion
 {
   namespace pandora_alert_handler
   {
+    Victim::is3D = true;
 
     Victim::Victim()
     {

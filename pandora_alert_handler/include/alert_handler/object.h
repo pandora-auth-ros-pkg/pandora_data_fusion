@@ -57,6 +57,23 @@ namespace pandora_data_fusion
     template <class DerivedObject> class Object : public BaseObject
     {
       public:
+        static bool is3D;
+      protected:
+        //!< Variable with objects' min distance.
+        static float distanceThres_;
+        //!< Variable with objects' merge distance.
+        static float mergeDistance_;
+        //!< Variable containing object type's score.
+        static int objectScore_;
+        //!< Variable containing object type's probability threshold for an
+        //!< object to become legitimate.
+        static float probabilityThres_;
+        //!< A string indicating the type of object
+        static std::string type_;
+        //!< Pointer to list that contains Objects with type DerivedObject;
+        static ListPtr listPtr_;
+
+      public:
         //!< Type Definitions
         typedef boost::shared_ptr<DerivedObject> Ptr;
         typedef boost::shared_ptr<DerivedObject const> ConstPtr;
@@ -317,20 +334,6 @@ namespace pandora_data_fusion
         //!< The object's pose in 3d space
         Pose pose_;
 
-        //!< Variable with objects' min distance.
-        static float distanceThres_;
-        //!< Variable with objects' merge distance.
-        static float mergeDistance_;
-        //!< Variable containing object type's score.
-        static int objectScore_;
-        //!< Variable containing object type's probability threshold for an
-        //!< object to become legitimate.
-        static float probabilityThres_;
-        //!< A string indicating the type of object
-        static std::string type_;
-        //!< Pointer to list that contains Objects with type DerivedObject;
-        static ListPtr listPtr_;
-
       private:
         friend class ObjectListTest;
     };
@@ -341,6 +344,8 @@ namespace pandora_data_fusion
         legit_ = false;
       }
 
+    template <class DerivedObject>
+      bool Object<DerivedObject>::is3D = false;
     template <class DerivedObject>
       float Object<DerivedObject>::distanceThres_ = 0.5;
     template <class DerivedObject>
