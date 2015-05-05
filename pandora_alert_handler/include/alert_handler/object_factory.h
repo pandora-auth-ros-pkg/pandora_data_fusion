@@ -146,7 +146,7 @@ namespace pandora_data_fusion
         try
         {
           typename ObjectType::Ptr newObject( new ObjectType );
-          setUpObject<ObjectType>(newObject, msg.generalAlerts[ii], transform);
+          setUpObject<ObjectType>(newObject, msg.generalAlerts[ii], msg.header.stamp, transform);
           objectsVectorPtr->push_back(newObject);
         }
         catch (AlertException ex)

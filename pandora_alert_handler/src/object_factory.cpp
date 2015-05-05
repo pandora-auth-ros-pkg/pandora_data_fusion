@@ -56,7 +56,7 @@ namespace pandora_data_fusion
       currentHoleTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
       HolePtrVectorPtr holesVectorPtr( new HolePtrVector );
-      for (int ii = 0; ii < msg.holeDirections.size(); ++ii)
+      for (int ii = 0; ii < msg.holesDirections.size(); ++ii)
       {
         try
         {
@@ -188,7 +188,7 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpHole(const HolePtr& holePtr,
-        const pandora_vision_msgs::HoleDirectionMsg& msg,
+        const pandora_vision_msgs::HoleDirectionAlert& msg,
         const ros::Time& timeFound,
         const tf::Transform& transform)
     {
@@ -201,7 +201,7 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr,
-        const pandora_vision_msgs::HazmatAlertMsg& msg,
+        const pandora_vision_msgs::HazmatAlert& msg,
         const ros::Time& timeFound,
         const tf::Transform& transform)
     {
@@ -214,7 +214,7 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpQr(const QrPtr& qrPtr,
-        const pandora_vision_msgs::QRAlertMsg& msg,
+        const pandora_vision_msgs::QRAlert& msg,
         const ros::Time& timeFound,
         const tf::Transform& transform)
     {
@@ -227,7 +227,7 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpLandoltc(const LandoltcPtr& landoltcPtr,
-        const pandora_vision_msgs::LandoltcAlertMsg& msg,
+        const pandora_vision_msgs::LandoltcAlert& msg,
         const ros::Time& timeFound,
         const tf::Transform& transform)
     {
@@ -240,14 +240,14 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpDataMatrix(const DataMatrixPtr& dataMatrixPtr,
-        const pandora_vision_msgs::DataMatrixAlertMsg& msg,
+        const pandora_vision_msgs::DataMatrixAlert& msg,
         const ros::Time& timeFound,
         const tf::Transform& transform)
     {
       dataMatrixPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
             msg.info.pitch, transform));
       dataMatrixPtr->setProbability(msg.info.probability);
-      datamatrixPtr->setTimeFound(timeFound);
+      dataMatrixPtr->setTimeFound(timeFound);
       dataMatrixPtr->setContent(msg.datamatrixContent);
       dataMatrixPtr->initializeObjectFilter();
     }

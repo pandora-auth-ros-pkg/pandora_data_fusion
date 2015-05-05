@@ -74,27 +74,38 @@ namespace pandora_data_fusion
 
       std::string param;
 
-      nh->param<std::string>("object_names/hazmat", param, "hazmat");
+      nh_->param<std::string>("object_names/hazmat", param, "hazmat");
       Hazmat::setObjectType(param);
-      nh->param<std::string>("object_names/qr", param, "qr");
+      nh_->param<std::string>("object_names/qr", param, "qr");
       Qr::setObjectType(param);
-      nh->param<std::string>("object_names/landoltc", param, "landoltc");
+      nh_->param<std::string>("object_names/landoltc", param, "landoltc");
       Landoltc::setObjectType(param);
-      nh->param<std::string>("object_names/data_matrix", param, "data_matrix");
+      nh_->param<std::string>("object_names/data_matrix", param, "data_matrix");
       DataMatrix::setObjectType(param);
 
-      nh->param<std::string>("object_names/hole", param, "hole");
+      nh_->param<std::string>("object_names/hole", param, "hole");
       Hole::setObjectType(param);
-      nh->param<std::string>("object_names/thermal", param, "thermal");
+      nh_->param<std::string>("object_names/thermal", param, "thermal");
       Thermal::setObjectType(param);
-      nh->param<std::string>("object_names/victim_image", param, "victim_image");
+      nh_->param<std::string>("object_names/victim_image", param, "victim_image");
       VictimImage::setObjectType(param);
-      nh->param<std::string>("object_names/motion", param, "motion");
+      nh_->param<std::string>("object_names/motion", param, "motion");
       Motion::setObjectType(param);
-      nh->param<std::string>("object_names/sound", param, "sound");
+      nh_->param<std::string>("object_names/sound", param, "sound");
       Sound::setObjectType(param);
-      nh->param<std::string>("object_names/co2", param, "co2");
+      nh_->param<std::string>("object_names/co2", param, "co2");
       Co2::setObjectType(param);
+
+      Hazmat::is3D = true;
+      Qr::is3D = true;
+      Landoltc::is3D = true;
+      DataMatrix::is3D = true;
+      Sound::is3D = false;
+      Co2::is3D = false;
+      Hole::is3D = true;
+      Thermal::is3D = true;
+      Motion::is3D = true;
+      VictimImage::is3D = true;
 
       victimsToGo_.reset( new VictimList );
       victimsVisited_.reset( new VictimList );
@@ -277,7 +288,8 @@ namespace pandora_data_fusion
         return;
       }
 
-      objectHandler_->handleHoles(holesVectorPtr, objectFactory_->getTransform());
+      tf::Transform transform = objectFactory_->getCurrentHoleTransform();
+      objectHandler_->handleHoles(holesVectorPtr, transform);
 
       victimHandler_->notify();
 

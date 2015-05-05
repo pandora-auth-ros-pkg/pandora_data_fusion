@@ -58,6 +58,7 @@ namespace pandora_data_fusion
 
       nh->param<std::string>("object_names/victim", param, std::string("victim"));
       Victim::setObjectType(param);
+      Victim::is3D = true;
 
       clusterer_.reset(new VictimClusterer(0.2));
 

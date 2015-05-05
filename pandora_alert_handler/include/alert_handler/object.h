@@ -57,6 +57,15 @@ namespace pandora_data_fusion
     template <class DerivedObject> class Object : public BaseObject
     {
       public:
+        //!< Type Definitions
+        typedef boost::shared_ptr<DerivedObject> Ptr;
+        typedef boost::shared_ptr<DerivedObject const> ConstPtr;
+        typedef std::vector<Ptr> PtrVector;
+        typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
+        typedef boost::shared_ptr< ObjectList<DerivedObject> > ListPtr;
+        typedef boost::shared_ptr< const ObjectList<DerivedObject> > ListConstPtr;
+
+      public:
         static bool is3D;
 
       protected:
@@ -73,15 +82,6 @@ namespace pandora_data_fusion
         static std::string type_;
         //!< Pointer to list that contains Objects with type DerivedObject;
         static ListPtr listPtr_;
-
-      public:
-        //!< Type Definitions
-        typedef boost::shared_ptr<DerivedObject> Ptr;
-        typedef boost::shared_ptr<DerivedObject const> ConstPtr;
-        typedef std::vector<Ptr> PtrVector;
-        typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<DerivedObject> > ListPtr;
-        typedef boost::shared_ptr< const ObjectList<DerivedObject> > ListConstPtr;
 
       public:
         /**
@@ -357,6 +357,7 @@ namespace pandora_data_fusion
 
       private:
         friend class ObjectListTest;
+
     };
 
     template <class DerivedObject>
@@ -366,7 +367,7 @@ namespace pandora_data_fusion
       }
 
     template <class DerivedObject>
-      bool Object<DerivedObject>::is3D = false;
+      bool Object<DerivedObject>::is3D = true;
     template <class DerivedObject>
       float Object<DerivedObject>::distanceThres_ = 0.5;
     template <class DerivedObject>

@@ -256,7 +256,7 @@ namespace pandora_data_fusion
 
       template <class ObjectType>
         void AlertHandler::victimAlertCallback(
-            const pandora_common_msgs::GeneralAlertVector& msg);
+            const pandora_common_msgs::GeneralAlertVector& msg)
       {
         if (map_->data.size() == 0)
           return;

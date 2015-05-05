@@ -313,7 +313,7 @@ namespace pandora_data_fusion
         (*(*it))->update(object);
         if (Utils::arePointsInRange(
               object->getPose().position, (*(*it))->getPose().position,
-              ObjectType::is3D, ObjectType::getMergeDistance())
+              ObjectType::is3D, ObjectType::getMergeDistance()))
         {
           if (first)
           {

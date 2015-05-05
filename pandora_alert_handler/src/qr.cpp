@@ -42,8 +42,6 @@ namespace pandora_data_fusion
 {
   namespace pandora_alert_handler
   {
-    Qr::is3D = true;
-
     Qr::Qr() {}
 
     bool Qr::isSameObject(const ObjectConstPtr& object) const

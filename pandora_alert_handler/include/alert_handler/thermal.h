@@ -47,8 +47,6 @@ namespace pandora_data_fusion
 {
   namespace pandora_alert_handler
   {
-    Thermal::is3D = true;
-
     /**
      * @class Thermal
      * @brief Concrete class representing a Thermal Object. Inherits from Object

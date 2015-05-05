@@ -155,6 +155,7 @@ namespace pandora_data_fusion
     }
 
     /**
+     * TODO
      * @details Sound and CO2 pois give us spatial information in a 2d
      * surface on their sensors' tf frame's plane. We should not search for them
      * in a sphere but in a cylinder.
@@ -170,7 +171,7 @@ namespace pandora_data_fusion
         if (ObjectType::getObjectType() == Sound::getObjectType() ||
             ObjectType::getObjectType() == Co2::getObjectType()) {
           valid = victimsToGoList_->isObjectPoseInList(
-              (*iter), VICTIM_CLUSTER_RADIUS, false);
+              (*iter), VICTIM_CLUSTER_RADIUS);
         }
         else {
           valid = victimsToGoList_->isObjectPoseInList(

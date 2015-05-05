@@ -51,6 +51,8 @@ namespace pandora_data_fusion
       victimsToGoList_(victimsToGoList),
       victimsVisitedList_(victimsVisitedList)
     {
+      std::string param;
+
       roboCupScore_ = 0;
 
       if (nh->getParam("published_topic_names/qr_notification", param))

@@ -42,8 +42,6 @@ namespace pandora_data_fusion
 {
   namespace pandora_alert_handler
   {
-    Motion::is3D = true;
-
     Motion::Motion() {}
 
     void Motion::getVisualization(visualization_msgs::

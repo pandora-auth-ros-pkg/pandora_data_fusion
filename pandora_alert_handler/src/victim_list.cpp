@@ -126,7 +126,7 @@ namespace pandora_data_fusion
         victimInfo.victimFrameId = (*it)->getFrameId();
         // mby replace with timeFound and its own frame_id
         victimInfo.victimPose.header.stamp = now;
-        victimInfo.victimPose.header.frame_id = Victim::getGlobalFrame();
+        victimInfo.victimPose.header.frame_id = (*it)->getFrameId();
         victimInfo.victimPose.pose = (*it)->getPose();
         victimInfo.probability = (*it)->getProbability();
         for (ObjectConstPtrVector::const_iterator iter = (*it)->getObjects().begin();
