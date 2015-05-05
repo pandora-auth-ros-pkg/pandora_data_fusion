@@ -53,7 +53,7 @@ namespace pandora_data_fusion
     HolePtrVectorPtr ObjectFactory::makeHoles(
         const pandora_vision_msgs::HoleDirectionAlertVector& msg)
     {
-      currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+      currentHoleTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
       HolePtrVectorPtr holesVectorPtr( new HolePtrVector );
       for (int ii = 0; ii < msg.holeDirections.size(); ++ii)
@@ -61,7 +61,8 @@ namespace pandora_data_fusion
         try
         {
           HolePtr newHole( new Hole );
-          setUpHole(newHole, msg.holesDirections[ii]);
+          setUpHole(newHole, msg.holesDirections[ii], msg.header.stamp,
+              currentHoleTransform_);
           holesVectorPtr->push_back(newHole);
         }
         catch (AlertException ex)
@@ -77,7 +78,8 @@ namespace pandora_data_fusion
     HazmatPtrVectorPtr ObjectFactory::makeHazmats(
         const pandora_vision_msgs::HazmatAlertVector& msg)
     {
-      currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+      tf::Transform transform;
+      transform = poseFinder_->lookupTransformFromWorld(msg.header);
 
       HazmatPtrVectorPtr hazmatsVectorPtr( new HazmatPtrVector );
       for (int ii = 0; ii < msg.hazmatAlerts.size(); ++ii)
@@ -85,7 +87,8 @@ namespace pandora_data_fusion
         try
         {
           HazmatPtr newHazmat( new Hazmat );
-          setUpHazmat(newHazmat, msg.hazmatAlerts[ii]);
+          setUpHazmat(newHazmat, msg.hazmatAlerts[ii], msg.header.stamp,
+              transform);
           hazmatsVectorPtr->push_back(newHazmat);
         }
         catch (AlertException ex)
@@ -101,7 +104,8 @@ namespace pandora_data_fusion
     QrPtrVectorPtr ObjectFactory::makeQrs(
         const pandora_vision_msgs::QRAlertVector& msg)
     {
-      currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+      tf::Transform transform;
+      transform = poseFinder_->lookupTransformFromWorld(msg.header);
 
       QrPtrVectorPtr qrsVectorPtr( new QrPtrVector );
       for (int ii = 0; ii < msg.qrAlerts.size(); ++ii)
@@ -109,7 +113,7 @@ namespace pandora_data_fusion
         try
         {
           QrPtr newQr( new Qr );
-          setUpQr(newQr, msg.qrAlerts[ii], msg.header.stamp);
+          setUpQr(newQr, msg.qrAlerts[ii], msg.header.stamp, transform);
           qrsVectorPtr->push_back(newQr);
         }
         catch (AlertException ex)
@@ -125,7 +129,8 @@ namespace pandora_data_fusion
     LandoltcPtrVectorPtr ObjectFactory::makeLandoltcs(
         const pandora_vision_msgs::LandoltcAlertVector& msg)
     {
-      currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+      tf::Transform transform;
+      transform = poseFinder_->lookupTransformFromWorld(msg.header);
 
       LandoltcPtrVectorPtr landoltcsVectorPtr( new LandoltcPtrVector );
       for (int ii = 0; ii < msg.landoltcAlerts.size(); ++ii)
@@ -133,7 +138,8 @@ namespace pandora_data_fusion
         try
         {
           LandoltcPtr newLandoltc( new Landoltc );
-          setUpLandoltc(newLandoltc, msg.landoltcAlerts[ii]);
+          setUpLandoltc(newLandoltc, msg.landoltcAlerts[ii], msg.header.stamp,
+              transform);
           landoltcsVectorPtr->push_back(newLandoltc);
         }
         catch (AlertException ex)
@@ -149,7 +155,8 @@ namespace pandora_data_fusion
     DataMatrixPtrVectorPtr ObjectFactory::makeDataMatrices(
         const pandora_vision_msgs::DataMatrixAlertVector& msg)
     {
-      currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+      tf::Transform transform;
+      transform = poseFinder_->lookupTransformFromWorld(msg.header);
 
       DataMatrixPtrVectorPtr dataMatricesVectorPtr( new DataMatrixPtrVector );
       for (int ii = 0; ii < msg.dataMatrixAlerts.size(); ++ii)
@@ -157,7 +164,8 @@ namespace pandora_data_fusion
         try
         {
           DataMatrixPtr newDataMatrix( new DataMatrix );
-          setUpDataMatrix(newDataMatrix, msg.dataMatrixAlerts[ii]);
+          setUpDataMatrix(newDataMatrix, msg.dataMatrixAlerts[ii],
+              msg.header.stamp, transform);
           dataMatricesVectorPtr->push_back(newDataMatrix);
         }
         catch (AlertException ex)
@@ -180,53 +188,66 @@ namespace pandora_data_fusion
     }
 
     void ObjectFactory::setUpHole(const HolePtr& holePtr,
-        const pandora_vision_msgs::HoleDirectionMsg& msg)
+        const pandora_vision_msgs::HoleDirectionMsg& msg,
+        const ros::Time& timeFound,
+        const tf::Transform& transform)
     {
       holePtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
-            msg.info.pitch, currentTransform_));
+            msg.info.pitch, transform));
       holePtr->setProbability(msg.info.probability);
+      holePtr->setTimeFound(timeFound);
       holePtr->setHoleId(msg.holeId);
       holePtr->initializeObjectFilter();
     }
 
     void ObjectFactory::setUpHazmat(const HazmatPtr& hazmatPtr,
-        const pandora_vision_msgs::HazmatAlertMsg& msg)
+        const pandora_vision_msgs::HazmatAlertMsg& msg,
+        const ros::Time& timeFound,
+        const tf::Transform& transform)
     {
       hazmatPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
-            msg.info.pitch, currentTransform_));
+            msg.info.pitch, transform));
       hazmatPtr->setProbability(msg.info.probability);
+      hazmatPtr->setTimeFound(timeFound);
       hazmatPtr->setPattern(msg.patternType);
       hazmatPtr->initializeObjectFilter();
     }
 
     void ObjectFactory::setUpQr(const QrPtr& qrPtr,
         const pandora_vision_msgs::QRAlertMsg& msg,
-        ros::Time timeFound)
+        const ros::Time& timeFound,
+        const tf::Transform& transform)
     {
       qrPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
-            msg.info.pitch, currentTransform_));
+            msg.info.pitch, transform));
       qrPtr->setProbability(msg.info.probability);
+      qrPtr->setTimeFound(timeFound);
       qrPtr->setContent(msg.QRcontent);
       qrPtr->initializeObjectFilter();
-      qrPtr->setTimeFound(timeFound);
     }
 
     void ObjectFactory::setUpLandoltc(const LandoltcPtr& landoltcPtr,
-        const pandora_vision_msgs::LandoltcAlertMsg& msg)
+        const pandora_vision_msgs::LandoltcAlertMsg& msg,
+        const ros::Time& timeFound,
+        const tf::Transform& transform)
     {
       landoltcPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
-            msg.info.pitch, currentTransform_));
+            msg.info.pitch, transform));
       landoltcPtr->setProbability(msg.info.probability);
+      landoltcPtr->setTimeFound(timeFound);
       landoltcPtr->setAngles(msg.angles);
       landoltcPtr->initializeObjectFilter();
     }
 
     void ObjectFactory::setUpDataMatrix(const DataMatrixPtr& dataMatrixPtr,
-        const pandora_vision_msgs::DataMatrixAlertMsg& msg)
+        const pandora_vision_msgs::DataMatrixAlertMsg& msg,
+        const ros::Time& timeFound,
+        const tf::Transform& transform)
     {
       dataMatrixPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
-            msg.info.pitch, currentTransform_));
+            msg.info.pitch, transform));
       dataMatrixPtr->setProbability(msg.info.probability);
+      datamatrixPtr->setTimeFound(timeFound);
       dataMatrixPtr->setContent(msg.datamatrixContent);
       dataMatrixPtr->initializeObjectFilter();
     }
