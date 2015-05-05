@@ -141,7 +141,7 @@ namespace pandora_data_fusion
       setSubscriber <pandora_vision_msgs::DataMatrixAlertVector const&>
         (DataMatrix::getObjectType(), &AlertHandler::dataMatrixAlertCallback);
 
-      setSubscriber <pandora_vision_msgs::HoleDirectionVector const&>
+      setSubscriber <pandora_vision_msgs::HoleDirectionAlertVector const&>
         (Hole::getObjectType(), &AlertHandler::holeAlertCallback);
       setSubscriber <pandora_common_msgs::GeneralAlertVector const&>
         (Thermal::getObjectType(), &AlertHandler::victimAlertCallback<Thermal>);
@@ -258,7 +258,7 @@ namespace pandora_data_fusion
     /*  Alert-concerned Callbacks  */
 
     void AlertHandler::holeAlertCallback(
-        const pandora_vision_msgs::HoleDirectionVector& msg)
+        const pandora_vision_msgs::HoleDirectionAlertVector& msg)
     {
       if (map_->data.size() == 0)
         return;

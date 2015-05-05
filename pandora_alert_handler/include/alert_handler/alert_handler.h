@@ -141,7 +141,7 @@ namespace pandora_data_fusion
         /*  Victim-concerned Subscribers  */
 
         void holeAlertCallback(
-            const pandora_vision_msgs::HoleDirectionVector& msg);
+            const pandora_vision_msgs::HoleDirectionAlertVector& msg);
         void thermalAlertCallback(
             const pandora_common_msgs::GeneralAlertVector& msg);
         template <class ObjectType>

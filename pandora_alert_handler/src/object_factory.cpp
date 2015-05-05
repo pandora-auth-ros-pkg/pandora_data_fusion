@@ -51,12 +51,12 @@ namespace pandora_data_fusion
     }
 
     HolePtrVectorPtr ObjectFactory::makeHoles(
-        const pandora_vision_msgs::HolesDirectionsVectorMsg& msg)
+        const pandora_vision_msgs::HoleDirectionAlertVector& msg)
     {
       currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
       HolePtrVectorPtr holesVectorPtr( new HolePtrVector );
-      for (int ii = 0; ii < msg.holesDirections.size(); ++ii)
+      for (int ii = 0; ii < msg.holeDirections.size(); ++ii)
       {
         try
         {
@@ -75,7 +75,7 @@ namespace pandora_data_fusion
     }
 
     HazmatPtrVectorPtr ObjectFactory::makeHazmats(
-        const pandora_vision_msgs::HazmatAlertsVectorMsg& msg)
+        const pandora_vision_msgs::HazmatAlertVector& msg)
     {
       currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
@@ -99,7 +99,7 @@ namespace pandora_data_fusion
     }
 
     QrPtrVectorPtr ObjectFactory::makeQrs(
-        const pandora_vision_msgs::QRAlertsVectorMsg& msg)
+        const pandora_vision_msgs::QRAlertVector& msg)
     {
       currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
@@ -123,7 +123,7 @@ namespace pandora_data_fusion
     }
 
     LandoltcPtrVectorPtr ObjectFactory::makeLandoltcs(
-        const pandora_vision_msgs::LandoltcAlertsVectorMsg& msg)
+        const pandora_vision_msgs::LandoltcAlertVector& msg)
     {
       currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
@@ -147,7 +147,7 @@ namespace pandora_data_fusion
     }
 
     DataMatrixPtrVectorPtr ObjectFactory::makeDataMatrices(
-        const pandora_vision_msgs::DataMatrixAlertsVectorMsg& msg)
+        const pandora_vision_msgs::DataMatrixAlertVector& msg)
     {
       currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
 
@@ -194,7 +194,7 @@ namespace pandora_data_fusion
     {
       hazmatPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
             msg.info.pitch, currentTransform_));
-      hazmatPtr->setProbability(1);
+      hazmatPtr->setProbability(msg.info.probability);
       hazmatPtr->setPattern(msg.patternType);
       hazmatPtr->initializeObjectFilter();
     }
@@ -205,7 +205,7 @@ namespace pandora_data_fusion
     {
       qrPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
             msg.info.pitch, currentTransform_));
-      qrPtr->setProbability(1);
+      qrPtr->setProbability(msg.info.probability);
       qrPtr->setContent(msg.QRcontent);
       qrPtr->initializeObjectFilter();
       qrPtr->setTimeFound(timeFound);
@@ -216,7 +216,7 @@ namespace pandora_data_fusion
     {
       landoltcPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
             msg.info.pitch, currentTransform_));
-      landoltcPtr->setProbability(1);
+      landoltcPtr->setProbability(msg.info.probability);
       landoltcPtr->setAngles(msg.angles);
       landoltcPtr->initializeObjectFilter();
     }
@@ -226,11 +226,10 @@ namespace pandora_data_fusion
     {
       dataMatrixPtr->setPose(poseFinder_->findAlertPose(msg.info.yaw,
             msg.info.pitch, currentTransform_));
-      dataMatrixPtr->setProbability(1);
+      dataMatrixPtr->setProbability(msg.info.probability);
       dataMatrixPtr->setContent(msg.datamatrixContent);
       dataMatrixPtr->initializeObjectFilter();
     }
 
-}  // namespace pandora_alert_handler
+  }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-
