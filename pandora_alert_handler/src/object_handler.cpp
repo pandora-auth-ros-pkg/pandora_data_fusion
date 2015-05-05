@@ -94,6 +94,7 @@ namespace pandora_data_fusion
         {
           pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;
           newQrNofifyMsg.header.stamp = newQrs->at(ii)->getTimeFound();
+          newQrNofifyMsg.header.frame_id = newQrs->at(ii)->getFrameId();
           newQrNofifyMsg.x = newQrs->at(ii)->getPose().position.x;
           newQrNofifyMsg.y = newQrs->at(ii)->getPose().position.y;
           newQrNofifyMsg.content = newQrs->at(ii)->getContent();
@@ -117,7 +118,7 @@ namespace pandora_data_fusion
       while (iter != holesPtr->end())
       {
         bool invalid = !Utils::arePointsInRange((*iter)->getPose().position,
-            framePosition, SENSOR_RANGE);
+            framePosition, Hole::is3D, SENSOR_RANGE);
 
         if (invalid)
         {

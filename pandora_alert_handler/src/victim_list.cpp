@@ -124,6 +124,7 @@ namespace pandora_data_fusion
 
         victimInfo.id = (*it)->getId();
         victimInfo.victimFrameId = (*it)->getFrameId();
+        // mby replace with timeFound and its own frame_id
         victimInfo.victimPose.header.stamp = now;
         victimInfo.victimPose.header.frame_id = Victim::getGlobalFrame();
         victimInfo.victimPose.pose = (*it)->getPose();
@@ -202,4 +203,3 @@ namespace pandora_data_fusion
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-

@@ -58,6 +58,7 @@ namespace pandora_data_fusion
     {
       public:
         static bool is3D;
+
       protected:
         //!< Variable with objects' min distance.
         static float distanceThres_;
@@ -385,7 +386,7 @@ namespace pandora_data_fusion
         PoseStamped objPoseStamped;
         objPoseStamped.pose = pose_;
         objPoseStamped.header.frame_id = frame_id_;
-        objPoseStamped.header.stamp = ros::Time(0);
+        objPoseStamped.header.stamp = ros::Time::now();
         return objPoseStamped;
       }
 

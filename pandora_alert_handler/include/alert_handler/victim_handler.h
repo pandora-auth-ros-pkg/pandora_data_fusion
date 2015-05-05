@@ -188,6 +188,7 @@ namespace pandora_data_fusion
 
         //!< Radius within which all legit objects are associated with a victim.
         float CLUSTER_RADIUS;
+
     };
 
     typedef boost::scoped_ptr<VictimHandler> VictimHandlerPtr;
