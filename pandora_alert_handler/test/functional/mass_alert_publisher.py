@@ -40,7 +40,7 @@ import roslib; roslib.load_manifest('pandora_alert_handler')
 import rospy
 import actionlib
 import sys
-from pandora_testing_tools.testing_intervictimImage import alert_delivery
+from pandora_testing_tools.testing_interface import alert_delivery
 
 from dynamic_reconfigure.server import Server
 from pandora_alert_handler.cfg import MassAlertPublisherConfig
@@ -121,7 +121,7 @@ class MassPublisher:
                         self.config.sound_probability)
 
                 if self.config.victimImage_post:
-                    self.alertDeliveryBoy.delivervictimImageOrder(
+                    self.alertDeliveryBoy.deliverVictimImageOrder(
                         self.config.victimImage_yaw,
                         self.config.victimImage_pitch,
                         self.config.victimImage_probability)

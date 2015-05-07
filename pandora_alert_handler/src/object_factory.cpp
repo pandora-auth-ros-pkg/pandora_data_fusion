@@ -114,6 +114,8 @@ namespace pandora_data_fusion
         {
           QrPtr newQr( new Qr );
           setUpQr(newQr, msg.qrAlerts[ii], msg.header.stamp, transform);
+          ROS_DEBUG_NAMED("alert_handler", "[ALERT_HANDLER_OBJECT_FACTORY] Made qr object:");
+          ROS_DEBUG_STREAM_NAMED("alert_handler", newQr->getPose());
           qrsVectorPtr->push_back(newQr);
         }
         catch (AlertException ex)
