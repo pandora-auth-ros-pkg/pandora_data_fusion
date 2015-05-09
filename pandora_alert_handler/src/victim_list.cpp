@@ -116,8 +116,6 @@ namespace pandora_data_fusion
     {
       victimsMsg->clear();
 
-      ros::Time now = ros::Time::now();
-
       for (const_iterator it = this->begin(); it != this->end(); ++it)
       {
         pandora_data_fusion_msgs::VictimInfoMsg victimInfo;
@@ -125,8 +123,8 @@ namespace pandora_data_fusion
         victimInfo.id = (*it)->getId();
         victimInfo.victimFrameId = (*it)->getFrameId();
         // mby replace with timeFound and its own frame_id
-        victimInfo.victimPose.header.stamp = now;
-        victimInfo.victimPose.header.frame_id = (*it)->getFrameId();
+        victimInfo.victimPose.header.stamp = ros::Time(0);
+        victimInfo.victimPose.header.frame_id = Victim::getGlobalFrame();
         victimInfo.victimPose.pose = (*it)->getPose();
         victimInfo.probability = (*it)->getProbability();
         for (ObjectConstPtrVector::const_iterator iter = (*it)->getObjects().begin();

@@ -47,7 +47,7 @@ from pandora_alert_handler.cfg import MassAlertPublisherConfig
 
 class MassPublisher:
 
-    def __init__(self,frame_id):
+    def __init__(self, frame_id):
 
         self.alertDeliveryBoy = alert_delivery.AlertDeliveryBoy(frame_id)
 
