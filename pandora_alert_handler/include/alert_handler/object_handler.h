@@ -137,7 +137,8 @@ namespace pandora_data_fusion
     void ObjectHandler::handleObjects(
         const typename ObjectType::PtrVectorPtr& newObjects)
     {
-      if (ObjectType::getObjectType() != Thermal::getObjectType() &&
+      if (ObjectType::getObjectType() != VictimImage::getObjectType() &&
+          ObjectType::getObjectType() != Thermal::getObjectType() &&
           ObjectType::getObjectType() != Hazmat::getObjectType() &&
           ObjectType::getObjectType() != Landoltc::getObjectType() &&
           ObjectType::getObjectType() != DataMatrix::getObjectType()) {
