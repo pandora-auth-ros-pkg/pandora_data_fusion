@@ -127,7 +127,6 @@ namespace pandora_data_fusion
 
         float SENSOR_RANGE;
         float VICTIM_CLUSTER_RADIUS;
-
     };
 
     /**
@@ -194,7 +193,7 @@ namespace pandora_data_fusion
 
     typedef boost::scoped_ptr< ObjectHandler >  ObjectHandlerPtr;
 
-  }  // namespace pandora_alert_handler
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
 #endif  // ALERT_HANDLER_OBJECT_HANDLER_H
