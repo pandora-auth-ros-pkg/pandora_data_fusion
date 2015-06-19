@@ -7,6 +7,16 @@ project(frame_matcher)
 # - Use `find_package` command to bring dependencies
 # - Use `generate_dynamic_reconfigure_options` to setup dynamic reconfigure
 # - Set flags if needed
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  urdf
+  tf
+  pandora_alert_handler
+  nav_msgs
+  geometry_msgs
+  roslint
+  )
+
 
 ################################################################################
 #                             Catkin Package Setup                             #
@@ -17,6 +27,22 @@ project(frame_matcher)
 # - Set `include_directories`
 # - Set `link_directories` (if necessary, usually avoid to if concerns catkin
 #   libraries)
+catkin_package(
+  CATKIN_DEPENDS
+    roscpp
+    urdf
+    tf
+    pandora_alert_handler
+    nav_msgs
+    geometry_msgs
+  INCLUDE_DIRS
+    include
+  )
+
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+  )
 
 ################################################################################
 #                                  Libraries                                   #
@@ -47,7 +73,7 @@ project(frame_matcher)
 #   CMakeLists.txt with it
 
 if(CATKIN_ENABLE_TESTING)
-  # add_subdirectory(test)
+  add_subdirectory(test)
 endif()
 
 ################################################################################

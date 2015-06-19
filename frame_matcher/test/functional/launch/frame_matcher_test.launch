@@ -1,0 +1,74 @@
+<launch>
+
+  <arg name="camera" default="camera" />
+
+  <node pkg="map_server" type="map_server" name="static_map_publisher"
+    args="$(find pandora_alert_handler)/test/test_maps/map1.yaml"/>
+
+  <node pkg="tf" type="static_transform_publisher"
+    name="worldToMap" args="0 0 0 0 0 0 /world /map 100" />
+
+  <!-- <node pkg="tf" type="static_transform_publisher"                           -->
+  <!--     name="mapToBaseLink" args="1 2 0.2 -1.5708 0 0 /map /base_link 100" /> -->
+
+  <include file="$(find pandora_robots_description)/launch/woody/woody_description.launch" />
+
+  <!-- <node pkg="tf" type="static_transform_publisher"                                                                      -->
+  <!--     name="kinectLinkToCameraLink" args="0 0 0.013 0 0 0 /kinect_link /$(camera)_base_link 100" />                     -->
+  <!-- <node pkg="tf" type="static_transform_publisher"                                                                      -->
+  <!--     name="cameraLinkToCameraFrame" args="0.027 0 0.266 0 0 0 /$(camera)_base_link /$(camera)_frame 100" />            -->
+  <!-- <node pkg="tf" type="static_transform_publisher"                                                                      -->
+  <!--     name="cameraFrameToCameraOptical" args="0 0 0 -1.5708 0 -1.5708 /$(camera)_frame /$(camera)_optical_frame 100" /> -->
+
+  <param name="/$(camera)_optical_frame/hfov" value="" />
+  <param name="/$(camera)_optical_frame/vfov" value="" />
+
+
+  <!--<env name="ROSCONSOLE_CONFIG_FILE" -->
+    <!--value="$(find pandora_alert_handler)/config/alert_handler/logger_debug.cfg"/>-->
+  <include file="$(find frame_matcher)/launch/frame_matcher.launch" />
+  <rosparam param="subscribed_topic_names/map" ns="/pandora_data_fusion/frame_matcher">/map</rosparam>
+
+  <test test-name="FrameMatcherFunctionalTest" pkg="frame_matcher" type="frame_matcher_functional.py" />
+
+</launch>
+<!-- <launch>                                                                                          -->
+<!--   <arg name="camera_frame" default="kinect_rgb_frame" />                                          -->
+
+<!--   <node pkg="map_server" type="map_server" name="static_map_publisher"                            -->
+<!--     args="$(find pandora_alert_handler)/test/test_maps/map1.yaml"/>                               -->
+
+<!--   <node pkg="tf" type="static_transform_publisher"                                                -->
+<!--     name="world2headCamera" args="1 2 1 -1.574 0 0 /map $(arg camera_frame) 100" />               -->
+
+<!--   <node pkg="tf" type="static_transform_publisher"                                                -->
+<!--     name="world2map" args="0 0 0 0 0 0 /world /map 100" />                                        -->
+
+<!--   <include file="$(find pandora_data_fusion_launchers)/launch/data_fusion_standalone.launch" />   -->
+<!--   <rosparam param="subscribed_topic_names/map" ns="data_fusion/alert_handler">/map</rosparam>     -->
+
+<!--   <include file="$(find pandora_runtime_visualization)/launch/visualization.launch" />            -->
+
+<!--   <node name="mass_alert_publisher" type="mass_alert_publisher.py"                                -->
+<!--     pkg="pandora_alert_handler" respawn="true" args="$(arg camera_frame)" />                      -->
+
+<!--   <node name="data_fusion_object_visualization" type="rqt_gui" pkg="rqt_gui" />                   -->
+
+<!-- </launch>                                                                                         -->
+<!-- <launch>                                                                                          -->
+
+<!--   <param name="/use_sim_time" value="true"/>                                                      -->
+
+<!--   [><env name="ROSCONSOLE_CONFIG_FILE"                                             <]             -->
+<!--   [>  value="$(find pandora_alert_handler)/config/alert_handler/logger_debug.cfg"/><]             -->
+<!--   <include file="$(find pandora_alert_handler)/launch/alert_handler.launch" />                    -->
+
+<!--   <node pkg="rosbag" type="play" name="player" output="screen"                                    -->
+<!--     args="--clock $(find pandora_alert_handler)/test/functional/saloon_2014-04-27-20-30-41.bag" > -->
+<!--     <remap from="/vision/hole_direction" to="/vision/holes_direction_alert" />                    -->
+<!--   </node>                                                                                         -->
+
+<!--   <test test-name="AlertHandlerTest" pkg="pandora_alert_handler"                                  -->
+<!--     type="alert_handler_test.py"/>                                                                -->
+
+<!-- </launch>                                                                                         -->

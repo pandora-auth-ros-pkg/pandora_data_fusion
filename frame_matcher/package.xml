@@ -20,6 +20,7 @@
 <!--
                            Build Dependencies
                                                                             -->
+  <build_depend>roslint</build_depend>
 
 <!--
                            Exec Dependencies
@@ -28,10 +29,22 @@
 <!--
                            Dependencies
                                                                             -->
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>urdf</depend>
+  <depend>tf</depend>
+  <depend>pandora_alert_handler</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
 
 <!--
                            Test Dependencies
                                                                             -->
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>roslib</test_depend>
+  <test_depend>python-numpy</test_depend>
+  <test_depend>pandora_testing_tools</test_depend>
 
   <export>
   </export>

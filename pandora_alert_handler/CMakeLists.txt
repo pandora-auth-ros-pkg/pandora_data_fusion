@@ -8,8 +8,10 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   roslint
   visualization_msgs
-  geometry_msgs
   nav_msgs
+  geometry_msgs
+  std_srvs
+  std_msgs
   pandora_data_fusion_msgs
   pandora_common_msgs
   pandora_vision_msgs
@@ -43,8 +45,10 @@ catkin_package(
     actionlib
     dynamic_reconfigure
     visualization_msgs
-    geometry_msgs
     nav_msgs
+    geometry_msgs
+    std_srvs
+    std_msgs
     pandora_data_fusion_msgs
     pandora_common_msgs
     pandora_vision_msgs
