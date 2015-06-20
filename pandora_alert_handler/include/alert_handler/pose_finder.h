@@ -47,8 +47,6 @@
 #include <boost/utility.hpp>
 
 #include <tf/transform_broadcaster.h>
-// #include <tf/LinearMath/Transform.h>
-// #include <tf/LinearMath/Quaternion.h>
 
 #include <nav_msgs/OccupancyGrid.h>
 
@@ -78,7 +76,7 @@ namespace pandora_alert_handler
 
     void updateParams(float occupiedCellThres,
                       float heightHighThres, float heightLowThres,
-                      float orientationDist, float orientationCircle);
+                      float orientationCircle);
 
    private:
     Point positionOnWall(const tf::Transform& transform);
@@ -95,7 +93,6 @@ namespace pandora_alert_handler
 
     /*  Parameters  */
     float ORIENTATION_CIRCLE;
-    float ORIENTATION_DIST;
     float HEIGHT_HIGH_THRES;
     float HEIGHT_LOW_THRES;
     float OCCUPIED_CELL_THRES;

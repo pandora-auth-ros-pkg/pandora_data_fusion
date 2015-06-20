@@ -348,7 +348,7 @@ namespace pandora_data_fusion
     {
       objectFactory_->dynamicReconfigForward(config.occupiedCellThres,
           config.highThres, config.lowThres,
-          config.orientationCircle, config.orientationDist);
+          config.orientationCircle);
 
       Hole::setObjectScore(-1);
       Hole::setProbabilityThres(config.holeMinProbability);
