@@ -63,8 +63,9 @@ namespace pandora_data_fusion
         typedef boost::shared_ptr<DerivedObject const> ConstPtr;
         typedef std::vector<Ptr> PtrVector;
         typedef boost::shared_ptr<PtrVector> PtrVectorPtr;
-        typedef boost::shared_ptr< ObjectList<DerivedObject> > ListPtr;
-        typedef boost::shared_ptr< const ObjectList<DerivedObject> > ListConstPtr;
+        typedef ObjectList<DerivedObject> List;
+        typedef boost::shared_ptr< List > ListPtr;
+        typedef boost::shared_ptr< List const > ListConstPtr;
 
         /**
          * @brief Setter for member type_
