@@ -47,6 +47,8 @@
 #include <boost/utility.hpp>
 
 #include <tf/transform_broadcaster.h>
+// #include <tf/LinearMath/Transform.h>
+// #include <tf/LinearMath/Quaternion.h>
 
 #include <nav_msgs/OccupancyGrid.h>
 
@@ -58,46 +60,51 @@
 
 namespace pandora_data_fusion
 {
-  namespace pandora_alert_handler
+namespace pandora_alert_handler
+{
+
+  class PoseFinder : private boost::noncopyable
   {
+   public:
+    PoseFinder(const MapPtr& map, const std::string& mapType);
 
-    class PoseFinder : private boost::noncopyable
-    {
-      public:
-        PoseFinder(const MapPtr& map, const std::string& mapType);
-        Pose findAlertPose(float alertYaw, float alertPitch,
-            tf::Transform tfTransform);
-        tf::Transform lookupTransformFromWorld(std_msgs::Header header);
-        geometry_msgs::Quaternion findNormalVectorOnWall(Point framePoint,
-            Point alertPoint);
+    Pose findAlertPose(float alertYaw, float alertPitch,
+                       const tf::Transform& tfTransform);
 
-        void updateParams(float occupiedCellThres,
-            float heightHighThres, float heightLowThres,
-            float orientationDist, float orientationCircle);
+    tf::Transform lookupTransformFromWorld(const std_msgs::Header& header);
 
-      private:
-        Point positionOnWall(Point startPoint, float angle);
-        float calcHeight(float alertPitch, float height, float distFromAlert);
-        std::pair<Point, Point> findDiameterEndPointsOnWall(
-            std::vector<Point> points);
+    geometry_msgs::Quaternion findAppropriateOrientation(
+        const Point& framePoint, const Point& alertPoint);
 
-      private:
-        MapPtr map_;
+    void updateParams(float occupiedCellThres,
+                      float heightHighThres, float heightLowThres,
+                      float orientationDist, float orientationCircle);
 
-        TfListenerPtr listener_;
+   private:
+    Point positionOnWall(const tf::Transform& transform);
 
-        /*  Parameters  */
-        float ORIENTATION_CIRCLE;
-        float ORIENTATION_DIST;
-        float HEIGHT_HIGH_THRES;
-        float HEIGHT_LOW_THRES;
-        float OCCUPIED_CELL_THRES;
+    float calcHeight(const tf::Transform& transform, float distFromAlert);
 
-      private:
-        friend class PoseFinderTest;
-    };
+    std::pair<Point, Point> findDiameterEndPointsOnWall(
+        std::vector<Point> points);
 
-    typedef boost::scoped_ptr< PoseFinder > PoseFinderPtr;
+   private:
+    MapPtr map_;
+
+    TfListenerPtr listener_;
+
+    /*  Parameters  */
+    float ORIENTATION_CIRCLE;
+    float ORIENTATION_DIST;
+    float HEIGHT_HIGH_THRES;
+    float HEIGHT_LOW_THRES;
+    float OCCUPIED_CELL_THRES;
+
+   private:
+    friend class PoseFinderTest;
+  };
+
+  typedef boost::scoped_ptr< PoseFinder > PoseFinderPtr;
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

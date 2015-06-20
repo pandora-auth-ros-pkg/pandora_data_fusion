@@ -40,6 +40,7 @@
 #define ALERT_HANDLER_DEFINES_H
 
 #include <vector>
+#include <cmath>
 #include <boost/math/constants/constants.hpp>
 
 #include <geometry_msgs/Pose.h>
@@ -66,8 +67,8 @@
 
 namespace pandora_data_fusion
 {
-  namespace pandora_alert_handler
-  {
+namespace pandora_alert_handler
+{
 
     using geometry_msgs::Point;
     using geometry_msgs::Pose;

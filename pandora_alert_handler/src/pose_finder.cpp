@@ -67,39 +67,41 @@ namespace pandora_data_fusion
     }
 
     Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
-        tf::Transform tfTransform)
+        const tf::Transform& tfTransform)
     {
       Pose outPose;
 
-      tfScalar pitch, roll, yaw, horizontalDirection, verticalDirection;
-
-      tfTransform.getBasis().getRPY(roll, pitch, yaw);
+      tf::Quaternion alertOrientation, sensorOrientation;
+      tfTransform.getBasis().getRotation(sensorOrientation);
       tf::Vector3 origin = tfTransform.getOrigin();
 
-      horizontalDirection = yaw - alertYaw;
-      verticalDirection = alertPitch - pitch;
+      // Should be in compliance with how vision creates yaw and pitch
+      // FAULTY CODE
+
+      alertOrientation.setRPY(0, alertPitch, alertYaw);
+      tf::Transform newTf(sensorOrientation * alertOrientation, origin);
+
+      Point position = positionOnWall(newTf);
 
       Point framePosition = Utils::vector3ToPoint(origin);
-
-      Point position = positionOnWall(framePosition, horizontalDirection);
-
       float distFromAlert = Utils::distanceBetweenPoints2D(
           position, framePosition);
 
-      float height = calcHeight(verticalDirection, framePosition.z, distFromAlert);
+      float height = calcHeight(newTf, distFromAlert);
 
       outPose.position = Utils::point2DAndHeight2Point3D(position, height);
-      outPose.orientation = findNormalVectorOnWall(framePosition, outPose.position);
+      outPose.orientation = findAppropriateOrientation(framePosition, outPose.position);
 
       return outPose;
     }
 
-    float PoseFinder::calcHeight(float alertPitch,
-        float height, float distFromAlert)
+    float PoseFinder::calcHeight(const tf::Transform& transform, float distFromAlert)
     {
-      float alertHeight = tan(alertPitch) * distFromAlert;
+      Point xDirection = Utils::vector3ToPoint(transform.getBasis().getColumn(0));
+      float lengthInXYPlane = sqrt(xDirection.x * xDirection.x + xDirection.y * xDirection.y);
+      float alertHeight = xDirection.z / lengthInXYPlane * distFromAlert;
 
-      alertHeight += height;
+      alertHeight += transform.getOrigin()[2];
 
       ROS_DEBUG_NAMED("pose_finder",
           "[ALERT_HANDLER]Height of alert = %f ", alertHeight);
@@ -112,28 +114,28 @@ namespace pandora_data_fusion
       return alertHeight;
     }
 
-    Point PoseFinder::positionOnWall(Point startPoint, float angle)
+    Point PoseFinder::positionOnWall(const tf::Transform& transform)
     {
       const float resolution = map_->info.resolution;
       float x = 0, y = 0, D = 5 * resolution;
+      Point xDirection = Utils::vector3ToPoint(transform.getBasis().getColumn(0));
+      // ROS_DEBUG("xDirection:\nx: %f\ny: %f\nz: %f\n", xDirection.x, xDirection.y, xDirection.z);
 
-      float currX = startPoint.x;
-      float currY = startPoint.y;
+      float currX = transform.getOrigin()[0];
+      float currY = transform.getOrigin()[1];
+      // ROS_DEBUG("currX: %f, currY: %f", currX, currY);
 
-      float omega = angle;
+      x = D * xDirection.x + currX;
+      y = D * xDirection.y + currY;
+      // ROS_DEBUG("x: %f, y: %f", x, y);
 
-      x = D * cos(omega) + currX;
-      y = D * sin(omega) + currY;
-
-      while (map_->data[COORDS(x, y, map_)]
-          < OCCUPIED_CELL_THRES * 100)
+      // ROS_DEBUG("coords: %d", coords);
+      while (CELL(x, y, map_) < OCCUPIED_CELL_THRES * 100)
       {
-        D += resolution;
-        x = D * cos(omega) + currX;
-        y = D * sin(omega) + currY;
+        x += resolution * xDirection.x;
+        y += resolution * xDirection.y;
       }
-      if (map_->data[COORDS(x, y, map_)]
-          > OCCUPIED_CELL_THRES * 100)
+      if (CELL(x, y, map_) > OCCUPIED_CELL_THRES * 100)
       {
         Point onWall;
         onWall.x = x;
@@ -144,8 +146,8 @@ namespace pandora_data_fusion
         throw AlertException("Can not find point on wall");
     }
 
-    geometry_msgs::Quaternion PoseFinder::findNormalVectorOnWall(Point framePoint,
-        Point alertPoint)
+    geometry_msgs::Quaternion PoseFinder::findAppropriateOrientation(
+        const Point& framePoint, const Point& alertPoint)
     {
       std::vector<Point> points;
       float x = 0, y = 0;
@@ -165,8 +167,7 @@ namespace pandora_data_fusion
         }
       }
 
-      std::pair<Point, Point> pointsOnWall =
-        findDiameterEndPointsOnWall(points);
+      std::pair<Point, Point> pointsOnWall = findDiameterEndPointsOnWall(points);
 
       float angle;
 
@@ -239,7 +240,7 @@ namespace pandora_data_fusion
     }
 
 
-    tf::Transform PoseFinder::lookupTransformFromWorld(std_msgs::Header header)
+    tf::Transform PoseFinder::lookupTransformFromWorld(const std_msgs::Header& header)
     {
       tf::StampedTransform tfTransform;
 
