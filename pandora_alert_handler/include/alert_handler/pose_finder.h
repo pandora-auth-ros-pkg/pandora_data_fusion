@@ -66,25 +66,25 @@ namespace pandora_alert_handler
    public:
     PoseFinder(const MapPtr& map, const std::string& mapType);
 
-    Pose findAlertPose(float alertYaw, float alertPitch,
+    geometry_msgs::Pose findAlertPose(float alertYaw, float alertPitch,
                        const tf::Transform& tfTransform);
 
     tf::Transform lookupTransformFromWorld(const std_msgs::Header& header);
 
     geometry_msgs::Quaternion findAppropriateOrientation(
-        const Point& framePoint, const Point& alertPoint);
+        const geometry_msgs::Point& framePoint, const geometry_msgs::Point& alertPoint);
 
     void updateParams(float occupiedCellThres,
                       float heightHighThres, float heightLowThres,
                       float orientationCircle);
 
    private:
-    Point positionOnWall(const tf::Transform& transform);
+    geometry_msgs::Point positionOnWall(const tf::Transform& transform);
 
     float calcHeight(const tf::Transform& transform, float distFromAlert);
 
-    std::pair<Point, Point> findDiameterEndPointsOnWall(
-        std::vector<Point> points);
+    std::pair<geometry_msgs::Point, geometry_msgs::Point> findDiameterEndPointsOnWall(
+        std::vector<geometry_msgs::Point> points);
 
    private:
     MapPtr map_;

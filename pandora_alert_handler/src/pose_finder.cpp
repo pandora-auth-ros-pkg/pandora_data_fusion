@@ -65,10 +65,10 @@ namespace pandora_alert_handler
       ORIENTATION_CIRCLE = orientationCircle;
     }
 
-    Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
+    geometry_msgs::Pose PoseFinder::findAlertPose(float alertYaw, float alertPitch,
         const tf::Transform& tfTransform)
     {
-      Pose outPose;
+      geometry_msgs::Pose outPose;
 
       tf::Quaternion alertOrientation, sensorOrientation;
       tfTransform.getBasis().getRotation(sensorOrientation);
@@ -77,9 +77,9 @@ namespace pandora_alert_handler
       alertOrientation.setRPY(0, alertPitch, alertYaw);
       tf::Transform newTf(sensorOrientation * alertOrientation, origin);
 
-      Point position = positionOnWall(newTf);
+      geometry_msgs::Point position = positionOnWall(newTf);
 
-      Point framePosition = Utils::vector3ToPoint(origin);
+      geometry_msgs::Point framePosition = Utils::vector3ToPoint(origin);
       float distFromAlert = Utils::distanceBetweenPoints2D(
           position, framePosition);
 
@@ -93,7 +93,7 @@ namespace pandora_alert_handler
 
     float PoseFinder::calcHeight(const tf::Transform& transform, float distFromAlert)
     {
-      Point xDirection = Utils::vector3ToPoint(transform.getBasis().getColumn(0));
+      geometry_msgs::Point xDirection = Utils::vector3ToPoint(transform.getBasis().getColumn(0));
       float lengthInXYPlane = sqrt(xDirection.x * xDirection.x + xDirection.y * xDirection.y);
       float alertHeight = xDirection.z / lengthInXYPlane * distFromAlert;
 
@@ -110,11 +110,11 @@ namespace pandora_alert_handler
       return alertHeight;
     }
 
-    Point PoseFinder::positionOnWall(const tf::Transform& transform)
+    geometry_msgs::Point PoseFinder::positionOnWall(const tf::Transform& transform)
     {
       const float resolution = map_->info.resolution;
       float x = 0, y = 0, D = 5 * resolution;
-      Point xDirection = Utils::vector3ToPoint(transform.getBasis().getColumn(0));
+      geometry_msgs::Point xDirection = Utils::vector3ToPoint(transform.getBasis().getColumn(0));
 
       float currX = transform.getOrigin()[0];
       float currY = transform.getOrigin()[1];
@@ -129,7 +129,7 @@ namespace pandora_alert_handler
       }
       if (CELL(x, y, map_) > OCCUPIED_CELL_THRES * 100)
       {
-        Point onWall;
+        geometry_msgs::Point onWall;
         onWall.x = x;
         onWall.y = y;
         return onWall;
@@ -139,9 +139,9 @@ namespace pandora_alert_handler
     }
 
     geometry_msgs::Quaternion PoseFinder::findAppropriateOrientation(
-        const Point& framePoint, const Point& alertPoint)
+        const geometry_msgs::Point& framePoint, const geometry_msgs::Point& alertPoint)
     {
-      std::vector< std::vector<Point> > freeArcs;
+      std::vector< std::vector<geometry_msgs::Point> > freeArcs;
       float x = 0, y = 0;
       unsigned int i, j;
       bool freeSpace = false;
@@ -153,11 +153,11 @@ namespace pandora_alert_handler
 
         if (CELL(x, y, map_) < OCCUPIED_CELL_THRES * 100) {
           if (!freeSpace) {
-            std::vector<Point> freeArc;
+            std::vector<geometry_msgs::Point> freeArc;
             freeArcs.push_back(freeArc);
             freeSpace = true;
           }
-          Point temp;
+          geometry_msgs::Point temp;
           temp.x = x;
           temp.y = y;
           freeArcs.back().push_back(temp);
@@ -175,15 +175,15 @@ namespace pandora_alert_handler
       y = alertPoint.y + ORIENTATION_CIRCLE * sin(i * DEGREE);
       bool first_point = CELL(x, y, map_) < OCCUPIED_CELL_THRES * 100;
       if (first_point == true && last_point == true) {
-        std::vector<Point> lastFreeArc = freeArcs.back();
+        std::vector<geometry_msgs::Point> lastFreeArc = freeArcs.back();
         freeArcs.pop_back();
         freeArcs[0].insert(freeArcs[0].end(), lastFreeArc.begin(), lastFreeArc.end());
       }
 
-      Point approachPoint;
+      geometry_msgs::Point approachPoint;
       float smallestDistance = std::numeric_limits<float>::max();
       for (i = 0; i < freeArcs.size(); ++i) {
-        Point middle;
+        geometry_msgs::Point middle;
         for (j = 0; j < freeArcs[i].size(); ++j) {
           middle.x += freeArcs[i][j].x / freeArcs[i].size();
           middle.y += freeArcs[i][j].y / freeArcs[i].size();

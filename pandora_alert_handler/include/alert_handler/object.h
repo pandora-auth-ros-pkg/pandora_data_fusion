@@ -240,7 +240,7 @@ namespace pandora_data_fusion
          * @brief Returns the object's pose
          * @return geometry_msgs::PoseStamped The object's pose
          */
-        virtual PoseStamped getPoseStamped() const;
+        virtual geometry_msgs::PoseStamped getPoseStamped() const;
 
         /**
          * @brief Updates this object with the measurement.
@@ -299,7 +299,7 @@ namespace pandora_data_fusion
          * @brief Getter for member pose_
          * @return geometry_msgs::Pose& The object's pose
          */
-        Pose getPose() const
+        geometry_msgs::Pose getPose() const
         {
           return pose_;
         }
@@ -358,7 +358,7 @@ namespace pandora_data_fusion
          * @param pose [const geometry_msgs::Pose&] The new pose value
          * @return void
          */
-        void setPose(const Pose& pose)
+        void setPose(const geometry_msgs::Pose& pose)
         {
           pose_ = pose;
         }
@@ -376,7 +376,7 @@ namespace pandora_data_fusion
         ros::Time timeFound_;
 
         //!< The object's pose in 3d space
-        Pose pose_;
+        geometry_msgs::Pose pose_;
 
       private:
         friend class ObjectListTest;
@@ -408,9 +408,9 @@ namespace pandora_data_fusion
       typename Object<DerivedObject>::ListPtr Object<DerivedObject>::listPtr_;
 
     template <class DerivedObject>
-      PoseStamped Object<DerivedObject>::getPoseStamped() const
+      geometry_msgs::PoseStamped Object<DerivedObject>::getPoseStamped() const
       {
-        PoseStamped objPoseStamped;
+        geometry_msgs::PoseStamped objPoseStamped;
         objPoseStamped.pose = pose_;
         objPoseStamped.header.frame_id = frame_id_;
         objPoseStamped.header.stamp = ros::Time::now();
