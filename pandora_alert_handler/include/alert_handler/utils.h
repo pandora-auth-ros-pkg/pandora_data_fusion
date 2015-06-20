@@ -42,13 +42,14 @@
 #define ALERT_HANDLER_UTILS_H
 
 #include <utility>
+#include <cmath>
 #include <boost/utility.hpp>
 
 #include <ros/ros.h>
-#include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
 
-#include <std_msgs/Empty.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Quaternion.h>
 
 #include "alert_handler/exceptions.h"
 #include "alert_handler/defines.h"
@@ -67,6 +68,9 @@ namespace pandora_data_fusion
         static float distanceBetweenPoints(Point a, Point b, bool is3D);
         static bool arePointsInRange(Point pointA, Point pointB,
             bool is3D, float sensor_range);
+        static bool isOrientationClose(geometry_msgs::Quaternion orientA,
+            geometry_msgs::Quaternion orientB,
+            float diff_thres);
         static geometry_msgs::Quaternion calculateQuaternion(Point a,
             Point b);
         static Point vector3ToPoint(tf::Vector3 vector);

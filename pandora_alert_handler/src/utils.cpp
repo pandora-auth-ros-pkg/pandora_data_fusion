@@ -88,7 +88,7 @@ namespace pandora_data_fusion
 
       yaw = atan2(b.y - a.y, b.x - a.x);
 
-      return tf::createQuaternionMsgFromRollPitchYaw(0, 0, yaw);
+      return tf::createQuaternionMsgFromYaw(yaw);
     }
 
     Point Utils::vector3ToPoint(tf::Vector3 vector)
@@ -105,11 +105,16 @@ namespace pandora_data_fusion
         bool is3D, float sensor_range)
     {
       float dist = distanceBetweenPoints(pointA, pointB, is3D);
+      return dist <= sensor_range;
+    }
 
-      if (dist > sensor_range)
-        return false;
-      else
-        return true;
+    bool Utils::isOrientationClose(geometry_msgs::Quaternion orientA,
+        geometry_msgs::Quaternion orientB,
+        float diff_thres)
+    {
+      double yawA = tf::getYaw(orientA);
+      double yawB = tf::getYaw(orientB);
+      return fabs(yawA - yawB) < diff_thres;
     }
 
     float Utils::probabilityFromStdDev(float boundingRadius, float deviation)
