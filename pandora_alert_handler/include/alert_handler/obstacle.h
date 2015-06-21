@@ -71,7 +71,6 @@ namespace pandora_alert_handler
     /* public methods */
     virtual bool isSameObject(const ObjectConstPtr& object) const;
     virtual void update(const ObjectConstPtr& measurement);
-    virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
     uint8_t getObstacleType() const;
     void setObstacleType(uint8_t obstacleType);
@@ -82,7 +81,7 @@ namespace pandora_alert_handler
     double getWidth() const;
     void setWidth(double width);
 
-   private:
+   protected:
     /* data */
     uint8_t obstacleType_;
     double length_;
