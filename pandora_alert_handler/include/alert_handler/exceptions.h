@@ -46,22 +46,29 @@
 
 namespace pandora_data_fusion
 {
-  namespace pandora_alert_handler
+namespace pandora_alert_handler
+{
+
+  class TfException : public std::runtime_error
   {
+    public:
+      explicit TfException(const std::string& errorDescription) :
+        std::runtime_error(errorDescription) {}
+  };
 
-    class TfException : public std::runtime_error
-    {
-      public:
-        explicit TfException(const std::string errorDescription) :
-          std::runtime_error(errorDescription) {}
-    };
+  class AlertException : public std::runtime_error
+  {
+    public:
+      explicit AlertException(const std::string& errorDescription) :
+        std::runtime_error(errorDescription) {}
+  };
 
-    class AlertException : public std::runtime_error
-    {
-      public:
-        explicit AlertException(const std::string errorDescription) :
-          std::runtime_error(errorDescription) {}
-    };
+  class ObstacleTypeException : public std::runtime_error
+  {
+    public:
+      explicit ObstacleTypeException(const std::string& errorDescription) :
+        std::runtime_error(errorDescription) {}
+  };
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
