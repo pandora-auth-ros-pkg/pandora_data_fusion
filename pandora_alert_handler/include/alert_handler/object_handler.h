@@ -121,6 +121,7 @@ namespace pandora_alert_handler
     private:
       ros::Publisher qrPublisher_;
       ros::Publisher scorePublisher_;
+      ros::Publisher obstaclePublisher_;
 
       VictimListConstPtr victimsToGoList_;
       VictimListConstPtr victimsVisitedList_;
@@ -235,9 +236,11 @@ namespace pandora_alert_handler
     {
       ObstaclePtr obstacleToSend;
       if (Obstacle::getList()->add(newObstacles->at(ii))) {
+        ROS_DEBUG("[ObjectHandler %d] Found new obstacle!", __LINE__);
         obstacleToSend = newObstacles->at(ii);
       }
       else {
+        ROS_DEBUG("[ObjectHandler %d] Fetching old obstacle", __LINE__);
         // Fetch object from list
       }
       // Create and send info message to navigation
@@ -251,6 +254,7 @@ namespace pandora_alert_handler
       obstacleInfo.type = obstacleToSend->getObstacleType();
       obstacleInfo.valid = true;
       // Publish order for obstacle costmap
+      obstaclePublisher_.publish(obstacleInfo);
     }
   }
 
@@ -269,8 +273,6 @@ namespace pandora_alert_handler
       bool valid = false;
       valid = victimsToGoList_->isObjectPoseInList(
           (*iter), VICTIM_CLUSTER_RADIUS);
-      // valid = valid ||
-      //   victimsVisitedList_->isObjectPoseInList((*iter), VICTIM_CLUSTER_RADIUS);
       if (!valid)
       {
         ROS_DEBUG_NAMED("OBJECT_HANDLER",

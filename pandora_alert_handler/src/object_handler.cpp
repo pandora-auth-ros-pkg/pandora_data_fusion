@@ -62,7 +62,7 @@ namespace pandora_alert_handler
     }
     else
     {
-      ROS_FATAL("[ALERT_HANDLER] qr_notification topic name param not found");
+      ROS_FATAL("[ObjectHandler %d] qr_notification topic name param not found", __LINE__);
       ROS_BREAK();
     }
 
@@ -72,7 +72,17 @@ namespace pandora_alert_handler
     }
     else
     {
-      ROS_FATAL("[ALERT_HANDLER] robocup_score topic name param not found");
+      ROS_FATAL("[ObjectHandler %d] robocup_score topic name param not found", __LINE__);
+      ROS_BREAK();
+    }
+
+    if (nh->getParam("published_topic_names/obstacle_info", param))
+    {
+      obstaclePublisher_ = nh->advertise<pandora_data_fusion_msgs::ObstacleInfo>(param, 10);
+    }
+    else
+    {
+      ROS_FATAL("[ObjectHandler %d] obstacle_info topic name param not found", __LINE__);
       ROS_BREAK();
     }
   }
