@@ -327,7 +327,7 @@ namespace pandora_data_fusion
         void setId(int id)
         {
           id_ = id;
-          frame_id_ = type_ + "_" + boost::to_string(id_);
+          frame_id_ = setFrameId(id);
         }
 
         /**
@@ -367,6 +367,11 @@ namespace pandora_data_fusion
         void setPose(const geometry_msgs::Pose& pose)
         {
           pose_ = pose;
+        }
+
+        virtual std::string setFrameId(int id)
+        {
+          return type_ + "_" + boost::to_string(id);
         }
 
       protected:
