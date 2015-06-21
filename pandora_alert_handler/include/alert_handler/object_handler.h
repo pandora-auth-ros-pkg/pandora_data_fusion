@@ -235,6 +235,7 @@ namespace pandora_alert_handler
     for (int ii = 0; ii < newObstacles->size(); ++ii)
     {
       ObstaclePtr obstacleToSend;
+      bool obstacleToSendFound = true;
       if (Obstacle::getList()->add(newObstacles->at(ii))) {
         ROS_DEBUG("[ObjectHandler %d] Found new obstacle!", __LINE__);
         obstacleToSend = newObstacles->at(ii);
@@ -242,19 +243,29 @@ namespace pandora_alert_handler
       else {
         ROS_DEBUG("[ObjectHandler %d] Fetching old obstacle", __LINE__);
         // Fetch object from list
+        typename Obstacle::List::IteratorList obstacleListIteratorList;
+        obstacleToSendFound = Obstacle::getList()->isAnExistingObject(
+            newObstacles->at(ii), &obstacleListIteratorList);
+        if (obstacleToSendFound) {
+          ROS_WARN_COND(obstacleListIteratorList.size() != 1,
+              "[ObjectHandler %d] New obstacle matched with more than one old ones", __LINE__);
+          obstacleToSend = *(*obstacleListIteratorList.begin());
+        }
       }
-      // Create and send info message to navigation
-      pandora_data_fusion_msgs::ObstacleInfo obstacleInfo;
-      obstacleInfo.id = obstacleToSend->getId();
-      obstacleInfo.obstacleFrameId = obstacleToSend->getFrameId();
-      obstacleInfo.obstaclePose = obstacleToSend->getPoseStamped();
-      obstacleInfo.probability = obstacleToSend->getProbability();
-      obstacleInfo.length = obstacleToSend->getLength();
-      obstacleInfo.width = obstacleToSend->getWidth();
-      obstacleInfo.type = obstacleToSend->getObstacleType();
-      obstacleInfo.valid = true;
-      // Publish order for obstacle costmap
-      obstaclePublisher_.publish(obstacleInfo);
+      if (obstacleToSendFound) {
+        // Create and send info message to navigation
+        pandora_data_fusion_msgs::ObstacleInfo obstacleInfo;
+        obstacleInfo.id = obstacleToSend->getId();
+        obstacleInfo.obstacleFrameId = obstacleToSend->getFrameId();
+        obstacleInfo.obstaclePose = obstacleToSend->getPoseStamped();
+        obstacleInfo.probability = obstacleToSend->getProbability();
+        obstacleInfo.length = obstacleToSend->getLength();
+        obstacleInfo.width = obstacleToSend->getWidth();
+        obstacleInfo.type = obstacleToSend->getObstacleType();
+        obstacleInfo.valid = true;
+        // Publish order for obstacle costmap
+        obstaclePublisher_.publish(obstacleInfo);
+      }
     }
   }
 

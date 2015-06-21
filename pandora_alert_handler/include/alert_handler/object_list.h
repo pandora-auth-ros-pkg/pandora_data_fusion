@@ -95,10 +95,10 @@ namespace pandora_data_fusion
           void getObjectsTfInfo(PoseStampedVector* poses) const;
           void fillGeotiff(pandora_data_fusion_msgs::GeotiffSrv::Response* res) const;
           void getVisualization(visualization_msgs::MarkerArray* markers) const;
-
-        protected:
           bool isAnExistingObject(
               const ConstPtr& object, IteratorList* iteratorListPtr);
+
+        protected:
 
           virtual void updateObjects(const ConstPtr& object,
               const IteratorList& iteratorList);
