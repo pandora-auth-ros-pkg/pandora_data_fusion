@@ -98,8 +98,8 @@ namespace pandora_alert_handler
         const boost::array<double, 4>& pointsDepth,
         const tf::Transform& tfTransform, double* length)
     {
-      geometry_msgs::Point leftPoint = projectAlertPosition(pointsYaw[0],
-          pointsPitch[0], pointsDepth[0], tfTransform);
+      geometry_msgs::Point leftPoint = projectAlertPosition(pointsYaw[3],
+          pointsPitch[3], pointsDepth[3], tfTransform);
       geometry_msgs::Point rightPoint = projectAlertPosition(pointsYaw[1],
           pointsPitch[1], pointsDepth[1], tfTransform);
       geometry_msgs::Quaternion orientation = Utils::calculateQuaternion(leftPoint, rightPoint);
