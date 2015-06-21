@@ -62,8 +62,6 @@ namespace pandora_alert_handler
     public:
       ObjectFactory(const MapPtr& map, const std::string& mapType);
 
-      HolePtrVectorPtr makeHoles(const Hole::AlertVector& msg);
-      ObstaclePtrVectorPtr makeObstacles(const Obstacle::AlertVector& msg);
       template <class ObjectType>
         typename ObjectType::PtrVectorPtr makeObjects(
             const typename ObjectType::AlertVector& msg);
@@ -92,11 +90,11 @@ namespace pandora_alert_handler
             const typename ObjectType::Alert& msg,
             const ros::Time& timeFound,
             const tf::Transform& transform);
-      void setUpObstacle(
-          const ObstaclePtr& obstaclePtr,
-          const Obstacle::Alert& msg,
-          const ros::Time& timeFound,
-          const tf::Transform& transform);
+      // template <> void setUpObject<Obstacle>(
+      //       const typename Obstacle::Ptr& objectPtr,
+      //       const typename Obstacle::Alert& msg,
+      //       const ros::Time& timeFound,
+      //       const tf::Transform& transform);
 
     private:
       tf::Transform currentTransform_;
@@ -105,32 +103,6 @@ namespace pandora_alert_handler
 
       double SOFT_OBSTACLE_WIDTH;
   };
-
-  template <class ObjectType>
-  typename ObjectType::PtrVectorPtr ObjectFactory::makeObjects(
-      const typename ObjectType::AlertVector& msg)
-  {
-    currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
-
-    typename ObjectType::PtrVectorPtr objectsVectorPtr(
-        new typename ObjectType::PtrVector);
-    for (int ii = 0; ii < msg.alerts.size(); ++ii) {
-      try
-      {
-        typename ObjectType::Ptr newObject( new ObjectType );
-        setUpObject<ObjectType>(newObject, msg.alerts[ii],
-                                msg.header.stamp, currentTransform_);
-        objectsVectorPtr->push_back(newObject);
-      }
-      catch (AlertException ex)
-      {
-        ROS_WARN_NAMED("ALERT_HANDLER",
-            "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
-      }
-    }
-
-    return objectsVectorPtr;
-  }
 
   template <class ObjectType>
   void ObjectFactory::setUpObject(
@@ -210,7 +182,6 @@ namespace pandora_alert_handler
     geometry_msgs::Pose obstaclePose = poseFinder_->findPoseFromPoints(
         msg.pointsYaw, msg.pointsPitch, msg.pointsDepth, transform, &length);
     objectPtr->setPose(obstaclePose);
-    objectPtr->setObstacleType(msg.type);
     if (msg.type == pandora_vision_msgs::ObstacleAlert::SOFT_OBSTACLE) {
       objectPtr->setLength(length);
       objectPtr->setWidth(SOFT_OBSTACLE_WIDTH);
@@ -218,6 +189,72 @@ namespace pandora_alert_handler
     objectPtr->setProbability(msg.probability);
     objectPtr->setTimeFound(timeFound);
     objectPtr->initializeObjectFilter();
+  }
+
+  template <class ObjectType>
+  typename ObjectType::PtrVectorPtr ObjectFactory::makeObjects(
+      const typename ObjectType::AlertVector& msg)
+  {
+    currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+
+    typename ObjectType::PtrVectorPtr objectsVectorPtr(
+        new typename ObjectType::PtrVector);
+    for (int ii = 0; ii < msg.alerts.size(); ++ii) {
+      try
+      {
+        typename ObjectType::Ptr newObject( new ObjectType );
+        setUpObject<ObjectType>(newObject, msg.alerts[ii],
+                                msg.header.stamp, currentTransform_);
+        objectsVectorPtr->push_back(newObject);
+      }
+      catch (AlertException ex)
+      {
+        ROS_WARN_NAMED("ALERT_HANDLER",
+            "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
+      }
+    }
+
+    return objectsVectorPtr;
+  }
+
+  template <>
+  typename Obstacle::PtrVectorPtr ObjectFactory::makeObjects<Obstacle>(
+      const typename Obstacle::AlertVector& msg)
+  {
+    currentTransform_ = poseFinder_->lookupTransformFromWorld(msg.header);
+
+    typename Obstacle::PtrVectorPtr obstacleVectorPtr(new typename Obstacle::PtrVector);
+    for (int ii = 0; ii < msg.alerts.size(); ++ii) {
+      try
+      {
+        typename Obstacle::Ptr newObstacle;
+        switch (msg.alerts[ii].type) {
+          case pandora_vision_msgs::ObstacleAlert::BARREL:
+            newObstacle.reset( new Barrel );
+            break;
+          case pandora_vision_msgs::ObstacleAlert::SOFT_OBSTACLE:
+            newObstacle.reset( new SoftObstacle );
+            break;
+          case pandora_vision_msgs::ObstacleAlert::HARD_OBSTACLE:
+            newObstacle.reset( new HardObstacle );
+            break;
+          default:
+            throw ObstacleTypeException(
+                "Non-registered obstacle type "+boost::to_string(msg.alerts[ii].type));
+            break;
+        }
+        setUpObject<Obstacle>(newObstacle, msg.alerts[ii],
+                              msg.header.stamp, currentTransform_);
+        obstacleVectorPtr->push_back(newObstacle);
+      }
+      catch (AlertException ex)
+      {
+        ROS_WARN_NAMED("ALERT_HANDLER",
+            "[ALERT_HANDLER_OBJECT_FACTORY %d] %s", __LINE__, ex.what());
+      }
+    }
+
+    return obstacleVectorPtr;
   }
 
   typedef boost::scoped_ptr<ObjectFactory> ObjectFactoryPtr;

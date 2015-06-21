@@ -277,7 +277,7 @@ namespace pandora_alert_handler
       {
         objectsVectorPtr = objectFactory_->makeObjects<ObjectType>(msg);
       }
-      catch (TfException ex)
+      catch (std::runtime_error& ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d] %s",  __LINE__, ex.what());
         return;
@@ -306,9 +306,9 @@ namespace pandora_alert_handler
       HolePtrVectorPtr holesVectorPtr;
       try
       {
-        holesVectorPtr = objectFactory_->makeHoles(msg);
+        holesVectorPtr = objectFactory_->makeObjects<Hole>(msg);
       }
-      catch (TfException ex)
+      catch (std::runtime_error& ex)
       {
         ROS_ERROR("[ALERT_HANDLER %d] %s",  __LINE__, ex.what());
         return;
