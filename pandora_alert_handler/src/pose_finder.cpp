@@ -93,15 +93,15 @@ namespace pandora_alert_handler
     }
 
     geometry_msgs::Pose PoseFinder::findPoseFromPoints(
-        const std::pair<double, double>& pointsYaw,
-        const std::pair<double, double>& pointsPitch,
-        const std::pair<double, double>& pointsDepth,
+        const boost::array<double, 4>& pointsYaw,
+        const boost::array<double, 4>& pointsPitch,
+        const boost::array<double, 4>& pointsDepth,
         const tf::Transform& tfTransform, double* length)
     {
-      geometry_msgs::Point leftPoint = projectAlertPosition(pointsYaw.first,
-          pointsPitch.first, pointsDepth.first, tfTransform);
-      geometry_msgs::Point rightPoint = projectAlertPosition(pointsYaw.second,
-          pointsPitch.second, pointsDepth.second, tfTransform);
+      geometry_msgs::Point leftPoint = projectAlertPosition(pointsYaw[0],
+          pointsPitch[0], pointsDepth[0], tfTransform);
+      geometry_msgs::Point rightPoint = projectAlertPosition(pointsYaw[1],
+          pointsPitch[1], pointsDepth[1], tfTransform);
       geometry_msgs::Quaternion orientation = Utils::calculateQuaternion(leftPoint, rightPoint);
       *length = Utils::distanceBetweenPoints2D(leftPoint, rightPoint);
       geometry_msgs::Pose outPose;

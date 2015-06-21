@@ -49,5 +49,6 @@
 #include "alert_handler/co2.h"
 #include "alert_handler/landoltc.h"
 #include "alert_handler/data_matrix.h"
+#include "alert_handler/obstacle.h"
 
 #endif  // ALERT_HANDLER_OBJECTS_H

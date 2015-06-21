@@ -65,11 +65,6 @@ namespace pandora_alert_handler
     typedef pandora_vision_msgs::ObstacleAlertVector AlertVector;
 
    public:
-    static void setUpObject(const Ptr& ptr, const Alert& msg)
-    {
-      ptr->setObstacleType(msg.type);
-    }
-
     Obstacle ();
     virtual ~Obstacle ();
 

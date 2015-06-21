@@ -43,6 +43,7 @@
 #include <vector>
 #include <string>
 #include <boost/utility.hpp>
+#include <boost/array.hpp>
 
 #include <tf/transform_broadcaster.h>
 
@@ -67,9 +68,9 @@ namespace pandora_alert_handler
     geometry_msgs::Pose findAlertPose(double alertYaw, double alertPitch,
                        const tf::Transform& tfTransform);
     geometry_msgs::Pose findPoseFromPoints(
-        const std::pair<double, double>& pointsYaw,
-        const std::pair<double, double>& pointsPitch,
-        const std::pair<double, double>& pointsDepth,
+        const boost::array<double, 4>& pointsYaw,
+        const boost::array<double, 4>& pointsPitch,
+        const boost::array<double, 4>& pointsDepth,
         const tf::Transform& tfTransform, double* length);
     geometry_msgs::Point projectAlertPosition(double alertYaw, double alertPitch,
         double depth, const tf::Transform& tfTransform);
