@@ -54,6 +54,21 @@ namespace pandora_alert_handler
     return isSame;
   }
 
+  void Obstacle::update(const ObjectConstPtr& measurement)
+  {
+    KalmanObject<Obstacle>::update(measurement);
+
+    ObstacleConstPtr obstacleMeas = boost::dynamic_pointer_cast<Obstacle const>(measurement);
+    double newLength = obstacleMeas->getLength();
+    if (newLength > length_) {
+      length_ = newLength;
+    }
+    double newWidth = obstacleMeas->getWidth();
+    if (newWidth > width_) {
+      width_ = newWidth;
+    }
+  }
+
   void Obstacle::getVisualization(visualization_msgs::MarkerArray* markers) const
   {
     // visualization_msgs::Marker marker;

@@ -70,6 +70,7 @@ namespace pandora_alert_handler
 
     /* public methods */
     virtual bool isSameObject(const ObjectConstPtr& object) const;
+    virtual void update(const ObjectConstPtr& measurement);
     virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
     uint8_t getObstacleType() const;
