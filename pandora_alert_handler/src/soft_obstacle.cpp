@@ -63,17 +63,17 @@ namespace pandora_alert_handler
     marker.id = id_;
     marker.pose = pose_;
     marker.type = visualization_msgs::Marker::LINE_LIST;
-    marker.scale.x = 0.1;
-    marker.color.r = 0;
-    marker.color.g = 0;
+    marker.scale.x = 0.2;
+    marker.color.r = 0.8;
+    marker.color.g = 0.2;
     marker.color.b = 0;
-    marker.color.a = 1.0;
-    int iSize = length_ / 0.1;
+    marker.color.a = 0.5;
+    int iSize = length_ / 0.2;
     for (int i = -iSize/2; i < iSize/2 + 1; i++) {
       geometry_msgs::Point point;
-      point.x = i * 0.1;
+      point.x = i * 0.2;
       marker.points.push_back(point);
-      point.z = 0.3;
+      point.z = 1.0;
       marker.points.push_back(point);
     }
     markers->markers.push_back(marker);
