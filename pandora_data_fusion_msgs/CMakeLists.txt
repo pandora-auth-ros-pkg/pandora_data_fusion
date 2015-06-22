@@ -29,7 +29,7 @@ add_service_files(
 
 add_action_files(
   FILES
-    DeleteVictim.action
+    ChooseVictim.action
     ValidateVictim.action
   )
 
