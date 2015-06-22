@@ -109,20 +109,26 @@ namespace pandora_data_fusion
 
       if (victimsToGoList_->size() != 0)
       {
-        VictimList::const_iterator currentVictim = victimsToGoList_->begin();
-        ros::Time oldestVictim = (*currentVictim)->getTimeFound();
-        for (VictimList::const_iterator it = ++victimsToGoList_->begin();
-            it != victimsToGoList_->end(); it++)
-        {
-          if ((*it)->getTimeFound() < oldestVictim)
+        VictimConstPtr currentVictim;
+        if (targetedVictim_.get() == NULL) {
+          currentVictim = *(victimsToGoList_->begin());
+          ros::Time oldestVictim = currentVictim->getTimeFound();
+          for (VictimList::const_iterator it = ++victimsToGoList_->begin();
+              it != victimsToGoList_->end(); it++)
           {
-            oldestVictim = (*it)->getTimeFound();
-            currentVictim = it;
+            if ((*it)->getTimeFound() < oldestVictim)
+            {
+              currentVictim = *it;
+              oldestVictim = currentVictim->getTimeFound();
+            }
           }
+        }
+        else {
+          currentVictim = targetedVictim_;
         }
 
         pandora_data_fusion_msgs::GlobalProbabilitiesMsg probabilities;
-        ObjectConstPtrVector currentVictimsObjects = (*currentVictim)->getObjects();
+        ObjectConstPtrVector currentVictimsObjects = currentVictim->getObjects();
         for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
         {
           if (currentVictimsObjects[ii]->getType() == VictimImage::getObjectType())
@@ -159,14 +165,12 @@ namespace pandora_data_fusion
       return result;
     }
 
-    /**
-     * @details Delegate to victimList
-     */
-    void VictimHandler::getVictimsInfo(
-        pandora_data_fusion_msgs::WorldModelMsg* worldModelMsg)
+    bool VictimHandler::targetVictim(int victimId)
     {
-      victimsToGoList_->getVictimsInfo(&(worldModelMsg->victims));
-      victimsVisitedList_->getVictimsInfo(&(worldModelMsg->visitedVictims));
+      targetedVictim_ = victimsToGoList_->targetVictim(victimId);
+      if (targetedVictim_.get())
+        return true;
+      return false;
     }
 
     /**
@@ -184,6 +188,9 @@ namespace pandora_data_fusion
         Motion::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
         Sound::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
         Co2::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+        if (targetedVictim_->getId() == victimId) {
+          targetedVictim_.reset();
+        }
       }
       return deleted;
     }
@@ -191,19 +198,34 @@ namespace pandora_data_fusion
     /**
      * @details Delegate to victimList
      */
-    bool VictimHandler::validateVictim(int victimId, bool victimValid)
+    bool VictimHandler::validateVictim(int victimId, bool victimVerified,
+        bool victimValid)
     {
-      VictimPtr currentVictim = victimsToGoList_->validateVictim(victimId, victimValid);
+      VictimPtr currentVictim = victimsToGoList_->validateVictim(victimId,
+          victimVerified, victimValid);
 
       if (currentVictim.get())
       {
         victimsVisitedList_->addUnchanged(currentVictim);
+        if (targetedVictim_->getId() == victimId) {
+          targetedVictim_.reset();
+        }
         return true;
       }
       return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @details Delegate to victimList
+     */
+    void VictimHandler::getVictimsInfo(
+        pandora_data_fusion_msgs::WorldModelMsg* worldModelMsg)
+    {
+      victimsToGoList_->getVictimsInfo(&(worldModelMsg->victims));
+      victimsVisitedList_->getVictimsInfo(&(worldModelMsg->visitedVictims));
+    }
 
     void VictimHandler::getVictimsPosesStamped(PoseStampedVector* victimsToGo,
         PoseStampedVector* victimsVisited)

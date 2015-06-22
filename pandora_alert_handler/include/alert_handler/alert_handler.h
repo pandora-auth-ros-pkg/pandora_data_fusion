@@ -56,7 +56,7 @@
 
 #include "pandora_data_fusion_msgs/WorldModelMsg.h"
 #include "pandora_data_fusion_msgs/VictimInfoMsg.h"
-#include "pandora_data_fusion_msgs/DeleteVictimAction.h"
+#include "pandora_data_fusion_msgs/ChooseVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"
 #include "pandora_data_fusion_msgs/GeotiffSrv.h"
@@ -86,7 +86,9 @@ namespace pandora_alert_handler
   //!< Type Definitions
   typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
   typedef actionlib::SimpleActionServer
-    <pandora_data_fusion_msgs::DeleteVictimAction> DeleteVictimServer;
+    <pandora_data_fusion_msgs::ChooseVictimAction> TargetVictimServer;
+  typedef actionlib::SimpleActionServer
+    <pandora_data_fusion_msgs::ChooseVictimAction> DeleteVictimServer;
   typedef actionlib::SimpleActionServer
     <pandora_data_fusion_msgs::ValidateVictimAction>
     ValidateVictimServer;
@@ -102,6 +104,12 @@ namespace pandora_alert_handler
       explicit AlertHandler(const std::string& ns);
 
       /* Victim-concerned Goal Callbacks */
+
+      /**
+       * @brief: Client is Agent. Set which victim is currently targeted
+       * @return: void
+       */
+      void targetVictimCallback();
 
       /**
         * @brief Client is Agent. Order to delete Victim.
@@ -203,6 +211,7 @@ namespace pandora_alert_handler
       tf::TransformBroadcaster objectsBroadcaster_;
       ros::Timer tfPublisherTimer_;
 
+      boost::shared_ptr<TargetVictimServer> targetVictimServer_;
       boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
       boost::shared_ptr<ValidateVictimServer> validateVictimServer_;
 

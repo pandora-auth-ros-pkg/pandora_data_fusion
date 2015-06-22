@@ -110,6 +110,8 @@ namespace pandora_data_fusion
          */
         void flush();
 
+        bool targetVictim(int victimId);
+
         /**
          * @brief Deletes VictimPtr from VictimsToGo list with victimId.
          * @param victimId [int] victim's id
@@ -120,11 +122,12 @@ namespace pandora_data_fusion
         /**
          * @brief Validates current victim.
          * @param victimId [int] Id of victim to be validated.
-         * @param victimValid [bool] True for positive and false for
-         * negative validation
+         * @param victimVerified [bool] If current victim was verified by agent
+         * as positive or not
+         * @param victimValid [bool] If current victim is confirmed as valid or not
          * @return bool true, if succeded, false, if not found
          */
-        bool validateVictim(int victimId, bool victimValid);
+        bool validateVictim(int victimId, bool victimVerified, bool victimValid);
 
         /**
          * @brief Fills victimsMsg with information about victims to go.
@@ -177,6 +180,7 @@ namespace pandora_data_fusion
       private:
         //!< Publisher for victim concerned probabilities.
         ros::Publisher probabilitiesPublisher_;
+        VictimPtr targetedVictim_;
 
         //!< Victim Clusterer.
         VictimClustererPtr clusterer_;

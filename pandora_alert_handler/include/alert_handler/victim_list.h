@@ -91,6 +91,8 @@ namespace pandora_data_fusion
         void getVictimsInfo(
             std::vector<pandora_data_fusion_msgs::VictimInfoMsg>* victimsMsg);
 
+        VictimPtr targetVictim(int victimId);
+
         /**
          * @brief Deletes VictimPtr with the corresponding victimId
          * @param victimId [int] id that will be used to search for the victim
@@ -103,10 +105,13 @@ namespace pandora_data_fusion
         /**
          * @brief Validates victim with victimId.
          * @param victimId [int] current victim's unique id
-         * @param victimValid [bool] If current victim is valid or not
+         * @param victimVerified [bool] If current victim was verified by agent
+         * as positive or not
+         * @param victimValid [bool] If current victim is confirmed as valid or not
          * @return VictimPtr pointer to current victim
          */
-        VictimPtr validateVictim(int victimId, bool objectValid);
+        VictimPtr validateVictim(int victimId, bool victimVerified,
+            bool victimValid);
 
         /**
          * @brief Adds the given victim to the list as is, no checks and updates
@@ -126,6 +131,9 @@ namespace pandora_data_fusion
          */
         void updateObjects(const ConstPtr& victim,
             const IteratorList& iteratorList);
+
+      private:
+        VictimPtr targetedVictim_;
 
       private:
         friend class VictimListTest;

@@ -199,6 +199,19 @@ namespace pandora_alert_handler
 
     // Action Servers
 
+    if (nh_->getParam("action_server_names/target_victim", param))
+    {
+      targetVictimServer_.reset(new TargetVictimServer(*nh_, param, false));
+    }
+    else
+    {
+      ROS_FATAL("[ALERT_HANDLER] target_victim action name param not found");
+      ROS_BREAK();
+    }
+    targetVictimServer_->registerGoalCallback(
+        boost::bind(&AlertHandler::targetVictimCallback, this));
+    targetVictimServer_->start();
+
     if (nh_->getParam("action_server_names/delete_victim", param))
     {
       deleteVictimServer_.reset(new DeleteVictimServer(*nh_, param, false));
@@ -321,6 +334,15 @@ namespace pandora_alert_handler
     }
   }
 
+  void AlertHandler::targetVictimCallback()
+  {
+    int victimId = targetVictimServer_->acceptNewGoal()->victimId;
+    bool targeted = victimHandler_->targetVictim(victimId);
+    if (!targeted)
+      targetVictimServer_->setAborted();
+    targetVictimServer_->setSucceeded();
+  }
+
   void AlertHandler::deleteVictimCallback()
   {
     int victimId = deleteVictimServer_->acceptNewGoal()->victimId;
@@ -334,7 +356,8 @@ namespace pandora_alert_handler
   void AlertHandler::validateVictimCallback()
   {
     GoalConstPtr goal = validateVictimServer_->acceptNewGoal();
-    bool validated = victimHandler_->validateVictim(goal->victimId, goal->victimValid);
+    bool validated = victimHandler_->validateVictim(goal->victimId,
+        goal->victimVerified, goal->victimValid);
     publishVictims();
     if (!validated)
       validateVictimServer_->setAborted();

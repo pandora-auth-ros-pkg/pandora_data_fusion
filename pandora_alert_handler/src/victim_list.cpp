@@ -81,15 +81,20 @@ namespace pandora_data_fusion
       ROS_ASSERT(iteratorList.size() > 0);
 
       iterator victimToUpdate = *(iteratorList.begin());
-      ros::Time oldestVictim = (*victimToUpdate)->getTimeFound();
+      if ((*victimToUpdate)->getId() != targetedVictim_->getId()) {
+        ros::Time oldestVictim = (*victimToUpdate)->getTimeFound();
 
-      for (IteratorList::const_iterator it = ++iteratorList.begin();
-          it != iteratorList.end() ; ++it)
-      {
-        if ((*(*it))->getTimeFound() < oldestVictim)
+        for (IteratorList::const_iterator it = ++iteratorList.begin();
+            it != iteratorList.end() ; ++it)
         {
-          oldestVictim = (*(*it))->getTimeFound();
-          victimToUpdate = *it;
+          if ((*(*it))->getId() == targetedVictim_->getId()) {
+            victimToUpdate = *it;
+            break;
+          }
+          if ((*(*it))->getTimeFound() < oldestVictim) {
+            oldestVictim = (*(*it))->getTimeFound();
+            victimToUpdate = *it;
+          }
         }
       }
 
@@ -122,8 +127,7 @@ namespace pandora_data_fusion
 
         victimInfo.id = (*it)->getId();
         victimInfo.victimFrameId = (*it)->getFrameId();
-        // mby replace with timeFound and its own frame_id
-        victimInfo.victimPose.header.stamp = ros::Time(0);
+        victimInfo.victimPose.header.stamp = ros::Time::now();
         victimInfo.victimPose.header.frame_id = Victim::getGlobalFrame();
         victimInfo.victimPose.pose = (*it)->getPose();
         victimInfo.probability = (*it)->getProbability();
@@ -135,10 +139,30 @@ namespace pandora_data_fusion
             victimInfo.sensors.push_back((*iter)->getType());
           }
         }
+        victimInfo.verified = (*it)->getVerified();
         victimInfo.valid = (*it)->getValid();
 
         victimsMsg->push_back(victimInfo);
       }
+    }
+
+    VictimPtr VictimList::targetVictim(int victimId)
+    {
+      VictimPtr currentVictim;
+
+      for (VictimList::iterator it = objects_.begin();
+          it != objects_.end(); ++it)
+      {
+        if ((*it)->getId() == victimId)
+        {
+          targetedVictim_ = *it;
+          targetedVictim_->setTargeted();
+          currentVictim = targetedVictim_;
+          break;
+        }
+      }
+
+      return currentVictim;
     }
 
     /**
@@ -155,6 +179,10 @@ namespace pandora_data_fusion
         {
           deletedVictim->setPose((*it)->getPose());
           objects_.erase(it);
+          if (targetedVictim_->getId() == victimId) {
+            targetedVictim_->clearTargeted();
+            targetedVictim_.reset();
+          }
           return true;
         }
       }
@@ -166,7 +194,8 @@ namespace pandora_data_fusion
      * Also, sets its validation variable according to agent's order.
      * Next this victim is deleted from victim list and returned.
      */
-    VictimPtr VictimList::validateVictim(int victimId, bool victimValid)
+    VictimPtr VictimList::validateVictim(int victimId, bool victimVerified,
+        bool victimValid)
     {
       VictimPtr currentVictim;
 
@@ -176,9 +205,14 @@ namespace pandora_data_fusion
         if ((*it)->getId() == victimId)
         {
           currentVictim = *it;
+          currentVictim->setVerified(victimVerified);
           currentVictim->setValid(victimValid);
           currentVictim->setVisited(true);
           objects_.erase(it);
+          if (targetedVictim_->getId() == victimId) {
+            targetedVictim_->clearTargeted();
+            targetedVictim_.reset();
+          }
           break;
         }
       }

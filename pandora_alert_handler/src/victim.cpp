@@ -36,6 +36,9 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <boost/algorithm/string.hpp>
+#include <string>
+
 #include "alert_handler/victim.h"
 
 namespace pandora_data_fusion
@@ -46,6 +49,8 @@ namespace pandora_data_fusion
     {
       lastVictimId_++;
       id_ = lastVictimId_;
+      isTargeted_ = false;
+      verified_ = false;
       valid_ = false;
       visited_ = false;
       timeFound_ = ros::Time::now();
@@ -77,35 +82,63 @@ namespace pandora_data_fusion
       victimMarker.scale.y = 0.1;
       victimMarker.scale.z = 0.1;
       victimDescription.scale.z = 0.1;
+      victimMarker.lifetime = ros::Duration(0.2);
+      victimDescription.lifetime = ros::Duration(0.2);
       if (visited_)
       {
-        victimMarker.color.r = 1;
+        boost::to_upper(victimDescription.text);
+        victimMarker.color.r = 0;
         victimMarker.color.g = 0;
         victimMarker.color.b = 0;
-        victimMarker.color.a = 1;
-        victimDescription.color.r = 1;
+        victimMarker.color.a = 0.7;
+        victimDescription.color.r = 0;
         victimDescription.color.g = 0;
         victimDescription.color.b = 0;
         victimDescription.color.a = 1;
         if (valid_)
         {
-          victimDescription.text = "VALID_" + victimDescription.text + "!!!!";
+          victimMarker.color.g = 1;
+          victimDescription.color.g = 1;
+          victimDescription.text = "VALID_" + victimDescription.text + "!";
         }
         else
         {
-          victimDescription.text = "REJECTED_" + victimDescription.text;
+          if (verified_) {
+            victimMarker.color.r = 1;
+            victimDescription.color.r = 1;
+            victimDescription.text = "REJECTED_" + victimDescription.text;
+          }
+          else {
+            victimMarker.color.r = 0.5;
+            victimMarker.color.b = 0.3;
+            victimDescription.color.r = 0.5;
+            victimDescription.color.b = 0.3;
+            victimDescription.text = "CANCELLED_" + victimDescription.text;
+          }
         }
       }
       else
       {
-        victimMarker.color.r = 0.94;
-        victimMarker.color.g = 0.1255;
-        victimMarker.color.b = 0.788;
-        victimMarker.color.a = 0.7;
-        victimDescription.color.r = 0.94;
-        victimDescription.color.g = 0.1255;
-        victimDescription.color.b = 0.788;
-        victimDescription.color.a = 0.7;
+        if (isTargeted_) {
+          victimMarker.color.r = 0;
+          victimMarker.color.g = 0.7;
+          victimMarker.color.b = 0.7;
+          victimMarker.color.a = 0.7;
+          victimDescription.color.r = 0;
+          victimDescription.color.g = 0.7;
+          victimDescription.color.b = 0.7;
+          victimDescription.color.a = 0.7;
+        }
+        else {
+          victimMarker.color.r = 0.94;
+          victimMarker.color.g = 0.1255;
+          victimMarker.color.b = 0.788;
+          victimMarker.color.a = 0.7;
+          victimDescription.color.r = 0.94;
+          victimDescription.color.g = 0.1255;
+          victimDescription.color.b = 0.788;
+          victimDescription.color.a = 0.7;
+        }
       }
 
       markers->markers.push_back(victimMarker);

@@ -112,6 +112,25 @@ namespace pandora_data_fusion
          */
         virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
+        void clearTargeted()
+        {
+          isTargeted_ = false;
+        }
+
+        void setTargeted()
+        {
+          isTargeted_ = true;
+        }
+
+        /**
+         * @brief Getter for member verified_
+         * @return bool verified_
+         */
+        bool getVerified() const
+        {
+          return verified_;
+        }
+
         /**
          * @brief Getter for member valid_
          * @return bool valid_
@@ -153,6 +172,16 @@ namespace pandora_data_fusion
          * @return tf::Transform
          */
         tf::Transform getRotatedTransform() const;
+
+        /**
+         * @brief Setter for member verified_
+         * @param verified [bool] The new verified_ value
+         * @return void
+         */
+        void setVerified(bool verified)
+        {
+          verified_ = verified;
+        }
 
         /**
          * @brief Setter for member valid_
@@ -199,6 +228,10 @@ namespace pandora_data_fusion
         tf::Transform getTransform() const;
 
       protected:
+        //!< True, if victim is currently targeted
+        bool isTargeted_;
+        //!< If victim is verified by sensor fusion
+        bool verified_;
         //!< The validity of the victim
         bool valid_;
         //!< True if the victim was visited false otherwise
