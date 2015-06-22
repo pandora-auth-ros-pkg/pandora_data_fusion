@@ -59,6 +59,9 @@ namespace pandora_alert_handler
     KalmanObject<Obstacle>::update(measurement);
 
     ObstacleConstPtr obstacleMeas = boost::dynamic_pointer_cast<Obstacle const>(measurement);
+    geometry_msgs::Pose newPose = this->getPose();
+    newPose.orientation = obstacleMeas->getPose().orientation;
+    this->setPose(newPose);
     double newLength = obstacleMeas->getLength();
     if (newLength > length_) {
       length_ = newLength;
