@@ -170,7 +170,7 @@ namespace pandora_alert_handler
       const typename ObjectType::PtrVectorPtr& newObjects,
       const tf::Transform& transform)
   {
-    if (ObjectType::getObjectType() != VictimImage::getObjectType() &&
+    if (ObjectType::getObjectType() != VisualVictim::getObjectType() &&
         ObjectType::getObjectType() != Hazmat::getObjectType() &&
         ObjectType::getObjectType() != Landoltc::getObjectType() &&
         ObjectType::getObjectType() != DataMatrix::getObjectType()) {

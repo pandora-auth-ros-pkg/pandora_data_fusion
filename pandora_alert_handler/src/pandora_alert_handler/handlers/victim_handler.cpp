@@ -131,8 +131,8 @@ namespace pandora_alert_handler
       ObjectConstPtrVector currentVictimsObjects = currentVictim->getObjects();
       for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
       {
-        if (currentVictimsObjects[ii]->getType() == VictimImage::getObjectType())
-          probabilities.victim = currentVictimsObjects[ii]->getProbability();
+        if (currentVictimsObjects[ii]->getType() == VisualVictim::getObjectType())
+          probabilities.visualVictim = currentVictimsObjects[ii]->getProbability();
         if (currentVictimsObjects[ii]->getType() == Thermal::getObjectType())
           probabilities.thermal = currentVictimsObjects[ii]->getProbability();
         if (currentVictimsObjects[ii]->getType() == Motion::getObjectType())
@@ -157,7 +157,7 @@ namespace pandora_alert_handler
 
     Hole::getList()->getAllLegitObjects(result);
     Thermal::getList()->getAllLegitObjects(result);
-    VictimImage::getList()->getAllLegitObjects(result);
+    VisualVictim::getList()->getAllLegitObjects(result);
     Motion::getList()->getAllLegitObjects(result);
     Sound::getList()->getAllLegitObjects(result);
     Co2::getList()->getAllLegitObjects(result);
@@ -184,7 +184,7 @@ namespace pandora_alert_handler
     {
       Hole::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
       Thermal::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
-      VictimImage::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
+      VisualVictim::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
       Motion::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
       Sound::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);
       Co2::getList()->removeInRangeOfObject(deletedVictim, CLUSTER_RADIUS);

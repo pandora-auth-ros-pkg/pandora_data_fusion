@@ -61,7 +61,7 @@ class MassPublisher:
         self.hole_1_post = False
         self.hole_2_post = False
         self.thermal_post = False
-        self.victimImage_post = False
+        self.visualVictim_post = False
         self.motion_post = False
         self.sound_post = False
         self.co2_post = False
@@ -121,11 +121,11 @@ class MassPublisher:
                         self.config.sound_pitch,
                         self.config.sound_probability)
 
-                if self.config.victimImage_post:
-                    self.alertDeliveryBoy.deliverVictimImageOrder(
-                        self.config.victimImage_yaw,
-                        self.config.victimImage_pitch,
-                        self.config.victimImage_probability)
+                if self.config.visualVictim_post:
+                    self.alertDeliveryBoy.deliverVisualVictimOrder(
+                        self.config.visualVictim_yaw,
+                        self.config.visualVictim_pitch,
+                        self.config.visualVictim_probability)
 
                 if self.config.thermal_post:
                     self.alertDeliveryBoy.deliverThermalOrder(

@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_VICTIM_IMAGE_H
-#define PANDORA_ALERT_HANDLER_VICTIM_IMAGE_H
+#ifndef PANDORA_ALERT_HANDLER_VISUAL_VICTIM_H
+#define PANDORA_ALERT_HANDLER_VISUAL_VICTIM_H
 
 #include <vector>
 
@@ -52,10 +52,10 @@ namespace pandora_alert_handler
 {
 
   /**
-    * @class VictimImage
-    * @brief Concrete class representing a VictimImage Object. Inherits from Object
+    * @class VisualVictim
+    * @brief Concrete class representing a VisualVictim Object. Inherits from Object
     */
-  class VictimImage : public KalmanObject<VictimImage>
+  class VisualVictim : public KalmanObject<VisualVictim>
   {
    public:
     //!< Type Definitions
@@ -71,20 +71,20 @@ namespace pandora_alert_handler
     /**
       * @brief Constructor
       */
-    VictimImage();
+    VisualVictim();
 
     virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
   };
 
-  typedef VictimImage::Ptr VictimImagePtr;
-  typedef VictimImage::ConstPtr VictimImageConstPtr;
-  typedef VictimImage::PtrVector VictimImagePtrVector;
-  typedef VictimImage::PtrVectorPtr VictimImagePtrVectorPtr;
-  typedef VictimImage::List VictimImageList;
-  typedef VictimImage::ListPtr VictimImageListPtr;
-  typedef VictimImage::ListConstPtr VictimImageListConstPtr;
+  typedef VisualVictim::Ptr VisualVictimPtr;
+  typedef VisualVictim::ConstPtr VisualVictimConstPtr;
+  typedef VisualVictim::PtrVector VisualVictimPtrVector;
+  typedef VisualVictim::PtrVectorPtr VisualVictimPtrVectorPtr;
+  typedef VisualVictim::List VisualVictimList;
+  typedef VisualVictim::ListPtr VisualVictimListPtr;
+  typedef VisualVictim::ListConstPtr VisualVictimListConstPtr;
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_VICTIM_IMAGE_H
+#endif  // PANDORA_ALERT_HANDLER_VISUAL_VICTIM_H

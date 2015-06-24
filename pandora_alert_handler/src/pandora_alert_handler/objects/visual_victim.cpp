@@ -39,16 +39,16 @@
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 
-#include "pandora_alert_handler/objects/victim_image.h"
+#include "pandora_alert_handler/objects/visual_victim.h"
 
 namespace pandora_data_fusion
 {
 namespace pandora_alert_handler
 {
 
-  VictimImage::VictimImage() {}
+  VisualVictim::VisualVictim() {}
 
-  void VictimImage::getVisualization(visualization_msgs::
+  void VisualVictim::getVisualization(visualization_msgs::
       MarkerArray* markers) const
   {
     visualization_msgs::Marker marker;

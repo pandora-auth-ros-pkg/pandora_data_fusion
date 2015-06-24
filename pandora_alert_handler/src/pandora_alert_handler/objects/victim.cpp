@@ -159,7 +159,7 @@ namespace pandora_alert_handler
     bool victimVisionFound = false;
     for (int ii = 0; ii < objects_.size(); ++ii)
     {
-      if (objects_[ii]->getType() == VictimImage::getObjectType())
+      if (objects_[ii]->getType() == VisualVictim::getObjectType())
       {
         setProbability(objects_[ii]->getProbability());
         victimVisionFound = true;
@@ -192,7 +192,7 @@ namespace pandora_alert_handler
 
     findRepresentativeObject<Hole>(objects);
     findRepresentativeObject<Thermal>(objects);
-    findRepresentativeObject<VictimImage>(objects);
+    findRepresentativeObject<VisualVictim>(objects);
     findRepresentativeObject<Motion>(objects);
     findRepresentativeObject<Sound>(objects);
     findRepresentativeObject<Co2>(objects);
@@ -216,12 +216,12 @@ namespace pandora_alert_handler
     if (isEmpty)
       return;
 
-    int victimImageIndex = -1, holeIndex = -1, thermalIndex = -1;
+    int visualVictimIndex = -1, holeIndex = -1, thermalIndex = -1;
     for (int ii = 0; ii < objects_.size(); ++ii)
     {
-      if (objects_[ii]->getType() == VictimImage::getObjectType())
+      if (objects_[ii]->getType() == VisualVictim::getObjectType())
       {
-        victimImageIndex = ii;
+        visualVictimIndex = ii;
       }
       else if (objects_[ii]->getType() == Hole::getObjectType())
       {
@@ -233,9 +233,9 @@ namespace pandora_alert_handler
       }
     }
 
-    if (victimImageIndex != -1)
+    if (visualVictimIndex != -1)
     {
-      selectedObjectIndex_ = victimImageIndex;
+      selectedObjectIndex_ = visualVictimIndex;
     }
     else if (holeIndex != -1)
     {

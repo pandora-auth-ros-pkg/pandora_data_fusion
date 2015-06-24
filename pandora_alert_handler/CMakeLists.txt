@@ -113,7 +113,7 @@ add_library(${PROJECT_NAME}_objects
   src/pandora_alert_handler/objects/data_matrix.cpp
   src/pandora_alert_handler/objects/qr.cpp
   src/pandora_alert_handler/objects/thermal.cpp
-  src/pandora_alert_handler/objects/victim_image.cpp
+  src/pandora_alert_handler/objects/visual_victim.cpp
   src/pandora_alert_handler/objects/motion.cpp
   src/pandora_alert_handler/objects/sound.cpp
   src/pandora_alert_handler/objects/co2.cpp

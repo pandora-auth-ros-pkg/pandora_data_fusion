@@ -100,7 +100,7 @@ namespace pandora_alert_handler
       * @brief Constructor
       * @param ns [std::string const&] Has the namespace of the node.
       */
-    explicit AlertHandler(const std::string& ns=std::string());
+    explicit AlertHandler(const std::string& ns="~");
 
     /* Victim-concerned Goal Callbacks */
 
@@ -230,7 +230,7 @@ namespace pandora_alert_handler
     ObstacleListPtr obstacles_;
     ThermalListPtr thermals_;
     MotionListPtr motions_;
-    VictimImageListPtr victimImages_;
+    VisualVictimListPtr visualVictims_;
     SoundListPtr sounds_;
     Co2ListPtr co2s_;
 

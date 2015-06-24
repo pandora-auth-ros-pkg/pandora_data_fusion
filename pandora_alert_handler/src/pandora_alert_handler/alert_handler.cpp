@@ -55,7 +55,7 @@ namespace pandora_alert_handler
     qrs_.reset( new QrList );
     hazmats_.reset( new HazmatList );
     thermals_.reset( new ThermalList );
-    victimImages_.reset( new VictimImageList );
+    visualVictims_.reset( new VisualVictimList );
     motions_.reset( new MotionList );
     sounds_.reset( new SoundList );
     co2s_.reset( new Co2List );
@@ -67,7 +67,7 @@ namespace pandora_alert_handler
     Qr::setList(qrs_);
     Hazmat::setList(hazmats_);
     Thermal::setList(thermals_);
-    VictimImage::setList(victimImages_);
+    VisualVictim::setList(visualVictims_);
     Motion::setList(motions_);
     Sound::setList(sounds_);
     Co2::setList(co2s_);
@@ -91,8 +91,8 @@ namespace pandora_alert_handler
     Obstacle::setObjectType(param);
     nh_->param<std::string>("object_names/thermal", param, "thermal");
     Thermal::setObjectType(param);
-    nh_->param<std::string>("object_names/victim_image", param, "victim_image");
-    VictimImage::setObjectType(param);
+    nh_->param<std::string>("object_names/visual_victim", param, "visual_victim");
+    VisualVictim::setObjectType(param);
     nh_->param<std::string>("object_names/motion", param, "motion");
     Motion::setObjectType(param);
     nh_->param<std::string>("object_names/sound", param, "sound");
@@ -110,7 +110,7 @@ namespace pandora_alert_handler
     Obstacle::is3D = false;
     Thermal::is3D = true;
     Motion::is3D = true;
-    VictimImage::is3D = true;
+    VisualVictim::is3D = true;
 
     Hazmat::isVictimAlert = false;
     Qr::isVictimAlert = false;
@@ -122,7 +122,7 @@ namespace pandora_alert_handler
     Obstacle::isVictimAlert = false;
     Thermal::isVictimAlert = true;
     Motion::isVictimAlert = true;
-    VictimImage::isVictimAlert = true;
+    VisualVictim::isVictimAlert = true;
 
     victimsToGo_.reset( new VictimList );
     victimsVisited_.reset( new VictimList );
@@ -166,7 +166,7 @@ namespace pandora_alert_handler
     setSubscriber<DataMatrix>();
     setSubscriber<Hole>();
     setSubscriber<Thermal>();
-    setSubscriber<VictimImage>();
+    setSubscriber<VisualVictim>();
     setSubscriber<Co2>();
     setSubscriber<Motion>();
     setSubscriber<Sound>();
@@ -301,7 +301,7 @@ namespace pandora_alert_handler
     qrs_->getObjectsTfInfo(&objectsTfInfo);
     hazmats_->getObjectsTfInfo(&objectsTfInfo);
     thermals_->getObjectsTfInfo(&objectsTfInfo);
-    victimImages_->getObjectsTfInfo(&objectsTfInfo);
+    visualVictims_->getObjectsTfInfo(&objectsTfInfo);
     motions_->getObjectsTfInfo(&objectsTfInfo);
     sounds_->getObjectsTfInfo(&objectsTfInfo);
     co2s_->getObjectsTfInfo(&objectsTfInfo);
@@ -431,13 +431,13 @@ namespace pandora_alert_handler
     Thermal::getFilterModel()->initializeSystemModel(config.thermalSystemNoiseSD);
     Thermal::getFilterModel()->initializeMeasurementModel(config.thermalMeasurementSD);
 
-    VictimImage::setObjectScore(config.victimImageScore);
-    VictimImage::setProbabilityThres(config.victimImageMinProbability);
-    VictimImage::setDistanceThres(config.victimImageMinDistance);
-    VictimImage::setOrientDiff(config.victimImageOrientDiff);
-    VictimImage::setMergeDistance(config.objectMergeDistance);
-    VictimImage::getFilterModel()->initializeSystemModel(config.victimImageSystemNoiseSD);
-    VictimImage::getFilterModel()->initializeMeasurementModel(config.victimImageMeasurementSD);
+    VisualVictim::setObjectScore(config.visualVictimScore);
+    VisualVictim::setProbabilityThres(config.visualVictimMinProbability);
+    VisualVictim::setDistanceThres(config.visualVictimMinDistance);
+    VisualVictim::setOrientDiff(config.visualVictimOrientDiff);
+    VisualVictim::setMergeDistance(config.objectMergeDistance);
+    VisualVictim::getFilterModel()->initializeSystemModel(config.visualVictimSystemNoiseSD);
+    VisualVictim::getFilterModel()->initializeMeasurementModel(config.visualVictimMeasurementSD);
 
     Motion::setObjectScore(config.motionScore);
     Motion::setProbabilityThres(config.motionMinProbability);
@@ -479,7 +479,7 @@ namespace pandora_alert_handler
     qrs_->getObjectsPosesStamped(&rs.qrs);
     hazmats_->getObjectsPosesStamped(&rs.hazmats);
     thermals_->getObjectsPosesStamped(&rs.thermals);
-    victimImages_->getObjectsPosesStamped(&rs.victimImages);
+    visualVictims_->getObjectsPosesStamped(&rs.visualVictims);
     motions_->getObjectsPosesStamped(&rs.motions);
     sounds_->getObjectsPosesStamped(&rs.sounds);
     co2s_->getObjectsPosesStamped(&rs.co2s);
@@ -500,7 +500,7 @@ namespace pandora_alert_handler
     qrs_->getVisualization(&rs.hazmats);
     hazmats_->getVisualization(&rs.qrs);
     thermals_->getVisualization(&rs.thermals);
-    victimImages_->getVisualization(&rs.victimImages);
+    visualVictims_->getVisualization(&rs.visualVictims);
     motions_->getVisualization(&rs.motions);
     sounds_->getVisualization(&rs.sounds);
     co2s_->getVisualization(&rs.co2s);
@@ -532,7 +532,7 @@ namespace pandora_alert_handler
     qrs_->clear();
     hazmats_->clear();
     thermals_->clear();
-    victimImages_->clear();
+    visualVictims_->clear();
     motions_->clear();
     sounds_->clear();
     co2s_->clear();

@@ -43,7 +43,7 @@
 #include "pandora_alert_handler/objects/hazmat.h"
 #include "pandora_alert_handler/objects/qr.h"
 #include "pandora_alert_handler/objects/thermal.h"
-#include "pandora_alert_handler/objects/victim_image.h"
+#include "pandora_alert_handler/objects/visual_victim.h"
 #include "pandora_alert_handler/objects/motion.h"
 #include "pandora_alert_handler/objects/sound.h"
 #include "pandora_alert_handler/objects/co2.h"

@@ -157,9 +157,9 @@ namespace pandora_alert_handler
     objectPtr->initializeObjectFilter();
   }
   template <>
-  void ObjectFactory::setUpObject<VictimImage>(
-      const typename VictimImage::Ptr& objectPtr,
-      const typename VictimImage::Alert& msg,
+  void ObjectFactory::setUpObject<VisualVictim>(
+      const typename VisualVictim::Ptr& objectPtr,
+      const typename VisualVictim::Alert& msg,
       const ros::Time& timeFound,
       const tf::Transform& transform)
   {

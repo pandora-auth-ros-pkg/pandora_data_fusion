@@ -80,16 +80,24 @@ namespace pandora_alert_handler
   {
     ROS_ASSERT(iteratorList.size() > 0);
 
+    bool skip = true;
     iterator victimToUpdate = *(iteratorList.begin());
-    if ((*victimToUpdate)->getId() != targetedVictim_->getId()) {
+    if (targetedVictim_.get() != NULL) {
+      if ((*victimToUpdate)->getId() == targetedVictim_->getId()) {
+        skip = false;
+      }
+    }
+    if (skip) {
       ros::Time oldestVictim = (*victimToUpdate)->getTimeFound();
 
       for (IteratorList::const_iterator it = ++iteratorList.begin();
           it != iteratorList.end() ; ++it)
       {
-        if ((*(*it))->getId() == targetedVictim_->getId()) {
-          victimToUpdate = *it;
-          break;
+        if (targetedVictim_.get() != NULL) {
+          if ((*(*it))->getId() == targetedVictim_->getId()) {
+            victimToUpdate = *it;
+            break;
+          }
         }
         if ((*(*it))->getTimeFound() < oldestVictim) {
           oldestVictim = (*(*it))->getTimeFound();
