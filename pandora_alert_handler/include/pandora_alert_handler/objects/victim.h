@@ -238,10 +238,6 @@ namespace pandora_alert_handler
     ObjectConstPtrVector objects_;
 
    private:
-    // TODO REDUNDANT??
-    static int lastVictimId_;  //!< The last in line victim ID
-
-   private:
     friend class VictimTest;
   };
 

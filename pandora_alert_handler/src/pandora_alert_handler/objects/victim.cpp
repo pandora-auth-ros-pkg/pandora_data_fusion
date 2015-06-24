@@ -51,8 +51,6 @@ namespace pandora_alert_handler
 
   Victim::Victim()
   {
-    lastVictimId_++;
-    id_ = lastVictimId_;
     isTargeted_ = false;
     verified_ = false;
     valid_ = false;
@@ -61,8 +59,6 @@ namespace pandora_alert_handler
     selectedObjectIndex_ = -1;
     probability_ = 0;
   }
-
-  int Victim::lastVictimId_ = 0;
 
   void Victim::getVisualization(visualization_msgs::MarkerArray* markers) const
   {
