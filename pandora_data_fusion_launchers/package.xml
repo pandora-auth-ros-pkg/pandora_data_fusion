@@ -15,7 +15,6 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <exec_depend>pandora_alert_handler</exec_depend>
-  <exec_depend>pandora_sensor_coverage</exec_depend>
   <exec_depend>pandora_sensor_processing</exec_depend>
   <exec_depend>state_manager</exec_depend>
 
