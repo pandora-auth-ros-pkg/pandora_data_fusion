@@ -49,6 +49,7 @@
 
 #include "pandora_alert_handler/objects/objects.h"
 #include "pandora_alert_handler/object_lists/object_list.h"
+#include "pandora_alert_handler/object_lists/obstacle_list.h"
 #include "pandora_alert_handler/object_lists/victim_list.h"
 
 namespace pandora_data_fusion
@@ -112,8 +113,10 @@ namespace pandora_alert_handler
     void keepValidObjects(const typename ObjectType::PtrVectorPtr& objectsPtr,
         const tf::Transform& cameraTransform);
     template <class ObjectType>
-      void keepValidVerificationObjects(
-          const typename ObjectType::PtrVectorPtr& objectsPtr);
+    void deleteObjectsOnSoftObstacles(const typename ObjectType::PtrVectorPtr& objectsPtr);
+    template <class ObjectType>
+    void keepValidVerificationObjects(
+        const typename ObjectType::PtrVectorPtr& objectsPtr);
 
    private:
     ros::Publisher qrPublisher_;
@@ -161,6 +164,57 @@ namespace pandora_alert_handler
     }
   }
 
+  template <class ObjectType>
+  void ObjectHandler::deleteObjectsOnSoftObstacles(
+      const typename ObjectType::PtrVectorPtr& objectsPtr)
+  {
+    typename ObjectType::PtrVector::iterator iter = objectsPtr->begin();
+
+    while (iter != objectsPtr->end()) {
+      bool onSoft = false;
+      onSoft = boost::dynamic_pointer_cast<ObstacleList>(Obstacle::getList())
+        ->isObjectPoseOnSoftObstacles(*iter);
+      if (onSoft)
+      {
+        ROS_WARN_NAMED("OBJECT_HANDLER",
+            "[OBJECT_HANDLER %d] Deleting object on a soft obstacle...", __LINE__);
+        iter = objectsPtr->erase(iter);
+      }
+      else
+      {
+        ++iter;
+      }
+    }
+  }
+
+  /**
+    * @details Sound and CO2 pois give us spatial information in a 2d
+    * surface on their sensors' tf frame's plane. We should not search for them
+    * in a sphere but in a cylinder.
+    */
+  template <class ObjectType>
+  void ObjectHandler::keepValidVerificationObjects(
+      const typename ObjectType::PtrVectorPtr& objectsPtr)
+  {
+    typename ObjectType::PtrVector::iterator iter = objectsPtr->begin();
+
+    while (iter != objectsPtr->end()) {
+      bool valid = false;
+      valid = victimsToGoList_->isObjectPoseInList(
+          (*iter), VICTIM_CLUSTER_RADIUS);
+      if (!valid)
+      {
+        ROS_DEBUG_NAMED("OBJECT_HANDLER",
+            "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
+        iter = objectsPtr->erase(iter);
+      }
+      else
+      {
+        ++iter;
+      }
+    }
+  }
+
   /**
     * @details keepValidVerificationObjects should not be called for
     * symbol pois (qr, hazmat, landoltc, datamatrix) as well as thermal
@@ -176,6 +230,7 @@ namespace pandora_alert_handler
         ObjectType::getObjectType() != DataMatrix::getObjectType()) {
       keepValidVerificationObjects<ObjectType>(newObjects);
     }
+    deleteObjectsOnSoftObstacles<ObjectType>(newObjects);
     for (int ii = 0; ii < newObjects->size(); ++ii) {
       if (ObjectType::getList()->add(newObjects->at(ii))) {
         std_msgs::Int32 updateScoreMsg;
@@ -192,6 +247,7 @@ namespace pandora_alert_handler
       const tf::Transform& transform)
   {
     keepValidObjects<Thermal>(newObjects, transform);
+    deleteObjectsOnSoftObstacles<Thermal>(newObjects);
     for (int ii = 0; ii < newObjects->size(); ++ii) {
       if (Thermal::getList()->add(newObjects->at(ii))) {
         std_msgs::Int32 updateScoreMsg;
@@ -207,6 +263,7 @@ namespace pandora_alert_handler
       const typename Qr::PtrVectorPtr& newQrs,
       const tf::Transform& transform)
   {
+    deleteObjectsOnSoftObstacles<Qr>(newQrs);
     for (int ii = 0; ii < newQrs->size(); ++ii)
     {
       if (Qr::getList()->add(newQrs->at(ii)))
@@ -253,34 +310,6 @@ namespace pandora_alert_handler
         obstacleInfo = obstacleToSend->getObstacleInfo();
         // Publish order for obstacle costmap
         obstaclePublisher_.publish(obstacleInfo);
-      }
-    }
-  }
-
-  /**
-    * @details Sound and CO2 pois give us spatial information in a 2d
-    * surface on their sensors' tf frame's plane. We should not search for them
-    * in a sphere but in a cylinder.
-    */
-  template <class ObjectType>
-  void ObjectHandler::keepValidVerificationObjects(
-      const typename ObjectType::PtrVectorPtr& objectsPtr)
-  {
-    typename ObjectType::PtrVector::iterator iter = objectsPtr->begin();
-
-    while (iter != objectsPtr->end()) {
-      bool valid = false;
-      valid = victimsToGoList_->isObjectPoseInList(
-          (*iter), VICTIM_CLUSTER_RADIUS);
-      if (!valid)
-      {
-        ROS_DEBUG_NAMED("OBJECT_HANDLER",
-            "[OBJECT_HANDLER %d] Deleting not valid object...", __LINE__);
-        iter = objectsPtr->erase(iter);
-      }
-      else
-      {
-        ++iter;
       }
     }
   }

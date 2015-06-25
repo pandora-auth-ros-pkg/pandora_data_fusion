@@ -90,6 +90,7 @@ namespace pandora_alert_handler
       const tf::Transform& transform)
   {
     keepValidObjects<Hole>(newHoles, transform);
+    deleteObjectsOnSoftObstacles<Hole>(newHoles);
 
     for (int ii = 0; ii < newHoles->size(); ++ii)
     {

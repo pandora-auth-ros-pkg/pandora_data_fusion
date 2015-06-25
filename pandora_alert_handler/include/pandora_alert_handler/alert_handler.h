@@ -74,6 +74,7 @@
 #include "pandora_alert_handler/AlertHandlerConfig.h"
 #include "pandora_data_fusion_utils/defines.h"
 #include "pandora_alert_handler/object_lists/object_list.h"
+#include "pandora_alert_handler/object_lists/obstacle_list.h"
 #include "pandora_alert_handler/object_lists/victim_list.h"
 #include "pandora_alert_handler/object_factory.h"
 #include "pandora_alert_handler/handlers/object_handler.h"
