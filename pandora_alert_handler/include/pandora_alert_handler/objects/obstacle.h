@@ -44,6 +44,7 @@
 
 #include "pandora_vision_msgs/ObstacleAlert.h"
 #include "pandora_vision_msgs/ObstacleAlertVector.h"
+#include "pandora_data_fusion_msgs/ObstacleInfo.h"
 
 #include "pandora_alert_handler/objects/object_interface/kalman_object.h"
 
@@ -63,6 +64,7 @@ namespace pandora_alert_handler
     //!< Type Definitions
     typedef pandora_vision_msgs::ObstacleAlert Alert;
     typedef pandora_vision_msgs::ObstacleAlertVector AlertVector;
+    typedef pandora_data_fusion_msgs::ObstacleInfo Info;
 
    public:
     Obstacle ();
@@ -71,6 +73,10 @@ namespace pandora_alert_handler
     /* public methods */
     virtual bool isSameObject(const ObjectConstPtr& object) const;
     virtual void update(const ObjectConstPtr& measurement);
+    virtual void fillGeotiff(const pandora_data_fusion_msgs::
+        GetGeotiffResponsePtr& res) const;
+
+    pandora_data_fusion_msgs::ObstacleInfo getObstacleInfo() const;
 
     uint8_t getObstacleType() const;
     void setObstacleType(uint8_t obstacleType);

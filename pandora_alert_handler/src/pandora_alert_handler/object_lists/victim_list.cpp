@@ -131,19 +131,7 @@ namespace pandora_alert_handler
 
     for (const_iterator it = this->begin(); it != this->end(); ++it)
     {
-      pandora_data_fusion_msgs::VictimInfo victimInfo;
-
-      victimInfo.id = (*it)->getId();
-      victimInfo.victimFrameId = (*it)->getFrameId();
-      victimInfo.victimPose.header.stamp = ros::Time::now();
-      victimInfo.victimPose.header.frame_id = (*it)->getGlobalFrame();
-      victimInfo.victimPose.pose = (*it)->getPose();
-      victimInfo.probability = (*it)->getProbability();
-      victimInfo.sensors = (*it)->getSensors(true);
-      victimInfo.verified = (*it)->getVerified();
-      victimInfo.valid = (*it)->getValid();
-
-      victimsMsg->push_back(victimInfo);
+      victimsMsg->push_back((*it)->getVictimInfo());
     }
   }
 

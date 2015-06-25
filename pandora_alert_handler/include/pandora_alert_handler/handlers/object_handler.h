@@ -44,7 +44,7 @@
 
 #include <std_msgs/Int32.h>
 
-#include "pandora_data_fusion_msgs/QrNotification.h"
+#include "pandora_data_fusion_msgs/QrInfo.h"
 #include "pandora_data_fusion_msgs/ObstacleInfo.h"
 
 #include "pandora_alert_handler/objects/objects.h"
@@ -211,13 +211,9 @@ namespace pandora_alert_handler
     {
       if (Qr::getList()->add(newQrs->at(ii)))
       {
-        pandora_data_fusion_msgs::QrNotification newQrNofifyMsg;
-        newQrNofifyMsg.header.stamp = newQrs->at(ii)->getTimeFound();
-        newQrNofifyMsg.header.frame_id = newQrs->at(ii)->getFrameId();
-        newQrNofifyMsg.x = newQrs->at(ii)->getPose().position.x;
-        newQrNofifyMsg.y = newQrs->at(ii)->getPose().position.y;
-        newQrNofifyMsg.content = newQrs->at(ii)->getContent();
-        qrPublisher_.publish(newQrNofifyMsg);
+        pandora_data_fusion_msgs::QrInfo qrInfo;
+        qrInfo = newQrs->at(ii)->getQrInfo();
+        qrPublisher_.publish(qrInfo);
         std_msgs::Int32 updateScoreMsg;
         roboCupScore_ += Qr::getObjectScore();
         updateScoreMsg.data = roboCupScore_;
@@ -254,14 +250,7 @@ namespace pandora_alert_handler
       if (obstacleToSendFound) {
         // Create and send info message to navigation
         pandora_data_fusion_msgs::ObstacleInfo obstacleInfo;
-        obstacleInfo.id = obstacleToSend->getId();
-        obstacleInfo.obstacleFrameId = obstacleToSend->getFrameId();
-        obstacleInfo.obstaclePose = obstacleToSend->getPoseStamped();
-        obstacleInfo.probability = obstacleToSend->getProbability();
-        obstacleInfo.length = obstacleToSend->getLength();
-        obstacleInfo.width = obstacleToSend->getWidth();
-        obstacleInfo.type = obstacleToSend->getObstacleType();
-        obstacleInfo.valid = true;
+        obstacleInfo = obstacleToSend->getObstacleInfo();
         // Publish order for obstacle costmap
         obstaclePublisher_.publish(obstacleInfo);
       }

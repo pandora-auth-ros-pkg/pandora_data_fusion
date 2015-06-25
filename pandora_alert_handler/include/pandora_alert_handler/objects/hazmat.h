@@ -43,6 +43,7 @@
 
 #include "pandora_vision_msgs/HazmatAlertVector.h"
 #include "pandora_vision_msgs/HazmatAlert.h"
+#include "pandora_data_fusion_msgs/HazmatInfo.h"
 
 #include "pandora_alert_handler/objects/object_interface/kalman_object.h"
 
@@ -61,6 +62,7 @@ namespace pandora_alert_handler
     //!< Type Definitions
     typedef pandora_vision_msgs::HazmatAlertVector AlertVector;
     typedef pandora_vision_msgs::HazmatAlert Alert;
+    typedef pandora_data_fusion_msgs::HazmatInfo Info;
 
    public:
     static void setUpObject(const Ptr& ptr, const Alert& msg)
@@ -76,6 +78,11 @@ namespace pandora_alert_handler
     virtual bool isSameObject(const ObjectConstPtr& object) const;
 
     virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
+    virtual void fillGeotiff(const pandora_data_fusion_msgs::
+        GetGeotiffResponsePtr& res) const;
+
+    pandora_data_fusion_msgs::HazmatInfo getHazmatInfo() const;
 
     /**
       * @brief Getter for member pattern_

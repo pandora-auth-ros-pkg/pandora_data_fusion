@@ -58,9 +58,10 @@
 #include "pandora_data_fusion_msgs/VictimInfo.h"
 #include "pandora_data_fusion_msgs/ChooseVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
-#include "pandora_data_fusion_msgs/GetObjectsSrv.h"
-#include "pandora_data_fusion_msgs/GeotiffSrv.h"
-#include "pandora_data_fusion_msgs/GetMarkersSrv.h"
+#include "pandora_data_fusion_msgs/GetObjects.h"
+#include "pandora_data_fusion_msgs/GetGeotiff.h"
+#include "pandora_data_fusion_msgs/GetMarkers.h"
+#include "pandora_data_fusion_msgs/GetVictimProbabilities.h"
 
 #include "pandora_vision_msgs/HoleDirectionAlertVector.h"
 #include "pandora_vision_msgs/QRAlertVector.h"
@@ -149,20 +150,23 @@ namespace pandora_alert_handler
     void updateMap(const nav_msgs::OccupancyGridConstPtr& msg);
 
     /*  Map Visualization Callbacks  */
-
-    bool geotiffServiceCb(
-        pandora_data_fusion_msgs::GeotiffSrv::Request &req,
-        pandora_data_fusion_msgs::GeotiffSrv::Response &res);
-
-    bool getMarkersServiceCb(
-        pandora_data_fusion_msgs::GetMarkersSrv::Request& rq,
-        pandora_data_fusion_msgs::GetMarkersSrv::Response &rs);
-
     /*  Services Callbacks  */
 
+    bool getGeotiffServiceCb(
+        pandora_data_fusion_msgs::GetGeotiff::Request& rq,
+        pandora_data_fusion_msgs::GetGeotiff::Response& rs);
+
+    bool getMarkersServiceCb(
+        pandora_data_fusion_msgs::GetMarkers::Request& rq,
+        pandora_data_fusion_msgs::GetMarkers::Response& rs);
+
     bool getObjectsServiceCb(
-        pandora_data_fusion_msgs::GetObjectsSrv::Request& rq,
-        pandora_data_fusion_msgs::GetObjectsSrv::Response &rs);
+        pandora_data_fusion_msgs::GetObjects::Request& rq,
+        pandora_data_fusion_msgs::GetObjects::Response& rs);
+
+    bool getVictimProbabilitiesCb(
+        pandora_data_fusion_msgs::GetVictimProbabilities::Request& rq,
+        pandora_data_fusion_msgs::GetVictimProbabilities::Response& rs);
 
     bool flushQueues(
         std_srvs::Empty::Request& rq,
@@ -200,10 +204,10 @@ namespace pandora_alert_handler
     ros::Subscriber mapSubscriber_;
 
     ros::ServiceServer getMarkersService_;
-    ros::ServiceServer geotiffService_;
-
-    ros::ServiceServer flushService_;
+    ros::ServiceServer getGeotiffService_;
     ros::ServiceServer getObjectsService_;
+    ros::ServiceServer getVictimProbabilitiesService_;
+    ros::ServiceServer flushService_;
 
     ros::Publisher worldModelPublisher_;
 

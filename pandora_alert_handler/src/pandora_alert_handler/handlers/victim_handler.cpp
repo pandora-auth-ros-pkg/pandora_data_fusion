@@ -65,7 +65,7 @@ namespace pandora_alert_handler
     if (nh->getParam("published_topic_names/global_probabilities", param))
     {
       probabilitiesPublisher_ = nh->
-        advertise<pandora_data_fusion_msgs::GlobalProbabilities>(param, 10);
+        advertise<pandora_data_fusion_msgs::VictimProbabilities>(param, 2);
     }
     else
     {
@@ -130,23 +130,9 @@ namespace pandora_alert_handler
         currentVictim = targetedVictim_;
       }
 
-      pandora_data_fusion_msgs::GlobalProbabilities probabilities;
-      ObjectConstPtrVector currentVictimsObjects = currentVictim->getObjects();
-      for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
-      {
-        if (currentVictimsObjects[ii]->getType() == VisualVictim::getObjectType())
-          probabilities.visualVictim = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Thermal::getObjectType())
-          probabilities.thermal = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Motion::getObjectType())
-          probabilities.motion = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Co2::getObjectType())
-          probabilities.co2 = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Sound::getObjectType())
-          probabilities.sound = currentVictimsObjects[ii]->getProbability();
-        if (currentVictimsObjects[ii]->getType() == Hazmat::getObjectType())
-          probabilities.hazmat = currentVictimsObjects[ii]->getProbability();
-      }
+      pandora_data_fusion_msgs::VictimProbabilities probabilities;
+      probabilities = currentVictim->getProbabilities();
+
       probabilitiesPublisher_.publish(probabilities);
     }
   }
@@ -244,7 +230,7 @@ namespace pandora_alert_handler
     * @details
     */
   void VictimHandler::fillGeotiff(
-      pandora_data_fusion_msgs::GeotiffSrv::Response* res)
+      const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res)
   {
     victimsVisitedList_->fillGeotiff(res);
   }
@@ -258,6 +244,21 @@ namespace pandora_alert_handler
   {
     victimsVisitedList_->getVisualization(victimsVisitedMarkers);
     victimsToGoList_->getVisualization(victimsToGoMarkers);
+  }
+
+  bool VictimHandler::getVictimProbabilities(int victimId,
+      const pandora_data_fusion_msgs::GetVictimProbabilitiesResponsePtr& rs)
+  {
+    bool found = false;
+    for (VictimList::const_iterator it = victimsToGoList_->begin();
+         it != victimsToGoList_->end(); ++it) {
+      if ((*it)->getId() == victimId) {
+        found = true;
+        rs->sensors = (*it)->getSensors(true);
+        rs->probabilities = (*it)->getProbabilities();
+      }
+    }
+    return found;
   }
 
   /**
@@ -280,4 +281,3 @@ namespace pandora_alert_handler
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-

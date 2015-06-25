@@ -44,6 +44,7 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 
 #include "visualization_msgs/MarkerArray.h"
+#include "pandora_data_fusion_msgs/GetGeotiff.h"
 
 // #include "alert_handler/const_iterator_const_ref.h"
 #include "pandora_alert_handler/objects/object_interface/base_object.h"
@@ -93,7 +94,8 @@ namespace pandora_alert_handler
 
     void getObjectsPosesStamped(PoseStampedVector* poses) const;
     void getObjectsTfInfo(PoseStampedVector* poses) const;
-    void fillGeotiff(pandora_data_fusion_msgs::GeotiffSrv::Response* res) const;
+    void fillGeotiff(
+      const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res) const;
     void getVisualization(visualization_msgs::MarkerArray* markers) const;
     bool isAnExistingObject(
         const ConstPtr& object, IteratorList* iteratorListPtr);
@@ -274,7 +276,7 @@ namespace pandora_alert_handler
 
   template <class ObjectType>
   void ObjectList<ObjectType>::fillGeotiff(
-      pandora_data_fusion_msgs::GeotiffSrv::Response* res) const
+      const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res) const
   {
     for (const_iterator it = this->begin(); it != this->end(); ++it)
     {

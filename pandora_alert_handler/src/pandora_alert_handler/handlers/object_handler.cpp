@@ -55,20 +55,19 @@ namespace pandora_alert_handler
 
     roboCupScore_ = 0;
 
-    if (nh->getParam("published_topic_names/qr_notification", param))
+    if (nh->getParam("published_topic_names/qr_info", param))
     {
-      qrPublisher_ = nh->advertise<
-        pandora_data_fusion_msgs::QrNotification>(param, 10);
+      qrPublisher_ = nh->advertise<pandora_data_fusion_msgs::QrInfo>(param, 2);
     }
     else
     {
-      ROS_FATAL("[ObjectHandler %d] qr_notification topic name param not found", __LINE__);
+      ROS_FATAL("[ObjectHandler %d] qr_info topic name param not found", __LINE__);
       ROS_BREAK();
     }
 
     if (nh->getParam("published_topic_names/robocup_score", param))
     {
-      scorePublisher_ = nh->advertise<std_msgs::Int32>(param, 10);
+      scorePublisher_ = nh->advertise<std_msgs::Int32>(param, 2);
     }
     else
     {
@@ -78,7 +77,7 @@ namespace pandora_alert_handler
 
     if (nh->getParam("published_topic_names/obstacle_info", param))
     {
-      obstaclePublisher_ = nh->advertise<pandora_data_fusion_msgs::ObstacleInfo>(param, 10);
+      obstaclePublisher_ = nh->advertise<pandora_data_fusion_msgs::ObstacleInfo>(param, 2);
     }
     else
     {

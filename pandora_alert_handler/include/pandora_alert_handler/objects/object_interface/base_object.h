@@ -47,7 +47,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <visualization_msgs/MarkerArray.h>
 
-#include "pandora_data_fusion_msgs/GeotiffSrv.h"
+#include "pandora_data_fusion_msgs/GetGeotiff.h"
 
 namespace pandora_data_fusion
 {
@@ -70,8 +70,8 @@ namespace pandora_alert_handler
     virtual bool isSameObject(const ConstPtr& object) const = 0;
     virtual geometry_msgs::PoseStamped getPoseStamped() const = 0;
     virtual geometry_msgs::PoseStamped getTfInfo() const = 0;
-    virtual void fillGeotiff(pandora_data_fusion_msgs::
-        GeotiffSrv::Response* res) const = 0;
+    virtual void fillGeotiff(
+        const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res) const = 0;
     virtual void getVisualization(visualization_msgs::
         MarkerArray* markers) const = 0;
     virtual std::string getType() const = 0;

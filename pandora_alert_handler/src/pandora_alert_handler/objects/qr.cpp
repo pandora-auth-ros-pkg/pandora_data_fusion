@@ -92,5 +92,26 @@ namespace pandora_alert_handler
     markers->markers.push_back(description);
   }
 
+  void Qr::fillGeotiff(const pandora_data_fusion_msgs::
+      GetGeotiffResponsePtr& res) const
+  {
+    res->qrs.push_back(getQrInfo());
+  }
+
+  pandora_data_fusion_msgs::QrInfo Qr::getQrInfo() const
+  {
+    Info qrInfo;
+
+    qrInfo.id = getId();
+    qrInfo.qrFrameId = getFrameId();
+    qrInfo.timeFound = getTimeFound();
+    qrInfo.qrPose = getPoseStamped();
+    qrInfo.probability = getProbability();
+
+    qrInfo.content = getContent();
+
+    return qrInfo;
+  }
+
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

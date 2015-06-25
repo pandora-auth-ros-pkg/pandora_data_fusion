@@ -73,6 +73,29 @@ namespace pandora_alert_handler
     }
   }
 
+  void Obstacle::fillGeotiff(const pandora_data_fusion_msgs::
+      GetGeotiffResponsePtr& res) const
+  {
+    res->obstacles.push_back(getObstacleInfo());
+  }
+
+  pandora_data_fusion_msgs::ObstacleInfo Obstacle::getObstacleInfo() const
+  {
+    Info obstacleInfo;
+
+    obstacleInfo.id = getId();
+    obstacleInfo.obstacleFrameId = getFrameId();
+    obstacleInfo.timeFound = getTimeFound();
+    obstacleInfo.obstaclePose = getPoseStamped();
+    obstacleInfo.probability = getProbability();
+
+    obstacleInfo.length = getLength();
+    obstacleInfo.width = getWidth();
+    obstacleInfo.type = getObstacleType();
+
+    return obstacleInfo;
+  }
+
   uint8_t Obstacle::getObstacleType() const
   {
     return obstacleType_;

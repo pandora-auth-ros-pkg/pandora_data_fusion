@@ -41,6 +41,8 @@
 
 #include <vector>
 
+#include "pandora_data_fusion_msgs/VictimProbabilities.h"
+
 #include "pandora_alert_handler/objects/object_interface/object.h"
 #include "pandora_alert_handler/objects/objects.h"
 
@@ -97,8 +99,8 @@ namespace pandora_alert_handler
       * @param res [data_fusion...::GeotiffSrv::Response*]
       * @return void
       */
-    virtual void fillGeotiff(pandora_data_fusion_msgs::
-        GeotiffSrv::Response* res) const;
+    virtual void fillGeotiff(const pandora_data_fusion_msgs::
+        GetGeotiffResponsePtr& res) const;
 
     /**
       * @override
@@ -158,10 +160,14 @@ namespace pandora_alert_handler
       * @brief Getter for member objects_
       * @return std::set<int>& objects_
       */
-    const ObjectConstPtrVector& getObjects() const
+    ObjectConstPtrVector getObjects() const
     {
       return objects_;
     }
+
+    pandora_data_fusion_msgs::VictimProbabilities getProbabilities() const;
+
+    pandora_data_fusion_msgs::VictimInfo getVictimInfo() const;
 
     /**
       * @brief Getter for victim's transform from /world (yaw-reversed)

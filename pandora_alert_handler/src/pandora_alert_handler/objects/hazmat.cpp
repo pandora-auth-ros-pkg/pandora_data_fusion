@@ -94,5 +94,26 @@ namespace pandora_alert_handler
     markers->markers.push_back(description);
   }
 
+  void Hazmat::fillGeotiff(const pandora_data_fusion_msgs::
+      GetGeotiffResponsePtr& res) const
+  {
+    res->hazmats.push_back(getHazmatInfo());
+  }
+
+  pandora_data_fusion_msgs::HazmatInfo Hazmat::getHazmatInfo() const
+  {
+    Info hazmatInfo;
+
+    hazmatInfo.id = getId();
+    hazmatInfo.hazmatFrameId = getFrameId();
+    hazmatInfo.timeFound = getTimeFound();
+    hazmatInfo.hazmatPose = getPoseStamped();
+    hazmatInfo.probability = getProbability();
+
+    hazmatInfo.pattern = getPattern();
+
+    return hazmatInfo;
+  }
+
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

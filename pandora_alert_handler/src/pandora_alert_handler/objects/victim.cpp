@@ -145,11 +145,11 @@ namespace pandora_alert_handler
     markers->markers.push_back(victimDescription);
   }
 
-  void Victim::fillGeotiff(pandora_data_fusion_msgs::GeotiffSrv::Response* res) const
+  void Victim::fillGeotiff(const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res) const
   {
     if (valid_)
     {
-      res->victims.push_back(getPoseStamped());
+      res->victims.push_back(getVictimInfo());
     }
   }
 
@@ -210,6 +210,46 @@ namespace pandora_alert_handler
       sensors.push_back(objects_[ii]->getType());
     }
     return sensors;
+  }
+
+  pandora_data_fusion_msgs::VictimProbabilities Victim::getProbabilities() const
+  {
+    pandora_data_fusion_msgs::VictimProbabilities probabilities;
+    for (int ii = 0; ii < objects_.size(); ++ii)
+    {
+      if (objects_[ii]->getType() == VisualVictim::getObjectType())
+        probabilities.visualVictim = objects_[ii]->getProbability();
+      if (objects_[ii]->getType() == Thermal::getObjectType())
+        probabilities.thermal = objects_[ii]->getProbability();
+      if (objects_[ii]->getType() == Motion::getObjectType())
+        probabilities.motion = objects_[ii]->getProbability();
+      if (objects_[ii]->getType() == Co2::getObjectType())
+        probabilities.co2 = objects_[ii]->getProbability();
+      if (objects_[ii]->getType() == Sound::getObjectType())
+        probabilities.sound = objects_[ii]->getProbability();
+      if (objects_[ii]->getType() == Hazmat::getObjectType())
+        probabilities.hazmat = objects_[ii]->getProbability();
+    }
+
+    return probabilities;
+  }
+
+  pandora_data_fusion_msgs::VictimInfo Victim::getVictimInfo() const
+  {
+    pandora_data_fusion_msgs::VictimInfo victimInfo;
+
+    victimInfo.id = getId();
+    victimInfo.victimFrameId = getFrameId();
+    victimInfo.timeFound = getTimeFound();
+    victimInfo.victimPose = getPoseStamped();
+    victimInfo.probability = getProbability();
+    victimInfo.valid = getValid();
+
+    victimInfo.sensors = getSensors(true);
+    victimInfo.probabilities = getProbabilities();
+    victimInfo.verified = getVerified();
+
+    return victimInfo;
   }
 
   /**

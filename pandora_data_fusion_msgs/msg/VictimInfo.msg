@@ -3,7 +3,8 @@ string victimFrameId
 time timeFound
 geometry_msgs/PoseStamped victimPose
 float32 probability
-bool valid
 
 string[] sensors
+pandora_data_fusion_msgs/VictimProbabilities probabilities
 bool verified
+bool valid

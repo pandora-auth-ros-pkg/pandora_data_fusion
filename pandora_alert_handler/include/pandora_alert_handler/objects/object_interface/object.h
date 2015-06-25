@@ -246,8 +246,7 @@ namespace pandora_alert_handler
 
     virtual geometry_msgs::PoseStamped getTfInfo() const;
 
-    virtual void fillGeotiff(pandora_data_fusion_msgs::
-        GeotiffSrv::Response* res) const;
+    virtual void fillGeotiff(const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res) const;
 
     /**
       * @brief Updates this object with the measurement.
@@ -463,7 +462,7 @@ namespace pandora_alert_handler
 
   template <class DerivedObject>
   void Object<DerivedObject>::fillGeotiff(
-      pandora_data_fusion_msgs::GeotiffSrv::Response* res) const {}
+      const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res) const {}
 
   template <class DerivedObject>
   bool Object<DerivedObject>::isSameObject(const ObjectConstPtr& object) const

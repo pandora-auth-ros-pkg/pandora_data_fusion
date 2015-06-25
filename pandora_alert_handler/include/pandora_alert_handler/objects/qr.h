@@ -44,6 +44,7 @@
 
 #include "pandora_vision_msgs/QRAlertVector.h"
 #include "pandora_vision_msgs/QRAlert.h"
+#include "pandora_data_fusion_msgs/QrInfo.h"
 
 #include "pandora_alert_handler/objects/object_interface/kalman_object.h"
 
@@ -62,6 +63,7 @@ namespace pandora_alert_handler
     //!< Type Definitions
     typedef pandora_vision_msgs::QRAlertVector AlertVector;
     typedef pandora_vision_msgs::QRAlert Alert;
+    typedef pandora_data_fusion_msgs::QrInfo Info;
 
    public:
     static void setUpObject(const Ptr& ptr, const Alert& msg)
@@ -75,9 +77,12 @@ namespace pandora_alert_handler
     Qr();
 
     virtual bool isSameObject(const ObjectConstPtr& object) const;
-
     virtual void getVisualization(visualization_msgs::
         MarkerArray* markers) const;
+    virtual void fillGeotiff(const pandora_data_fusion_msgs::
+        GetGeotiffResponsePtr& res) const;
+
+    pandora_data_fusion_msgs::QrInfo getQrInfo() const;
 
     /**
       * @brief Getter for member content_

@@ -257,7 +257,7 @@ namespace pandora_alert_handler
     }
     else
     {
-      ROS_FATAL("[ALERT_HANDLER] get_objects service name param not found");
+      ROS_FATAL("[ALERT_HANDLER] getObjects service name param not found");
       ROS_BREAK();
     }
 
@@ -268,18 +268,29 @@ namespace pandora_alert_handler
     }
     else
     {
-      ROS_FATAL("[ALERT_HANDLER] get_markers service name param not found");
+      ROS_FATAL("[ALERT_HANDLER] getMarkers service name param not found");
       ROS_BREAK();
     }
 
-    if (nh_->getParam("service_server_names/geotiff", param))
+    if (nh_->getParam("service_server_names/get_geotiff", param))
     {
-      geotiffService_ = nh_->advertiseService(param,
-          &AlertHandler::geotiffServiceCb, this);
+      getGeotiffService_ = nh_->advertiseService(param,
+          &AlertHandler::getGeotiffServiceCb, this);
     }
     else
     {
-      ROS_FATAL("[ALERT_HANDLER] geotiffSrv service name param not found");
+      ROS_FATAL("[ALERT_HANDLER] getGeotiff service name param not found");
+      ROS_BREAK();
+    }
+
+    if (nh_->getParam("service_server_names/get_victim_probabilities", param))
+    {
+      getVictimProbabilitiesService_ = nh_->advertiseService(param,
+          &AlertHandler::getVictimProbabilitiesCb, this);
+    }
+    else
+    {
+      ROS_FATAL("[ALERT_HANDLER] getVictimProbabilities service name param not found");
       ROS_BREAK();
     }
 
@@ -471,60 +482,83 @@ namespace pandora_alert_handler
   ///////////////////////////////////////////////////////
 
   bool AlertHandler::getObjectsServiceCb(
-      pandora_data_fusion_msgs::GetObjectsSrv::Request& rq,
-      pandora_data_fusion_msgs::GetObjectsSrv::Response &rs)
+      pandora_data_fusion_msgs::GetObjects::Request& rq,
+      pandora_data_fusion_msgs::GetObjects::Response& rs)
   {
-    holes_->getObjectsPosesStamped(&rs.holes);
-    obstacles_->getObjectsPosesStamped(&rs.obstacles);
-    qrs_->getObjectsPosesStamped(&rs.qrs);
-    hazmats_->getObjectsPosesStamped(&rs.hazmats);
-    thermals_->getObjectsPosesStamped(&rs.thermals);
-    visualVictims_->getObjectsPosesStamped(&rs.visualVictims);
-    motions_->getObjectsPosesStamped(&rs.motions);
-    sounds_->getObjectsPosesStamped(&rs.sounds);
-    co2s_->getObjectsPosesStamped(&rs.co2s);
-    landoltcs_->getObjectsPosesStamped(&rs.landoltcs);
-    dataMatrices_->getObjectsPosesStamped(&rs.dataMatrices);
+    pandora_data_fusion_msgs::GetObjectsResponsePtr ptr(
+        new pandora_data_fusion_msgs::GetObjectsResponse );
+    holes_->getObjectsPosesStamped(&ptr->holes);
+    obstacles_->getObjectsPosesStamped(&ptr->obstacles);
+    qrs_->getObjectsPosesStamped(&ptr->qrs);
+    hazmats_->getObjectsPosesStamped(&ptr->hazmats);
+    thermals_->getObjectsPosesStamped(&ptr->thermals);
+    visualVictims_->getObjectsPosesStamped(&ptr->visualVictims);
+    motions_->getObjectsPosesStamped(&ptr->motions);
+    sounds_->getObjectsPosesStamped(&ptr->sounds);
+    co2s_->getObjectsPosesStamped(&ptr->co2s);
+    landoltcs_->getObjectsPosesStamped(&ptr->landoltcs);
+    dataMatrices_->getObjectsPosesStamped(&ptr->dataMatrices);
 
-    victimHandler_->getVictimsPosesStamped(&rs.victimsToGo, &rs.victimsVisited);
+    victimHandler_->getVictimsPosesStamped(&ptr->victimsToGo, &ptr->victimsVisited);
+    rs = *ptr;
 
     return true;
   }
 
   bool AlertHandler::getMarkersServiceCb(
-      pandora_data_fusion_msgs::GetMarkersSrv::Request& rq,
-      pandora_data_fusion_msgs::GetMarkersSrv::Response &rs)
+      pandora_data_fusion_msgs::GetMarkers::Request& rq,
+      pandora_data_fusion_msgs::GetMarkers::Response& rs)
   {
-    holes_->getVisualization(&rs.holes);
-    obstacles_->getVisualization(&rs.obstacles);
-    qrs_->getVisualization(&rs.hazmats);
-    hazmats_->getVisualization(&rs.qrs);
-    thermals_->getVisualization(&rs.thermals);
-    visualVictims_->getVisualization(&rs.visualVictims);
-    motions_->getVisualization(&rs.motions);
-    sounds_->getVisualization(&rs.sounds);
-    co2s_->getVisualization(&rs.co2s);
-    landoltcs_->getVisualization(&rs.landoltcs);
-    dataMatrices_->getVisualization(&rs.dataMatrices);
+    pandora_data_fusion_msgs::GetMarkersResponsePtr ptr(
+        new pandora_data_fusion_msgs::GetMarkersResponse );
+    holes_->getVisualization(&ptr->holes);
+    obstacles_->getVisualization(&ptr->obstacles);
+    qrs_->getVisualization(&ptr->hazmats);
+    hazmats_->getVisualization(&ptr->qrs);
+    thermals_->getVisualization(&ptr->thermals);
+    visualVictims_->getVisualization(&ptr->visualVictims);
+    motions_->getVisualization(&ptr->motions);
+    sounds_->getVisualization(&ptr->sounds);
+    co2s_->getVisualization(&ptr->co2s);
+    landoltcs_->getVisualization(&ptr->landoltcs);
+    dataMatrices_->getVisualization(&ptr->dataMatrices);
 
-    victimHandler_->getVisualization(&rs.victimsVisited, &rs.victimsToGo);
+    victimHandler_->getVisualization(&ptr->victimsVisited, &ptr->victimsToGo);
+    rs = *ptr;
 
     return true;
   }
 
-  bool AlertHandler::geotiffServiceCb(
-      pandora_data_fusion_msgs::GeotiffSrv::Request &req,
-      pandora_data_fusion_msgs::GeotiffSrv::Response &res)
+  bool AlertHandler::getGeotiffServiceCb(
+      pandora_data_fusion_msgs::GetGeotiff::Request& rq,
+      pandora_data_fusion_msgs::GetGeotiff::Response& rs)
   {
-    qrs_->getObjectsPosesStamped(&res.qrs);
-    hazmats_->getObjectsPosesStamped(&res.hazmats);
-    victimHandler_->fillGeotiff(&res);
+    pandora_data_fusion_msgs::GetGeotiffResponsePtr ptr(
+        new pandora_data_fusion_msgs::GetGeotiffResponse );
+    qrs_->fillGeotiff(ptr);
+    hazmats_->fillGeotiff(ptr);
+    obstacles_->fillGeotiff(ptr);
+    victimHandler_->fillGeotiff(ptr);
+    rs = *ptr;
+    return true;
+  }
+
+  bool AlertHandler::getVictimProbabilitiesCb(
+      pandora_data_fusion_msgs::GetVictimProbabilities::Request& rq,
+      pandora_data_fusion_msgs::GetVictimProbabilities::Response& rs)
+  {
+    pandora_data_fusion_msgs::GetVictimProbabilitiesResponsePtr ptr(
+        new pandora_data_fusion_msgs::GetVictimProbabilitiesResponse );
+    bool success = victimHandler_->getVictimProbabilities(rq.victimId, ptr);
+    rs = *ptr;
+    rs.success = success;
+
     return true;
   }
 
   bool AlertHandler::flushQueues(
       std_srvs::Empty::Request& rq,
-      std_srvs::Empty::Response &rs)
+      std_srvs::Empty::Response& rs)
   {
     ROS_INFO_NAMED("ALERT_HANDLER_FLUSH_SERVICE", "Flushing lists!");
     holes_->clear();

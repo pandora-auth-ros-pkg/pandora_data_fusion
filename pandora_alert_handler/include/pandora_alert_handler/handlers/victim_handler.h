@@ -53,8 +53,9 @@
 
 #include "pandora_data_fusion_msgs/VictimInfo.h"
 #include "pandora_data_fusion_msgs/WorldModel.h"
-#include "pandora_data_fusion_msgs/GlobalProbabilities.h"
-#include "pandora_data_fusion_msgs/GeotiffSrv.h"
+#include "pandora_data_fusion_msgs/VictimProbabilities.h"
+#include "pandora_data_fusion_msgs/GetGeotiff.h"
+#include "pandora_data_fusion_msgs/GetVictimProbabilities.h"
 
 #include "pandora_alert_handler/objects/victim.h"
 #include "pandora_alert_handler/handlers/victim_clusterer.h"
@@ -153,8 +154,8 @@ namespace pandora_alert_handler
       * The output service response param
       * @return void
       */
-    void fillGeotiff(
-        pandora_data_fusion_msgs::GeotiffSrv::Response* res);
+  void fillGeotiff(
+      const pandora_data_fusion_msgs::GetGeotiffResponsePtr& res);
 
     /**
       * @brief Get the victims visualization
@@ -166,6 +167,9 @@ namespace pandora_alert_handler
       */
     void getVisualization(visualization_msgs::MarkerArray* victimsVisitedMarkers,
         visualization_msgs::MarkerArray* victimsToGoMarkers);
+
+    bool getVictimProbabilities(int victimId,
+        const pandora_data_fusion_msgs::GetVictimProbabilitiesResponsePtr& rs);
 
    private:
     /**
