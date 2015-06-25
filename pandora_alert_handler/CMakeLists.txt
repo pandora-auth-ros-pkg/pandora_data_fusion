@@ -132,6 +132,15 @@ add_dependencies(${PROJECT_NAME}_objects
   ${catkin_EXPORTED_TARGETS}
   )
 
+## ObstacleList
+add_library(${PROJECT_NAME}_obstacle_list
+  src/pandora_alert_handler/object_lists/obstacle_list.cpp
+  )
+target_link_libraries(${PROJECT_NAME}_obstacle_list
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_objects
+  )
+
 ## Victim
 add_library(${PROJECT_NAME}_victim
   src/pandora_alert_handler/objects/victim.cpp
@@ -172,6 +181,7 @@ target_link_libraries(${PROJECT_NAME}_object_handler
   ${catkin_LIBRARIES}
   pandora_data_fusion_utils
   ${PROJECT_NAME}_objects
+  ${PROJECT_NAME}_obstacle_list
   ${PROJECT_NAME}_victim_list
   )
 add_dependencies(${PROJECT_NAME}_object_handler
@@ -212,6 +222,7 @@ target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_object_factory
   ${PROJECT_NAME}_object_handler
   ${PROJECT_NAME}_victim_handler
+  ${PROJECT_NAME}_obstacle_list
   ${PROJECT_NAME}_victim_list
   )
 add_dependencies(${PROJECT_NAME}

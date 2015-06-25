@@ -58,7 +58,7 @@ namespace pandora_alert_handler
   template <class ObjectType>
   class ObjectList
   {
-    public:
+   public:
     //!< Type Definitions
     typedef boost::shared_ptr< ObjectType > Ptr;
     typedef boost::shared_ptr< ObjectType const > ConstPtr;
@@ -70,7 +70,7 @@ namespace pandora_alert_handler
     // ConstPtr> const_iterator;
     typedef std::list<iterator> IteratorList;
 
-    public:
+   public:
     ObjectList();
 
     bool add(const Ptr& object);
@@ -100,19 +100,19 @@ namespace pandora_alert_handler
     bool isAnExistingObject(
         const ConstPtr& object, IteratorList* iteratorListPtr);
 
-    protected:
+   protected:
     virtual void updateObjects(const ConstPtr& object,
         const IteratorList& iteratorList);
 
     void removeElementAt(iterator it);
 
-    protected:
+   protected:
     List objects_;
 
-    private:
+   private:
     int id_;
 
-    private:
+   private:
     friend class ObjectListTest;
   };
 

@@ -36,17 +36,17 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_OBSTACLE_H
-#define PANDORA_ALERT_HANDLER_OBSTACLE_H
+#ifndef PANDORA_ALERT_HANDLER_OBSTACLE_LIST_H
+#define PANDORA_ALERT_HANDLER_OBSTACLE_LIST_H
 
+#include <list>
 #include <vector>
-#include <string>
 
-#include "pandora_vision_msgs/ObstacleAlert.h"
-#include "pandora_vision_msgs/ObstacleAlertVector.h"
-#include "pandora_data_fusion_msgs/ObstacleInfo.h"
+#include "pandora_data_fusion_utils/defines.h"
+#include "pandora_data_fusion_utils/utils.h"
 
-#include "pandora_alert_handler/objects/object_interface/kalman_object.h"
+#include "pandora_alert_handler/objects/obstacle.h"
+#include "pandora_alert_handler/objects/soft_obstacle.h"
 
 namespace pandora_data_fusion
 {
@@ -54,52 +54,22 @@ namespace pandora_alert_handler
 {
 
   /**
-    * @class Obstacle
-    * @brief: Concrete class representing an obstacle in the world. Inherits
-    * from KalmanObject
-    */
-  class Obstacle : public KalmanObject<Obstacle>
+   * @class ObstacleList Extends ObjectList<Obstacle> with a method which
+   * examines whether a pose exists on a soft obstacle or not
+   */
+  class ObstacleList : public ObjectList<Obstacle>
   {
    public:
-    //!< Type Definitions
-    typedef pandora_vision_msgs::ObstacleAlert Alert;
-    typedef pandora_vision_msgs::ObstacleAlertVector AlertVector;
-    typedef pandora_data_fusion_msgs::ObstacleInfo Info;
-
-   public:
-    Obstacle ();
-    virtual ~Obstacle ();
+    ObstacleList ();
 
     /* public methods */
-    virtual bool isSameObject(const ObjectConstPtr& object) const;
-    virtual void update(const ObjectConstPtr& measurement);
-    virtual void fillGeotiff(const pandora_data_fusion_msgs::
-        GetGeotiffResponsePtr& res) const;
-
-    pandora_data_fusion_msgs::ObstacleInfo getObstacleInfo() const;
-
-    uint8_t getObstacleType() const;
-    void setObstacleType(uint8_t obstacleType);
-
-    double getLength() const;
-    void setLength(double length);
-
-    double getWidth() const;
-    void setWidth(double width);
-
-   protected:
-    /* data */
-    uint8_t obstacleType_;
-    double length_;
-    double width_;
+    bool isObjectPoseOnSoftObstacles(const ObjectConstPtr& object);
   };
 
-  typedef Obstacle::Ptr ObstaclePtr;
-  typedef Obstacle::ConstPtr ObstacleConstPtr;
-  typedef Obstacle::PtrVector ObstaclePtrVector;
-  typedef Obstacle::PtrVectorPtr ObstaclePtrVectorPtr;
+  typedef boost::shared_ptr<ObstacleList> ObstacleListPtr;
+  typedef boost::shared_ptr<const ObstacleList> ObstacleListConstPtr;
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_OBSTACLE_H
+#endif  // PANDORA_ALERT_HANDLER_OBSTACLE_LIST_H
