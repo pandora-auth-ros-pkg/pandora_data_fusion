@@ -55,6 +55,7 @@ include_directories(
   ${BFL_INCLUDE_DIRS}
   )
 link_directories(
+  ${catkin_LIBRARY_DIRS}
   ${BFL_LIBRARY_DIRS}
   )
 
