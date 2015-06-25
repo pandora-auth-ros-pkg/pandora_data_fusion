@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_OBSTACLE_H
-#define PANDORA_ALERT_HANDLER_OBSTACLE_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_OBSTACLE_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_OBSTACLE_H
 
 #include <vector>
 #include <string>
@@ -67,8 +67,8 @@ namespace pandora_alert_handler
     typedef pandora_data_fusion_msgs::ObstacleInfo Info;
 
    public:
-    Obstacle ();
-    virtual ~Obstacle ();
+    Obstacle();
+    virtual ~Obstacle();
 
     /* public methods */
     virtual bool isSameObject(const ObjectConstPtr& object) const;
@@ -102,4 +102,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_OBSTACLE_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_OBSTACLE_H

@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_OBSTACLE_LIST_H
-#define PANDORA_ALERT_HANDLER_OBSTACLE_LIST_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECT_LISTS_OBSTACLE_LIST_H
+#define PANDORA_ALERT_HANDLER_OBJECT_LISTS_OBSTACLE_LIST_H
 
 #include <list>
 #include <vector>
@@ -60,7 +60,7 @@ namespace pandora_alert_handler
   class ObstacleList : public ObjectList<Obstacle>
   {
    public:
-    ObstacleList ();
+    ObstacleList();
 
     /* public methods */
     bool isObjectPoseOnSoftObstacles(const ObjectConstPtr& object);
@@ -72,4 +72,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_OBSTACLE_LIST_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECT_LISTS_OBSTACLE_LIST_H

@@ -38,6 +38,7 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <vector>
 #include <string>
 
 #include "pandora_alert_handler/handlers/victim_handler.h"
@@ -95,9 +96,7 @@ namespace pandora_alert_handler
         continue;
       bool victimIsNew = victimsToGoList_->add(newVictimVector[ii]);
       if (victimIsNew)
-      {
         ROS_INFO("[ALERT_HANDLER] New victim found!!!");
-      }
     }
   }
 
@@ -126,7 +125,8 @@ namespace pandora_alert_handler
           }
         }
       }
-      else {
+      else
+      {
         currentVictim = targetedVictim_;
       }
 

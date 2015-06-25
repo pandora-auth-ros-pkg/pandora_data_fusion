@@ -196,8 +196,10 @@ namespace pose_finder
       x = alertPoint.x + ORIENTATION_CIRCLE * cos(i * DEGREE);
       y = alertPoint.y + ORIENTATION_CIRCLE * sin(i * DEGREE);
 
-      if (CELL(x, y, map_) < OCCUPIED_CELL_THRES * 100) {
-        if (!freeSpace) {
+      if (CELL(x, y, map_) < OCCUPIED_CELL_THRES * 100)
+      {
+        if (!freeSpace)
+        {
           std::vector<geometry_msgs::Point> freeArc;
           freeArcs.push_back(freeArc);
           freeSpace = true;
@@ -207,7 +209,8 @@ namespace pose_finder
         temp.y = y;
         freeArcs.back().push_back(temp);
       }
-      else {
+      else
+      {
         freeSpace = false;
       }
     }
@@ -219,7 +222,8 @@ namespace pose_finder
     x = alertPoint.x + ORIENTATION_CIRCLE * cos(i * DEGREE);
     y = alertPoint.y + ORIENTATION_CIRCLE * sin(i * DEGREE);
     bool first_point = CELL(x, y, map_) < OCCUPIED_CELL_THRES * 100;
-    if (first_point == true && last_point == true) {
+    if (first_point == true && last_point == true)
+    {
       std::vector<geometry_msgs::Point> lastFreeArc = freeArcs.back();
       freeArcs.pop_back();
       freeArcs[0].insert(freeArcs[0].end(), lastFreeArc.begin(), lastFreeArc.end());
@@ -234,7 +238,8 @@ namespace pose_finder
         middle.y += freeArcs[i][j].y / freeArcs[i].size();
       }
       float distance = Utils::distanceBetweenPoints2D(framePoint, middle);
-      if (distance < smallestDistance) {
+      if (distance < smallestDistance)
+      {
         approachPoint = middle;
         smallestDistance = distance;
       }

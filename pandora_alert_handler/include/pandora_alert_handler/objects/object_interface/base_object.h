@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_BASE_OBJECT_H
-#define PANDORA_ALERT_HANDLER_BASE_OBJECT_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_BASE_OBJECT_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_BASE_OBJECT_H
 
 #include <string>
 #include <vector>
@@ -100,4 +100,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_BASE_OBJECT_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_BASE_OBJECT_H

@@ -63,13 +63,11 @@ namespace pandora_alert_handler
     newPose.orientation = obstacleMeas->getPose().orientation;
     this->setPose(newPose);
     double newLength = obstacleMeas->getLength();
-    if (newLength > length_) {
+    if (newLength > length_)
       length_ = newLength;
-    }
     double newWidth = obstacleMeas->getWidth();
-    if (newWidth > width_) {
+    if (newWidth > width_)
       width_ = newWidth;
-    }
   }
 
   void Obstacle::fillGeotiff(const pandora_data_fusion_msgs::

@@ -87,19 +87,22 @@ namespace pandora_alert_handler
         skip = false;
       }
     }
-    if (skip) {
+    if (skip)
+    {
       ros::Time oldestVictim = (*victimToUpdate)->getTimeFound();
 
       for (IteratorList::const_iterator it = ++iteratorList.begin();
           it != iteratorList.end() ; ++it)
       {
         if (targetedVictim_.get() != NULL) {
-          if ((*(*it))->getId() == targetedVictim_->getId()) {
+          if ((*(*it))->getId() == targetedVictim_->getId())
+          {
             victimToUpdate = *it;
             break;
           }
         }
-        if ((*(*it))->getTimeFound() < oldestVictim) {
+        if ((*(*it))->getTimeFound() < oldestVictim)
+        {
           oldestVictim = (*(*it))->getTimeFound();
           victimToUpdate = *it;
         }
@@ -112,9 +115,7 @@ namespace pandora_alert_handler
         it != iteratorList.end(); ++it)
     {
       if ((*it) == victimToUpdate)
-      {
         continue;
-      }
       objects_.erase(*(it));
     }
   }

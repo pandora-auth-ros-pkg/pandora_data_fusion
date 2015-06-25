@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_MOTION_H
-#define PANDORA_ALERT_HANDLER_MOTION_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_MOTION_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_MOTION_H
 
 #include <vector>
 
@@ -87,4 +87,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_MOTION_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_MOTION_H

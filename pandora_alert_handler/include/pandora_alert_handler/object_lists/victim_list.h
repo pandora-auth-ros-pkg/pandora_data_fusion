@@ -38,8 +38,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_VICTIM_LIST_H
-#define PANDORA_ALERT_HANDLER_VICTIM_LIST_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECT_LISTS_VICTIM_LIST_H
+#define PANDORA_ALERT_HANDLER_OBJECT_LISTS_VICTIM_LIST_H
 
 #include <list>
 #include <vector>
@@ -145,4 +145,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_VICTIM_LIST_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECT_LISTS_VICTIM_LIST_H

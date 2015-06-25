@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_KALMAN_OBJECT_H
-#define PANDORA_ALERT_HANDLER_KALMAN_OBJECT_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_KALMAN_OBJECT_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_KALMAN_OBJECT_H
 
 #include "pandora_alert_handler/objects/object_interface/object.h"
 #include "pandora_data_fusion_utils/filter_model.h"
@@ -154,7 +154,8 @@ namespace pandora_alert_handler
   };
 
   template <class DerivedObject>
-  pandora_data_fusion_utils::FilterModelPtr KalmanObject<DerivedObject>::modelPtr_ = pandora_data_fusion_utils::FilterModelPtr(new pandora_data_fusion_utils::FilterModel);
+  pandora_data_fusion_utils::FilterModelPtr KalmanObject<DerivedObject>::modelPtr_ = pandora_data_fusion_utils::
+  FilterModelPtr(new pandora_data_fusion_utils::FilterModel);
 
   template <class DerivedObject>
   void KalmanObject<DerivedObject>::initializeObjectFilter()
@@ -259,4 +260,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_KALMAN_OBJECT_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_KALMAN_OBJECT_H

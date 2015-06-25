@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_OBJECTS_H
-#define PANDORA_ALERT_HANDLER_OBJECTS_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_OBJECTS_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_OBJECTS_H
 
 #include "pandora_alert_handler/objects/hole.h"
 #include "pandora_alert_handler/objects/hazmat.h"
@@ -54,4 +54,4 @@
 #include "pandora_alert_handler/objects/soft_obstacle.h"
 #include "pandora_alert_handler/objects/hard_obstacle.h"
 
-#endif  // PANDORA_ALERT_HANDLER_OBJECTS_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_OBJECTS_H

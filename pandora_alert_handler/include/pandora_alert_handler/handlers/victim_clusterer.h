@@ -38,8 +38,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_VICTIM_CLUSTERER_H
-#define PANDORA_ALERT_HANDLER_VICTIM_CLUSTERER_H
+#ifndef PANDORA_ALERT_HANDLER_HANDLERS_VICTIM_CLUSTERER_H
+#define PANDORA_ALERT_HANDLER_HANDLERS_VICTIM_CLUSTERER_H
 
 #include <vector>
 #include <boost/utility.hpp>
@@ -112,4 +112,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_VICTIM_CLUSTERER_H
+#endif  // PANDORA_ALERT_HANDLER_HANDLERS_VICTIM_CLUSTERER_H

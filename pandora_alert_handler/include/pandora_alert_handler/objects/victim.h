@@ -36,9 +36,10 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_VICTIM_H
-#define PANDORA_ALERT_HANDLER_VICTIM_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_VICTIM_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_VICTIM_H
 
+#include <string>
 #include <vector>
 
 #include "pandora_data_fusion_msgs/VictimProbabilities.h"
@@ -292,4 +293,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_VICTIM_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_VICTIM_H

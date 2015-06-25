@@ -37,6 +37,7 @@
  *********************************************************************/
 
 #include <string>
+#include <vector>
 #include <boost/algorithm/string.hpp>
 
 #include <visualization_msgs/Marker.h>
@@ -103,12 +104,14 @@ namespace pandora_alert_handler
       }
       else
       {
-        if (verified_) {
+        if (verified_)
+        {
           victimMarker.color.r = 1;
           victimDescription.color.r = 1;
           victimDescription.text = "REJECTED_" + victimDescription.text;
         }
-        else {
+        else
+        {
           victimMarker.color.r = 0.5;
           victimMarker.color.b = 0.3;
           victimDescription.color.r = 0.5;
@@ -119,7 +122,8 @@ namespace pandora_alert_handler
     }
     else
     {
-      if (isTargeted_) {
+      if (isTargeted_)
+      {
         victimMarker.color.r = 0;
         victimMarker.color.g = 0.7;
         victimMarker.color.b = 0.7;
@@ -129,7 +133,8 @@ namespace pandora_alert_handler
         victimDescription.color.b = 0.7;
         victimDescription.color.a = 0.7;
       }
-      else {
+      else
+      {
         victimMarker.color.r = 0.94;
         victimMarker.color.g = 0.1255;
         victimMarker.color.b = 0.788;
@@ -157,8 +162,7 @@ namespace pandora_alert_handler
   {
     float probability = 0;
     bool victimVisionFound = false;
-    for (int ii = 0; ii < objects_.size(); ++ii)
-    {
+    for (int ii = 0; ii < objects_.size(); ++ii) {
       if (objects_[ii]->getType() == VisualVictim::getObjectType())
       {
         setProbability(objects_[ii]->getProbability());

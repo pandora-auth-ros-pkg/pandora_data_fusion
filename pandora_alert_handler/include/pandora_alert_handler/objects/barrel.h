@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_BARREL_H
-#define PANDORA_ALERT_HANDLER_BARREL_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_BARREL_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_BARREL_H
 
 #include <vector>
 #include <string>
@@ -70,8 +70,8 @@ namespace pandora_alert_handler
     typedef boost::shared_ptr< List const > ListConstPtr;
 
    public:
-    Barrel ();
-    virtual ~Barrel ();
+    Barrel();
+    virtual ~Barrel();
 
     virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
     virtual std::string setFrameId(int id);
@@ -88,4 +88,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_BARREL_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_BARREL_H

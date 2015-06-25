@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_ALERT_HANDLER_OBJECT_HANDLER_H
-#define PANDORA_ALERT_HANDLER_OBJECT_HANDLER_H
+#ifndef PANDORA_ALERT_HANDLER_HANDLERS_OBJECT_HANDLER_H
+#define PANDORA_ALERT_HANDLER_HANDLERS_OBJECT_HANDLER_H
 
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -233,7 +233,8 @@ namespace pandora_alert_handler
     }
     deleteObjectsOnSoftObstacles<ObjectType>(newObjects);
     for (int ii = 0; ii < newObjects->size(); ++ii) {
-      if (ObjectType::getList()->add(newObjects->at(ii))) {
+      if (ObjectType::getList()->add(newObjects->at(ii)))
+      {
         std_msgs::Int32 updateScoreMsg;
         roboCupScore_ += ObjectType::getObjectScore();
         updateScoreMsg.data = roboCupScore_;
@@ -250,7 +251,8 @@ namespace pandora_alert_handler
     keepValidObjects<Thermal>(newObjects, transform);
     deleteObjectsOnSoftObstacles<Thermal>(newObjects);
     for (int ii = 0; ii < newObjects->size(); ++ii) {
-      if (Thermal::getList()->add(newObjects->at(ii))) {
+      if (Thermal::getList()->add(newObjects->at(ii)))
+      {
         std_msgs::Int32 updateScoreMsg;
         roboCupScore_ += Thermal::getObjectScore();
         updateScoreMsg.data = roboCupScore_;
@@ -265,8 +267,7 @@ namespace pandora_alert_handler
       const tf::Transform& transform)
   {
     deleteObjectsOnSoftObstacles<Qr>(newQrs);
-    for (int ii = 0; ii < newQrs->size(); ++ii)
-    {
+    for (int ii = 0; ii < newQrs->size(); ++ii) {
       if (Qr::getList()->add(newQrs->at(ii)))
       {
         pandora_data_fusion_msgs::QrInfo qrInfo;
@@ -285,27 +286,30 @@ namespace pandora_alert_handler
       const typename Obstacle::PtrVectorPtr& newObstacles,
       const tf::Transform& transform)
   {
-    for (int ii = 0; ii < newObstacles->size(); ++ii)
-    {
+    for (int ii = 0; ii < newObstacles->size(); ++ii) {
       ObstaclePtr obstacleToSend;
       bool obstacleToSendFound = true;
-      if (Obstacle::getList()->add(newObstacles->at(ii))) {
+      if (Obstacle::getList()->add(newObstacles->at(ii)))
+      {
         ROS_DEBUG("[ObjectHandler %d] Found new obstacle!", __LINE__);
         obstacleToSend = newObstacles->at(ii);
       }
-      else {
+      else
+      {
         ROS_DEBUG("[ObjectHandler %d] Fetching old obstacle", __LINE__);
         // Fetch object from list
         typename Obstacle::List::IteratorList obstacleListIteratorList;
         obstacleToSendFound = Obstacle::getList()->isAnExistingObject(
             newObstacles->at(ii), &obstacleListIteratorList);
-        if (obstacleToSendFound) {
+        if (obstacleToSendFound)
+        {
           ROS_WARN_COND(obstacleListIteratorList.size() != 1,
               "[ObjectHandler %d] New obstacle matched with more than one old ones", __LINE__);
           obstacleToSend = *(*obstacleListIteratorList.begin());
         }
       }
-      if (obstacleToSendFound) {
+      if (obstacleToSendFound)
+      {
         // Create and send info message to navigation
         pandora_data_fusion_msgs::ObstacleInfo obstacleInfo;
         obstacleInfo = obstacleToSend->getObstacleInfo();
@@ -320,4 +324,4 @@ namespace pandora_alert_handler
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_ALERT_HANDLER_OBJECT_HANDLER_H
+#endif  // PANDORA_ALERT_HANDLER_HANDLERS_OBJECT_HANDLER_H

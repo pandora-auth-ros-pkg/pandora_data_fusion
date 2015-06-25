@@ -229,7 +229,8 @@ namespace pandora_alert_handler
       try
       {
         typename Obstacle::Ptr newObstacle;
-        switch (msg.alerts[ii].type) {
+        switch (msg.alerts[ii].type)
+        {
           case pandora_vision_msgs::ObstacleAlert::BARREL:
             newObstacle.reset( new Barrel );
             break;

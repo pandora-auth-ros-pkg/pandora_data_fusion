@@ -36,6 +36,7 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
+#include <string>
 #include <boost/lexical_cast.hpp>
 
 #include <visualization_msgs/Marker.h>
