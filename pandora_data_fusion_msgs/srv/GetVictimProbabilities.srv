@@ -1,0 +1,4 @@
+int32 victimId
+---
+bool success
+pandora_data_fusion_msgs/VictimProbabilities probabilities

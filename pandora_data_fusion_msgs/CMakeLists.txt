@@ -14,16 +14,18 @@ add_message_files(
   FILES
     VictimInfo.msg
     ObstacleInfo.msg
+    QrInfo.msg
+    HazmatInfo.msg
     WorldModel.msg
-    QrNotification.msg
-    GlobalProbabilities.msg
+    VictimProbabilities.msg
   )
 
 add_service_files(
   FILES
-    GetObjectsSrv.srv
-    GeotiffSrv.srv
-    GetMarkersSrv.srv
+    GetObjects.srv
+    GetGeotiff.srv
+    GetMarkers.srv
+    GetVictimProbabilities.srv
   )
 
 add_action_files(
