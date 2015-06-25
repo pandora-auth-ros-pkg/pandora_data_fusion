@@ -70,6 +70,8 @@ namespace pandora_data_fusion_utils
     static float distanceBetweenPoints(geometry_msgs::Point a, geometry_msgs::Point b, bool is3D);
     static bool arePointsInRange(geometry_msgs::Point pointA, geometry_msgs::Point pointB,
         bool is3D, float sensor_range);
+    static bool isPoseInBox2D(const geometry_msgs::Pose& reference,
+        double length, double width, const geometry_msgs::Pose& pose)
     static bool isOrientationClose(geometry_msgs::Quaternion orientA,
         geometry_msgs::Quaternion orientB,
         float diff_thres);

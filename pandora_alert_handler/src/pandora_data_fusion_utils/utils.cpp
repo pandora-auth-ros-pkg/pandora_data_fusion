@@ -113,6 +113,18 @@ namespace pandora_data_fusion_utils
     return dist <= sensor_range;
   }
 
+  /**
+   * @details: reference and pose should have the same origin, e.g. /map
+   */
+  bool Utils::isPoseInBox2D(const geometry_msgs::Pose& reference,
+      double length, double width, const geometry_msgs::Pose& pose)
+  {
+    double yaw = tf::getYaw(reference.orientation);
+    double xn = cos(yaw) * pose.position.x - sin(yaw) * pose.position.y - reference.position.x;
+    double yn = sin(yaw) * pose.position.x + cos(yaw) * pose.position.y - reference.position.y;
+    return (fabs(xn) < length / 2 && fabs(yn) < width / 2);
+  }
+
   bool Utils::isOrientationClose(geometry_msgs::Quaternion orientA,
       geometry_msgs::Quaternion orientB,
       float diff_thres)
