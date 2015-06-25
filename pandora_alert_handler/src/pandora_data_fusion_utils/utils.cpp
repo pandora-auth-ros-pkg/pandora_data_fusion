@@ -131,9 +131,12 @@ namespace pandora_data_fusion_utils
       geometry_msgs::Quaternion orientB,
       float diff_thres)
   {
-    double yawA = tf::getYaw(orientA);
-    double yawB = tf::getYaw(orientB);
-    return fabs(yawA - yawB) < diff_thres;
+    double yawDiff = tf::getYaw(orientA) - tf::getYaw(orientB);
+    if (yawDiff < 0)
+      yawDiff += 2 * PI;
+    if (yawDiff > PI)
+      yawDiff = 2 * PI - yawDiff;
+    return yawDiff < diff_thres;
   }
 
   float Utils::probabilityFromStdDev(float boundingRadius, float deviation)
