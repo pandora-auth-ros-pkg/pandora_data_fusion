@@ -36,7 +36,8 @@ __author__ = "Afouras Triantafyllos and Tsirigotis Christos"
 __maintainer__ = "Tsirigotis Christos"
 __email__ = "tsirif@gmail.com"
 
-import roslib; roslib.load_manifest('pandora_alert_handler')
+import roslib
+roslib.load_manifest('pandora_alert_handler')
 import rospy
 import actionlib
 import sys
@@ -44,6 +45,7 @@ from pandora_testing_tools.testing_interface import alert_delivery
 
 from dynamic_reconfigure.server import Server
 from pandora_alert_handler.cfg import MassAlertPublisherConfig
+
 
 class MassPublisher:
 
@@ -101,7 +103,7 @@ class MassPublisher:
                     self.alertDeliveryBoy.deliverLandoltcOrder(
                         self.config.landoltc_yaw,
                         self.config.landoltc_pitch,
-                        orderAngles = [1, 0, 0.25])
+                        orderAngles=[1, 0, 0.25])
 
                 if self.config.motion_post:
                     self.alertDeliveryBoy.deliverMotionOrder(
