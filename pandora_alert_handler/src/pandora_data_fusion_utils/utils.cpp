@@ -120,8 +120,10 @@ namespace pandora_data_fusion_utils
       double length, double width, const geometry_msgs::Pose& pose)
   {
     double yaw = tf::getYaw(reference.orientation);
-    double xn = cos(yaw) * pose.position.x - sin(yaw) * pose.position.y - reference.position.x;
-    double yn = sin(yaw) * pose.position.x + cos(yaw) * pose.position.y - reference.position.y;
+    double xDiff = pose.position.x - reference.position.x;
+    double yDiff = pose.position.y - reference.position.y;
+    double xn = cos(yaw) * xDiff - sin(yaw) * yDiff;
+    double yn = sin(yaw) * xDiff + cos(yaw) * yDiff;
     return (fabs(xn) < length / 2 && fabs(yn) < width / 2);
   }
 
