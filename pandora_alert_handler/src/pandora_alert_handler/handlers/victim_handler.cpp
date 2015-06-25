@@ -62,14 +62,14 @@ namespace pandora_alert_handler
 
     clusterer_.reset(new VictimClusterer(0.2));
 
-    if (nh->getParam("published_topic_names/global_probabilities", param))
+    if (nh->getParam("published_topic_names/victim_probabilities", param))
     {
       probabilitiesPublisher_ = nh->
         advertise<pandora_data_fusion_msgs::VictimProbabilities>(param, 2);
     }
     else
     {
-      ROS_FATAL("global probabilities topic name param not found");
+      ROS_FATAL("victim probabilities topic name param not found");
       ROS_BREAK();
     }
   }

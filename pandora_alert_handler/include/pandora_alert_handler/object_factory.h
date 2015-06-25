@@ -229,7 +229,6 @@ namespace pandora_alert_handler
       try
       {
         typename Obstacle::Ptr newObstacle;
-        newObstacle->setGlobalFrame(globalFrame_);
         switch (msg.alerts[ii].type) {
           case pandora_vision_msgs::ObstacleAlert::BARREL:
             newObstacle.reset( new Barrel );
@@ -245,6 +244,7 @@ namespace pandora_alert_handler
                 "Non-registered obstacle type "+boost::to_string(msg.alerts[ii].type));
             break;
         }
+        newObstacle->setGlobalFrame(globalFrame_);
         setUpObject<Obstacle>(newObstacle, msg.alerts[ii],
                               msg.header.stamp, currentTransform_);
         obstacleVectorPtr->push_back(newObstacle);

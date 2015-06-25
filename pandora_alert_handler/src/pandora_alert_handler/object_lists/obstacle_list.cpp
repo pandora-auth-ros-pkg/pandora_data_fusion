@@ -55,6 +55,7 @@ namespace pandora_alert_handler
     for (const_iterator it = this->begin(); it != this->end(); ++it)
     {
       if ((*it)->getObstacleType() == pandora_vision_msgs::ObstacleAlert::SOFT_OBSTACLE) {
+        ROS_DEBUG("Found a soft obstacle to compare to!");
         if (pandora_data_fusion_utils::Utils::
             isPoseInBox2D((*it)->getPose(), (*it)->getLength(), (*it)->getWidth(),
               object->getPose()))

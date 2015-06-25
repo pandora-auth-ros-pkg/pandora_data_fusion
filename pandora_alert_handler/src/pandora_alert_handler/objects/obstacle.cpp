@@ -50,9 +50,8 @@ namespace pandora_alert_handler
   {
     bool isSame = Object<Obstacle>::isSameObject(object);
     if (!isSame) return false;
-    isSame = obstacleType_ == boost::dynamic_pointer_cast<Obstacle const>(
-        object)->getObstacleType();
-    return isSame;
+    return (obstacleType_ == boost::dynamic_pointer_cast<Obstacle const>(
+        object)->getObstacleType());
   }
 
   void Obstacle::update(const ObjectConstPtr& measurement)
