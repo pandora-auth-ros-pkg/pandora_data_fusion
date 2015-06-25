@@ -139,14 +139,7 @@ namespace pandora_alert_handler
       victimInfo.victimPose.header.frame_id = (*it)->getGlobalFrame();
       victimInfo.victimPose.pose = (*it)->getPose();
       victimInfo.probability = (*it)->getProbability();
-      for (ObjectConstPtrVector::const_iterator iter = (*it)->getObjects().begin();
-          iter != (*it)->getObjects().end(); ++iter)
-      {
-        if ((*iter)->getType() != Hole::getObjectType())
-        {
-          victimInfo.sensors.push_back((*iter)->getType());
-        }
-      }
+      victimInfo.sensors = (*it)->getSensors(true);
       victimInfo.verified = (*it)->getVerified();
       victimInfo.valid = (*it)->getValid();
 

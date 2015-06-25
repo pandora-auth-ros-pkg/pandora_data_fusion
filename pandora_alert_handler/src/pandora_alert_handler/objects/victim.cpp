@@ -172,7 +172,8 @@ namespace pandora_alert_handler
     }
     if (!victimVisionFound)
     {
-      int numberOfObjects = 2 > objects_.size() - 1 ? 2 : objects_.size() - 1;
+      std::vector<std::string> signsOfLife = getSensors(true);
+      int numberOfObjects = 2 > signsOfLife.size() ? 2 : signsOfLife.size();
       probability /= numberOfObjects;
       setProbability(probability);
     }
@@ -196,7 +197,19 @@ namespace pandora_alert_handler
     findRepresentativeObject<Motion>(objects);
     findRepresentativeObject<Sound>(objects);
     findRepresentativeObject<Co2>(objects);
+    findRepresentativeObject<Hazmat>(objects);
     updateRepresentativeObject();
+  }
+
+  std::vector<std::string> Victim::getSensors(bool signsOfLife) const
+  {
+    std::vector<std::string> sensors;
+    for (int ii = 0; ii < objects_.size(); ++ii) {
+      if (signsOfLife && objects_[ii]->getType() == Hole::getObjectType())
+        continue;
+      sensors.push_back(objects_[ii]->getType());
+    }
+    return sensors;
   }
 
   /**
@@ -285,4 +298,3 @@ namespace pandora_alert_handler
 
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
-

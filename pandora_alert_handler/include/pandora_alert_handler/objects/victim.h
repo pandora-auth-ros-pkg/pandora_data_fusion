@@ -73,6 +73,8 @@ namespace pandora_alert_handler
       */
     void setObjects(const ObjectConstPtrVector& objects);
 
+    std::vector<std::string> getSensors(bool signsOfLife) const;
+
     /**
       * @brief Inspects this victim's objects in order to verify it.
       * Sets its probability.

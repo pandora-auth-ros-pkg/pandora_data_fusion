@@ -112,7 +112,7 @@ namespace pandora_alert_handler
     Motion::is3D = true;
     VisualVictim::is3D = true;
 
-    Hazmat::isVictimAlert = false;
+    Hazmat::isVictimAlert = true;
     Qr::isVictimAlert = false;
     Landoltc::isVictimAlert = false;
     DataMatrix::isVictimAlert = false;

@@ -86,10 +86,13 @@ namespace pandora_alert_handler
 
     for (int ii = 0; ii < newVictimVector.size(); ii++)
     {
+      // Escape if it is already visited
       if (victimsVisitedList_->contains(newVictimVector[ii]))
-      {
         continue;
-      }
+      // Escape if it has only a hazmat
+      std::vector<std::string> sensors = newVictimVector[ii]->getSensors(false);
+      if (sensors.size() == 1 && sensors[0] == Hazmat::getObjectType())
+        continue;
       bool victimIsNew = victimsToGoList_->add(newVictimVector[ii]);
       if (victimIsNew)
       {
@@ -141,6 +144,8 @@ namespace pandora_alert_handler
           probabilities.co2 = currentVictimsObjects[ii]->getProbability();
         if (currentVictimsObjects[ii]->getType() == Sound::getObjectType())
           probabilities.sound = currentVictimsObjects[ii]->getProbability();
+        if (currentVictimsObjects[ii]->getType() == Hazmat::getObjectType())
+          probabilities.hazmat = currentVictimsObjects[ii]->getProbability();
       }
       probabilitiesPublisher_.publish(probabilities);
     }
@@ -161,6 +166,7 @@ namespace pandora_alert_handler
     Motion::getList()->getAllLegitObjects(result);
     Sound::getList()->getAllLegitObjects(result);
     Co2::getList()->getAllLegitObjects(result);
+    Hazmat::getList()->getAllLegitObjects(result);
 
     return result;
   }
