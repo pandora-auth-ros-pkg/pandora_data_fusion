@@ -50,12 +50,9 @@ namespace pandora_alert_handler
 
   bool DataMatrix::isSameObject(const ObjectConstPtr& object) const
   {
-    // TODO change
-    bool cond = Object<DataMatrix>::isSameObject(object)
-      && !content_.compare(
-          boost::dynamic_pointer_cast<const DataMatrix>(object)->getContent());
-
-    return cond;
+    if (this->getType() != object->getType())
+      return false;
+    return !content_.compare(boost::dynamic_pointer_cast<DataMatrix const>(object)->getContent());
   }
 
   void DataMatrix::getVisualization(visualization_msgs::MarkerArray* markers) const

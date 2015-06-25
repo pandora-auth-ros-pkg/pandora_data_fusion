@@ -51,6 +51,7 @@ namespace pandora_data_fusion
 {
 namespace pandora_alert_handler
 {
+
   HardObstacle::HardObstacle()
   {
     obstacleType_ = pandora_vision_msgs::ObstacleAlert::HARD_OBSTACLE;

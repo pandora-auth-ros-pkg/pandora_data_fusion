@@ -52,12 +52,9 @@ namespace pandora_alert_handler
 
   bool Hazmat::isSameObject(const ObjectConstPtr& object) const
   {
-    // TODO change
-    bool cond = Object<Hazmat>::isSameObject(object)
-      && pattern_ ==
-      boost::dynamic_pointer_cast<const Hazmat>(object)->getPattern();
-
-    return cond;
+    if (!Object<Hazmat>::isSameObject(object))
+      return false;
+    return pattern_ == boost::dynamic_pointer_cast<const Hazmat>(object)->getPattern();
   }
 
   void Hazmat::getVisualization(visualization_msgs::MarkerArray* markers) const
