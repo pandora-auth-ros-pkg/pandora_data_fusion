@@ -65,7 +65,7 @@ namespace pandora_alert_handler
     if (nh->getParam("published_topic_names/global_probabilities", param))
     {
       probabilitiesPublisher_ = nh->
-        advertise<pandora_data_fusion_msgs::GlobalProbabilitiesMsg>(param, 10);
+        advertise<pandora_data_fusion_msgs::GlobalProbabilities>(param, 10);
     }
     else
     {
@@ -130,7 +130,7 @@ namespace pandora_alert_handler
         currentVictim = targetedVictim_;
       }
 
-      pandora_data_fusion_msgs::GlobalProbabilitiesMsg probabilities;
+      pandora_data_fusion_msgs::GlobalProbabilities probabilities;
       ObjectConstPtrVector currentVictimsObjects = currentVictim->getObjects();
       for (int ii = 0; ii < currentVictimsObjects.size(); ++ii)
       {
@@ -227,7 +227,7 @@ namespace pandora_alert_handler
     * @details Delegate to victimList
     */
   void VictimHandler::getVictimsInfo(
-      pandora_data_fusion_msgs::WorldModelMsg* worldModelMsg)
+      pandora_data_fusion_msgs::WorldModel* worldModelMsg)
   {
     victimsToGoList_->getVictimsInfo(&(worldModelMsg->victims));
     victimsVisitedList_->getVictimsInfo(&(worldModelMsg->visitedVictims));

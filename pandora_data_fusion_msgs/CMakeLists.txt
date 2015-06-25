@@ -12,18 +12,17 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-    VictimInfoMsg.msg
+    VictimInfo.msg
     ObstacleInfo.msg
-    WorldModelMsg.msg
-    QrNotificationMsg.msg
-    GlobalProbabilitiesMsg.msg
+    WorldModel.msg
+    QrNotification.msg
+    GlobalProbabilities.msg
   )
 
 add_service_files(
   FILES
     GetObjectsSrv.srv
     GeotiffSrv.srv
-    QrCsvSrv.srv
     GetMarkersSrv.srv
   )
 

@@ -54,8 +54,8 @@
 #include <std_srvs/Empty.h>
 #include <std_msgs/Int16.h>
 
-#include "pandora_data_fusion_msgs/WorldModelMsg.h"
-#include "pandora_data_fusion_msgs/VictimInfoMsg.h"
+#include "pandora_data_fusion_msgs/WorldModel.h"
+#include "pandora_data_fusion_msgs/VictimInfo.h"
 #include "pandora_data_fusion_msgs/ChooseVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjectsSrv.h"

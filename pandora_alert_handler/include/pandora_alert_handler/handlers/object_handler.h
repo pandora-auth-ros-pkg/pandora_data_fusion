@@ -44,7 +44,7 @@
 
 #include <std_msgs/Int32.h>
 
-#include "pandora_data_fusion_msgs/QrNotificationMsg.h"
+#include "pandora_data_fusion_msgs/QrNotification.h"
 #include "pandora_data_fusion_msgs/ObstacleInfo.h"
 
 #include "pandora_alert_handler/objects/objects.h"
@@ -211,7 +211,7 @@ namespace pandora_alert_handler
     {
       if (Qr::getList()->add(newQrs->at(ii)))
       {
-        pandora_data_fusion_msgs::QrNotificationMsg newQrNofifyMsg;
+        pandora_data_fusion_msgs::QrNotification newQrNofifyMsg;
         newQrNofifyMsg.header.stamp = newQrs->at(ii)->getTimeFound();
         newQrNofifyMsg.header.frame_id = newQrs->at(ii)->getFrameId();
         newQrNofifyMsg.x = newQrs->at(ii)->getPose().position.x;

@@ -45,8 +45,8 @@
 #include <vector>
 #include <map>
 
-#include "pandora_data_fusion_msgs/WorldModelMsg.h"
-#include "pandora_data_fusion_msgs/VictimInfoMsg.h"
+#include "pandora_data_fusion_msgs/WorldModel.h"
+#include "pandora_data_fusion_msgs/VictimInfo.h"
 
 #include "pandora_data_fusion_utils/defines.h"
 #include "pandora_alert_handler/object_lists/object_list.h"
@@ -84,12 +84,12 @@ namespace pandora_alert_handler
     void inspect();
 
     /**
-      * @brief Returns a vector containing a VictimInfoMsg for each unvisited victim
-      * @param victimsMsg [pandora_data_fusion_msgs::WorldModelMsg*] The output vector
+      * @brief Returns a vector containing a VictimInfo for each unvisited victim
+      * @param victimsMsg [pandora_data_fusion_msgs::WorldModel*] The output vector
       * @return void
       */
     void getVictimsInfo(
-        std::vector<pandora_data_fusion_msgs::VictimInfoMsg>* victimsMsg);
+        std::vector<pandora_data_fusion_msgs::VictimInfo>* victimsMsg);
 
     VictimPtr targetVictim(int victimId);
 

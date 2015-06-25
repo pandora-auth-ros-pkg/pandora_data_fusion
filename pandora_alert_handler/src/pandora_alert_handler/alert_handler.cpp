@@ -151,7 +151,7 @@ namespace pandora_alert_handler
     */
   void AlertHandler::publishVictims()
   {
-    pandora_data_fusion_msgs::WorldModelMsg worldModelMsg;
+    pandora_data_fusion_msgs::WorldModel worldModelMsg;
     victimHandler_->getVictimsInfo(&worldModelMsg);
     worldModelPublisher_.publish(worldModelMsg);
   }
@@ -188,7 +188,7 @@ namespace pandora_alert_handler
     if (nh_->getParam("published_topic_names/world_model", param))
     {
       worldModelPublisher_ = nh_->
-        advertise<pandora_data_fusion_msgs::WorldModelMsg>(param, 10);
+        advertise<pandora_data_fusion_msgs::WorldModel>(param, 10);
     }
     else
     {

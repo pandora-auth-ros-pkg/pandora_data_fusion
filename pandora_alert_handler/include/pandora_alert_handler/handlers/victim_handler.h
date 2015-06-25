@@ -51,9 +51,9 @@
 
 #include <visualization_msgs/MarkerArray.h>
 
-#include "pandora_data_fusion_msgs/VictimInfoMsg.h"
-#include "pandora_data_fusion_msgs/WorldModelMsg.h"
-#include "pandora_data_fusion_msgs/GlobalProbabilitiesMsg.h"
+#include "pandora_data_fusion_msgs/VictimInfo.h"
+#include "pandora_data_fusion_msgs/WorldModel.h"
+#include "pandora_data_fusion_msgs/GlobalProbabilities.h"
 #include "pandora_data_fusion_msgs/GeotiffSrv.h"
 
 #include "pandora_alert_handler/objects/victim.h"
@@ -133,7 +133,7 @@ namespace pandora_alert_handler
       * @param victimsMsg [pandora_data_fusion_msgs::VictimsMsg*] msg to be filled
       * @return void
       */
-    void getVictimsInfo(pandora_data_fusion_msgs::WorldModelMsg* worldModelMsg);
+    void getVictimsInfo(pandora_data_fusion_msgs::WorldModel* worldModelMsg);
 
     /**
       * @brief Get Poses Stamped of all victims in victimsToGo, victimsVisited and

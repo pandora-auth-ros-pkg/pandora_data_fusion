@@ -125,13 +125,13 @@ namespace pandora_alert_handler
     * and sensors.
     */
   void VictimList::getVictimsInfo(
-      std::vector<pandora_data_fusion_msgs::VictimInfoMsg>* victimsMsg)
+      std::vector<pandora_data_fusion_msgs::VictimInfo>* victimsMsg)
   {
     victimsMsg->clear();
 
     for (const_iterator it = this->begin(); it != this->end(); ++it)
     {
-      pandora_data_fusion_msgs::VictimInfoMsg victimInfo;
+      pandora_data_fusion_msgs::VictimInfo victimInfo;
 
       victimInfo.id = (*it)->getId();
       victimInfo.victimFrameId = (*it)->getFrameId();

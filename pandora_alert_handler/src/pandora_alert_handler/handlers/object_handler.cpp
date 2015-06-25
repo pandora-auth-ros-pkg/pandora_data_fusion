@@ -58,7 +58,7 @@ namespace pandora_alert_handler
     if (nh->getParam("published_topic_names/qr_notification", param))
     {
       qrPublisher_ = nh->advertise<
-        pandora_data_fusion_msgs::QrNotificationMsg>(param, 10);
+        pandora_data_fusion_msgs::QrNotification>(param, 10);
     }
     else
     {
