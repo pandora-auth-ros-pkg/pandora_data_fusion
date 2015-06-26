@@ -97,29 +97,9 @@ namespace pandora_alert_handler
       content_ = content;
     }
 
-    /**
-      * @brief Getter for member timeFound_
-      * @return ros::Time The DATAMATRIX's timeFound
-      */
-    ros::Time getTimeFound() const
-    {
-      return timeFound_;
-    }
-
-    /**
-      * @brief Setter for member timeFound_
-      * @return void
-      */
-    void setTimeFound(ros::Time timeFound)
-    {
-      timeFound_ = timeFound;
-    }
-
    private:
     //!< The dataMatrix's content
     std::string content_;
-    //!< The time when this dataMatrix was first found
-    ros::Time timeFound_;
   };
 
   typedef DataMatrix::Ptr DataMatrixPtr;
