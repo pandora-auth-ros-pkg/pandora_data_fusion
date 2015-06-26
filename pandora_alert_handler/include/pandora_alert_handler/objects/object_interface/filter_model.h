@@ -36,8 +36,8 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef PANDORA_DATA_FUSION_UTILS_FILTER_MODEL_H
-#define PANDORA_DATA_FUSION_UTILS_FILTER_MODEL_H
+#ifndef PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_FILTER_MODEL_H
+#define PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_FILTER_MODEL_H
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -50,7 +50,7 @@
 
 namespace pandora_data_fusion
 {
-namespace pandora_data_fusion_utils
+namespace pandora_alert_handler
 {
 
   //!< Type definitions
@@ -134,7 +134,7 @@ namespace pandora_data_fusion_utils
   typedef boost::shared_ptr<FilterModel> FilterModelPtr;
   typedef boost::shared_ptr<FilterModel const> FilterModelConstPtr;
 
-}  // namespace pandora_data_fusion_utils
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion
 
-#endif  // PANDORA_DATA_FUSION_UTILS_FILTER_MODEL_H
+#endif  // PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_FILTER_MODEL_H

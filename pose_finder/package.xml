@@ -1,8 +1,8 @@
 <package format="2">
 
-  <name>pandora_alert_handler</name>
+  <name>pose_finder</name>
   <version>0.7.0</version>
-  <description>Data Fusion Alert Handler</description>
+  <description>Package with class which handles geometrical world transformations</description>
 
   <maintainer email='tsirif@gmail.com'>Tsirigotis Christos</maintainer>
 
@@ -11,8 +11,6 @@
   <url type="bugtracker">https://github.com/pandora-auth-ros-pkg/pandora_data_fusion/issues</url>
   <url type="repository">https://github.com/pandora-auth-ros-pkg/pandora_data_fusion.git</url>
 
-  <author>Afouras Triantafyllos</author>
-  <author>Chris Zalidis</author>
   <author>Tsirigotis Christos</author>
 
   <buildtool_depend>catkin</buildtool_depend>
@@ -21,23 +19,13 @@
 
   <depend>roscpp</depend>
   <depend>tf</depend>
-  <depend>actionlib</depend>
-  <depend>dynamic_reconfigure</depend>
-  <depend>visualization_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>pandora_data_fusion_msgs</depend>
-  <depend>pandora_vision_msgs</depend>
-  <depend>pandora_common_msgs</depend>
-  <depend>pose_finder</depend>
   <depend>pandora_data_fusion_utils</depend>
-  <depend>bfl</depend>
 
   <!--  Test Dependencies  -->
-  <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>
   <test_depend>roslib</test_depend>
-  <test_depend>python-numpy</test_depend>
   <test_depend>pandora_testing_tools</test_depend>
 
   <export>

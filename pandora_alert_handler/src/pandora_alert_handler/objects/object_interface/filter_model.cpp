@@ -38,11 +38,11 @@
 
 #include <vector>
 
-#include "pandora_data_fusion_utils/filter_model.h"
+#include "pandora_alert_handler/objects/object_interface/filter_model.h"
 
 namespace pandora_data_fusion
 {
-namespace pandora_data_fusion_utils
+namespace pandora_alert_handler
 {
 
   /**
@@ -131,5 +131,5 @@ namespace pandora_data_fusion_utils
     return measurementModels;
   }
 
-}  // namespace pandora_data_fusion_utils
+}  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

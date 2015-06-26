@@ -39,8 +39,11 @@
 #ifndef PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_KALMAN_OBJECT_H
 #define PANDORA_ALERT_HANDLER_OBJECTS_OBJECT_INTERFACE_KALMAN_OBJECT_H
 
+
+#include "pandora_data_fusion_utils/utils.h"
+
 #include "pandora_alert_handler/objects/object_interface/object.h"
-#include "pandora_data_fusion_utils/filter_model.h"
+#include "pandora_alert_handler/objects/object_interface/filter_model.h"
 
 namespace pandora_data_fusion
 {
@@ -76,7 +79,7 @@ namespace pandora_alert_handler
       * @brief Update with measurement Object's information the conviction pdf
       * of this object's filter.
       * @param measurement [ConstPtr const&] Object that carries measurement info.
-      * @param model [pandora_data_fusion_utils::FilterModelConstPtr const&] Filter's model that the update
+      * @param model [FilterModelConstPtr const&] Filter's model that the update
       * will be based upon.
       * @return void
       */
@@ -111,22 +114,22 @@ namespace pandora_alert_handler
 
     /**
       * @brief Setter for the reference of filter model.
-      * @param modelPtr [pandora_data_fusion_utils::FilterModelPtr const&]
+      * @param modelPtr [FilterModelPtr const&]
       * Reference to filter model.
       * @return void
       */
-    static pandora_data_fusion_utils::FilterModelPtr getFilterModel()
+    static FilterModelPtr getFilterModel()
     {
       return modelPtr_;
     }
 
     /**
       * @brief Setter for the reference of filter model.
-      * @param modelPtr [pandora_data_fusion_utils::FilterModelPtr const&]
+      * @param modelPtr [FilterModelPtr const&]
       * Reference to filter model.
       * @return void
       */
-    static void setFilterModel(pandora_data_fusion_utils::FilterModelPtr modelPtr)
+    static void setFilterModel(FilterModelPtr modelPtr)
     {
       modelPtr_ = modelPtr;
     }
@@ -147,15 +150,15 @@ namespace pandora_alert_handler
     FilterPtr filterZ_;
 
     //!< Pointer to filter's model.
-    static pandora_data_fusion_utils::FilterModelPtr modelPtr_;
+    static FilterModelPtr modelPtr_;
 
    private:
     friend class ObjectListTest;
   };
 
   template <class DerivedObject>
-  pandora_data_fusion_utils::FilterModelPtr KalmanObject<DerivedObject>::modelPtr_ = pandora_data_fusion_utils::
-  FilterModelPtr(new pandora_data_fusion_utils::FilterModel);
+  FilterModelPtr KalmanObject<DerivedObject>::modelPtr_ =
+  FilterModelPtr(new FilterModel);
 
   template <class DerivedObject>
   void KalmanObject<DerivedObject>::initializeObjectFilter()
@@ -208,9 +211,9 @@ namespace pandora_alert_handler
     input(1) = 0.0;
 
     //!< Updating existing object's filter pdfs.
-    pandora_data_fusion_utils::SystemModelPtrVector systemModels;
+    SystemModelPtrVector systemModels;
     systemModels = modelPtr_->getSystemModels();
-    pandora_data_fusion_utils::MeasurementModelPtrVector measurementModels;
+    MeasurementModelPtrVector measurementModels;
     measurementModels = modelPtr_->getMeasurementModels();
 
     newPosition(1) = measurementPosition.x;
