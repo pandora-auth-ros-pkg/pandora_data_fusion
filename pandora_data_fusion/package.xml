@@ -1,6 +1,6 @@
 <package format="2">
   <name>pandora_data_fusion</name>
-  <version>0.0.0</version>
+  <version>0.8.0</version>
   <description>Contains pandora data fusion packages</description>
 
   <maintainer email="tsirif@gmail.com">Tsirigotis Christos</maintainer>
