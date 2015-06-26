@@ -140,6 +140,15 @@ namespace pandora_alert_handler
     }
 
     /**
+      * @brief Getter for member timeValidated_
+      * @return ros::Time when victim was validated by agent
+      */
+    ros::Time getTimeValidated() const
+    {
+      return timeValidated_;
+    }
+
+    /**
       * @brief Getter for member visited_
       * @return bool visited_
       */
@@ -197,6 +206,17 @@ namespace pandora_alert_handler
     }
 
     /**
+      * @brief Setter for member timeValidated_
+      * @param timeValidated [ros::Time const&] when victim was validated by
+      * agent
+      * @return void
+      */
+    void setTimeValidated(const ros::Time& timeValidated)
+    {
+      timeValidated_ = timeValidated;
+    }
+
+    /**
       * @brief Setter for member visited_
       * @param visited [bool] The new visited_ value
       * @return void
@@ -237,6 +257,8 @@ namespace pandora_alert_handler
     bool verified_;
     //!< The validity of the victim
     bool valid_;
+    //!< Time that victim was validated
+    ros::Time timeValidated_;
     //!< True if the victim was visited false otherwise
     bool visited_;
 

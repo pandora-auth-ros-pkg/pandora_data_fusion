@@ -303,7 +303,7 @@ namespace pandora_alert_handler
 
     /**
       * @brief Getter for member timeFound_
-      * @return ros::Time The QR's timeFound
+      * @return ros::Time when the object was found by sensor processors
       */
     ros::Time getTimeFound() const
     {
@@ -372,6 +372,8 @@ namespace pandora_alert_handler
 
     /**
       * @brief Setter for member timeFound_
+      * @param timeFound [ros::Time const&] when object was found by sensor
+      * procesors
       * @return void
       */
     void setTimeFound(const ros::Time& timeFound)

@@ -138,6 +138,12 @@ namespace pandora_alert_handler
 
   VictimPtr VictimList::targetVictim(int victimId)
   {
+    if (targetedVictim_.get() != NULL)
+    {
+      targetedVictim_->clearTargeted();
+      targetedVictim_.reset();
+    }
+
     VictimPtr currentVictim;
 
     for (VictimList::iterator it = objects_.begin();
@@ -197,6 +203,7 @@ namespace pandora_alert_handler
         currentVictim = *it;
         currentVictim->setVerified(victimVerified);
         currentVictim->setValid(victimValid);
+        currentVictim->setTimeValidated(ros::Time::now());
         currentVictim->setVisited(true);
         objects_.erase(it);
         if (targetedVictim_->getId() == victimId) {

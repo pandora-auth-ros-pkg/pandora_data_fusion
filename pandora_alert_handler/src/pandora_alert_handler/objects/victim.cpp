@@ -154,7 +154,10 @@ namespace pandora_alert_handler
   {
     if (valid_)
     {
-      res->victims.push_back(getVictimInfo());
+      pandora_data_fusion_msgs::VictimInfo validVictimInfo;
+      validVictimInfo = getVictimInfo();
+      validVictimInfo.timeFound = getTimeValidated();
+      res->victims.push_back(validVictimInfo);
     }
   }
 
