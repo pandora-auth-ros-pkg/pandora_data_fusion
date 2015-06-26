@@ -49,9 +49,8 @@ namespace pandora_alert_handler
 {
 
   VictimHandler::VictimHandler(
-      const ros::NodeHandlePtr& nh,
-      VictimListPtr victimsToGoList,
-      VictimListPtr victimsVisitedList) :
+      const ros::NodeHandlePtr& nh, const std::string& globalFrame,
+      VictimListPtr victimsToGoList, VictimListPtr victimsVisitedList) :
     victimsToGoList_(victimsToGoList),
     victimsVisitedList_(victimsVisitedList)
   {
@@ -61,7 +60,7 @@ namespace pandora_alert_handler
     Victim::setObjectType(param);
     Victim::is3D = true;
 
-    clusterer_.reset(new VictimClusterer(0.2));
+    clusterer_.reset( new VictimClusterer(globalFrame, 0.2) );
 
     if (nh->getParam("published_topic_names/victim_probabilities", param))
     {

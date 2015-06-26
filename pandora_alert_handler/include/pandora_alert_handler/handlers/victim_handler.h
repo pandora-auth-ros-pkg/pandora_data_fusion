@@ -78,9 +78,8 @@ namespace pandora_alert_handler
       * @brief Constructor
       */
     VictimHandler(
-        const ros::NodeHandlePtr& nh,
-        VictimListPtr victimsToGoList,
-        VictimListPtr victimsVisitedList);
+        const ros::NodeHandlePtr& nh, const std::string& globalFrame,
+        VictimListPtr victimsToGoList, VictimListPtr victimsVisitedList);
 
     /**
       * @brief Updates the victim lists with the existing objects

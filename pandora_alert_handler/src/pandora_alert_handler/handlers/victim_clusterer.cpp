@@ -48,7 +48,9 @@ using pandora_data_fusion_utils::Utils;
 namespace pandora_alert_handler
 {
 
-  VictimClusterer::VictimClusterer(float clusterRadius)
+  VictimClusterer::VictimClusterer(
+      const std::string& globalFrame, float clusterRadius) :
+    globalFrame_(globalFrame)
   {
     CLUSTER_RADIUS = clusterRadius;
   }
@@ -67,12 +69,10 @@ namespace pandora_alert_handler
 
     VictimPtrVector newVictimVector;
 
-    for (int ii = 0; ii < groupedObjects.size(); ++ii)
-    {
-      VictimPtr newVictim(new Victim);
-
+    for (int ii = 0; ii < groupedObjects.size(); ++ii) {
+      VictimPtr newVictim( new Victim );
+      newVictim->setGlobalFrame(globalFrame_);
       newVictim->setObjects(groupedObjects[ii]);
-
       newVictimVector.push_back(newVictim);
     }
 
@@ -89,14 +89,12 @@ namespace pandora_alert_handler
     {
       ObjectConstPtrVectorVector groupedObjects;
 
-      for (int objectIt = 0 ; objectIt < allObjects->size() ; ++objectIt)
-      {
+      for (int objectIt = 0 ; objectIt < allObjects->size() ; ++objectIt) {
         ObjectConstPtr currentObj = allObjects->at(objectIt);
 
         bool isAdded = false;
 
-        for (int ii = 0; ii < groupedObjects.size(); ++ii)
-        {
+        for (int ii = 0; ii < groupedObjects.size(); ++ii) {
           geometry_msgs::Point groupCenterPoint =
             findGroupCenterPoint(groupedObjects[ii]);
 
@@ -147,8 +145,7 @@ namespace pandora_alert_handler
     geometry_msgs::Point centerPoint;
 
     for (ObjectConstPtrVector::const_iterator it = objects.begin();
-        it != objects.end(); ++it)
-    {
+        it != objects.end(); ++it) {
       centerPoint.x += (*it)->getPose().position.x;
       centerPoint.y += (*it)->getPose().position.y;
       centerPoint.z += (*it)->getPose().position.z;

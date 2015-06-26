@@ -141,7 +141,7 @@ namespace pandora_alert_handler
 
     objectFactory_.reset( new ObjectFactory(map_, globalFrame_, param) );
     objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_) );
-    victimHandler_.reset( new VictimHandler(nh_, victimsToGo_, victimsVisited_) );
+    victimHandler_.reset( new VictimHandler(nh_, globalFrame_, victimsToGo_, victimsVisited_) );
 
     initRosInterfaces();
   }

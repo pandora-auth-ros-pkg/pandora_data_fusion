@@ -66,7 +66,7 @@ namespace pandora_alert_handler
     /**
       * @brief Constructor
       */
-    explicit VictimClusterer(float clusterRadius);
+    VictimClusterer(const std::string& globalFrame, float clusterRadius);
 
     /**
       * @brief Creates a new victim vector from groups of Objects
@@ -100,6 +100,8 @@ namespace pandora_alert_handler
     geometry_msgs::Point findGroupCenterPoint(const ObjectConstPtrVector& objects);
 
    private:
+    //!< Map origin to which victim poses are refering
+    std::string globalFrame_;
     //!< The radius used for clustering
     float CLUSTER_RADIUS;
 
