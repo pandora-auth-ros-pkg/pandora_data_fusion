@@ -10,7 +10,7 @@
 find_package(roslib REQUIRED)
 find_package(rostest REQUIRED)
 find_package(pandora_testing_tools REQUIRED)
-# find_package(pandora_cmake_tools REQUIRED)
+find_package(pandora_cmake_tools REQUIRED)
 
 include_directories(
   ${pandora_testing_tools_INCLUDE_DIRS}
@@ -34,6 +34,12 @@ include_directories(
 #   with extra data
 # - DON'N forget to `find_package(pandora_cmake_tools REQUIRED)` if you intend
 #   to use `download_extra_data`
+download_data(
+  ${PROJECT_NAME}_frame_matcher_test.bag
+  http://downloads.pandora.ee.auth.gr/bags/frame_matcher_test.bag
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test/functional
+  MD5
+  )
 
 ################################################################################
 #                                  Unit Tests                                  #
