@@ -21,6 +21,7 @@
                            Build Dependencies
                                                                             -->
   <build_depend>roslint</build_depend>
+  <build_depend>pandora_cmake_tools</build_depend>
 
 <!--
                            Exec Dependencies
@@ -33,7 +34,7 @@
   <depend>rospy</depend>
   <depend>urdf</depend>
   <depend>tf</depend>
-  <depend>pandora_alert_handler</depend>
+  <depend>pose_finder</depend>
   <depend>nav_msgs</depend>
   <depend>geometry_msgs</depend>
 

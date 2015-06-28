@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   urdf
   tf
-  pandora_alert_handler
+  pose_finder
   nav_msgs
   geometry_msgs
   roslint
@@ -32,7 +32,7 @@ catkin_package(
     roscpp
     urdf
     tf
-    pandora_alert_handler
+    pose_finder
     nav_msgs
     geometry_msgs
   INCLUDE_DIRS

@@ -38,7 +38,7 @@ download_data(
   ${PROJECT_NAME}_frame_matcher_test.bag
   http://downloads.pandora.ee.auth.gr/bags/frame_matcher_test.bag
   DESTINATION ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_SHARE_DESTINATION}/test/functional
-  MD5
+  MD5 09bd8ca9d31ba8da19fd2449256bc9d7
   )
 
 ################################################################################

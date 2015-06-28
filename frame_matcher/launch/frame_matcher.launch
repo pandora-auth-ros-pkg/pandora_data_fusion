@@ -7,17 +7,17 @@
   <arg name="enhanced_frame_to_topic" default="/camera/enhanced_image" />
   <arg name="robot_states_on" default="[4]" />
 
-  <node pkg="frame_matcher" name="$(arg name)" type="frame_matcher_node" output="screen"
-      ns="/pandora_data_fusion" >
-    <rosparam>
-      global_frame: $(arg global_frame)
-      subscribed_topic_names:
-        map: $(arg map_topic)
-        frame_from: $(arg frame_from_topic)
-        frame_to: $(arg frame_to_topic)
-      published_topic_names:
-        enhanced_frame_to: $(arg enhanced_frame_to_topic)
-      robot_states_on: $(arg robot_states_on)
-    </rosparam>
-  </node>
+  <!-- <node pkg="frame_matcher" name="$(arg name)" type="frame_matcher_node" output="screen" -->
+  <!--     ns="/pandora_data_fusion" >                                                        -->
+  <!--   <rosparam>                                                                           -->
+  <!--     global_frame: $(arg global_frame)                                                  -->
+  <!--     subscribed_topic_names:                                                            -->
+  <!--       map: $(arg map_topic)                                                            -->
+  <!--       frame_from: $(arg frame_from_topic)                                              -->
+  <!--       frame_to: $(arg frame_to_topic)                                                  -->
+  <!--     published_topic_names:                                                             -->
+  <!--       enhanced_frame_to: $(arg enhanced_frame_to_topic)                                -->
+  <!--     robot_states_on: $(arg robot_states_on)                                            -->
+  <!--   </rosparam>                                                                          -->
+  <!-- </node>                                                                                -->
 </launch>

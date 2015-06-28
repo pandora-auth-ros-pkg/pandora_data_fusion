@@ -1,7 +1,7 @@
 <launch>
 
   <node pkg="map_server" type="map_server" name="static_map_publisher"
-    args="$(find pandora_alert_handler)/test/test_maps/map1.yaml"/>
+    args="$(find pose_finder)/test/test_maps/map1.yaml"/>
 
   <node pkg="tf" type="static_transform_publisher"
     name="world2headCamera" args="1 2 1 -1.574 0 0  /map headCamera 100" />

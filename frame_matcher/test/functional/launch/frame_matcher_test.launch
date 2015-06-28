@@ -3,9 +3,6 @@
   <param name="/use_sim_time" value="true"/>
   <arg name="camera" default="logitec_stick" />
 
-  <node pkg="map_server" type="map_server" name="static_map_publisher"
-    args="$(find pandora_alert_handler)/test/test_maps/map1.yaml"/>
-
   <node pkg="tf" type="static_transform_publisher"
     name="worldToMap" args="0 0 0 0 0 0 /world /map 100" />
 
@@ -21,6 +18,6 @@
   <node pkg="pandora_testing_tools" name="frame_matcher_bag_player" type="bag_player_for_tests"
       args="--bags $(find frame_matcher)/test/functional/frame_matcher_test.bag --clock" output="screen" />
 
-  <test test-name="FrameMatcherFunctionalTest" pkg="frame_matcher" type="frame_matcher_functional.py" />
+  <test test-name="FrameMatcherTest" pkg="frame_matcher" type="frame_matcher_functional.py" />
 
 </launch>
