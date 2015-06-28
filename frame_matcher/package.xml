@@ -12,35 +12,22 @@
 
   <author>Tsirigotis Christos</author>
 
-<!--
-                           Buildtool Dependencies
-                                                                            -->
   <buildtool_depend>catkin</buildtool_depend>
 
-<!--
-                           Build Dependencies
-                                                                            -->
   <build_depend>roslint</build_depend>
+  <build_depend>cmake_modules</build_depend>
   <build_depend>pandora_cmake_tools</build_depend>
 
-<!--
-                           Exec Dependencies
-                                                                            -->
-
-<!--
-                           Dependencies
-                                                                            -->
   <depend>roscpp</depend>
   <depend>rospy</depend>
+  <depend>pluginlib</depend>
   <depend>urdf</depend>
   <depend>tf</depend>
   <depend>pose_finder</depend>
+  <depend>sensor_processor</depend>
   <depend>nav_msgs</depend>
   <depend>geometry_msgs</depend>
 
-<!--
-                           Test Dependencies
-                                                                            -->
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>
   <test_depend>roslib</test_depend>
@@ -48,5 +35,6 @@
   <test_depend>pandora_testing_tools</test_depend>
 
   <export>
+    <frame_matcher plugin="${prefix}/frame_matcher_plugins.xml"/>
   </export>
 </package>

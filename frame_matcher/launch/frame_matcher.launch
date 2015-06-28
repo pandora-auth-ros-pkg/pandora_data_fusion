@@ -6,6 +6,7 @@
   <arg name="frame_to_topic" default="/camera/image" />
   <arg name="enhanced_frame_to_topic" default="/camera/enhanced_image" />
   <arg name="robot_states_on" default="[4]" />
+  <arg name="post_processor" default="frame_matcher/enhanced_image_postprocessor" />
 
   <!-- <node pkg="frame_matcher" name="$(arg name)" type="frame_matcher_node" output="screen" -->
   <!--     ns="/pandora_data_fusion" >                                                        -->
@@ -18,6 +19,7 @@
   <!--     published_topic_names:                                                             -->
   <!--       enhanced_frame_to: $(arg enhanced_frame_to_topic)                                -->
   <!--     robot_states_on: $(arg robot_states_on)                                            -->
+           post_processor: $(arg post_processor)
   <!--   </rosparam>                                                                          -->
   <!-- </node>                                                                                -->
 </launch>

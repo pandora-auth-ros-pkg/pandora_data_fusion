@@ -1,0 +1,16 @@
+<class_libraries>
+  <library path="libmatcher_postprocessors">
+    <class name="frame_matcher/enhanced_image_postprocessor"
+        type="pandora_data_fusion::frame_matcher::EnhancedImagePostProcessor"
+        base_class_type="sensor_processor::AbstractProcessor">
+      <description>Formats outputs as EnhancedImage messages when given regions
+      regions of interest on an image frame.</description>
+    </class>
+    <class name="frame_matcher/candidate_hole_postprocessor"
+        type="pandora_data_fusion::frame_matcher::CandidateHolePostProcessor"
+        base_class_type="sensor_processor::AbstractProcessor">
+      <description>Formats outputs as CandidateHolesVectorMsg message when given
+      regions of interest on an image frame.</description>
+    </class>
+  </library>
+</class_libraries>
