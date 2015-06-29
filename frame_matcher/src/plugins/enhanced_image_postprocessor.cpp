@@ -41,7 +41,7 @@
 #include <pluginlib/class_list_macros.h>
 
 #include "sensor_processor/handler.h"
-#include "sensor_processor/abstact_processor.h"
+#include "sensor_processor/abstract_processor.h"
 #include "pandora_vision_msgs/EnhancedImage.h"
 
 #include "frame_matcher/points_on_frame.h"
@@ -57,22 +57,25 @@ namespace frame_matcher
   /**
    * @details TODO
    */
-  EnhancedImagePostProcessor::
-  EnhancedImagePostProcessor(const std::string ns, sensor_processor::Handler* handler)
-  {
-  }
+  // EnhancedImagePostProcessor::
+  // EnhancedImagePostProcessor(const std::string ns, sensor_processor::Handler* handler)
+  // {
+  // }
 
+  EnhancedImagePostProcessor::
+  EnhancedImagePostProcessor() {}
   EnhancedImagePostProcessor::
   ~EnhancedImagePostProcessor() {}
 
   /**
    * @details TODO
    */
-  void
+  bool
   EnhancedImagePostProcessor::
   postProcess(const PointsOnFrameConstPtr& input,
       const pandora_vision_msgs::EnhancedImagePtr& output)
   {
+    return true;
   }
 
 }  // namespace frame_matcher

@@ -18,6 +18,7 @@ find_package(catkin REQUIRED
     nav_msgs
     geometry_msgs
     sensor_processor
+    pandora_vision_common
     roslint
   )
 
@@ -41,8 +42,12 @@ catkin_package(
     nav_msgs
     geometry_msgs
     sensor_processor
+    pandora_vision_common
   INCLUDE_DIRS
     include
+  LIBRARIES
+    candidate_hole_postprocessor
+    enhanced_image_postprocessor
   )
 
 include_directories(
@@ -59,13 +64,26 @@ include_directories(
 # - Set `add_dependencies`, if necessary, to `${catkin_EXPORTED_TARGETS}` or
 #   others
 
-add_library(matcher_postprocessors
-  src/plugins/enhanced_image_postprocessor.cpp
+add_library(candidate_hole_postprocessor
   src/plugins/candidate_hole_postprocessor.cpp
-)
-# target_link_libraries(matcher_postprocessors
-#   costmap_2d
-# )
+  )
+target_link_libraries(candidate_hole_postprocessor
+  ${catkin_LIBRARIES}
+  )
+add_dependencies(candidate_hole_postprocessor
+  ${catkin_EXPORTED_TARGETS}
+  )
+
+add_library(enhanced_image_postprocessor
+  src/plugins/enhanced_image_postprocessor.cpp
+  )
+target_link_libraries(enhanced_image_postprocessor
+  ${catkin_LIBRARIES}
+  )
+add_dependencies(enhanced_image_postprocessor
+  ${catkin_EXPORTED_TARGETS}
+  )
+
 ################################################################################
 #                                 Executables                                  #
 ################################################################################
@@ -78,6 +96,14 @@ add_library(matcher_postprocessors
 ################################################################################
 # - Setup roslint for test code with `roslint_cpp`, `roslint_python` or
 # `roslint_custom`
+
+file(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS
+  RELATIVE ${PROJECT_SOURCE_DIR}
+    include/**/*.h
+    src/**/*.cpp
+    src/*.cpp
+    )
+roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 
 ################################################################################
 #                                   Testing                                    #
@@ -104,13 +130,14 @@ endif()
 # )
 
 install(TARGETS
-  matcher_postprocessors
+  enhanced_image_postprocessor
+  candidate_hole_postprocessor
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-)
+  )
 
 install(FILES frame_matcher_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+  )
 
 # install(DIRECTORY include/${PROJECT_NAME}/
 #   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}

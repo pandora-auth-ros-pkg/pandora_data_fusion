@@ -60,7 +60,7 @@ namespace frame_matcher
   {
    public:
     typedef boost::shared_ptr<PointsOnFrame> Ptr;
-    typedef boost::shared_ptr<PointsOnFrame> ConstPtr;
+    typedef boost::shared_ptr<PointsOnFrame const> ConstPtr;
 
    public:
     // pandora_vision_msgs::EnhancedImageConstPtr enhancedImagePtr;

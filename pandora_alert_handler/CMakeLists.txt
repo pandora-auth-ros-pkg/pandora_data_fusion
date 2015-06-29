@@ -56,7 +56,9 @@ catkin_package(
     pandora_data_fusion_utils
   INCLUDE_DIRS
     include
+    ${BFL_INCLUDE_DIRS}
   LIBRARIES
+    ${BFL_LIBRARIES}
     ${PROJECT_NAME}_filter_model
     ${PROJECT_NAME}_objects
     ${PROJECT_NAME}_victim
@@ -169,7 +171,7 @@ target_link_libraries(${PROJECT_NAME}_object_handler
   ${PROJECT_NAME}_victim_list
   )
 add_dependencies(${PROJECT_NAME}_object_handler
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
   )
 
 ## VictimClusterer
@@ -192,7 +194,7 @@ target_link_libraries(${PROJECT_NAME}_victim_handler
   ${PROJECT_NAME}_victim_clusterer
   )
 add_dependencies(${PROJECT_NAME}_victim_handler
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
   )
 
 ## AlertHandler
@@ -209,7 +211,6 @@ target_link_libraries(${PROJECT_NAME}
   )
 add_dependencies(${PROJECT_NAME}
   ${catkin_EXPORTED_TARGETS}
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
   )
 
 ## Main

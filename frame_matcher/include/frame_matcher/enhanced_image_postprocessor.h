@@ -64,16 +64,17 @@ namespace frame_matcher
      * @param handler [sensor_processor::AbstractHandler*] A pointer of the class that
      * handles this postprocessor
      **/
-    EnhancedImagePostProcessor(const std::string& ns, sensor_processor::Handler* handler);
+    // EnhancedImagePostProcessor(const std::string& ns, sensor_processor::Handler* handler);
+    EnhancedImagePostProcessor();
     virtual ~EnhancedImagePostProcessor();
 
     /**
      * @brief TODO
      * @param input [const PointsOnFrameConstPtr&] TODO
      * @param output [const EnhancedImagesVectorMsgPtr&] TODO
-     * @return virtual  TODO
+     * @return bool TODO
      */
-    virtual void
+    virtual bool
     postProcess(const PointsOnFrameConstPtr& input,
         const pandora_vision_msgs::EnhancedImagePtr& output);
   };

@@ -55,7 +55,7 @@ namespace frame_matcher
    * @class CandidateHolePostProcessor TODO
    */
   class CandidateHolePostProcessor : public sensor_processor::PostProcessor<
-                                     PointsOnFrame, pandora_vision_hole::CandidateHolesVectorMsgPtr>
+                                     PointsOnFrame, pandora_vision_hole::CandidateHolesVectorMsg>
   {
    public:
     /**
@@ -64,16 +64,17 @@ namespace frame_matcher
      * @param handler [sensor_processor::AbstractHandler*] A pointer of the class that
      * handles this postprocessor
      **/
-    CandidateHolePostProcessor(const std::string& ns, sensor_processor::Handler* handler);
+    // CandidateHolePostProcessor(const std::string& ns, sensor_processor::Handler* handler);
+    CandidateHolePostProcessor();
     virtual ~CandidateHolePostProcessor();
 
     /**
      * @brief TODO
      * @param input [const PointsOnFrameConstPtr&] TODO
      * @param output [const CandidateHolesVectorMsgPtr&] TODO
-     * @return virtual  TODO
+     * @return bool TODO
      */
-    virtual void
+    virtual bool
     postProcess(const PointsOnFrameConstPtr& input,
         const pandora_vision_hole::CandidateHolesVectorMsgPtr& output);
   };
