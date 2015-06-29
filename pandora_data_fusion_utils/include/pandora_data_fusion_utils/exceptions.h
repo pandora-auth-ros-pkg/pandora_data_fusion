@@ -63,6 +63,13 @@ namespace pandora_data_fusion_utils
       std::runtime_error(errorDescription) {}
   };
 
+  class MapException : public std::runtime_error
+  {
+   public:
+    explicit MapException(const std::string& errorDescription) :
+      std::runtime_error(errorDescription) {}
+  };
+
   class ObstacleTypeException : public std::runtime_error
   {
    public:
