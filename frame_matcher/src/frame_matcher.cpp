@@ -55,10 +55,8 @@ namespace frame_matcher
     sensor_processor::Handler(ns),
     PostProcessorLoader_("sensor_processor", "sensor_processor::AbstractProcessor")
   {
-    ros::NodeHandle private_nh("~");
-    name_ = private_nh.getNamespace();
     // Get PostProcessor's implementation name
-    if (!private_nh.getParam("post_processor", postProcessorName_))
+    if (!privateNh_.getParam("post_processor", postProcessorName_))
     {
       ROS_FATAL("[FRAME_MATCHER %d] post processor class name param not found "
                 "for %s", __LINE__, name_.c_str());
@@ -67,7 +65,7 @@ namespace frame_matcher
     // Get Active States
     XmlRpc::XmlRpcValue active_states;
     activeStates_.clear();
-    if (!private_nh.getParam("robot_states_on", active_states))
+    if (!privateNh_.getParam("robot_states_on", active_states))
     {
       ROS_FATAL("[FRAME_MATCHER %d] robot states, at which node is on, were not"
                 " found for %s", __LINE__, name_.c_str());

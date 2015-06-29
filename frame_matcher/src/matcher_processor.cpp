@@ -36,64 +36,42 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef FRAME_MATCHER_FRAME_MATCHER_H
-#define FRAME_MATCHER_FRAME_MATCHER_H
-
 #include <string>
-#include <vector>
-
-#include <pluginlib/class_loader.h>
 
 #include "sensor_processor/handler.h"
-#include "sensor_processor/abstract_processor.h"
+
+#include "frame_matcher/points_on_frame.h"
+#include "frame_matcher/matcher_processor.h"
 
 namespace pandora_data_fusion
 {
 namespace frame_matcher
 {
+
   /**
-    * @class FrameMatcher class that implements Handler to organise frame
-    * mather processors
-    */
-  class FrameMatcher : public sensor_processor::Handler
+   * @details TODO
+   */
+  MatcherProcessor::
+  MatcherProcessor(const std::string ns, sensor_processor::Handler* handler)
   {
-   public:
-    explicit FrameMatcher(const std::string& ns);
-    virtual ~FrameMatcher();
+    initialize(ns, handler);
+  }
 
-   protected:
-    /**
-      * @brief Function that performs all the needed procedures when the robot's
-      * state is changed
-      * @param newState [int] Robot's new state
-      */
-    virtual void
-    startTransition(int newState);
+  MatcherProcessor::
+  ~MatcherProcessor() {}
 
-    /**
-      * @brief Function that is called after the transition from one state to
-      * another is completed
-      */
-    virtual void
-    completeTransition();
+  /**
+   * @details TODO
+   */
+  void
+  MatcherProcessor::
+  preProcess(const PointsOnFrameConstPtr& input,
+      const PointsOnFramePtr& output)
+  {
+    // Give Roi rgb sensor image and points
+    // Set output correctly from input
+    // Return
+  }
 
-   private:
-    /**
-      * @brief Load Post Processor implementation class if available
-      * @param name [const std::string&] name of implementation class
-      */
-    void
-    loadPostProcessor(const std::string& name);
-
-   private:
-    //!< Name of the PostProcessor implementation to be used
-    std::string postProcessorName_;
-    //!< Plugin PostProcessor loader
-    pluginlib::ClassLoader<sensor_processor::AbstractProcessor> postProcessorLoader_;
-    //!< States in which node is active
-    std::vector<int> activeStates_;
-  };
 }  // namespace frame_matcher
 }  // namespace pandora_data_fusion
-
-#endif  // FRAME_MATCHER_FRAME_MATCHER_H

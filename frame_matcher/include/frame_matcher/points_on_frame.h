@@ -42,7 +42,11 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include "pandora_vision_msgs/EnhancedImage.h"
+#include <opencv2/opencv.hpp>
+#include <std_msgs/Header.h>
+#include <sensor_msgs/Image.h>
+
+// #include "pandora_vision_msgs/EnhancedImage.h"
 #include "pandora_vision_msgs/Keypoint.h"
 
 namespace pandora_data_fusion
@@ -59,8 +63,10 @@ namespace frame_matcher
     typedef boost::shared_ptr<PointsOnFrame> ConstPtr;
 
    public:
-    pandora_vision_msgs::EnhancedImageConstPtr enhancedImagePtr;
-    std::vector<pandora_vision_msgs::Keypoint> points;
+    // pandora_vision_msgs::EnhancedImageConstPtr enhancedImagePtr;
+    std_msgs::Header header;
+    sensor_msgs::Image rgbImage;
+    std::vector<cv::Point> points;
 
    public:
     PointsOnFrame() {}

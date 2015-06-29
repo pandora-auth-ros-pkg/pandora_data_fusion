@@ -19,7 +19,7 @@
   <!--     published_topic_names:                                                             -->
   <!--       enhanced_frame_to: $(arg enhanced_frame_to_topic)                                -->
   <!--     robot_states_on: $(arg robot_states_on)                                            -->
-           post_processor: $(arg post_processor)
+           <!-- post_processor: $(arg post_processor) -->
   <!--   </rosparam>                                                                          -->
   <!-- </node>                                                                                -->
 </launch>

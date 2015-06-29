@@ -55,6 +55,7 @@ namespace frame_matcher
   MatcherPreProcessor::
   MatcherPreProcessor(const std::string ns, sensor_processor::Handler* handler)
   {
+    initialize(ns, handler);
   }
 
   MatcherPreProcessor::
