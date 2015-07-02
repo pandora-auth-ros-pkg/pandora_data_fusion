@@ -68,6 +68,7 @@ namespace pose_finder
   {
    public:
     PoseFinder(const std::string& mapType);
+    virtual ~PoseFinder();
 
     tf::Transform lookupTransformFromWorld(const std::string& globalFrame,
         const std_msgs::Header& header);

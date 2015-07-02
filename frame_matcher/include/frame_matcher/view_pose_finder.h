@@ -39,12 +39,14 @@
 #ifndef FRAME_MATCHER_VIEW_POSE_FINDER_H
 #define FRAME_MATCHER_VIEW_POSE_FINDER_H
 
+#include <string>
 #include <boost/shared_ptr.hpp>
 
 #include <geometry_msgs/Point.h>
-#include <tf/LinearMath/Vector3.h>
 #include <tf/LinearMath/Transform.h>
 
+#include "pandora_data_fusion_utils/utils.h"
+#include "pandora_data_fusion_utils/exceptions.h"
 #include "pose_finder/pose_finder.h"
 
 namespace pandora_data_fusion
@@ -61,7 +63,7 @@ namespace frame_matcher
     virtual ~ViewPoseFinder();
 
     void findViewOrientation(
-        const geometry_msgs::Point& position,
+        const geometry_msgs::Point& point,
         const tf::Transform& tfTransform,
         double* yaw,
         double* pitch);

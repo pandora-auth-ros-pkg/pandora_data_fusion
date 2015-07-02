@@ -66,6 +66,7 @@ namespace pose_finder
   {
     listener_.reset(pandora_data_fusion_utils::TfFinder::newTfListener(mapType));
   }
+  PoseFinder::~PoseFinder() {}
 
   void PoseFinder::updateMap(const MapConstPtr& mapPtr)
   {
