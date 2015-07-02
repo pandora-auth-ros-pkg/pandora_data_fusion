@@ -78,6 +78,7 @@ namespace pandora_data_fusion_utils
     static geometry_msgs::Quaternion calculateQuaternion(geometry_msgs::Point a,
         geometry_msgs::Point b);
     static geometry_msgs::Point vector3ToPoint(const tf::Vector3& vector);
+    static tf::Vector3 pointToVector3(const geometry_msgs::Point& point);
     static float probabilityFromStdDev(float boundingRadius, float deviation);
     static float stdDevFromProbability(float boundingRadius, float probability);
   };
