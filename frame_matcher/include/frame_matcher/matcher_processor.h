@@ -83,14 +83,19 @@ namespace frame_matcher
     void updateImageTo(const sensor_msgs::ImageConstPtr& msg);
 
    private:
-    ROITransformerPtr roiTransformer_;
-    ViewPoseFinderPtr viewPoseFinder_;
+    ros::NodeHandle nh_;
+    ros::NodeHandle processor_nh_;
+    std::string processorName_;
+
+    RoiTransformerPtr roiTransformer_;
+    ViewPoseFinderPtr viewPoseFinderPtr_;
 
     ros::Subscriber imageToSubscriber_;
     std::string imageToTopicName_;
     ros::Subscriber mapSubscriber_;
     std::string mapTopicName_;
 
+    nsv_msgs::OccupancyGridConstPtr mapConstPtr_;
     sensor_msgs::ImageConstPtr imageToConstPtr_;
   };
 }  // namespace frame_matcher
