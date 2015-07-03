@@ -39,12 +39,16 @@
 #ifndef FRAME_MATCHER_KEYPOINT_TRANSFORMER_H
 #define FRAME_MATCHER_KEYPOINT_TRANSFORMER_H
 
-#include <string>
 #include <boost/scoped_ptr.hpp>
 
+#include <ros/ros.h>
 #include <opencv2/opencv.hpp>
 
+#include <sensor_msgs/Image.h>
+
 #include "pandora_vision_common/pandora_vision_utilities/general_alert_converter.h"
+#include "pandora_vision_common/poi_stamped.h"
+#include "pandora_common_msgs/GeneralAlert.h"
 
 #include "frame_matcher/view_pose_finder.h"
 
@@ -58,17 +62,25 @@ namespace frame_matcher
   class KeypointTransformer
   {
    public:
-    KeypointTransformer(const ViewPoseFinderPtr& viewPoseFinderPtr);
-    virtual ~KeypointTransformer();
+    KeypointTransformer(const ros::NodeHandle& nh, const ViewPoseFinderPtr& viewPoseFinderPtr);
+    virtual
+    ~KeypointTransformer();
 
-    cv::Point transformKeypoint(
-        const sensor_msgs::Image& imageFrom,
-        const cv::Point& roiFrom,
-        const sensor_msgs::Image& imageTo);
+    cv::Point
+    transformKeypoint(const sensor_msgs::Image& imageFrom,
+                      const cv::Point& pointFrom,
+                      const sensor_msgs::Image& imageTo);
+
+    // double
+    // getCameraHfov(const std::string& frame_id);
+
+    // double
+    // getCameraVfov(const std::string& frame_id);
 
    private:
-    ViewPoseFinderPtr viewPoseFinder_;
-    pandora_vision::GeneralAlertConverter generalAlertConverter;
+    ros::NodeHandle nh_;
+    ViewPoseFinderPtr viewPoseFinderPtr_;
+    pandora_vision::GeneralAlertConverter generalAlertConverter_;
   };
 
   typedef boost::scoped_ptr<KeypointTransformer> KeypointTransformerPtr;
