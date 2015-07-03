@@ -40,9 +40,12 @@
 #define FRAME_MATCHER_ROI_TRANSFORMER_H
 
 #include <string>
+#include <vector>
 #include <boost/scoped_ptr.hpp>
 
 #include <opencv2/opencv.hpp>
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
 
 #include "frame_matcher/keypoint_transformer.h"
 #include "frame_matcher/view_pose_finder.h"
@@ -57,17 +60,19 @@ namespace frame_matcher
   class RoiTransformer
   {
    public:
-    RoiTransformer(const ViewPoseFinderPtr& viewPoseFinderPtr);
-    virtual ~RoiTransformer();
+    RoiTransformer(const ros::NodeHandle& nh, const ViewPoseFinderPtr& viewPoseFinderPtr);
+    virtual
+    ~RoiTransformer();
 
-    void transformRegion(
-        const sensor_msgs::Image& imageFrom,
-        const std::vector<cv::Point>& roiFrom,
-        const sensor_msgs::Image& imageTo,
-        std::vector<cv::Point>* roiToPtr);
+    void
+    transformRegion(const sensor_msgs::Image& imageFrom,
+                    const std::vector<cv::Point>& roiFrom,
+                    const sensor_msgs::Image& imageTo,
+                    std::vector<cv::Point>* roiToPtr);
 
    private:
-    void changeIntoOrthogonalBox(const KeypointVectorPtr& roiPtr);
+    void
+    changeIntoOrthogonalBox(std::vector<cv::Point>* roiPtr);
 
    private:
     KeypointTransformer keypointTransformer_;
