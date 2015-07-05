@@ -45,7 +45,7 @@
 #include "sensor_processor/dynamic_handler.h"
 
 #include "frame_matcher/matcher_processor.h"
-#include "frame_matcher/enhanced_image_preprocessor.h"
+// #include "frame_matcher/enhanced_image_preprocessor.h"
 #include "frame_matcher/frame_matcher.h"
 
 namespace pandora_data_fusion
@@ -96,10 +96,10 @@ namespace frame_matcher
     }
     else if (previouslyOff && currentlyOn)
     {
-      // loadPreProcessor("~preprocessor", preprocessor_type_);
-      loadPreProcessor<EnhancedImagePreProcessor>("~");
+      loadPreProcessor("~input", preprocessor_type_);
+      // loadPreProcessor<EnhancedImagePreProcessor>("~");
       loadProcessor<MatcherProcessor>("~");
-      loadPostProcessor("~postprocessor", postprocessor_type_);
+      loadPostProcessor("~output", postprocessor_type_);
     }
 
     if (this->currentState_ == state_manager_msgs::RobotModeMsg::MODE_TERMINATING)

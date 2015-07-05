@@ -65,13 +65,13 @@ namespace frame_matcher
     processor_nh_ = this->getProcessorNodeHandle();
     processorName_ = this->getName();
 
-    if (!processor_nh_.getParam("image_target_topic", imageToTopicName_))
+    if (!processor_nh_.getParam("subscribed_topic_names/image_target_topic", imageToTopicName_))
     {
       ROS_FATAL("[%s] Cound not find image target topic name", processorName_.c_str());
       ROS_BREAK();
     }
 
-    if (!processor_nh_.getParam("map_topic", mapTopicName_))
+    if (!processor_nh_.getParam("subscribed_topic_names/map_topic", mapTopicName_))
     {
       ROS_FATAL("[%s] Cound not fing map topic name", processorName_.c_str());
       ROS_BREAK();
