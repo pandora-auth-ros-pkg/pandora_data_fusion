@@ -36,47 +36,25 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef FRAME_MATCHER_FRAME_MATCHER_H
-#define FRAME_MATCHER_FRAME_MATCHER_H
-
-#include <string>
-#include <vector>
-
+#include <ros/console.h>
 #include <ros/ros.h>
 
-#include "sensor_processor/dynamic_handler.h"
-#include "sensor_processor/abstract_processor.h"
+#include "frame_matcher/frame_matcher.h"
 
-namespace pandora_data_fusion
+using pandora_data_fusion::frame_matcher::FrameMatcher;
+
+int main(int argc, char** argv)
 {
-namespace frame_matcher
-{
-  /**
-    * @class FrameMatcher class that implements Handler to organise frame
-    * mather processors
-    */
-  class FrameMatcher : public sensor_processor::DynamicHandler
+  ros::init(argc, argv, "frame_matcher", ros::init_options::NoSigintHandler);
+  if (argc == 1 && !strcmp(argv[0], "--debug"))
   {
-   public:
-    explicit FrameMatcher();
-
-   protected:
-    /**
-      * @brief Function that performs all the needed procedures when the robot's
-      * state is changed
-      * @param newState [int] Robot's new state
-      */
-    virtual void
-    startTransition(int newState);
-
-   private:
-    ros::NodeHandle private_nh_;
-    std::string name_;
-
-    std::string preprocessor_type_;
-    std::string postprocessor_type_;
-  };
-}  // namespace frame_matcher
-}  // namespace pandora_data_fusion
-
-#endif  // FRAME_MATCHER_FRAME_MATCHER_H
+    if (ros::console::set_logger_level(
+          ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
+    {
+      ros::console::notifyLoggerLevelsChanged();
+    }
+  }
+  FrameMatcher frame_matcher;
+  ros::spin();
+  return 0;
+}

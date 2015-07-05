@@ -64,7 +64,6 @@ namespace frame_matcher
      * @param handler [sensor_processor::AbstractHandler*] A pointer of the class that
      * handles this postprocessor
      **/
-    // CandidateHolePostProcessor(const std::string& ns, sensor_processor::Handler* handler);
     CandidateHolePostProcessor();
     virtual ~CandidateHolePostProcessor();
 

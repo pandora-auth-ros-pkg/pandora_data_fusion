@@ -67,7 +67,7 @@ namespace frame_matcher
       double* yaw,
       double* pitch)
   {
-    tf::Vector3 poi_position = Utils::pointToVector3(point);
+    tf::Vector3 poi_position = pandora_data_fusion_utils::Utils::pointToVector3(point);
     tf::Vector3 sensor_position = tfTransform.getOrigin();
     tf::Vector3 viewFromOrigin = poi_position - sensor_position;
     tf::Vector3 viewFromSensor = tfTransform.getBasis() * viewFromOrigin;

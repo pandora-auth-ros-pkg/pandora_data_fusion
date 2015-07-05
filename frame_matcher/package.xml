@@ -20,7 +20,6 @@
 
   <depend>roscpp</depend>
   <depend>rospy</depend>
-  <depend>pluginlib</depend>
   <depend>urdf</depend>
   <depend>tf</depend>
   <depend>pose_finder</depend>
@@ -28,7 +27,7 @@
   <depend>pandora_vision_common</depend>
   <depend>nav_msgs</depend>
   <depend>geometry_msgs</depend>
-
+  <depend>pandora_data_fusion_utils</depend>
   <depend>pandora_vision_hole</depend>
 
   <test_depend>rosunit</test_depend>

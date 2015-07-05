@@ -43,6 +43,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "frame_matcher/view_pose_finder.h"
+#include "frame_matcher/roi_transformer.h"
 
 namespace pandora_data_fusion
 {
@@ -60,9 +61,9 @@ namespace frame_matcher
   void
   RoiTransformer::
   transformRegion(const sensor_msgs::Image& imageFrom,
-                  const std::vector<cv::Point>& roiFrom,
+                  const std::vector<cv::Point2f>& roiFrom,
                   const sensor_msgs::Image& imageTo,
-                  std::vector<cv::Point>* roiToPtr)
+                  std::vector<cv::Point2f>* roiToPtr)
   {
     for (int ii = 0; ii < roiFrom.size(); ++ii) {
       roiToPtr->push_back(keypointTransformer_.transformKeypoint(
@@ -73,12 +74,12 @@ namespace frame_matcher
 
   void
   RoiTransformer::
-  changeIntoOrthogonalBox(std::vector<cv::Point>* roiPtr)
+  changeIntoOrthogonalBox(std::vector<cv::Point2f>* roiPtr)
   {
     int ii;
     double minx, maxx, miny, maxy;
-    miny = minx = std::numerical_limits<double>::max();
-    maxx = maxy = std::numerical_limits<double>::min();
+    miny = minx = std::numeric_limits<double>::max();
+    maxx = maxy = std::numeric_limits<double>::min();
     for (ii = 0; ii < roiPtr->size(); ++ii) {
       double x = roiPtr->at(ii).x;
       minx = x < minx ? x : minx;
@@ -90,10 +91,10 @@ namespace frame_matcher
       maxy = y > maxy ? y : maxy;
     }
     roiPtr->clear();
-    roiPtr->push_back(cv::Point(minx, miny));
-    roiPtr->push_back(cv::Point(minx, maxy));
-    roiPtr->push_back(cv::Point(maxx, maxy));
-    roiPtr->push_back(cv::Point(maxx, miny));
+    roiPtr->push_back(cv::Point2f(minx, miny));
+    roiPtr->push_back(cv::Point2f(minx, maxy));
+    roiPtr->push_back(cv::Point2f(maxx, maxy));
+    roiPtr->push_back(cv::Point2f(maxx, miny));
   }
 
 }  // namespace frame_matcher

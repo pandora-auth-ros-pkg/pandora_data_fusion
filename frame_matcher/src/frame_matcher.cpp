@@ -42,7 +42,10 @@
 #include <ros/ros.h>
 
 #include "state_manager_msgs/RobotModeMsg.h"
+#include "sensor_processor/dynamic_handler.h"
 
+#include "frame_matcher/matcher_processor.h"
+#include "frame_matcher/enhanced_image_preprocessor.h"
 #include "frame_matcher/frame_matcher.h"
 
 namespace pandora_data_fusion
@@ -51,108 +54,66 @@ namespace frame_matcher
 {
 
   FrameMatcher::
-  FrameMatcher(const std::string& ns) :
-    sensor_processor::Handler(ns),
-    PostProcessorLoader_("sensor_processor", "sensor_processor::AbstractProcessor")
+  FrameMatcher() :
+    sensor_processor::DynamicHandler(false)
   {
-    // Get PostProcessor's implementation name
-    if (!privateNh_.getParam("post_processor", postProcessorName_))
+    private_nh_ = this->getPrivateNodeHandle();
+    name_ = this->getName();
+
+    if (!private_nh_.getParam("preprocessor", preprocessor_type_))
     {
-      ROS_FATAL("[FRAME_MATCHER %d] post processor class name param not found "
-                "for %s", __LINE__, name_.c_str());
+      ROS_FATAL("[%s] Cound not find matcher preprocessor", name_.c_str());
       ROS_BREAK();
     }
-    // Get Active States
-    XmlRpc::XmlRpcValue active_states;
-    activeStates_.clear();
-    if (!privateNh_.getParam("robot_states_on", active_states))
+
+    if (!private_nh_.getParam("postprocessor", preprocessor_type_))
     {
-      ROS_FATAL("[FRAME_MATCHER %d] robot states, at which node is on, were not"
-                " found for %s", __LINE__, name_.c_str());
-    }
-    ROS_ASSERT(active_states.getType() == XmlRpc::XmlRpcValue::TypeArray);
-    for (int ii = 0; ii < active_states.size(); ++ii) {
-      ROS_ASSERT(active_states[ii].getType() == XmlRpc::XmlRpcValue::TypeInt);
-      activeStates_.push_back(static_cast<int>(active_states[ii]));
+      ROS_FATAL("[%s] Cound not find matcher postprocessor", name_.c_str());
+      ROS_BREAK();
     }
   }
 
-  FrameMatcher::
-  ~FrameMatcher() {}
-
-  /**
-   * @details TODO
-   */
   void
   FrameMatcher::
   startTransition(int newState)
   {
-    currentState_ = newState;
+    this->previousState_ = this->currentState_;
+    this->currentState_ = newState;
 
     bool previouslyOff = true;
     bool currentlyOn = false;
 
     for (int ii = 0; ii < activeStates_.size(); ii++) {
-      previouslyOff = (previouslyOff && previousState_ != activeStates_[ii]);
-      currentlyOn = (currentlyOn || currentState_ == activeStates_[ii]);
+      previouslyOff = (previouslyOff && this->previousState_ != ROBOT_STATES(activeStates_[ii]));
+      currentlyOn = (currentlyOn || this->currentState_ == ROBOT_STATES(activeStates_[ii]));
     }
 
-    if (previouslyOff && currentlyOn)
+    if (!previouslyOff && !currentlyOn)
     {
-      preProcPtr_.reset( new MatcherPreProcessor("~preprocessor", this) );
-      processorPtr_.reset( new MatcherProcessor("~", this) );
-      // plugin post processor
-      loadPostProcessor(postProcessorName_);
+      this->preProcPtr_.reset();
+      this->processorPtr_.reset();
+      this->postProcPtr_.reset();
     }
-    else if (!previouslyOff && !currentlyOn)
+    else if (previouslyOff && currentlyOn)
     {
-      preProcPtr_.reset();
-      processorPtr_.reset();
-      postProcPtr_.reset();
+      // loadPreProcessor("~preprocessor", preprocessor_type_);
+      loadPreProcessor<EnhancedImagePreProcessor>("~");
+      loadProcessor<MatcherProcessor>("~");
+      loadPostProcessor("~postprocessor", postprocessor_type_);
     }
 
-    if (currentState_ == state_manager_msgs::RobotModeMsg::MODE_TERMINATING)
+    if (this->currentState_ == state_manager_msgs::RobotModeMsg::MODE_TERMINATING)
     {
-      preProcPtr_.reset();
-      processorPtr_.reset();
-      postProcPtr_.reset();
+      this->preProcPtr_.reset();
+      this->processorPtr_.reset();
+      this->postProcPtr_.reset();
 
+      ROS_INFO("[%s] Terminating", name_.c_str());
       ros::shutdown();
       return;
     }
-    previousState_ = currentState_;
-    transitionComplete(currentState_);
-  }
 
-  /**
-   * @details TODO
-   */
-  void
-  FrameMatcher::
-  completeTransition()
-  {
+    transitionComplete(this->currentState_);
   }
-
-  /**
-   * @details TODO
-   */
-  void
-  FrameMatcher::
-  loadPostProcessor(const std::string& name)
-  {
-    try
-    {
-      postProcPtr_ = postProcessorLoader_.createInstance(name);
-      postProcPtr_->initialize("~postprocessor", this);
-    }
-    catch (const pluginlib::PluginlibException& ex)
-    {
-      ROS_FATAL("[FRAME_MATCHER %d] Failed to create the %s processor, are you sure it is properly"
-                " registered and that the containing library is built? "
-                "Exception: %s", __LINE__, name.c_str(), ex.what());
-      ROS_BREAK();
-    }
-  }
-
 }  // namespace frame_matcher
 }  // namespace pandora_data_fusion

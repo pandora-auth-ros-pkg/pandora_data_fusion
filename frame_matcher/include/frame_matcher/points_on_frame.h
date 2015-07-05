@@ -66,7 +66,7 @@ namespace frame_matcher
     // pandora_vision_msgs::EnhancedImageConstPtr enhancedImagePtr;
     std_msgs::Header header;
     sensor_msgs::Image rgbImage;
-    std::vector<cv::Point> points;
+    std::vector< std::vector<cv::Point2f> > pointsVector;
 
    public:
     PointsOnFrame() {}

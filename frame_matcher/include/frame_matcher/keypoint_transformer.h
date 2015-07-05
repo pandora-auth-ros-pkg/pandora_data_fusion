@@ -56,6 +56,7 @@ namespace pandora_data_fusion
 {
 namespace frame_matcher
 {
+
   /**
    * @class KeypointTransformer TODO
    */
@@ -66,24 +67,22 @@ namespace frame_matcher
     virtual
     ~KeypointTransformer();
 
-    cv::Point
+    cv::Point2f
     transformKeypoint(const sensor_msgs::Image& imageFrom,
-                      const cv::Point& pointFrom,
+                      const cv::Point2f& pointFrom,
                       const sensor_msgs::Image& imageTo);
-
-    // double
-    // getCameraHfov(const std::string& frame_id);
-
-    // double
-    // getCameraVfov(const std::string& frame_id);
 
    private:
     ros::NodeHandle nh_;
+
     ViewPoseFinderPtr viewPoseFinderPtr_;
     pandora_vision::GeneralAlertConverter generalAlertConverter_;
+
+    std::string global_frame_;
   };
 
   typedef boost::scoped_ptr<KeypointTransformer> KeypointTransformerPtr;
+
 }  // namespace frame_matcher
 }  // namespace pandora_data_fusion
 

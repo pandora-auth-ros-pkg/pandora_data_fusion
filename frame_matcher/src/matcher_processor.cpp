@@ -57,12 +57,12 @@ namespace frame_matcher
    * @details TODO
    */
   MatcherProcessor::
-  MatcherProcessor(const std::string ns, sensor_processor::Handler* handler)
+  MatcherProcessor(const std::string& ns, sensor_processor::Handler* handler)
   {
     initialize(ns, handler);
 
-    nh_ = *(this->accessPublicNh());
-    processor_nh_ = *(this->accessProcessorNh());
+    nh_ = this->getPublicNodeHandle();
+    processor_nh_ = this->getProcessorNodeHandle();
     processorName_ = this->getName();
 
     if (!processor_nh_.getParam("image_target_topic", imageToTopicName_))
@@ -94,14 +94,17 @@ namespace frame_matcher
   }
 
   MatcherProcessor::
+  MatcherProcessor() {}
+
+  MatcherProcessor::
   ~MatcherProcessor() {}
 
   /**
    * @details TODO
    */
-  void
+  bool
   MatcherProcessor::
-  preProcess(const PointsOnFrameConstPtr& input, const PointsOnFramePtr& output)
+  process(const PointsOnFrameConstPtr& input, const PointsOnFramePtr& output)
   {
     if (mapConstPtr_.get() == NULL)
       throw sensor_processor::processor_error("Map is not initialized yet!");
@@ -109,10 +112,14 @@ namespace frame_matcher
     // Set output correctly from input
     output->header = input->header;
     output->rgbImage = input->rgbImage;
-    output->points.clear();
-    // Give Roi rgb sensor image and points
-    roiTransformer_->transformRegion(input->rgbImage, input->points,
-        *imageToConstPtr_, &output->points);
+    output->pointsVector.clear();
+    for (int ii = 0; ii < input->pointsVector.size(); ++ii) {
+      std::vector<cv::Point2f> points;
+      // Give Roi rgb sensor image and points
+      roiTransformer_->transformRegion(input->rgbImage, input->pointsVector[ii],
+          *imageToConstPtr_, &points);
+      output->pointsVector.push_back(points);
+    }
     return true;
   }
 

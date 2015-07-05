@@ -36,47 +36,49 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef FRAME_MATCHER_FRAME_MATCHER_H
-#define FRAME_MATCHER_FRAME_MATCHER_H
+#ifndef FRAME_MATCHER_ENHANCED_IMAGE_PREPROCESSOR_H
+#define FRAME_MATCHER_ENHANCED_IMAGE_PREPROCESSOR_H
 
 #include <string>
-#include <vector>
 
-#include <ros/ros.h>
+#include "sensor_processor/handler.h"
+#include "sensor_processor/preprocessor.h"
+#include "pandora_vision_msgs/EnhancedImage.h"
 
-#include "sensor_processor/dynamic_handler.h"
-#include "sensor_processor/abstract_processor.h"
+#include "frame_matcher/points_on_frame.h"
 
 namespace pandora_data_fusion
 {
 namespace frame_matcher
 {
   /**
-    * @class FrameMatcher class that implements Handler to organise frame
-    * mather processors
-    */
-  class FrameMatcher : public sensor_processor::DynamicHandler
+   * @class EnhancedImagePreprocessor TODO
+   */
+  class EnhancedImagePreProcessor : public sensor_processor::PreProcessor<
+                                     pandora_vision_msgs::EnhancedImage, PointsOnFrame>
   {
    public:
-    explicit FrameMatcher();
-
-   protected:
     /**
-      * @brief Function that performs all the needed procedures when the robot's
-      * state is changed
-      * @param newState [int] Robot's new state
-      */
-    virtual void
-    startTransition(int newState);
+     * @brief Constructor
+     * @param ns [const std::string&] The namespace of this postprocessor's nodeHandle
+     * @param handler [sensor_processor::AbstractHandler*] A pointer of the class that
+     * handles this postprocessor
+     **/
+    EnhancedImagePreProcessor();
+    virtual
+    ~EnhancedImagePreProcessor();
 
-   private:
-    ros::NodeHandle private_nh_;
-    std::string name_;
-
-    std::string preprocessor_type_;
-    std::string postprocessor_type_;
+    /**
+     * @brief TODO
+     * @param input [const PointsOnFrameConstPtr&] TODO
+     * @param output [const EnhancedImagesVectorMsgPtr&] TODO
+     * @return bool TODO
+     */
+    virtual bool
+    preProcess(const pandora_vision_msgs::EnhancedImageConstPtr& input,
+        const PointsOnFramePtr& output);
   };
 }  // namespace frame_matcher
 }  // namespace pandora_data_fusion
 
-#endif  // FRAME_MATCHER_FRAME_MATCHER_H
+#endif  // FRAME_MATCHER_ENHANCED_IMAGE_PREPROCESSOR_H

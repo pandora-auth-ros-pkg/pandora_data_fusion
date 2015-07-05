@@ -36,47 +36,67 @@
  *   Tsirigotis Christos <tsirif@gmail.com>
  *********************************************************************/
 
-#ifndef FRAME_MATCHER_FRAME_MATCHER_H
-#define FRAME_MATCHER_FRAME_MATCHER_H
-
 #include <string>
 #include <vector>
 
-#include <ros/ros.h>
+#include <pluginlib/class_list_macros.h>
+#include <opencv2/opencv.hpp>
 
-#include "sensor_processor/dynamic_handler.h"
+#include "sensor_processor/handler.h"
 #include "sensor_processor/abstract_processor.h"
+#include "pandora_vision_msgs/EnhancedImage.h"
+#include "pandora_vision_msgs/RegionOfInterest.h"
+
+#include "frame_matcher/points_on_frame.h"
+#include "frame_matcher/enhanced_image_preprocessor.h"
+
+PLUGINLIB_EXPORT_CLASS(pandora_data_fusion::frame_matcher::EnhancedImagePreProcessor, sensor_processor::AbstractProcessor)
 
 namespace pandora_data_fusion
 {
 namespace frame_matcher
 {
+
   /**
-    * @class FrameMatcher class that implements Handler to organise frame
-    * mather processors
-    */
-  class FrameMatcher : public sensor_processor::DynamicHandler
+   * @details TODO
+   */
+  EnhancedImagePreProcessor::
+  EnhancedImagePreProcessor() {}
+  EnhancedImagePreProcessor::
+  ~EnhancedImagePreProcessor() {}
+
+  /**
+   * @details TODO
+   */
+  bool
+  EnhancedImagePreProcessor::
+    preProcess(const pandora_vision_msgs::EnhancedImageConstPtr& input,
+        const PointsOnFramePtr& output)
   {
-   public:
-    explicit FrameMatcher();
+    output->header = input->header;
 
-   protected:
-    /**
-      * @brief Function that performs all the needed procedures when the robot's
-      * state is changed
-      * @param newState [int] Robot's new state
-      */
-    virtual void
-    startTransition(int newState);
+    output->rgbImage = input->rgbImage;
 
-   private:
-    ros::NodeHandle private_nh_;
-    std::string name_;
+    for (int ii = 0; ii < input->regionsOfInterest.size(); ++ii) {
+      pandora_vision_msgs::RegionOfInterest roi = input->regionsOfInterest[ii];
+      std::vector<cv::Point2f> points;
 
-    std::string preprocessor_type_;
-    std::string postprocessor_type_;
-  };
+      double halfWidth = roi.width / 2;
+      double halfHeight = roi.height / 2;
+      cv::Point2f tl(roi.center.x - halfWidth, roi.center.y - halfHeight);
+      cv::Point2f tr(roi.center.x + halfWidth, roi.center.y - halfHeight);
+      cv::Point2f bl(roi.center.x - halfWidth, roi.center.y + halfHeight);
+      cv::Point2f br(roi.center.x + halfWidth, roi.center.y + halfHeight);
+      points.push_back(tl);
+      points.push_back(tr);
+      points.push_back(bl);
+      points.push_back(br);
+
+      output->pointsVector.push_back(points);
+    }
+
+    return true;
+  }
+
 }  // namespace frame_matcher
 }  // namespace pandora_data_fusion
-
-#endif  // FRAME_MATCHER_FRAME_MATCHER_H

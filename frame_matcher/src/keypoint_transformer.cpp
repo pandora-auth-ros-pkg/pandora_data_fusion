@@ -57,16 +57,19 @@ namespace frame_matcher
 
   KeypointTransformer::
   KeypointTransformer(const ros::NodeHandle& nh, const ViewPoseFinderPtr& viewPoseFinderPtr) :
-    nh_(nh), viewPoseFinderPtr_(viewPoseFinderPtr) {}
+    nh_(nh), viewPoseFinderPtr_(viewPoseFinderPtr)
+  {
+    nh.param<std::string>("global_frame", global_frame_, "/map");
+  }
 
   KeypointTransformer::
   ~KeypointTransformer() {}
 
-  cv::Point
+  cv::Point2f
   KeypointTransformer::
   transformKeypoint(
       const sensor_msgs::Image& imageFrom,
-      const cv::Point& pointFrom,
+      const cv::Point2f& pointFrom,
       const sensor_msgs::Image& imageTo)
   {
     // #1 Calculate yaw and pitch from origin camera frame towards the point we
@@ -80,16 +83,19 @@ namespace frame_matcher
 
     // #2 Calculate position of the point we want to transform in the world
     tf::Transform originCameraFrame = viewPoseFinderPtr_->lookupTransformFromWorld(
-        global_frame_, alert.header);
+        global_frame_, originCameraAlert.header);
     geometry_msgs::Point pointInWorld = viewPoseFinderPtr_->findAlertPosition(
-        alert.info.yaw, alert.info.pitch, originCameraFrame);
+        originCameraAlert.info.yaw, originCameraAlert.info.pitch, originCameraFrame);
 
     // #3 Calculate yaw and pitch from target camera frame towards the point we
     // want to transform
     pandora_common_msgs::GeneralAlert targetCameraAlert;
     targetCameraAlert.header.frame_id = generalAlertConverter_.findParentFrameId(nh_,
         imageTo.header.frame_id, "/robot_description");
-    viewPoseFinderPtr_->findViewOrientation(pointInWorld, targetCameraFrameId,
+    targetCameraAlert.header.stamp = imageTo.header.stamp;  // change this later
+    tf::Transform targetCameraFrame = viewPoseFinderPtr_->lookupTransformFromWorld(
+        global_frame_, targetCameraAlert.header);
+    viewPoseFinderPtr_->findViewOrientation(pointInWorld, targetCameraFrame,
         &targetCameraAlert.info.yaw, &targetCameraAlert.info.pitch);
 
     // #4 Calculate point on target camera frame on which we see the same object
@@ -98,20 +104,6 @@ namespace frame_matcher
         targetCameraAlert, imageTo.width, imageTo.height);
     return poiOnTargetCamera.getPoint();
   }
-
-  // double
-  // KeypointTransformer::
-  // getCameraHfov(const std::string& frame_id)
-  // {
-  //   return generalAlertConverter_.findHfov(nh_, frame_id);
-  // }
-
-  // double
-  // KeypointTransformer::
-  // getCameraVfov(const std::string& frame_id)
-  // {
-  //   return generalAlertConverter_.findVfov(nh_, frame_id);
-  // }
 
 }  // namespace frame_matcher
 }  // namespace pandora_data_fusion

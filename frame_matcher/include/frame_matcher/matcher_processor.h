@@ -43,12 +43,15 @@
 
 #include <ros/ros.h>
 
-#include "nav_msgs/OccupancyGrid.h"
-#include "sensor_msgs/Image.h"
+#include <nav_msgs/OccupancyGrid.h>
+#include <sensor_msgs/Image.h>
+
 #include "sensor_processor/handler.h"
-#include "sensor_processor/preprocessor.h"
+#include "sensor_processor/processor.h"
 
 #include "frame_matcher/points_on_frame.h"
+#include "frame_matcher/roi_transformer.h"
+#include "frame_matcher/view_pose_finder.h"
 
 namespace pandora_data_fusion
 {
@@ -67,6 +70,7 @@ namespace frame_matcher
      * handles this postprocessor
      **/
     MatcherProcessor(const std::string& ns, sensor_processor::Handler* handler);
+    MatcherProcessor();
     virtual ~MatcherProcessor();
 
     /**
@@ -74,8 +78,8 @@ namespace frame_matcher
      * @param input [const pandora_vision_msgs::EnhancedImageConstPtr&] TODO
      * @param output [const PointsOnFramePtr&] TODO
      */
-    virtual void
-    preProcess(const PointsOnFrameConstPtr& input,
+    virtual bool
+    process(const PointsOnFrameConstPtr& input,
         const PointsOnFramePtr& output);
 
    private:
@@ -95,7 +99,7 @@ namespace frame_matcher
     ros::Subscriber mapSubscriber_;
     std::string mapTopicName_;
 
-    nsv_msgs::OccupancyGridConstPtr mapConstPtr_;
+    nav_msgs::OccupancyGridConstPtr mapConstPtr_;
     sensor_msgs::ImageConstPtr imageToConstPtr_;
   };
 }  // namespace frame_matcher

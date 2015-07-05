@@ -37,12 +37,15 @@
  *********************************************************************/
 
 #include <string>
+#include <vector>
 
 #include <pluginlib/class_list_macros.h>
+#include <opencv2/opencv.hpp>
 
 #include "sensor_processor/handler.h"
 #include "sensor_processor/abstract_processor.h"
 #include "pandora_vision_msgs/EnhancedImage.h"
+#include "pandora_vision_msgs/RegionOfInterest.h"
 
 #include "frame_matcher/points_on_frame.h"
 #include "frame_matcher/enhanced_image_postprocessor.h"
@@ -57,11 +60,6 @@ namespace frame_matcher
   /**
    * @details TODO
    */
-  // EnhancedImagePostProcessor::
-  // EnhancedImagePostProcessor(const std::string ns, sensor_processor::Handler* handler)
-  // {
-  // }
-
   EnhancedImagePostProcessor::
   EnhancedImagePostProcessor() {}
   EnhancedImagePostProcessor::
@@ -72,9 +70,25 @@ namespace frame_matcher
    */
   bool
   EnhancedImagePostProcessor::
-  postProcess(const PointsOnFrameConstPtr& input,
-      const pandora_vision_msgs::EnhancedImagePtr& output)
+  postProcess(const PointsOnFrameConstPtr& input, const pandora_vision_msgs::EnhancedImagePtr& output)
   {
+    output->header = input->header;
+
+    output->rgbImage = input->rgbImage;
+    output->isDepth = false;
+
+    for (int ii = 0; ii < input->pointsVector.size(); ++ii) {
+      pandora_vision_msgs::RegionOfInterest roi;
+      std::vector<cv::Point2f> points = input->pointsVector.at(ii);
+
+      roi.width = points[2].x - points[0].x;
+      roi.height = points[2].y - points[0].y;
+      roi.center.x = (points[2].x + points[0].x) / 2;
+      roi.center.y = (points[2].y + points[0].y) / 2;
+
+      output->regionsOfInterest.push_back(roi);
+    }
+
     return true;
   }
 

@@ -54,14 +54,6 @@ namespace pandora_data_fusion
 namespace frame_matcher
 {
 
-  /**
-   * @details TODO
-   */
-  // CandidateHolePostProcessor::
-  // CandidateHolePostProcessor(const std::string ns, sensor_processor::Handler* handler)
-  // {
-  // }
-
   CandidateHolePostProcessor::
   CandidateHolePostProcessor() {}
   CandidateHolePostProcessor::
@@ -75,6 +67,10 @@ namespace frame_matcher
   postProcess(const PointsOnFrameConstPtr& input,
       const pandora_vision_hole::CandidateHolesVectorMsgPtr& output)
   {
+    output->header = input->header;
+
+    output->image = input->rgbImage;
+
     return true;
   }
 

@@ -66,13 +66,13 @@ namespace frame_matcher
 
     void
     transformRegion(const sensor_msgs::Image& imageFrom,
-                    const std::vector<cv::Point>& roiFrom,
+                    const std::vector<cv::Point2f>& roiFrom,
                     const sensor_msgs::Image& imageTo,
-                    std::vector<cv::Point>* roiToPtr);
+                    std::vector<cv::Point2f>* roiToPtr);
 
    private:
     void
-    changeIntoOrthogonalBox(std::vector<cv::Point>* roiPtr);
+    changeIntoOrthogonalBox(std::vector<cv::Point2f>* roiPtr);
 
    private:
     KeypointTransformer keypointTransformer_;

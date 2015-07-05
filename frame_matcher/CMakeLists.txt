@@ -10,8 +10,6 @@ project(frame_matcher)
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
-    cmake_modules
-    pluginlib
     urdf
     tf
     pose_finder
@@ -19,9 +17,11 @@ find_package(catkin REQUIRED
     geometry_msgs
     sensor_processor
     pandora_vision_common
+    pandora_data_fusion_utils
+    cmake_modules
+    pandora_cmake_tools
     roslint
   )
-
 
 ################################################################################
 #                             Catkin Package Setup                             #
@@ -35,19 +35,24 @@ find_package(catkin REQUIRED
 catkin_package(
   CATKIN_DEPENDS
     roscpp
-    pluginlib
     urdf
     tf
     pose_finder
     nav_msgs
     geometry_msgs
     sensor_processor
+    pandora_data_fusion_utils
     pandora_vision_common
   INCLUDE_DIRS
     include
   LIBRARIES
-    candidate_hole_postprocessor
+    enhanced_image_preprocessor
     enhanced_image_postprocessor
+    view_pose_finder
+    keypoint_transformer
+    roi_transformer
+    matcher_processor
+    ${PROJECT_NAME}
   )
 
 include_directories(
@@ -64,13 +69,13 @@ include_directories(
 # - Set `add_dependencies`, if necessary, to `${catkin_EXPORTED_TARGETS}` or
 #   others
 
-add_library(candidate_hole_postprocessor
-  src/plugins/candidate_hole_postprocessor.cpp
+add_library(enhanced_image_preprocessor
+  src/plugins/enhanced_image_preprocessor.cpp
   )
-target_link_libraries(candidate_hole_postprocessor
+target_link_libraries(enhanced_image_preprocessor
   ${catkin_LIBRARIES}
   )
-add_dependencies(candidate_hole_postprocessor
+add_dependencies(enhanced_image_preprocessor
   ${catkin_EXPORTED_TARGETS}
   )
 
@@ -84,6 +89,46 @@ add_dependencies(enhanced_image_postprocessor
   ${catkin_EXPORTED_TARGETS}
   )
 
+add_library(view_pose_finder
+  src/view_pose_finder.cpp
+  )
+target_link_libraries(view_pose_finder
+  ${catkin_LIBRARIES}
+  )
+
+add_library(keypoint_transformer
+  src/keypoint_transformer.cpp
+  )
+target_link_libraries(keypoint_transformer
+  ${catkin_LIBRARIES}
+  view_pose_finder
+  )
+
+add_library(roi_transformer
+  src/roi_transformer.cpp
+  )
+target_link_libraries(roi_transformer
+  ${catkin_LIBRARIES}
+  keypoint_transformer
+  )
+
+add_library(matcher_processor
+  src/matcher_processor.cpp
+  )
+target_link_libraries(matcher_processor
+  ${catkin_LIBRARIES}
+  roi_transformer
+  )
+
+add_library(${PROJECT_NAME}
+  src/frame_matcher.cpp
+  )
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+  enhanced_image_preprocessor
+  matcher_processor
+  )
+
 ################################################################################
 #                                 Executables                                  #
 ################################################################################
@@ -91,8 +136,15 @@ add_dependencies(enhanced_image_postprocessor
 #   target names with `add_executable`
 # - Set `target_link_libraries` for each executable target
 
+add_executable(${PROJECT_NAME}_node
+  src/frame_matcher_node.cpp
+  )
+target_link_libraries(${PROJECT_NAME}_node
+  ${PROJECT_NAME}
+  )
+
 ################################################################################
-#                                   Roslint
+#                                  Roslint
 ################################################################################
 # - Setup roslint for test code with `roslint_cpp`, `roslint_python` or
 # `roslint_custom`
@@ -122,24 +174,22 @@ endif()
 # - Install targets of exported libraries with `install(TARGETS ...)`
 # - Install targets of executables with `install(TARGETS ...)`
 
-# install( TARGETS
-#     costmap_2d_markers
-#     costmap_2d_cloud
-#     costmap_2d_node
-#     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS
+  ${PROJECT_NAME}_node
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
 
 install(TARGETS
+  enhanced_image_preprocessor
   enhanced_image_postprocessor
-  candidate_hole_postprocessor
+  view_pose_finder
+  keypoint_transformer
+  roi_transformer
+  matcher_processor
+  ${PROJECT_NAME}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   )
 
 install(FILES frame_matcher_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   )
-
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   PATTERN ".svn" EXCLUDE
-# )
