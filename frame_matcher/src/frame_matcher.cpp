@@ -40,6 +40,8 @@
 #include <vector>
 
 #include <ros/ros.h>
+#include <pluginlib/class_list_macros.h>
+#include <nodelet/nodelet.h>
 
 #include "state_manager_msgs/RobotModeMsg.h"
 #include "sensor_processor/dynamic_handler.h"
@@ -48,6 +50,9 @@
 // #include "frame_matcher/enhanced_image_preprocessor.h"
 #include "frame_matcher/frame_matcher.h"
 
+PLUGINLIB_EXPORT_CLASS(pandora_data_fusion::frame_matcher::FrameMatcher,
+    nodelet::Nodelet)
+
 namespace pandora_data_fusion
 {
 namespace frame_matcher
@@ -55,8 +60,14 @@ namespace frame_matcher
 
   FrameMatcher::
   FrameMatcher() :
-    sensor_processor::DynamicHandler(false)
+    sensor_processor::DynamicHandler() {}
+
+  void
+  FrameMatcher::
+  onInit()
   {
+    sensor_processor::DynamicHandler::onInit();
+
     private_nh_ = this->getPrivateNodeHandle();
     name_ = this->getName();
 

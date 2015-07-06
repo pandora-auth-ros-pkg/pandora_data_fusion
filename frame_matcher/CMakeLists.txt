@@ -10,6 +10,8 @@ project(frame_matcher)
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
+    nodelet
+    pluginlib
     urdf
     tf
     pose_finder
@@ -35,6 +37,8 @@ find_package(catkin REQUIRED
 catkin_package(
   CATKIN_DEPENDS
     roscpp
+    nodelet
+    pluginlib
     urdf
     tf
     pose_finder

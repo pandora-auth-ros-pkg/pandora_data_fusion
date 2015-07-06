@@ -58,7 +58,10 @@ namespace frame_matcher
   class FrameMatcher : public sensor_processor::DynamicHandler
   {
    public:
-    explicit FrameMatcher();
+    FrameMatcher();
+
+    virtual void
+    onInit();
 
    protected:
     /**
