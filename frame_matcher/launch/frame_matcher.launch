@@ -7,7 +7,7 @@
   <arg name="postprocessor" default="frame_matcher/enhanced_image_postprocessor" />
   <arg name="map_topic" default="/slam/map" />
   <arg name="image_target" default="/camera/image" />
-  <arg name="input_image_topics" default="[/input_images]" />
+  <arg name="input_images" default="/input_images" />
   <arg name="matched_image" default="/camera/matched_images" />
 
   <node pkg="frame_matcher" name="$(arg name)" type="frame_matcher_node" output="screen">
@@ -17,13 +17,12 @@
       active_states: $(arg active_states)
       preprocessor: $(arg preprocessor)
       postprocessor: $(arg postprocessor)
-      subscribed_topic_names:
-        map_topic: $(arg map_topic)
-        image_target_topic: $(arg image_target)
-      input:
-        subscribed_topics: $(arg input_image_topics)
-      output:
-        published_topics: $(arg matched_image)
+      matcher:
+        subscribed_topic_names:
+          map_topic: $(arg map_topic)
+          image_target_topic: $(arg image_target)
+      subscribed_topics: $(arg input_images)
+      published_topics: $(arg matched_image)
     </rosparam>
   </node>
 </launch>

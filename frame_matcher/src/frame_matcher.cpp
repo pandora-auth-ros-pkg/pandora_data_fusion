@@ -90,23 +90,23 @@ namespace frame_matcher
 
     if (!previouslyOff && !currentlyOn)
     {
-      this->preProcPtr_.reset();
-      this->processorPtr_.reset();
-      this->postProcPtr_.reset();
+      unloadPreProcessor();
+      unloadProcessor();
+      unloadPostProcessor();
     }
     else if (previouslyOff && currentlyOn)
     {
-      loadPreProcessor("~input", preprocessor_type_);
+      loadPreProcessor("~preprocessor", preprocessor_type_);
       // loadPreProcessor<EnhancedImagePreProcessor>("~");
-      loadProcessor<MatcherProcessor>("~");
-      loadPostProcessor("~output", postprocessor_type_);
+      loadProcessor<MatcherProcessor>("~matcher");
+      loadPostProcessor("~postprocessor", postprocessor_type_);
     }
 
     if (this->currentState_ == state_manager_msgs::RobotModeMsg::MODE_TERMINATING)
     {
-      this->preProcPtr_.reset();
-      this->processorPtr_.reset();
-      this->postProcPtr_.reset();
+      unloadPreProcessor();
+      unloadProcessor();
+      unloadPostProcessor();
 
       ROS_INFO("[%s] Terminating", name_.c_str());
       ros::shutdown();
