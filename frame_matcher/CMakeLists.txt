@@ -129,7 +129,8 @@ add_library(${PROJECT_NAME}
   )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
-  # enhanced_image_preprocessor
+  enhanced_image_preprocessor
+  enhanced_image_postprocessor
   matcher_processor
   )
 

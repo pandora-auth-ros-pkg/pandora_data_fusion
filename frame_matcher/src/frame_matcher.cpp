@@ -47,7 +47,8 @@
 #include "sensor_processor/dynamic_handler.h"
 
 #include "frame_matcher/matcher_processor.h"
-// #include "frame_matcher/enhanced_image_preprocessor.h"
+#include "frame_matcher/enhanced_image_preprocessor.h"
+#include "frame_matcher/enhanced_image_postprocessor.h"
 #include "frame_matcher/frame_matcher.h"
 
 PLUGINLIB_EXPORT_CLASS(pandora_data_fusion::frame_matcher::FrameMatcher,
@@ -107,10 +108,11 @@ namespace frame_matcher
     }
     else if (previouslyOff && currentlyOn)
     {
-      loadPreProcessor("~preprocessor", preprocessor_type_);
+      loadPreProcessor<EnhancedImagePreProcessor>("~preprocessor");
       // loadPreProcessor<EnhancedImagePreProcessor>("~");
       loadProcessor<MatcherProcessor>("~matcher");
-      loadPostProcessor("~postprocessor", postprocessor_type_);
+      loadPostProcessor<EnhancedImagePostProcessor>("~postprocessor");
+      //loadPostProcessor("~postprocessor", postprocessor_type_);
     }
 
     if (this->currentState_ == state_manager_msgs::RobotModeMsg::MODE_TERMINATING)
