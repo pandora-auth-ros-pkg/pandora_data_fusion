@@ -73,6 +73,7 @@ namespace frame_matcher
     preProcess(const pandora_vision_msgs::EnhancedImageConstPtr& input,
         const PointsOnFramePtr& output)
   {
+    ROS_INFO("[%s] pre process", this->getName().c_str());
     output->header = input->header;
 
     output->rgbImage = input->rgbImage;

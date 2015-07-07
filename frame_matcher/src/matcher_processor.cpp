@@ -106,18 +106,25 @@ namespace frame_matcher
   MatcherProcessor::
   process(const PointsOnFrameConstPtr& input, const PointsOnFramePtr& output)
   {
+    ROS_INFO("[%s] process", this->getName().c_str());
     if (mapConstPtr_.get() == NULL)
+    {
+      ROS_ERROR("[%s] Map is not initialized yet!", this->getName().c_str());
       throw sensor_processor::processor_error("Map is not initialized yet!");
+    }
 
     // Set output correctly from input
     output->header = input->header;
     output->rgbImage = input->rgbImage;
     output->pointsVector.clear();
+    ROS_INFO("[%s] Input has %d rois.", this->getName().c_str(), input->pointsVector.size());
     for (int ii = 0; ii < input->pointsVector.size(); ++ii) {
       std::vector<cv::Point2f> points;
       // Give Roi rgb sensor image and points
       roiTransformer_->transformRegion(input->rgbImage, input->pointsVector[ii],
           *imageToConstPtr_, &points);
+      ROS_WARN("input roi %d has %d points and output roi has %d points",
+          ii, input->pointsVector[ii].size(), points.size());
       output->pointsVector.push_back(points);
     }
     return true;
@@ -127,6 +134,7 @@ namespace frame_matcher
   MatcherProcessor::
   updateMap(const nav_msgs::OccupancyGridConstPtr& msg)
   {
+    ROS_INFO("[%s] Map callback called", this->getName().c_str());
     mapConstPtr_ = msg;
     viewPoseFinderPtr_->updateMap(msg);
   }
@@ -135,6 +143,7 @@ namespace frame_matcher
   MatcherProcessor::
   updateImageTo(const sensor_msgs::ImageConstPtr& msg)
   {
+    ROS_INFO("[%s] Target image callback called", this->getName().c_str());
     imageToConstPtr_ = msg;
   }
 

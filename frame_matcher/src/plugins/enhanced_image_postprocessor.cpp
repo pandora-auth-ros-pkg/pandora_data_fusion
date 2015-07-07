@@ -72,6 +72,7 @@ namespace frame_matcher
   EnhancedImagePostProcessor::
   postProcess(const PointsOnFrameConstPtr& input, const pandora_vision_msgs::EnhancedImagePtr& output)
   {
+    ROS_INFO("[%s] post process", this->getName().c_str());
     output->header = input->header;
 
     output->rgbImage = input->rgbImage;
