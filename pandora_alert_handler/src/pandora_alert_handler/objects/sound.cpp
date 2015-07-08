@@ -85,5 +85,60 @@ namespace pandora_alert_handler
     markers->markers.push_back(description);
   }
 
+  void
+  Sound::
+  setWords(const std::vector<std::string>& words)
+  {
+    words_ = words;
+  }
+
+  std::vector<std::string>
+  Sound::
+  getWords() const
+  {
+    return words_;
+  }
+
+  void
+  Sound::
+  appendWord(const std::string word)
+  {
+    words_.push_back(word);
+  }
+
+  void
+  Sound::
+  clearWords()
+  {
+    words_.clear();
+  }
+
+  bool
+  Sound::
+  doesWordExist(const std::string& word) const
+  {
+    for (int ii = 0; ii < words_.size(); ++ii) {
+      if (words_[ii] == word)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  int
+  Sound::
+  getWordsSize() const
+  {
+    return words_.size();
+  }
+
+  bool
+  Sound::
+  isWordsEmpty() const
+  {
+    return getWordsSize() == 0;
+  }
+
 }  // namespace pandora_alert_handler
 }  // namespace pandora_data_fusion

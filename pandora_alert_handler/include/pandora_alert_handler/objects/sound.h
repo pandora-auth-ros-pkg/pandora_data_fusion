@@ -41,8 +41,8 @@
 
 #include <vector>
 
-#include "pandora_common_msgs/GeneralAlertVector.h"
-#include "pandora_common_msgs/GeneralAlertInfo.h"
+#include "pandora_audio_msgs/SoundAlertVector.h"
+#include "pandora_audio_msgs/SoundAlert.h"
 
 #include "pandora_alert_handler/objects/object_interface/kalman_object.h"
 
@@ -59,14 +59,37 @@ namespace pandora_alert_handler
   {
    public:
     //!< Type Definitions
-    typedef pandora_common_msgs::GeneralAlertInfo Alert;
-    typedef pandora_common_msgs::GeneralAlertVector AlertVector;
+    typedef pandora_audio_msgs::SoundAlert Alert;
+    typedef pandora_audio_msgs::SoundAlertVector AlertVector;
 
    public:
     static void setUpObject(const Ptr& ptr, const Alert& msg)
     {
-      return;
+      std::vector<std::string> words;
+      words.push_back(msg.word);
+      ptr->setWords(words);
     }
+
+    void
+    setWords(const std::vector<std::string>& words);
+
+    std::vector<std::string>
+    getWords() const;
+
+    void
+    appendWord(const std::string word);
+
+    void
+    clearWords();
+
+    bool
+    doesWordExist(const std::string word) const;
+
+    int
+    getWordsSize() const;
+
+    bool
+    isWordsEmpty() const;
 
     /**
       * @brief Constructor
@@ -74,6 +97,9 @@ namespace pandora_alert_handler
     Sound();
 
     virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
+
+   private:
+    std::vector<std::string> words_;
   };
 
   typedef Sound::Ptr SoundPtr;
