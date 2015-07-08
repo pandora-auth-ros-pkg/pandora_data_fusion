@@ -203,7 +203,8 @@ namespace pandora_alert_handler
     {
       if (ObjectType::getObjectType() == Sound::getObjectType())
       {
-        if (!iter->isWordsEmpty())
+        Sound::Ptr soundPtr = boost::dynamic_pointer_cast<Sound>(*iter);
+        if (!soundPtr->isWordsEmpty())
         {
           ++iter;
           continue;
@@ -241,24 +242,6 @@ namespace pandora_alert_handler
     {
       keepValidVerificationObjects<ObjectType>(newObjects);
     }
-    deleteObjectsOnSoftObstacles<ObjectType>(newObjects);
-    for (int ii = 0; ii < newObjects->size(); ++ii) {
-      if (ObjectType::getList()->add(newObjects->at(ii)))
-      {
-        std_msgs::Int32 updateScoreMsg;
-        roboCupScore_ += ObjectType::getObjectScore();
-        updateScoreMsg.data = roboCupScore_;
-        scorePublisher_.publish(updateScoreMsg);
-      }
-    }
-  }
-
-  template <>
-  void ObjectHandler::handleObjects<Sound>(
-      const typename Sound::PtrVectorPtr& newObjects,
-      const tf::Transform& transform)
-  {
-    keepValidVerificationObjects<ObjectType>(newObjects);
     deleteObjectsOnSoftObstacles<ObjectType>(newObjects);
     for (int ii = 0; ii < newObjects->size(); ++ii) {
       if (ObjectType::getList()->add(newObjects->at(ii)))

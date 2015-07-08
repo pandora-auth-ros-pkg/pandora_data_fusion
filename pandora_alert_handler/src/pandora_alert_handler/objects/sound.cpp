@@ -53,7 +53,7 @@ namespace pandora_alert_handler
   Sound::
   update(const ObjectConstPtr& measurement)
   {
-    KalmanObject<Obstacle>::update(measurement);
+    KalmanObject<Sound>::update(measurement);
 
     SoundConstPtr soundMeas = boost::dynamic_pointer_cast<Sound const>(measurement);
     if (!soundMeas->isWordsEmpty())
@@ -122,7 +122,7 @@ namespace pandora_alert_handler
 
   void
   Sound::
-  appendWord(const std::string word)
+  appendWord(const std::string& word)
   {
     words_.push_back(word);
   }

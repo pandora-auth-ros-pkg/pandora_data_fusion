@@ -65,7 +65,7 @@ namespace pandora_alert_handler
    public:
     static void setUpObject(const Ptr& ptr, const Alert& msg)
     {
-      if (msg.word != "")
+      if (msg.word != "0")
       {
         std::vector<std::string> words;
         words.push_back(msg.word);
@@ -89,13 +89,13 @@ namespace pandora_alert_handler
     getWords() const;
 
     void
-    appendWord(const std::string word);
+    appendWord(const std::string& word);
 
     void
     clearWords();
 
     bool
-    doesWordExist(const std::string word) const;
+    doesWordExist(const std::string& word) const;
 
     int
     getWordsSize() const;
