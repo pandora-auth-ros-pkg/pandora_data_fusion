@@ -47,6 +47,27 @@ namespace pandora_alert_handler
 {
 
   Sound::Sound() {}
+  Sound::~Sound() {}
+
+  void
+  Sound::
+  update(const ObjectConstPtr& measurement)
+  {
+    KalmanObject<Obstacle>::update(measurement);
+
+    SoundConstPtr soundMeas = boost::dynamic_pointer_cast<Sound const>(measurement);
+    if (!soundMeas->isWordsEmpty())
+    {
+      std::vector<std::string> words = soundMeas->getWords();
+      for (int ii = 0; ii < words.size(); ++ii)
+      {
+        if (!this->doesWordExist(words[ii]))
+        {
+          this->appendWord(words[ii]);
+        }
+      }
+    }
+  }
 
   void Sound::getVisualization(visualization_msgs::MarkerArray* markers) const
   {

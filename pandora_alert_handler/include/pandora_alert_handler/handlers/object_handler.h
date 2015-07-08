@@ -199,7 +199,16 @@ namespace pandora_alert_handler
   {
     typename ObjectType::PtrVector::iterator iter = objectsPtr->begin();
 
-    while (iter != objectsPtr->end()) {
+    while (iter != objectsPtr->end())
+    {
+      if (ObjectType::getObjectType() == Sound::getObjectType())
+      {
+        if (!iter->isWordsEmpty())
+        {
+          ++iter;
+          continue;
+        }
+      }
       bool valid = false;
       valid = victimsToGoList_->isObjectPoseInList(
           (*iter), VICTIM_CLUSTER_RADIUS);
@@ -228,9 +237,28 @@ namespace pandora_alert_handler
     if (ObjectType::getObjectType() != VisualVictim::getObjectType() &&
         ObjectType::getObjectType() != Hazmat::getObjectType() &&
         ObjectType::getObjectType() != Landoltc::getObjectType() &&
-        ObjectType::getObjectType() != DataMatrix::getObjectType()) {
+        ObjectType::getObjectType() != DataMatrix::getObjectType())
+    {
       keepValidVerificationObjects<ObjectType>(newObjects);
     }
+    deleteObjectsOnSoftObstacles<ObjectType>(newObjects);
+    for (int ii = 0; ii < newObjects->size(); ++ii) {
+      if (ObjectType::getList()->add(newObjects->at(ii)))
+      {
+        std_msgs::Int32 updateScoreMsg;
+        roboCupScore_ += ObjectType::getObjectScore();
+        updateScoreMsg.data = roboCupScore_;
+        scorePublisher_.publish(updateScoreMsg);
+      }
+    }
+  }
+
+  template <>
+  void ObjectHandler::handleObjects<Sound>(
+      const typename Sound::PtrVectorPtr& newObjects,
+      const tf::Transform& transform)
+  {
+    keepValidVerificationObjects<ObjectType>(newObjects);
     deleteObjectsOnSoftObstacles<ObjectType>(newObjects);
     for (int ii = 0; ii < newObjects->size(); ++ii) {
       if (ObjectType::getList()->add(newObjects->at(ii)))

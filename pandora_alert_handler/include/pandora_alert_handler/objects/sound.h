@@ -65,10 +65,22 @@ namespace pandora_alert_handler
    public:
     static void setUpObject(const Ptr& ptr, const Alert& msg)
     {
-      std::vector<std::string> words;
-      words.push_back(msg.word);
-      ptr->setWords(words);
+      if (msg.word != "")
+      {
+        std::vector<std::string> words;
+        words.push_back(msg.word);
+        ptr->setWords(words);
+      }
     }
+
+    /**
+      * @brief Constructor
+      */
+    Sound();
+    virtual ~Sound();
+
+    virtual void update(const ObjectConstPtr& measurement);
+    virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
     void
     setWords(const std::vector<std::string>& words);
@@ -90,13 +102,6 @@ namespace pandora_alert_handler
 
     bool
     isWordsEmpty() const;
-
-    /**
-      * @brief Constructor
-      */
-    Sound();
-
-    virtual void getVisualization(visualization_msgs::MarkerArray* markers) const;
 
    private:
     std::vector<std::string> words_;
