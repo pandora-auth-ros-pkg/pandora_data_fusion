@@ -60,7 +60,14 @@ namespace frame_matcher
   MatcherProcessor::
   MatcherProcessor(const std::string& ns, sensor_processor::Handler* handler)
   {
-    initialize(ns, handler);
+    this->initialize(ns, handler);
+  }
+
+  void
+  MatcherProcessor::
+  initialize(const std::string& ns, sensor_processor::Handler* handler)
+  {
+    sensor_processor::Processor<PointsOnFrame, PointsOnFrame>::initialize(ns, handler);
 
     nh_ = this->getPublicNodeHandle();
     processor_nh_ = this->getProcessorNodeHandle();
@@ -96,9 +103,6 @@ namespace frame_matcher
 
   MatcherProcessor::
   MatcherProcessor() {}
-
-  MatcherProcessor::
-  ~MatcherProcessor() {}
 
   /**
    * @details TODO
