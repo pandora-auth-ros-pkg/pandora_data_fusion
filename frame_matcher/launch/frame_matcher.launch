@@ -12,8 +12,10 @@
   <arg name="matched_image" default="/camera/matched_images" />
 
   <!-- <node pkg="frame_matcher" name="$(arg name)" type="frame_matcher_node" output="screen"> -->
+  <!-- <node pkg="nodelet" name="$(arg name)" type="nodelet" output="screen"      -->
+  <!--     args="load pandora_data_fusion/frame_matcher $(arg nodelet_manager)" > -->
   <node pkg="nodelet" name="$(arg name)" type="nodelet" output="screen"
-      args="load pandora_data_fusion/frame_matcher $(arg nodelet_manager)" >
+      args="standalone pandora_data_fusion/frame_matcher" >
     <rosparam subst_value="True" >
       global_frame: $(arg global_frame)
       map_type: $(arg map_type)
