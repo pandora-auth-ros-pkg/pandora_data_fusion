@@ -349,7 +349,13 @@ namespace pandora_alert_handler
     int victimId = targetVictimServer_->acceptNewGoal()->victimId;
     bool targeted = victimHandler_->targetVictim(victimId);
     if (!targeted)
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] Targeting victim with Id %d aborted!",
+          victimId);
       targetVictimServer_->setAborted();
+    }
+    ROS_INFO("[/PANDORA_ALERT_HANDLER] Targeting victim with Id %d succeeded!",
+        victimId);
     targetVictimServer_->setSucceeded();
   }
 
@@ -359,7 +365,13 @@ namespace pandora_alert_handler
     bool deleted = victimHandler_->deleteVictim(victimId);
     publishVictims();
     if (!deleted)
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] Deleting victim with Id %d aborted!",
+          victimId);
       deleteVictimServer_->setAborted();
+    }
+    ROS_WARN("[/PANDORA_ALERT_HANDLER] Deleting victim with Id %d succeeded!",
+        victimId);
     deleteVictimServer_->setSucceeded();
   }
 
@@ -370,7 +382,13 @@ namespace pandora_alert_handler
         goal->victimVerified, goal->victimValid);
     publishVictims();
     if (!validated)
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] Validating victim with Id %d aborted!",
+          victimId);
       validateVictimServer_->setAborted();
+    }
+    ROS_INFO("[/PANDORA_ALERT_HANDLER] Validating victim with Id %d succeeded!",
+        victimId);
     validateVictimServer_->setSucceeded();
   }
 
