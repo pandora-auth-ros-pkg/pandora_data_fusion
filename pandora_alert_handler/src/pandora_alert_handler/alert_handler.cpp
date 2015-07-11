@@ -384,11 +384,11 @@ namespace pandora_alert_handler
     if (!validated)
     {
       ROS_ERROR("[/PANDORA_ALERT_HANDLER] Validating victim with Id %d aborted!",
-          victimId);
+          goal->victimId);
       validateVictimServer_->setAborted();
     }
     ROS_INFO("[/PANDORA_ALERT_HANDLER] Validating victim with Id %d succeeded!",
-        victimId);
+        goal->victimId);
     validateVictimServer_->setSucceeded();
   }
 
