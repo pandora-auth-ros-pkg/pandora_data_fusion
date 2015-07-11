@@ -15,14 +15,16 @@
   <!-- <node pkg="nodelet" name="$(arg name)" type="nodelet" output="screen"      -->
   <!--     args="load pandora_data_fusion/frame_matcher $(arg nodelet_manager)" > -->
   <node pkg="nodelet" name="$(arg name)" type="nodelet" output="screen"
-      args="standalone pandora_data_fusion/frame_matcher" >
+      args="standalone pandora_data_fusion/frame_matcher"
+      launch-prefix="xterm -e gdb --args" >
+
     <rosparam subst_value="True" >
       global_frame: $(arg global_frame)
-      map_type: $(arg map_type)
       active_states: $(arg active_states)
       preprocessor: $(arg preprocessor)
       postprocessor: $(arg postprocessor)
       matcher:
+        map_type: $(arg map_type)
         subscribed_topic_names:
           map_topic: $(arg map_topic)
           image_target_topic: $(arg image_target)

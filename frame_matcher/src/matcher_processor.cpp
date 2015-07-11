@@ -88,7 +88,7 @@ namespace frame_matcher
     std::string map_type;
     if (!processor_nh_.getParam("map_type", map_type))
     {
-      ROS_FATAL("[%s] Cound not fing map type", processorName_.c_str());
+      ROS_FATAL("[%s] Cound not find map type", processorName_.c_str());
       ROS_BREAK();
     }
 
