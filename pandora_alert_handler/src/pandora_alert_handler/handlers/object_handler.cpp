@@ -106,6 +106,20 @@ namespace pandora_alert_handler
 
   void ObjectHandler::getQrsInfo(pandora_data_fusion_msgs::WorldModel* worldModelPtr)
   {
+    worldModelPtr->qrs.clear();
+    worldModelPtr->visitedQrs.clear();
+
+    for (QrList::const_iterator it = qrsToGoList_->begin();
+         it != qrsToGoList_->end(); ++it)
+    {
+      worldModelPtr->qrs.push_back((*it)->getQrInfo());
+    }
+
+    for (QrList::const_iterator it = qrsVisitedList_->begin();
+         it != qrsVisitedList_->end(); ++it)
+    {
+      worldModelPtr->visitedQrs.push_back((*it)->getQrInfo());
+    }
   }
 
   void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius)
