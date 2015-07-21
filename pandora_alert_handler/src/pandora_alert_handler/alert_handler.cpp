@@ -208,6 +208,19 @@ namespace pandora_alert_handler
 
     // Action Servers
 
+    if (nh_->getParam("action_server_names/visit_qr", param))
+    {
+      visitQRServer_.reset(new VisitQRServer(*nh_, param, false));
+    }
+    else
+    {
+      ROS_FATAL("[ALERT_HANDLER] visit_qr action name param not found");
+      ROS_BREAK();
+    }
+    visitQRServer_->registerGoalCallback(
+        boost::bind(&AlertHandler::visitQRCallback, this));
+    visitQRServer_->start();
+
     if (nh_->getParam("action_server_names/target_victim", param))
     {
       targetVictimServer_.reset(new TargetVictimServer(*nh_, param, false));
@@ -352,6 +365,23 @@ namespace pandora_alert_handler
           tf::StampedTransform(tfObject, it->header.stamp,
                                globalFrame_, it->header.frame_id));
     }
+  }
+
+  void AlertHandler::visitQRCallback()
+  {
+    int qrId = visitQRServer_->acceptNewGoal()->qrId;
+    bool success = objectHandler_->setQRVisited(qrId);
+    pandora_data_fusion_msgs::VisitQRResult result;
+    fetchWorldModel(&result.worldModel);
+    if (!success)
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] Setting qr with Id %d as visited aborted!",
+          qrId);
+      visitQRServer_->setAborted(result);
+    }
+    ROS_INFO("[/PANDORA_ALERT_HANDLER] Setting qr with Id %d as visited succeeded!",
+        qrId);
+    visitQRServer_->setSucceeded(result);
   }
 
   void AlertHandler::targetVictimCallback()

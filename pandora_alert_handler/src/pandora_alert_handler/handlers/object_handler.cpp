@@ -92,6 +92,19 @@ namespace pandora_alert_handler
     }
   }
 
+  bool ObjectHandler::setQRVisited(int qrId)
+  {
+    QrPtr visitedQr = qrsToGoList_->removeElementWithId(qrId);
+    if (visitedQr.get() == NULL)
+      return false;
+    if (!qrsVisitedList_->add(visitedQr))
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] qr with id %d has been set visited again.",
+          qrId);
+    }
+    return true;
+  }
+
   void ObjectHandler::handleHoles(const HolePtrVectorPtr& newHoles,
       const tf::Transform& transform)
   {

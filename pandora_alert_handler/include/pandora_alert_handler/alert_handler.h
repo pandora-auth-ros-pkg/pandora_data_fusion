@@ -56,6 +56,7 @@
 
 #include "pandora_data_fusion_msgs/WorldModel.h"
 #include "pandora_data_fusion_msgs/VictimInfo.h"
+#include "pandora_data_fusion_msgs/VisitQRAction.h"
 #include "pandora_data_fusion_msgs/ChooseVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjects.h"
@@ -88,6 +89,8 @@ namespace pandora_alert_handler
 
   //!< Type Definitions
   typedef actionlib::SimpleActionServer
+    <pandora_data_fusion_msgs::VisitQRAction> VisitQRServer;
+  typedef actionlib::SimpleActionServer
     <pandora_data_fusion_msgs::ChooseVictimAction> TargetVictimServer;
   typedef actionlib::SimpleActionServer
     <pandora_data_fusion_msgs::ChooseVictimAction> DeleteVictimServer;
@@ -104,6 +107,8 @@ namespace pandora_alert_handler
       * @param ns [std::string const&] Has the namespace of the node.
       */
     explicit AlertHandler(const std::string& ns="~");
+
+    void visitQRCallback();
 
     /* Victim-concerned Goal Callbacks */
 
@@ -222,6 +227,7 @@ namespace pandora_alert_handler
     tf::TransformBroadcaster objectsBroadcaster_;
     ros::Timer tfPublisherTimer_;
 
+    boost::shared_ptr<VisitQRServer> visitQRServer_;
     boost::shared_ptr<TargetVictimServer> targetVictimServer_;
     boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
     boost::shared_ptr<ValidateVictimServer> validateVictimServer_;

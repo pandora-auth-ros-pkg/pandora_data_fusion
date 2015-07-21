@@ -103,6 +103,7 @@ namespace pandora_alert_handler
     bool isAnExistingObject(
         const ConstPtr& object, IteratorList* iteratorListPtr);
     void removeElementAt(iterator it);
+    typename ObjectType::Ptr removeElementWithId(int objectId);
 
    protected:
     virtual void updateObjects(const ConstPtr& object,
@@ -201,6 +202,21 @@ namespace pandora_alert_handler
       ObjectList<ObjectType>::iterator it)
   {
     objects_.erase(it);
+  }
+
+  template <class ObjectType>
+  typename ObjectType::Ptr ObjectList<ObjectType>::removeElementWithId(int objectId)
+  {
+    typename ObjectType::Ptr objectPtr;
+    for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
+      if ((*it)->getId() == objectId)
+      {
+        objectPtr = *it;
+        removeElementAt(it);
+        break;
+      }
+    }
+    return objectPtr;
   }
 
   template <class ObjectType>

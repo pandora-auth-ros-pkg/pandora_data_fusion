@@ -94,6 +94,7 @@ namespace pandora_alert_handler
         const tf::Transform& transform);
 
     void getQrsInfo(pandora_data_fusion_msgs::WorldModel* worldModelPtr);
+    bool setQRVisited(int qrId);
 
     /**
       * @brief parameter updating from dynamic reconfiguration
