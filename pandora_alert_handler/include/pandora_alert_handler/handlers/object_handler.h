@@ -302,29 +302,29 @@ namespace pandora_alert_handler
         roboCupScore_ += Qr::getObjectScore();
         updateScoreMsg.data = roboCupScore_;
         scorePublisher_.publish(updateScoreMsg);
-      }
 
-      // If qr is located above a certain height, then put it to visited list
-      if (newQrs->at(ii)->getPose().position.z > UNREACHABLE_HEIGHT)
-      {
-        qrsVisitedList_->add(newQrs->at(ii));
-      }
-
-      // Do other qrs exist near a new qr? then put them all to visited list
-      // else put them to to_go list
-      else if (qrCluster)
-      {
-        qrsVisitedList_->add(newQrs->at(ii));
-        for (typename QrList::IteratorList::const_iterator it = iteratorList.begin();
-            it != iteratorList.end(); ++it)
+        // If qr is located above a certain height, then put it to visited list
+        if (newQrs->at(ii)->getPose().position.z > UNREACHABLE_HEIGHT)
         {
-          qrsVisitedList_->add(*(*it));
-          qrsToGoList_->removeElementAt(*it);
+          qrsVisitedList_->addUnchanged(newQrs->at(ii));
         }
-      }
-      else
-      {
-        qrsToGoList_->add(newQrs->at(ii));
+
+        // Do other qrs exist near a new qr? then put them all to visited list
+        // else put them to to_go list
+        else if (qrCluster)
+        {
+          qrsVisitedList_->addUnchanged(newQrs->at(ii));
+          for (typename QrList::IteratorList::const_iterator it = iteratorList.begin();
+              it != iteratorList.end(); ++it)
+          {
+            qrsVisitedList_->addUnchanged(*(*it));
+            qrsToGoList_->removeElementAt(*it);
+          }
+        }
+        else
+        {
+          qrsToGoList_->addUnchanged(newQrs->at(ii));
+        }
       }
     }
   }
