@@ -75,7 +75,9 @@ namespace pandora_alert_handler
     ObjectHandler(
         const ros::NodeHandlePtr& nh,
         const VictimListConstPtr& victimsToGoList,
-        const VictimListConstPtr& victimsVisited);
+        const VictimListConstPtr& victimsVisited,
+        const QrListPtr& qrsToGo,
+        const QrListPtr& qrsVisited);
 
     void handleHoles(const HolePtrVectorPtr& newHoles,
         const tf::Transform& transform);
@@ -125,6 +127,9 @@ namespace pandora_alert_handler
 
     VictimListConstPtr victimsToGoList_;
     VictimListConstPtr victimsVisitedList_;
+
+    QrListPtr qrsToGoList_;
+    QrListPtr qrsVisitedList_;
 
     int roboCupScore_;
 

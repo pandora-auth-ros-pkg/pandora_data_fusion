@@ -251,6 +251,9 @@ namespace pandora_alert_handler
     //!< The visited victims list
     VictimListPtr victimsVisited_;
 
+    QrListPtr qrsToGo_;
+    QrListPtr qrsVisited_;
+
     pose_finder::PoseFinderPtr poseFinderPtr_;
     ObjectFactoryPtr objectFactory_;
     ObjectHandlerPtr objectHandler_;

@@ -47,9 +47,13 @@ namespace pandora_alert_handler
 
   ObjectHandler::ObjectHandler(const ros::NodeHandlePtr& nh,
       const VictimListConstPtr& victimsToGoList,
-      const VictimListConstPtr& victimsVisitedList) :
+      const VictimListConstPtr& victimsVisitedList,
+      const QrListPtr& qrsToGo,
+      const QrListPtr& qrsVisited) :
     victimsToGoList_(victimsToGoList),
-    victimsVisitedList_(victimsVisitedList)
+    victimsVisitedList_(victimsVisitedList),
+    qrsToGoList_(qrsToGo),
+    qrsVisitedList_(qrsVisited)
   {
     std::string param;
 

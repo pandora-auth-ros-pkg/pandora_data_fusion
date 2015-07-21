@@ -126,6 +126,9 @@ namespace pandora_alert_handler
     victimsToGo_.reset( new VictimList );
     victimsVisited_.reset( new VictimList );
 
+    qrsToGo_.reset( new QrList );
+    qrsVisited_.reset( new QrList );
+
     if (!nh_->getParam("map_type", param))
     {
       ROS_FATAL("[ALERT_HANDLER] map_type param not found");
@@ -140,7 +143,8 @@ namespace pandora_alert_handler
 
     poseFinderPtr_.reset( new pose_finder::PoseFinder(param) );
     objectFactory_.reset( new ObjectFactory(poseFinderPtr_, globalFrame_) );
-    objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_) );
+    objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_,
+          qrsToGo_, qrsVisited_) );
     victimHandler_.reset( new VictimHandler(nh_, globalFrame_, victimsToGo_, victimsVisited_) );
 
     initRosInterfaces();
