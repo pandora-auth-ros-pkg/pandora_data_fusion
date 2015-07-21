@@ -114,13 +114,6 @@ namespace pandora_alert_handler
         bool victimValid);
 
     /**
-      * @brief Adds the given victim to the list as is, no checks and updates
-      * @param victim [VictimPtr const&] The victim to be added
-      * @return void
-      */
-    void addUnchanged(const VictimPtr& victim);
-
-    /**
       * @override
       */
     void clear();

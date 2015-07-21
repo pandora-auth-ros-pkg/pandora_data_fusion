@@ -217,14 +217,6 @@ namespace pandora_alert_handler
     return currentVictim;
   }
 
-  /**
-    * @details ~Add As You Are~ - Nirvana
-    */
-  void VictimList::addUnchanged(const VictimPtr& victim)
-  {
-    objects_.push_back(victim);
-  }
-
   void VictimList::clear()
   {
     objects_.clear();

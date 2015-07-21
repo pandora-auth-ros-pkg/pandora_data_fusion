@@ -103,7 +103,8 @@ namespace pandora_alert_handler
       * with a victim in question [identification mode]
       * @return void
       */
-    void updateParams(float sensor_range, float victim_cluster_radius);
+    void updateParams(float sensor_range, float victim_cluster_radius,
+        float unreachable_height);
 
    private:
     /**
@@ -138,6 +139,7 @@ namespace pandora_alert_handler
 
     float SENSOR_RANGE;
     float VICTIM_CLUSTER_RADIUS;
+    float UNREACHABLE_HEIGHT;
   };
 
   template <class ObjectType>
@@ -296,6 +298,14 @@ namespace pandora_alert_handler
         updateScoreMsg.data = roboCupScore_;
         scorePublisher_.publish(updateScoreMsg);
       }
+
+      // If qr is located above a certain height, then put it to visited list
+      if (newQrs->at(ii)->getPose().position.z > UNREACHABLE_HEIGHT)
+      {
+      }
+
+      // Do other qrs exist near a new qr? then put them all to visited list
+      // else put them to to_go list
     }
   }
 

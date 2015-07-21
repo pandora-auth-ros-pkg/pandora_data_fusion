@@ -74,6 +74,7 @@ namespace pandora_alert_handler
     ObjectList();
 
     bool add(const Ptr& object);
+    void addUnchanged(const Ptr& object);
 
     /**
       * @brief Fills a vector with all legit ObjectTypes from list.
@@ -168,6 +169,15 @@ namespace pandora_alert_handler
     object->setId(id_++);
     objects_.push_back(object);
     return true;
+  }
+
+  /**
+    * @details ~Add As You Are~ - Nirvana
+    */
+  template <class ObjectType>
+  void ObjectList<ObjectType>::addUnchanged(const Ptr& object)
+  {
+    objects_.push_back(object);
   }
 
   template <class ObjectType>

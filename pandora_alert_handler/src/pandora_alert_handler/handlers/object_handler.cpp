@@ -122,10 +122,12 @@ namespace pandora_alert_handler
     }
   }
 
-  void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius)
+  void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius,
+      float unreachable_height)
   {
     SENSOR_RANGE = sensor_range;
     VICTIM_CLUSTER_RADIUS = victim_cluster_radius;
+    UNREACHABLE_HEIGHT = unreachable_height;
   }
 
 }  // namespace pandora_alert_handler

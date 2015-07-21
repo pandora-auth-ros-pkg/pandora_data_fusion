@@ -507,7 +507,8 @@ namespace pandora_alert_handler
     Co2::getFilterModel()->initializeSystemModel(config.co2SystemNoiseSD);
     Co2::getFilterModel()->initializeMeasurementModel(config.co2MeasurementSD);
 
-    objectHandler_->updateParams(config.sensorRange, config.clusterRadius);
+    objectHandler_->updateParams(config.sensorRange, config.clusterRadius,
+        config.unreachableHeight);
 
     victimHandler_->updateParams(config.clusterRadius, config.sameVictimRadius);
   }
