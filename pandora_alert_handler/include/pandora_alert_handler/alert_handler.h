@@ -63,6 +63,7 @@
 #include "pandora_data_fusion_msgs/GetGeotiff.h"
 #include "pandora_data_fusion_msgs/GetMarkers.h"
 #include "pandora_data_fusion_msgs/GetVictimProbabilities.h"
+#include "pandora_data_fusion_msgs/GetWorldModel.h"
 
 #include "pandora_vision_msgs/HoleDirectionAlertVector.h"
 #include "pandora_vision_msgs/QRAlertVector.h"
@@ -175,6 +176,10 @@ namespace pandora_alert_handler
         pandora_data_fusion_msgs::GetVictimProbabilities::Request& rq,
         pandora_data_fusion_msgs::GetVictimProbabilities::Response& rs);
 
+    bool getWorldModelCb(
+        pandora_data_fusion_msgs::GetWorldModel::Request& rq,
+        pandora_data_fusion_msgs::GetWorldModel::Response& rs);
+
     bool flushQueues(
         std_srvs::Empty::Request& rq,
         std_srvs::Empty::Response& rs);
@@ -220,6 +225,7 @@ namespace pandora_alert_handler
     ros::ServiceServer getGeotiffService_;
     ros::ServiceServer getObjectsService_;
     ros::ServiceServer getVictimProbabilitiesService_;
+    ros::ServiceServer getWorldModelService_;
     ros::ServiceServer flushService_;
 
     ros::Publisher worldModelPublisher_;

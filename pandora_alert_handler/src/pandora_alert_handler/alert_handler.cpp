@@ -317,6 +317,17 @@ namespace pandora_alert_handler
       ROS_BREAK();
     }
 
+    if (nh_->getParam("service_server_names/get_world_model", param))
+    {
+      getWorldModelService_ = nh_->advertiseService(param,
+          &AlertHandler::getWorldModelCb, this);
+    }
+    else
+    {
+      ROS_FATAL("[ALERT_HANDLER] getWorldModel service name param not found");
+      ROS_BREAK();
+    }
+
     // Dynamic Reconfigure Server
     dynReconfServer_.setCallback(boost::bind(
           &AlertHandler::dynamicReconfigCallback, this, _1, _2));
@@ -616,6 +627,15 @@ namespace pandora_alert_handler
     bool success = victimHandler_->getVictimProbabilities(rq.victimId, ptr);
     rs = *ptr;
     rs.success = success;
+
+    return true;
+  }
+
+  bool AlertHandler::getWorldModelCb(
+      pandora_data_fusion_msgs::GetWorldModel::Request& rq,
+      pandora_data_fusion_msgs::GetWorldModel::Response& rs)
+  {
+    fetchWorldModel(&rs.worldModel);
 
     return true;
   }
