@@ -153,7 +153,7 @@ namespace pandora_alert_handler
   /**
     * [AlertHandler::publishVictims description]
     */
-  void AlertHandler::publishVictims()
+  void AlertHandler::publishWorldModel()
   {
     pandora_data_fusion_msgs::WorldModel worldModelMsg;
     fetchWorldModel(&worldModelMsg);
@@ -163,6 +163,7 @@ namespace pandora_alert_handler
   void AlertHandler::fetchWorldModel(pandora_data_fusion_msgs::WorldModel* worldModelPtr)
   {
     victimHandler_->getVictimsInfo(worldModelPtr);
+    objectHandler_->getQrsInfo(worldModelPtr);
   }
 
   void AlertHandler::initRosInterfaces()

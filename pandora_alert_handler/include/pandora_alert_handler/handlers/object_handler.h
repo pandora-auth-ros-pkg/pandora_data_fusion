@@ -46,6 +46,7 @@
 
 #include "pandora_data_fusion_msgs/QrInfo.h"
 #include "pandora_data_fusion_msgs/ObstacleInfo.h"
+#include "pandora_data_fusion_msgs/WorldModel.h"
 
 #include "pandora_alert_handler/objects/objects.h"
 #include "pandora_alert_handler/object_lists/object_list.h"
@@ -91,6 +92,8 @@ namespace pandora_alert_handler
     void handleObjects(
         const typename ObjectType::PtrVectorPtr& objectsPtr,
         const tf::Transform& transform);
+
+    void getQrsInfo(pandora_data_fusion_msgs::WorldModel* worldModelPtr);
 
     /**
       * @brief parameter updating from dynamic reconfiguration

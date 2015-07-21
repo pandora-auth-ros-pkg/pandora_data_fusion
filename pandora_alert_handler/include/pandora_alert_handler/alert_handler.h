@@ -194,7 +194,7 @@ namespace pandora_alert_handler
       * @brief Takes info from VictimsToGo_ and publishes it to the Agent.
       * @return void
       */
-    void publishVictims();
+    void publishWorldModel();
 
     /**
      * @brief Fetches world model from victim handler
@@ -316,8 +316,8 @@ namespace pandora_alert_handler
     if (ObjectType::isVictimAlert)
     {
       victimHandler_->inspect();
-      publishVictims();
     }
+    publishWorldModel();
   }
 
   template <>
@@ -348,7 +348,7 @@ namespace pandora_alert_handler
 
   victimHandler_->notify();
 
-  publishVictims();
+  publishWorldModel();
 }
 
 }  // namespace pandora_alert_handler

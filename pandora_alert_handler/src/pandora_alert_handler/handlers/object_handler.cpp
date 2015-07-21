@@ -38,6 +38,8 @@
 
 #include <string>
 
+#include "pandora_data_fusion_msgs/WorldModel.h"
+
 #include "pandora_alert_handler/handlers/object_handler.h"
 
 namespace pandora_data_fusion
@@ -100,6 +102,10 @@ namespace pandora_alert_handler
     {
       Hole::getList()->add(newHoles->at(ii));
     }
+  }
+
+  void ObjectHandler::getQrsInfo(pandora_data_fusion_msgs::WorldModel* worldModelPtr)
+  {
   }
 
   void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius)
