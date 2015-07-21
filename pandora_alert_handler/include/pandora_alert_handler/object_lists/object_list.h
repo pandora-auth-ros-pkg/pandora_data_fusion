@@ -92,6 +92,8 @@ namespace pandora_alert_handler
 
     bool isObjectPoseInList(const ObjectConstPtr& object, float radius) const;
     void removeInRangeOfObject(const ObjectConstPtr& object, float range);
+    bool areObjectsNearby(const ObjectConstPtr& object, IteratorList* iteratorListPtr,
+        float radius);
 
     void getObjectsPosesStamped(PoseStampedVector* poses) const;
     void getObjectsTfInfo(PoseStampedVector* poses) const;
@@ -100,12 +102,11 @@ namespace pandora_alert_handler
     void getVisualization(visualization_msgs::MarkerArray* markers) const;
     bool isAnExistingObject(
         const ConstPtr& object, IteratorList* iteratorListPtr);
+    void removeElementAt(iterator it);
 
    protected:
     virtual void updateObjects(const ConstPtr& object,
         const IteratorList& iteratorList);
-
-    void removeElementAt(iterator it);
 
    protected:
     List objects_;
@@ -264,6 +265,30 @@ namespace pandora_alert_handler
         ++iter;
       }
     }
+  }
+
+  template <class ObjectType>
+  bool ObjectList<ObjectType>::areObjectsNearby(const ObjectConstPtr& object,
+      IteratorList* iteratorListPtr, float radius)
+  {
+    for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+    {
+      bool inRange = false;
+      inRange = pandora_data_fusion_utils::Utils::arePointsInRange(
+          object->getPose().position, (*it)->getPose().position,
+          ObjectType::is3D, radius);
+
+      if (inRange)
+      {
+        iteratorListPtr->push_back(it);
+      }
+    }
+
+    if (!iteratorListPtr->empty())
+    {
+      return true;
+    }
+    return false;
   }
 
   template <class ObjectType>

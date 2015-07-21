@@ -287,7 +287,11 @@ namespace pandora_alert_handler
       const tf::Transform& transform)
   {
     deleteObjectsOnSoftObstacles<Qr>(newQrs);
+
     for (int ii = 0; ii < newQrs->size(); ++ii) {
+      QrList::IteratorList iteratorList;
+      bool qrCluster = qrsToGoList_->areObjectsNearby(newQrs->at(ii), &iteratorList, 0.2);
+
       if (Qr::getList()->add(newQrs->at(ii)))
       {
         pandora_data_fusion_msgs::QrInfo qrInfo;
@@ -302,10 +306,25 @@ namespace pandora_alert_handler
       // If qr is located above a certain height, then put it to visited list
       if (newQrs->at(ii)->getPose().position.z > UNREACHABLE_HEIGHT)
       {
+        qrsVisitedList_->add(newQrs->at(ii));
       }
 
       // Do other qrs exist near a new qr? then put them all to visited list
       // else put them to to_go list
+      else if (qrCluster)
+      {
+        qrsVisitedList_->add(newQrs->at(ii));
+        for (typename QrList::IteratorList::const_iterator it = iteratorList.begin();
+            it != iteratorList.end(); ++it)
+        {
+          qrsVisitedList_->add(*(*it));
+          qrsToGoList_->removeElementAt(*it);
+        }
+      }
+      else
+      {
+        qrsToGoList_->add(newQrs->at(ii));
+      }
     }
   }
 
