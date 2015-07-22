@@ -126,6 +126,9 @@ namespace pandora_alert_handler
     victimsToGo_.reset( new VictimList );
     victimsVisited_.reset( new VictimList );
 
+    qrsToGo_.reset( new QrList );
+    qrsVisited_.reset( new QrList );
+
     if (!nh_->getParam("map_type", param))
     {
       ROS_FATAL("[ALERT_HANDLER] map_type param not found");
@@ -140,7 +143,8 @@ namespace pandora_alert_handler
 
     poseFinderPtr_.reset( new pose_finder::PoseFinder(param) );
     objectFactory_.reset( new ObjectFactory(poseFinderPtr_, globalFrame_) );
-    objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_) );
+    objectHandler_.reset( new ObjectHandler(nh_, victimsToGo_, victimsVisited_,
+          qrsToGo_, qrsVisited_) );
     victimHandler_.reset( new VictimHandler(nh_, globalFrame_, victimsToGo_, victimsVisited_) );
 
     initRosInterfaces();
@@ -149,7 +153,7 @@ namespace pandora_alert_handler
   /**
     * [AlertHandler::publishVictims description]
     */
-  void AlertHandler::publishVictims()
+  void AlertHandler::publishWorldModel()
   {
     pandora_data_fusion_msgs::WorldModel worldModelMsg;
     fetchWorldModel(&worldModelMsg);
@@ -159,6 +163,7 @@ namespace pandora_alert_handler
   void AlertHandler::fetchWorldModel(pandora_data_fusion_msgs::WorldModel* worldModelPtr)
   {
     victimHandler_->getVictimsInfo(worldModelPtr);
+    objectHandler_->getQrsInfo(worldModelPtr);
   }
 
   void AlertHandler::initRosInterfaces()
@@ -202,6 +207,19 @@ namespace pandora_alert_handler
     }
 
     // Action Servers
+
+    if (nh_->getParam("action_server_names/visit_qr", param))
+    {
+      visitQRServer_.reset(new VisitQRServer(*nh_, param, false));
+    }
+    else
+    {
+      ROS_FATAL("[ALERT_HANDLER] visit_qr action name param not found");
+      ROS_BREAK();
+    }
+    visitQRServer_->registerGoalCallback(
+        boost::bind(&AlertHandler::visitQRCallback, this));
+    visitQRServer_->start();
 
     if (nh_->getParam("action_server_names/target_victim", param))
     {
@@ -299,6 +317,17 @@ namespace pandora_alert_handler
       ROS_BREAK();
     }
 
+    if (nh_->getParam("service_server_names/get_world_model", param))
+    {
+      getWorldModelService_ = nh_->advertiseService(param,
+          &AlertHandler::getWorldModelCb, this);
+    }
+    else
+    {
+      ROS_FATAL("[ALERT_HANDLER] getWorldModel service name param not found");
+      ROS_BREAK();
+    }
+
     // Dynamic Reconfigure Server
     dynReconfServer_.setCallback(boost::bind(
           &AlertHandler::dynamicReconfigCallback, this, _1, _2));
@@ -347,6 +376,23 @@ namespace pandora_alert_handler
           tf::StampedTransform(tfObject, it->header.stamp,
                                globalFrame_, it->header.frame_id));
     }
+  }
+
+  void AlertHandler::visitQRCallback()
+  {
+    int qrId = visitQRServer_->acceptNewGoal()->qrId;
+    bool success = objectHandler_->setQRVisited(qrId);
+    pandora_data_fusion_msgs::VisitQRResult result;
+    fetchWorldModel(&result.worldModel);
+    if (!success)
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] Setting qr with Id %d as visited aborted!",
+          qrId);
+      visitQRServer_->setAborted(result);
+    }
+    ROS_INFO("[/PANDORA_ALERT_HANDLER] Setting qr with Id %d as visited succeeded!",
+        qrId);
+    visitQRServer_->setSucceeded(result);
   }
 
   void AlertHandler::targetVictimCallback()
@@ -502,7 +548,8 @@ namespace pandora_alert_handler
     Co2::getFilterModel()->initializeSystemModel(config.co2SystemNoiseSD);
     Co2::getFilterModel()->initializeMeasurementModel(config.co2MeasurementSD);
 
-    objectHandler_->updateParams(config.sensorRange, config.clusterRadius);
+    objectHandler_->updateParams(config.sensorRange, config.clusterRadius,
+        config.unreachableHeight);
 
     victimHandler_->updateParams(config.clusterRadius, config.sameVictimRadius);
   }
@@ -580,6 +627,15 @@ namespace pandora_alert_handler
     bool success = victimHandler_->getVictimProbabilities(rq.victimId, ptr);
     rs = *ptr;
     rs.success = success;
+
+    return true;
+  }
+
+  bool AlertHandler::getWorldModelCb(
+      pandora_data_fusion_msgs::GetWorldModel::Request& rq,
+      pandora_data_fusion_msgs::GetWorldModel::Response& rs)
+  {
+    fetchWorldModel(&rs.worldModel);
 
     return true;
   }

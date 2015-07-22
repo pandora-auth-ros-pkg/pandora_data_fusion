@@ -26,12 +26,14 @@ add_service_files(
     GetGeotiff.srv
     GetMarkers.srv
     GetVictimProbabilities.srv
+    GetWorldModel.srv
   )
 
 add_action_files(
   FILES
     ChooseVictim.action
     ValidateVictim.action
+    VisitQR.action
   )
 
 generate_messages(

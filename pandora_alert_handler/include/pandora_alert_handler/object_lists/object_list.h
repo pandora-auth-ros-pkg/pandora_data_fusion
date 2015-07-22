@@ -74,6 +74,7 @@ namespace pandora_alert_handler
     ObjectList();
 
     bool add(const Ptr& object);
+    void addUnchanged(const Ptr& object);
 
     /**
       * @brief Fills a vector with all legit ObjectTypes from list.
@@ -91,6 +92,8 @@ namespace pandora_alert_handler
 
     bool isObjectPoseInList(const ObjectConstPtr& object, float radius) const;
     void removeInRangeOfObject(const ObjectConstPtr& object, float range);
+    bool areObjectsNearby(const ObjectConstPtr& object, IteratorList* iteratorListPtr,
+        float radius);
 
     void getObjectsPosesStamped(PoseStampedVector* poses) const;
     void getObjectsTfInfo(PoseStampedVector* poses) const;
@@ -99,12 +102,12 @@ namespace pandora_alert_handler
     void getVisualization(visualization_msgs::MarkerArray* markers) const;
     bool isAnExistingObject(
         const ConstPtr& object, IteratorList* iteratorListPtr);
+    void removeElementAt(iterator it);
+    typename ObjectType::Ptr removeElementWithId(int objectId);
 
    protected:
     virtual void updateObjects(const ConstPtr& object,
         const IteratorList& iteratorList);
-
-    void removeElementAt(iterator it);
 
    protected:
     List objects_;
@@ -170,6 +173,15 @@ namespace pandora_alert_handler
     return true;
   }
 
+  /**
+    * @details ~Add As You Are~ - Nirvana
+    */
+  template <class ObjectType>
+  void ObjectList<ObjectType>::addUnchanged(const Ptr& object)
+  {
+    objects_.push_back(object);
+  }
+
   template <class ObjectType>
   void ObjectList<ObjectType>::getAllLegitObjects(
       ObjectConstPtrVectorPtr vector) const
@@ -190,6 +202,21 @@ namespace pandora_alert_handler
       ObjectList<ObjectType>::iterator it)
   {
     objects_.erase(it);
+  }
+
+  template <class ObjectType>
+  typename ObjectType::Ptr ObjectList<ObjectType>::removeElementWithId(int objectId)
+  {
+    typename ObjectType::Ptr objectPtr;
+    for (iterator it = objects_.begin(); it != objects_.end(); ++it) {
+      if ((*it)->getId() == objectId)
+      {
+        objectPtr = *it;
+        removeElementAt(it);
+        break;
+      }
+    }
+    return objectPtr;
   }
 
   template <class ObjectType>
@@ -254,6 +281,30 @@ namespace pandora_alert_handler
         ++iter;
       }
     }
+  }
+
+  template <class ObjectType>
+  bool ObjectList<ObjectType>::areObjectsNearby(const ObjectConstPtr& object,
+      IteratorList* iteratorListPtr, float radius)
+  {
+    for (iterator it = objects_.begin(); it != objects_.end(); ++it)
+    {
+      bool inRange = false;
+      inRange = pandora_data_fusion_utils::Utils::arePointsInRange(
+          object->getPose().position, (*it)->getPose().position,
+          ObjectType::is3D, radius);
+
+      if (inRange)
+      {
+        iteratorListPtr->push_back(it);
+      }
+    }
+
+    if (!iteratorListPtr->empty())
+    {
+      return true;
+    }
+    return false;
   }
 
   template <class ObjectType>

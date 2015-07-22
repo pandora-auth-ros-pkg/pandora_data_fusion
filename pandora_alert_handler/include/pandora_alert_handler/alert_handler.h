@@ -56,12 +56,14 @@
 
 #include "pandora_data_fusion_msgs/WorldModel.h"
 #include "pandora_data_fusion_msgs/VictimInfo.h"
+#include "pandora_data_fusion_msgs/VisitQRAction.h"
 #include "pandora_data_fusion_msgs/ChooseVictimAction.h"
 #include "pandora_data_fusion_msgs/ValidateVictimAction.h"
 #include "pandora_data_fusion_msgs/GetObjects.h"
 #include "pandora_data_fusion_msgs/GetGeotiff.h"
 #include "pandora_data_fusion_msgs/GetMarkers.h"
 #include "pandora_data_fusion_msgs/GetVictimProbabilities.h"
+#include "pandora_data_fusion_msgs/GetWorldModel.h"
 
 #include "pandora_vision_msgs/HoleDirectionAlertVector.h"
 #include "pandora_vision_msgs/QRAlertVector.h"
@@ -88,6 +90,8 @@ namespace pandora_alert_handler
 
   //!< Type Definitions
   typedef actionlib::SimpleActionServer
+    <pandora_data_fusion_msgs::VisitQRAction> VisitQRServer;
+  typedef actionlib::SimpleActionServer
     <pandora_data_fusion_msgs::ChooseVictimAction> TargetVictimServer;
   typedef actionlib::SimpleActionServer
     <pandora_data_fusion_msgs::ChooseVictimAction> DeleteVictimServer;
@@ -104,6 +108,8 @@ namespace pandora_alert_handler
       * @param ns [std::string const&] Has the namespace of the node.
       */
     explicit AlertHandler(const std::string& ns="~");
+
+    void visitQRCallback();
 
     /* Victim-concerned Goal Callbacks */
 
@@ -170,6 +176,10 @@ namespace pandora_alert_handler
         pandora_data_fusion_msgs::GetVictimProbabilities::Request& rq,
         pandora_data_fusion_msgs::GetVictimProbabilities::Response& rs);
 
+    bool getWorldModelCb(
+        pandora_data_fusion_msgs::GetWorldModel::Request& rq,
+        pandora_data_fusion_msgs::GetWorldModel::Response& rs);
+
     bool flushQueues(
         std_srvs::Empty::Request& rq,
         std_srvs::Empty::Response& rs);
@@ -194,7 +204,7 @@ namespace pandora_alert_handler
       * @brief Takes info from VictimsToGo_ and publishes it to the Agent.
       * @return void
       */
-    void publishVictims();
+    void publishWorldModel();
 
     /**
      * @brief Fetches world model from victim handler
@@ -215,6 +225,7 @@ namespace pandora_alert_handler
     ros::ServiceServer getGeotiffService_;
     ros::ServiceServer getObjectsService_;
     ros::ServiceServer getVictimProbabilitiesService_;
+    ros::ServiceServer getWorldModelService_;
     ros::ServiceServer flushService_;
 
     ros::Publisher worldModelPublisher_;
@@ -222,6 +233,7 @@ namespace pandora_alert_handler
     tf::TransformBroadcaster objectsBroadcaster_;
     ros::Timer tfPublisherTimer_;
 
+    boost::shared_ptr<VisitQRServer> visitQRServer_;
     boost::shared_ptr<TargetVictimServer> targetVictimServer_;
     boost::shared_ptr<DeleteVictimServer> deleteVictimServer_;
     boost::shared_ptr<ValidateVictimServer> validateVictimServer_;
@@ -250,6 +262,9 @@ namespace pandora_alert_handler
     VictimListPtr victimsToGo_;
     //!< The visited victims list
     VictimListPtr victimsVisited_;
+
+    QrListPtr qrsToGo_;
+    QrListPtr qrsVisited_;
 
     pose_finder::PoseFinderPtr poseFinderPtr_;
     ObjectFactoryPtr objectFactory_;
@@ -313,8 +328,8 @@ namespace pandora_alert_handler
     if (ObjectType::isVictimAlert)
     {
       victimHandler_->inspect();
-      publishVictims();
     }
+    publishWorldModel();
   }
 
   template <>
@@ -345,7 +360,7 @@ namespace pandora_alert_handler
 
   victimHandler_->notify();
 
-  publishVictims();
+  publishWorldModel();
 }
 
 }  // namespace pandora_alert_handler

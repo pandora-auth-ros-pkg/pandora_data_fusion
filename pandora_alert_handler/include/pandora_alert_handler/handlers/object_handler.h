@@ -46,6 +46,7 @@
 
 #include "pandora_data_fusion_msgs/QrInfo.h"
 #include "pandora_data_fusion_msgs/ObstacleInfo.h"
+#include "pandora_data_fusion_msgs/WorldModel.h"
 
 #include "pandora_alert_handler/objects/objects.h"
 #include "pandora_alert_handler/object_lists/object_list.h"
@@ -75,7 +76,9 @@ namespace pandora_alert_handler
     ObjectHandler(
         const ros::NodeHandlePtr& nh,
         const VictimListConstPtr& victimsToGoList,
-        const VictimListConstPtr& victimsVisited);
+        const VictimListConstPtr& victimsVisited,
+        const QrListPtr& qrsToGo,
+        const QrListPtr& qrsVisited);
 
     void handleHoles(const HolePtrVectorPtr& newHoles,
         const tf::Transform& transform);
@@ -90,6 +93,9 @@ namespace pandora_alert_handler
         const typename ObjectType::PtrVectorPtr& objectsPtr,
         const tf::Transform& transform);
 
+    void getQrsInfo(pandora_data_fusion_msgs::WorldModel* worldModelPtr);
+    bool setQRVisited(int qrId);
+
     /**
       * @brief parameter updating from dynamic reconfiguration
       * @param sensor_range [float] sensor's range defines maximum distance
@@ -98,7 +104,8 @@ namespace pandora_alert_handler
       * with a victim in question [identification mode]
       * @return void
       */
-    void updateParams(float sensor_range, float victim_cluster_radius);
+    void updateParams(float sensor_range, float victim_cluster_radius,
+        float unreachable_height);
 
    private:
     /**
@@ -126,10 +133,14 @@ namespace pandora_alert_handler
     VictimListConstPtr victimsToGoList_;
     VictimListConstPtr victimsVisitedList_;
 
+    QrListPtr qrsToGoList_;
+    QrListPtr qrsVisitedList_;
+
     int roboCupScore_;
 
     float SENSOR_RANGE;
     float VICTIM_CLUSTER_RADIUS;
+    float UNREACHABLE_HEIGHT;
   };
 
   template <class ObjectType>
@@ -277,7 +288,11 @@ namespace pandora_alert_handler
       const tf::Transform& transform)
   {
     deleteObjectsOnSoftObstacles<Qr>(newQrs);
+
     for (int ii = 0; ii < newQrs->size(); ++ii) {
+      QrList::IteratorList iteratorList;
+      bool qrCluster = qrsToGoList_->areObjectsNearby(newQrs->at(ii), &iteratorList, 0.2);
+
       if (Qr::getList()->add(newQrs->at(ii)))
       {
         pandora_data_fusion_msgs::QrInfo qrInfo;
@@ -287,6 +302,29 @@ namespace pandora_alert_handler
         roboCupScore_ += Qr::getObjectScore();
         updateScoreMsg.data = roboCupScore_;
         scorePublisher_.publish(updateScoreMsg);
+
+        // If qr is located above a certain height, then put it to visited list
+        if (newQrs->at(ii)->getPose().position.z > UNREACHABLE_HEIGHT)
+        {
+          qrsVisitedList_->addUnchanged(newQrs->at(ii));
+        }
+
+        // Do other qrs exist near a new qr? then put them all to visited list
+        // else put them to to_go list
+        else if (qrCluster)
+        {
+          qrsVisitedList_->addUnchanged(newQrs->at(ii));
+          for (typename QrList::IteratorList::const_iterator it = iteratorList.begin();
+              it != iteratorList.end(); ++it)
+          {
+            qrsVisitedList_->addUnchanged(*(*it));
+            qrsToGoList_->removeElementAt(*it);
+          }
+        }
+        else
+        {
+          qrsToGoList_->addUnchanged(newQrs->at(ii));
+        }
       }
     }
   }

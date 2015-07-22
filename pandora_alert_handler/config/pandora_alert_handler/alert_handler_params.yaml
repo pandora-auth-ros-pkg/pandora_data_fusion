@@ -34,6 +34,7 @@ published_topic_names:
   robocup_score: /data_fusion/robocup_score
   victim_probabilities: /data_fusion/signs_of_life
 action_server_names:
+  visit_qr: /data_fusion/visit_qr
   target_victim: /data_fusion/target_victim
   delete_victim: /data_fusion/delete_victim
   validate_victim: /data_fusion/validate_victim
@@ -42,4 +43,5 @@ service_server_names:
   get_markers: /data_fusion/get_markers
   get_geotiff: /data_fusion/get_geotiff
   get_victim_probabilities: /data_fusion/get_probabilities
+  get_world_model: /data_fusion/get_world_model
   flush_queues: /data_fusion/flush_queues

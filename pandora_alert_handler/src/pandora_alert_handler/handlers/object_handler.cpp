@@ -38,6 +38,8 @@
 
 #include <string>
 
+#include "pandora_data_fusion_msgs/WorldModel.h"
+
 #include "pandora_alert_handler/handlers/object_handler.h"
 
 namespace pandora_data_fusion
@@ -47,9 +49,13 @@ namespace pandora_alert_handler
 
   ObjectHandler::ObjectHandler(const ros::NodeHandlePtr& nh,
       const VictimListConstPtr& victimsToGoList,
-      const VictimListConstPtr& victimsVisitedList) :
+      const VictimListConstPtr& victimsVisitedList,
+      const QrListPtr& qrsToGo,
+      const QrListPtr& qrsVisited) :
     victimsToGoList_(victimsToGoList),
-    victimsVisitedList_(victimsVisitedList)
+    victimsVisitedList_(victimsVisitedList),
+    qrsToGoList_(qrsToGo),
+    qrsVisitedList_(qrsVisited)
   {
     std::string param;
 
@@ -86,6 +92,19 @@ namespace pandora_alert_handler
     }
   }
 
+  bool ObjectHandler::setQRVisited(int qrId)
+  {
+    QrPtr visitedQr = qrsToGoList_->removeElementWithId(qrId);
+    if (visitedQr.get() == NULL)
+      return false;
+    if (!qrsVisitedList_->add(visitedQr))
+    {
+      ROS_ERROR("[/PANDORA_ALERT_HANDLER] qr with id %d has been set visited again.",
+          qrId);
+    }
+    return true;
+  }
+
   void ObjectHandler::handleHoles(const HolePtrVectorPtr& newHoles,
       const tf::Transform& transform)
   {
@@ -98,10 +117,30 @@ namespace pandora_alert_handler
     }
   }
 
-  void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius)
+  void ObjectHandler::getQrsInfo(pandora_data_fusion_msgs::WorldModel* worldModelPtr)
+  {
+    worldModelPtr->qrs.clear();
+    worldModelPtr->visitedQrs.clear();
+
+    for (QrList::const_iterator it = qrsToGoList_->begin();
+         it != qrsToGoList_->end(); ++it)
+    {
+      worldModelPtr->qrs.push_back((*it)->getQrInfo());
+    }
+
+    for (QrList::const_iterator it = qrsVisitedList_->begin();
+         it != qrsVisitedList_->end(); ++it)
+    {
+      worldModelPtr->visitedQrs.push_back((*it)->getQrInfo());
+    }
+  }
+
+  void ObjectHandler::updateParams(float sensor_range, float victim_cluster_radius,
+      float unreachable_height)
   {
     SENSOR_RANGE = sensor_range;
     VICTIM_CLUSTER_RADIUS = victim_cluster_radius;
+    UNREACHABLE_HEIGHT = unreachable_height;
   }
 
 }  // namespace pandora_alert_handler
