@@ -83,8 +83,8 @@ namespace pandora_alert_handler
     victimMarker.scale.y = 0.1;
     victimMarker.scale.z = 0.1;
     victimDescription.scale.z = 0.1;
-    victimMarker.lifetime = ros::Duration(0);
-    victimDescription.lifetime = ros::Duration(0);
+    victimMarker.lifetime = ros::Duration();
+    victimDescription.lifetime = ros::Duration();
     if (visited_)
     {
       boost::to_upper(victimDescription.text);
